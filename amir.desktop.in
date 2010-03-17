@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Amir
+Comment=Amir application
+Categories=GNOME;Utility;
+Exec=amir
+Icon=amir
+Terminal=false
+Type=Application
