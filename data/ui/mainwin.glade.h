@@ -1,0 +1,11 @@
+char *s = N_("Notebook Subjects");
+char *s = N_("_About Amir");
+char *s = N_("_Actions");
+char *s = N_("_Help");
+char *s = N_("_Initial Settings");
+char *s = N_("_Management");
+char *s = N_("_Quit");
+char *s = N_("_Reports");
+char *s = N_("_Settings");
+char *s = N_("_View");
+char *s = N_("label");

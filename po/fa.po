@@ -1,0 +1,130 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Hadi Aminzadeh <ha_60@yahoo.com>, 2010.
+msgid ""
+msgstr ""
+"Project-Id-Version: amir\n"
+"POT-Creation-Date: 2010-03-04 17:34+IRST\n"
+"PO-Revision-Date: 2010-03-05 12:52+0330\n"
+"Last-Translator: Hadi Aminzadeh <ha_60@yahoo.com>\n"
+"Language-Team: persian <info@jooyeshgar.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+"Report-Msgid-Bugs-To: \n"
+
+#: src/subjects.py:24
+msgid "Subject Code"
+msgstr "کد سرفصل"
+
+#: src/subjects.py:26
+msgid "Subject Name"
+msgstr "عنوان سرفصل"
+
+#: src/subjects.py:28
+msgid "Debtor or Creditor"
+msgstr "بدهکار بستانکار"
+
+#: src/subjects.py:100
+msgid "Please select an item from the list, to add subject for it."
+msgstr "برای ایجاد سرفصل لطفا بخش بالایی را انتخاب کنید"
+
+#: src/subjects.py:145
+msgid "Subject can not be deleted, because of having some child subjects"
+msgstr "سرفصل به خاطر وجود زیر فصل قابل پاک کردن نیست"
+
+#: src/subjects.py:155
+msgid ""
+"Subject can not be deleted, because there are some documents registered for "
+"it"
+msgstr "سرفصل قابل پاک کردن نیست زیرا سند هایی برای آن ثبت شده است."
+
+#: src/subjects.py:169
+msgid "Subject name should not be empty"
+msgstr "نام سرفصل را وارد کنید"
+
+#: src/subjects.py:196
+msgid "A ledger with this name already exists."
+msgstr "سرفصلی با این نام موجود است"
+
+#: data/mainwin.glade:16
+msgid "_Actions"
+msgstr "_Actions"
+
+#: data/mainwin.glade:45
+msgid "_View"
+msgstr "_مشاهده"
+
+#: data/mainwin.glade:57
+msgid "_Reports"
+msgstr "_گزارشات"
+
+#: data/mainwin.glade:86
+msgid "_Management"
+msgstr "_مدیریت"
+
+#: data/mainwin.glade:115 data/mainwin.glade:201
+msgid "_Help"
+msgstr "_راهنما"
+
+#: data/mainwin.glade:144
+msgid "_Initial Settings"
+msgstr "_تنظیمات اولیه"
+
+#: data/mainwin.glade:264 data/notebook.glade:40
+msgid "label"
+msgstr "برچسب"
+
+#: data/notebook.glade:7 data/notebook.glade:228
+msgid "Add ledger"
+msgstr "اضافه کردن سرفصل"
+
+#: data/notebook.glade:28
+msgid "Sub-ledger from:"
+msgstr ""
+
+#: data/notebook.glade:59
+msgid "Ledger name:"
+msgstr "نام سرفصل:"
+
+#: data/notebook.glade:101
+msgid "Debtor"
+msgstr "بدهکار"
+
+#: data/notebook.glade:114
+msgid "Creditor"
+msgstr "بستانکار"
+
+#: data/notebook.glade:128
+msgid "Both"
+msgstr "هردو"
+
+#: data/notebook.glade:147
+msgid "Ledger type"
+msgstr "نوع"
+
+#: data/notebook.glade:212
+msgid "Notebook Subjects"
+msgstr "دفتر معین"
+
+#: data/notebook.glade:227
+msgid "Insert"
+msgstr "درج"
+
+#: data/notebook.glade:241
+msgid "Add sub-ledger"
+msgstr ""
+
+#: data/notebook.glade:262
+msgid "Edit"
+msgstr "ویرایش"
+
+#: data/notebook.glade:276
+msgid "Ctrl+D"
+msgstr ""
+
+#: data/notebook.glade:277
+msgid "Delete"
+msgstr "حذف"
