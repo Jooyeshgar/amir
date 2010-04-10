@@ -5,6 +5,7 @@ from database import *
 import numberentry
 import dateentry
 import subjects
+import utility
 from database import *
 
 class AddEditDoc:
@@ -93,19 +94,20 @@ class AddEditDoc:
         selection = self.treeview.get_selection()
         iter = selection.get_selected()[1]
         if iter != None :
-            code = self.treestore.get(iter, 1)[0]
-            debt = self.treestore.get(iter, 2)[0]
-            credit = self.treestore.get(iter, 3)[0]
-            desc = self.treestore.get(iter, 4)[0]
+            code = self.liststore.get(iter, 1)[0]
+            debt = self.liststore.get(iter, 3)[0].replace(",", "")
+            credit = self.liststore.get(iter, 4)[0].replace(",", "")
+            desctxt = self.liststore.get(iter, 5)[0]
             
-            if debt != 0:
+            if debt != "0":
                 self.builder.get_object("debtor").set_active(True)
                 self.amount.set_text(debt)
             else:
                 self.builder.get_object("creditor").set_active(True)
                 self.amount.set_text(credit)
             self.code.set_text(code)
-            self.builder.get_object("desc").set_text(desc)
+            desc = self.builder.get_object("desc")
+            desc.set_text(desctxt)
         
             result = dialog.run()
             if result == 1:
@@ -114,12 +116,12 @@ class AddEditDoc:
                 else:
                     type = 1
                     
-                if debt != 0:
-                    self.debt_sum -= debt
+                if debt != "0":
+                    self.debt_sum -= int(debt)
                 else:
-                    self.credit_sum -= credit
+                    self.credit_sum -= int(credit)
                     
-                saveRow(self.code.get_text(), int(self.amount.get_text()), type, desc.get_text())
+                self.saveRow(self.code.get_text(), int(self.amount.get_text()), type, desc.get_text(), iter)
             
             dialog.hide()
     
@@ -127,31 +129,56 @@ class AddEditDoc:
         print("selecting...")
         #subjects = subjects.Subjects()
         
-    def saveRow(self, code, amount, type, desc):
+    def saveRow(self, code, amount, type, desc, iter=None):
         query = self.session.query(Subject).select_from(Subject)
         query = query.filter(Subject.code == code)
         sub = query.first()
-        
+        if sub == None:
+            errorstr = _("No subject is registered with the code: %s") % code
+            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK, errorstr)
+            msgbox.set_title("No subjects found")
+            msgbox.run();
+            msgbox.destroy()
+            return
+            
         if sub.type != 2:
             type = sub.type
         debt = 0
         credit = 0
         
         if type == 0:
-           debt = amount
+           debt = utility.showNumber(amount)
            self.debt_sum += amount
         else:
             if type == 1:
-                credit = amount
+                credit = utility.showNumber(amount)
                 self.credit_sum += amount
                  
-        self.liststore.append ((1, code, sub.name, debt, credit, desc))
-        self.builder.get_object("debtsum").set_text (str(self.debt_sum))
-        self.builder.get_object("creditsum").set_text (str(self.credit_sum))
-        pass
+        if iter != None:
+            self.liststore.set (iter, 1, code, 2, sub.name, 3, debt, 4, credit, 5, desc)
+        else :
+            self.liststore.append ((1, code, sub.name, debt, credit, desc))
+        self.builder.get_object("debtsum").set_text (utility.showNumber(self.debt_sum))
+        self.builder.get_object("creditsum").set_text (utility.showNumber(self.credit_sum))
     
     def deleteRow(self, sender):
-        pass
+        selection = self.treeview.get_selection()
+        iter = selection.get_selected()[1]
+        if iter != None :
+            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, "Are you sure to remove this row?")
+            msgbox.set_title("Are you sure?")
+            result = msgbox.run();
+            if result == gtk.RESPONSE_OK :
+                msgbox.destroy()
+                
+                debt = int(self.liststore.get(iter, 3)[0].replace(",", ""))
+                credit = int(self.liststore.get(iter, 4)[0].replace(",", ""))
+                self.liststore.remove(iter)
+                
+                self.debt_sum -= debt
+                self.credit_sum -= credit
+                self.builder.get_object("debtsum").set_text (utility.showNumber(self.debt_sum))
+                self.builder.get_object("creditsum").set_text (utility.showNumber(self.credit_sum))
     
     def saveDocument(self, sender):
         pass

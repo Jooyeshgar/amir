@@ -48,6 +48,7 @@
                     <property name="label" translatable="yes">Delete row</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-delete</property>
+                    <signal name="clicked" handler="deleteRow"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
