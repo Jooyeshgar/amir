@@ -42,6 +42,17 @@ class DateEntry(gtk.Entry):
         
         datestring = str(datelist[0]) + Settings.datedelim + str(datelist[1]) + Settings.datedelim + str(datelist[2])
         self.set_text(datestring)
+        self.year = year
+        self.month = month
+        self.day = day
+        
+    def getDateObject(self):
+        if Settings.datetype == "jalali":
+            jd = self.cal.jalali_to_jd(self.year, self.month, self.day)
+            (gyear, gmonth, gday) = self.cal.jd_to_gregorian(jd)
+            return date(gyear, gmonth, gday)
+        else :
+            return date(self.year, self.month, self.day)
         
     def correctDate(self, sender, event):
         text = self.get_text()
@@ -110,9 +121,12 @@ class DateEntry(gtk.Entry):
                 correct = 1
             except ValueError:
                 gday -= 1
-                dey -= 1
+                day -= 1
                 
         self.showDate(year, month, day)
+        self.year = year
+        self.month = month
+        self.day = day
             
             
         

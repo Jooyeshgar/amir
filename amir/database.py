@@ -26,11 +26,11 @@ class Subject(Base):
 
 class Bill(Base):
     __tablename__ = "bill"
-    id = Column(BigInteger, primary_key=True)
+    id = Column(Integer, primary_key=True)
     number = Column(Integer, nullable = False)
     creation_date = Column(Date, nullable = False)
     lastedit_date = Column(Date, nullable = False)
-    date = Column(Date, nullable = False)
+    date = Column(Date, nullable = False)   #date of transactions in the bill
     
     def __init__(self, number, creation_date, lastedit_date, date):
         self.number = number
@@ -40,7 +40,7 @@ class Bill(Base):
     
 class Notebook(Base):
     __tablename__ = "notebook"
-    id = Column(BigInteger, primary_key=True)
+    id = Column(Integer, primary_key=True)
     subject_id = Column(None, ForeignKey('subject.id'))
     bill_id = Column(None, ForeignKey('bill.id'))
     desc = Column(String, ColumnDefault(""))

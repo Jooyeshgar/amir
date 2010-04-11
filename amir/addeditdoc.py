@@ -1,6 +1,9 @@
 import pygtk
 import gtk
-from database import *
+from datetime import date
+
+from sqlalchemy.sql.functions import count
+from sqlalchemy.sql import and_
 
 import numberentry
 import dateentry
@@ -47,12 +50,16 @@ class AddEditDoc:
         column = gtk.TreeViewColumn(_("Subject Name"), gtk.CellRendererText(), text=2)
         column.set_spacing(5)
         column.set_resizable(True)
+        
+        money_cell_renderer = gtk.CellRendererText()
+        money_cell_renderer.set_alignment(1.0, 0.5)
+        
         self.treeview.append_column(column)
-        column = gtk.TreeViewColumn(_("Debt"), gtk.CellRendererText(), text=3)
+        column = gtk.TreeViewColumn(_("Debt"), money_cell_renderer, text=3)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
-        column = gtk.TreeViewColumn(_("Credit"), gtk.CellRendererText(), text=4)
+        column = gtk.TreeViewColumn(_("Credit"), money_cell_renderer, text=4)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
@@ -66,6 +73,7 @@ class AddEditDoc:
         self.session = db.session
         self.debt_sum = 0
         self.credit_sum = 0
+        self.docnumber = number
     
         self.treeview.set_model(self.liststore)
         self.window.show_all()
@@ -136,7 +144,7 @@ class AddEditDoc:
         if sub == None:
             errorstr = _("No subject is registered with the code: %s") % code
             msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK, errorstr)
-            msgbox.set_title("No subjects found")
+            msgbox.set_title(_("No subjects found"))
             msgbox.run();
             msgbox.destroy()
             return
@@ -165,8 +173,8 @@ class AddEditDoc:
         selection = self.treeview.get_selection()
         iter = selection.get_selected()[1]
         if iter != None :
-            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, "Are you sure to remove this row?")
-            msgbox.set_title("Are you sure?")
+            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, _("Are you sure to remove this row?"))
+            msgbox.set_title(_("Are you sure?"))
             result = msgbox.run();
             if result == gtk.RESPONSE_OK :
                 msgbox.destroy()
@@ -181,6 +189,42 @@ class AddEditDoc:
                 self.builder.get_object("creditsum").set_text (utility.showNumber(self.credit_sum))
     
     def saveDocument(self, sender):
-        pass
+        if self.docnumber > 0 :
+            query = self.session.query(Notebook).filter(Notebook.bill_id == self.docnumber).delete()
+        else :
+            query = self.session.query(Bill.number).select_from(Bill)
+            lastnumber = query.order_by(Bill.number.desc()).first()[0]
+            print lastnumber
+            if lastnumber == None:
+                lastnumber = 0
+            #TODO if lastnumber is not equal to the maximum BigInteger value:
+            today = date.today()
+            bill = Bill (lastnumber+1, today, today, self.date.getDateObject())
+            self.session.add(bill)
+            self.session.commit()
+            self.docnumber = bill.id
+            
+        iter = self.liststore.get_iter_first()
+        
+        while iter != None :
+            code = self.liststore.get(iter, 1)[0]
+            debt = self.liststore.get(iter, 3)[0].replace(",", "")
+            value = int(debt)
+            if value == 0 :
+                credit = self.liststore.get(iter, 4)[0].replace(",", "")
+                value = int(credit)
+            desctxt = self.liststore.get(iter, 5)[0]
+            
+            query = self.session.query(Subject).select_from(Subject)
+            query = query.filter(Subject.code == code)
+            sub = query.first().id
+            
+            row = Notebook (sub, self.docnumber, value, desctxt)
+            self.session.add(row)
+            iter = self.liststore.iter_next(iter)
+            
+        self.session.commit()
+            
+            
 
         
