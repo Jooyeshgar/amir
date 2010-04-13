@@ -2,8 +2,7 @@ import pygtk
 import gtk
 from datetime import date
 
-from sqlalchemy.sql.functions import count
-from sqlalchemy.sql import and_
+from sqlalchemy.orm.util import outerjoin
 
 import numberentry
 import dateentry
@@ -73,15 +72,51 @@ class AddEditDoc:
         self.session = db.session
         self.debt_sum = 0
         self.credit_sum = 0
-        self.docnumber = number
+        self.numrows = 0
+        if number > 0:
+            self.showRows(number)
+        else:
+            self.docid = 0
     
         self.treeview.set_model(self.liststore)
         self.window.show_all()
         self.builder.connect_signals(self)
         
+    def showRows(self, docnumber):
+        query = self.session.query(Bill).select_from(Bill)
+        bill = query.filter(Bill.number == docnumber).first()
+        self.date.showDateObject(bill.date)
+        self.docid = bill.id
+        
+        query = self.session.query(Notebook, Subject)
+        query = query.select_from(outerjoin(Notebook, Subject, Notebook.subject_id == Subject.id))
+        rows = query.filter(Notebook.bill_id == bill.id).all()
+        for n, s in rows:
+            self.numrows += 1
+            if n.is_creditor == True:
+                credit = utility.showNumber(n.value)
+                debt = "0"
+                self.credit_sum += n.value
+            else:
+                debt = utility.showNumber(n.value)
+                credit = "0"
+                self.debt_sum += n.value
+                
+            self.liststore.append((self.numrows, s.code, s.name, debt, credit, n.desc))
+            
+        self.builder.get_object("debtsum").set_text (utility.showNumber(self.debt_sum))
+        self.builder.get_object("creditsum").set_text (utility.showNumber(self.credit_sum))
+        if self.debt_sum > self.credit_sum:
+            diff = self.debt_sum - self.credit_sum
+        else:
+            diff = self.credit_sum - self.debt_sum
+        self.builder.get_object("difference").set_text (utility.showNumber(diff))
+        
+    
     def addRow(self, sender):
         dialog = self.builder.get_object("dialog1")
         dialog.set_title(_("Add new row"))
+        self.code.set_text("")
         
         desc = self.builder.get_object("desc")
         
@@ -137,6 +172,7 @@ class AddEditDoc:
         print("selecting...")
         #subjects = subjects.Subjects()
         
+    #TODO add progress bar
     def saveRow(self, code, amount, type, desc, iter=None):
         query = self.session.query(Subject).select_from(Subject)
         query = query.filter(Subject.code == code)
@@ -145,7 +181,7 @@ class AddEditDoc:
             errorstr = _("No subject is registered with the code: %s") % code
             msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK, errorstr)
             msgbox.set_title(_("No subjects found"))
-            msgbox.run();
+            msgbox.run()
             msgbox.destroy()
             return
             
@@ -165,19 +201,26 @@ class AddEditDoc:
         if iter != None:
             self.liststore.set (iter, 1, code, 2, sub.name, 3, debt, 4, credit, 5, desc)
         else :
-            self.liststore.append ((1, code, sub.name, debt, credit, desc))
+            self.numrows += 1
+            self.liststore.append ((self.numrows, code, sub.name, debt, credit, desc))
+            
         self.builder.get_object("debtsum").set_text (utility.showNumber(self.debt_sum))
         self.builder.get_object("creditsum").set_text (utility.showNumber(self.credit_sum))
+        if self.debt_sum > self.credit_sum:
+            diff = self.debt_sum - self.credit_sum
+        else:
+            diff = self.credit_sum - self.debt_sum
+        self.builder.get_object("difference").set_text (utility.showNumber(diff))
     
     def deleteRow(self, sender):
         selection = self.treeview.get_selection()
         iter = selection.get_selected()[1]
         if iter != None :
-            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, _("Are you sure to remove this row?"))
+            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, 
+                                       _("Are you sure to remove this row?"))
             msgbox.set_title(_("Are you sure?"))
             result = msgbox.run();
             if result == gtk.RESPONSE_OK :
-                msgbox.destroy()
                 
                 debt = int(self.liststore.get(iter, 3)[0].replace(",", ""))
                 credit = int(self.liststore.get(iter, 4)[0].replace(",", ""))
@@ -187,44 +230,71 @@ class AddEditDoc:
                 self.credit_sum -= credit
                 self.builder.get_object("debtsum").set_text (utility.showNumber(self.debt_sum))
                 self.builder.get_object("creditsum").set_text (utility.showNumber(self.credit_sum))
+            msgbox.destroy()
     
     def saveDocument(self, sender):
-        if self.docnumber > 0 :
-            query = self.session.query(Notebook).filter(Notebook.bill_id == self.docnumber).delete()
-        else :
-            query = self.session.query(Bill.number).select_from(Bill)
-            lastnumber = query.order_by(Bill.number.desc()).first()[0]
-            print lastnumber
-            if lastnumber == None:
-                lastnumber = 0
-            #TODO if lastnumber is not equal to the maximum BigInteger value:
+        if self.debt_sum != self.credit_sum:
+            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 
+                                       _("Debt sum and Credit sum should be equal"))
+            msgbox.set_title(_("Can not save document"))
+            msgbox.run()
+            msgbox.destroy()
+            return
+        else:
             today = date.today()
-            bill = Bill (lastnumber+1, today, today, self.date.getDateObject())
-            self.session.add(bill)
+            if self.docid > 0 :
+                query = self.session.query(Bill).select_from(Bill)
+                bill = query.filter(Bill.id == self.docid).first()
+                bill.lasteditdate = today
+                bill.date = self.date.getDateObject()
+                query = self.session.query(Notebook).filter(Notebook.bill_id == bill.id).delete()
+            else :
+                query = self.session.query(Bill.number).select_from(Bill)
+                lastnumbert = query.order_by(Bill.number.desc()).first()
+                if lastnumbert == None:
+                    lastnumber = 0
+                else:
+                    lastnumber = lastnumbert[0]
+                #TODO if lastnumber is not equal to the maximum BigInteger value:
+                bill = Bill (lastnumber+1, today, today, self.date.getDateObject())
+                self.session.add(bill)
+                self.session.commit()
+                self.docid = bill.id
+                
+            iter = self.liststore.get_iter_first()
+            
+            while iter != None :
+                code = self.liststore.get(iter, 1)[0]
+                debt = self.liststore.get(iter, 3)[0].replace(",", "")
+                value = int(debt)
+                is_creditor = False
+                if value == 0 :
+                    credit = self.liststore.get(iter, 4)[0].replace(",", "")
+                    value = int(credit)
+                    is_creditor = True
+                desctxt = self.liststore.get(iter, 5)[0]
+                
+                query = self.session.query(Subject).select_from(Subject)
+                query = query.filter(Subject.code == code)
+                sub = query.first().id
+                
+                row = Notebook (sub, self.docid, value, is_creditor, desctxt)
+                self.session.add(row)
+                iter = self.liststore.iter_next(iter)
+                
             self.session.commit()
-            self.docnumber = bill.id
-            
-        iter = self.liststore.get_iter_first()
         
-        while iter != None :
-            code = self.liststore.get(iter, 1)[0]
-            debt = self.liststore.get(iter, 3)[0].replace(",", "")
-            value = int(debt)
-            if value == 0 :
-                credit = self.liststore.get(iter, 4)[0].replace(",", "")
-                value = int(credit)
-            desctxt = self.liststore.get(iter, 5)[0]
-            
-            query = self.session.query(Subject).select_from(Subject)
-            query = query.filter(Subject.code == code)
-            sub = query.first().id
-            
-            row = Notebook (sub, self.docnumber, value, desctxt)
-            self.session.add(row)
-            iter = self.liststore.iter_next(iter)
-            
-        self.session.commit()
-            
-            
+    def deleteDocument(self, sender):
+        msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, _("Are you sure to delete the whole document?"))
+        msgbox.set_title(_("Are you sure?"))
+        result = msgbox.run();
+        
+        if result == gtk.RESPONSE_OK :
+            if self.docnumber > 0 :
+                query = self.session.query(Notebook).filter(Notebook.bill_id == self.docnumber).delete()
+                query = self.session.query(Bill).filter(Bill.id == self.docnumber).delete()
+                self.session.commit()
+            self.window.destroy()
+        msgbox.destroy() 
 
         

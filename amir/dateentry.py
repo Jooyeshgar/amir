@@ -46,6 +46,15 @@ class DateEntry(gtk.Entry):
         self.month = month
         self.day = day
         
+    #Assuming that date objects show gregorian date.
+    def showDateObject(self, date):
+        if Settings.datetype == "jalali":
+            jd = self.cal.gregorian_to_jd(date.year, date.month, date.day)
+            (jyear, jmonth, jday) = self.cal.jd_to_jalali(jd)
+            self.showDate(jyear, jmonth, jday)
+        else:
+            self.showDate(date.year, date.month, date.day)
+        
     def getDateObject(self):
         if Settings.datetype == "jalali":
             jd = self.cal.jalali_to_jd(self.year, self.month, self.day)

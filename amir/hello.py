@@ -20,18 +20,12 @@ class MainWindow:
         pass
     def manageSubjects(self, sender):
         dialog = subjects.Subjects()
-        print ("notebook subjects clicked")
         
     def settingsDialog(self, sender):
         pass
     
     def view_toolbar(self, sender):
         dialog = subjects.Subjects()
-        print ("view toolbar clicked")
-        db = database.db
-        users = db.session.query(database.User).all()
-        for user in users:
-            print user.age
         
     def hello(self, widget, data=None):
         print ("Hello World")
