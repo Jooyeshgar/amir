@@ -95,14 +95,46 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="label1">
+              <object class="GtkLabel" id="label9">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">date:</property>
+                <property name="label" translatable="yes">Document Numebr:</property>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="padding">4</property>
                 <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="docnumber">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">----</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="padding">4</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkVSeparator" id="vseparator1">
+                <property name="visible">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="padding">8</property>
+                <property name="position">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label1">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Date:</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="padding">4</property>
+                <property name="position">4</property>
               </packing>
             </child>
             <child>
@@ -114,7 +146,8 @@
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="position">2</property>
+                <property name="padding">4</property>
+                <property name="position">5</property>
               </packing>
             </child>
           </object>

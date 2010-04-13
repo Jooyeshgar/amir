@@ -104,6 +104,7 @@ class AddEditDoc:
                 
             self.liststore.append((self.numrows, s.code, s.name, debt, credit, n.desc))
             
+        self.builder.get_object("docnumber").set_text (str(docnumber))
         self.builder.get_object("debtsum").set_text (utility.showNumber(self.debt_sum))
         self.builder.get_object("creditsum").set_text (utility.showNumber(self.credit_sum))
         if self.debt_sum > self.credit_sum:
@@ -191,8 +192,8 @@ class AddEditDoc:
         credit = 0
         
         if type == 0:
-           debt = utility.showNumber(amount)
-           self.debt_sum += amount
+            debt = utility.showNumber(amount)
+            self.debt_sum += amount
         else:
             if type == 1:
                 credit = utility.showNumber(amount)
@@ -224,12 +225,25 @@ class AddEditDoc:
                 
                 debt = int(self.liststore.get(iter, 3)[0].replace(",", ""))
                 credit = int(self.liststore.get(iter, 4)[0].replace(",", ""))
-                self.liststore.remove(iter)
+                index = self.liststore.get(iter, 0)[0]
+                res = self.liststore.remove(iter)
+                #Update index of next rows
+                if res:
+                    while iter != None:
+                        self.liststore.set_value (iter, 0, index)
+                        index += 1
+                        iter = self.liststore.iter_next(iter)
+                self.numrows -= 1;
                 
                 self.debt_sum -= debt
                 self.credit_sum -= credit
                 self.builder.get_object("debtsum").set_text (utility.showNumber(self.debt_sum))
                 self.builder.get_object("creditsum").set_text (utility.showNumber(self.credit_sum))
+                if self.debt_sum > self.credit_sum:
+                    diff = self.debt_sum - self.credit_sum
+                else:
+                    diff = self.credit_sum - self.debt_sum
+                self.builder.get_object("difference").set_text (utility.showNumber(diff))
             msgbox.destroy()
     
     def saveDocument(self, sender):
@@ -241,22 +255,24 @@ class AddEditDoc:
             msgbox.destroy()
             return
         else:
+            number = 0
             today = date.today()
             if self.docid > 0 :
                 query = self.session.query(Bill).select_from(Bill)
                 bill = query.filter(Bill.id == self.docid).first()
                 bill.lasteditdate = today
                 bill.date = self.date.getDateObject()
+                number = bill.number
                 query = self.session.query(Notebook).filter(Notebook.bill_id == bill.id).delete()
             else :
                 query = self.session.query(Bill.number).select_from(Bill)
                 lastnumbert = query.order_by(Bill.number.desc()).first()
-                if lastnumbert == None:
-                    lastnumber = 0
-                else:
-                    lastnumber = lastnumbert[0]
-                #TODO if lastnumber is not equal to the maximum BigInteger value:
-                bill = Bill (lastnumber+1, today, today, self.date.getDateObject())
+                if lastnumbert != None:
+                    number = lastnumbert[0]
+                number += 1
+                
+                #TODO if number is not equal to the maximum BigInteger value, prevent bill registration.
+                bill = Bill (number, today, today, self.date.getDateObject())
                 self.session.add(bill)
                 self.session.commit()
                 self.docid = bill.id
@@ -283,6 +299,7 @@ class AddEditDoc:
                 iter = self.liststore.iter_next(iter)
                 
             self.session.commit()
+            self.builder.get_object("docnumber").set_text (str(number))
         
     def deleteDocument(self, sender):
         msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, _("Are you sure to delete the whole document?"))
@@ -290,9 +307,9 @@ class AddEditDoc:
         result = msgbox.run();
         
         if result == gtk.RESPONSE_OK :
-            if self.docnumber > 0 :
-                query = self.session.query(Notebook).filter(Notebook.bill_id == self.docnumber).delete()
-                query = self.session.query(Bill).filter(Bill.id == self.docnumber).delete()
+            if self.docid > 0 :
+                self.session.query(Notebook).filter(Notebook.bill_id == self.docid).delete()
+                self.session.query(Bill).filter(Bill.id == self.docid).delete()
                 self.session.commit()
             self.window.destroy()
         msgbox.destroy() 
