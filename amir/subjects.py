@@ -123,10 +123,10 @@ class Subjects(gobject.GObject):
             creditor = False
             both = False
             
-            if type == 0:
+            if type == self.__class__.subjecttypes[0]:
                self.builder.get_object("debtor").set_active(True)
             else:
-                if type == 1:
+                if type == self.__class__.subjecttypes[1]:
                     self.builder.get_object("creditor").set_active(True)
                 else :
                     self.builder.get_object("both").set_active(True) 
@@ -282,7 +282,14 @@ class Subjects(gobject.GObject):
         return False
     
     def selectSubjectFromList(self, treeview, path, view_column):
-        self.emit("subject-selected")
+        iter = self.treestore.get_iter(path)
+        code = self.treestore.get(iter, 0)[0]
+        name = self.treestore.get(iter, 1)[0]
+        
+        query = self.session.query(Subject).select_from(Subject)
+        query = query.filter(Subject.code == code)
+        sub_id = query.first().id
+        self.emit("subject-selected", sub_id, code, name)
                             
 gobject.type_register(Subjects)
 gobject.signal_new("subject-selected", Subjects, gobject.SIGNAL_RUN_LAST,

@@ -168,10 +168,6 @@ class AddEditDoc:
                 self.saveRow(self.code.get_text(), int(self.amount.get_text()), type, desc.get_text(), iter)
             
             dialog.hide()
-    
-    def selectSubject(self, sender):
-        print("selecting...")
-        #subjects = subjects.Subjects()
         
     #TODO add progress bar
     def saveRow(self, code, amount, type, desc, iter=None):
@@ -313,5 +309,18 @@ class AddEditDoc:
                 self.session.commit()
             self.window.destroy()
         msgbox.destroy() 
+
+    def selectSubject(self, sender):
+        subject_win = subjects.Subjects()
+        subject_win.connect("subject-selected", self.subjectSelected)
+        print("selecting...")
+        
+    def subjectSelected(self, sender, id, code, name):
+        self.code.set_text(code)
+        sender.window.destroy()
+        #print(id)
+        #print(code)
+        #print(name)
+        
 
         
