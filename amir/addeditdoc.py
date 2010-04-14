@@ -313,7 +313,6 @@ class AddEditDoc:
     def selectSubject(self, sender):
         subject_win = subjects.Subjects()
         subject_win.connect("subject-selected", self.subjectSelected)
-        print("selecting...")
         
     def subjectSelected(self, sender, id, code, name):
         self.code.set_text(code)
