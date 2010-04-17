@@ -7,6 +7,15 @@ from datetime import date
 from settings import *
 from calverter import calverter
 
+def dateToString(date):
+    datelist = ["", "", ""]
+    datelist[Settings.datefields["year"]] = date.year
+    datelist[Settings.datefields["month"]] = date.month
+    datelist[Settings.datefields["day"]] = date.day
+        
+    datestring = str(datelist[0]) + Settings.datedelim + str(datelist[1]) + Settings.datedelim + str(datelist[2])
+    return datestring
+    
 class DateEntry(gtk.Entry):
     
     def __init__(self, init_date=None):

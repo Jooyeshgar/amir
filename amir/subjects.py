@@ -165,8 +165,9 @@ class Subjects(gobject.GObject):
             print (result)
             
             if result[1] != 0 :
-                msg =  gtk.MessageDialog(parent, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
-                                    _("Subject can not be deleted, because of having some child subjects"))
+                msg =  gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
+                                    _("Subject can not be deleted, because it has some child subjects."))
+                msg.set_title(_("Error deleting subject"))
                 msg.run()
                 msg.destroy()
             else :
@@ -175,8 +176,9 @@ class Subjects(gobject.GObject):
                 query = query.filter(Notebook.subject_id == result[0])
                 rowcount = query.first()[0]
                 if rowcount != 0 :
-                    msg =  gtk.MessageDialog(parent, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
-                                    _("Subject can not be deleted, because there are some documents registered for it"))
+                    msg =  gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
+                                    _("Subject can not be deleted, because there are some documents registered for it."))
+                    msg.set_title(_("Error deleting subject"))
                     msg.run()
                     msg.destroy()
                 else :

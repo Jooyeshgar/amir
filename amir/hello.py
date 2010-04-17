@@ -22,7 +22,7 @@ class MainWindow:
         reportwin = notebookreport.NotebookReport()
     
     def subjectNotebookReport(self, sender):
-        reportwin = notebookreport.NotebookReport(True)
+        reportwin = notebookreport.NotebookReport(notebookreport.NotebookReport.LEDGER)
             
     def aboutAmir(self, sender):
         pass

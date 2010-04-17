@@ -93,14 +93,15 @@ class AddEditDoc:
         rows = query.filter(Notebook.bill_id == bill.id).all()
         for n, s in rows:
             self.numrows += 1
-            if n.is_creditor == True:
+            if n.value < 0:
+                value = -(n.value)
+                debt = utility.showNumber(value)
+                credit = "0"
+                self.debt_sum += value
+            else:
                 credit = utility.showNumber(n.value)
                 debt = "0"
                 self.credit_sum += n.value
-            else:
-                debt = utility.showNumber(n.value)
-                credit = "0"
-                self.debt_sum += n.value
                 
             self.liststore.append((self.numrows, s.code, s.name, debt, credit, n.desc))
             
@@ -278,19 +279,17 @@ class AddEditDoc:
             while iter != None :
                 code = self.liststore.get(iter, 1)[0]
                 debt = self.liststore.get(iter, 3)[0].replace(",", "")
-                value = int(debt)
-                is_creditor = False
+                value = -(int(debt))
                 if value == 0 :
                     credit = self.liststore.get(iter, 4)[0].replace(",", "")
                     value = int(credit)
-                    is_creditor = True
                 desctxt = self.liststore.get(iter, 5)[0]
                 
                 query = self.session.query(Subject).select_from(Subject)
                 query = query.filter(Subject.code == code)
                 sub = query.first().id
                 
-                row = Notebook (sub, self.docid, value, is_creditor, desctxt)
+                row = Notebook (sub, self.docid, value, desctxt)
                 self.session.add(row)
                 iter = self.liststore.iter_next(iter)
                 
