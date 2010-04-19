@@ -52,7 +52,8 @@ class PrintReport:
         self.pangocairo = pangocairo.CairoContext(self.cairo_context)
         
         self.formatHeader(context)
-        self.formatContent(page_nr)
+        getattr(self, self.drawfunction)(page_nr)
+        #self.drawDailyNotebook(page_nr)
  
     def formatHeader(self, context):
         LINE_HEIGHT = 25
@@ -76,7 +77,6 @@ class PrintReport:
             
         LINE_HEIGHT = 20
         addh = LINE_HEIGHT+MARGIN
-        print addh
         flag = 1
         for k,v in self.fields.items():
             self.pangolayout.set_text(k + ": " + v)
@@ -95,7 +95,7 @@ class PrintReport:
         self.header_height = addh + 8
             
             
-    def formatContent(self, page_nr):
+    def drawDailyNotebook(self, page_nr):
         RIGHT_EDGE = 570  #(table width + PAGE_MARGIN)
         HEADER_HEIGHT = self.header_height
         HEADING_HEIGHT = self.heading_height
@@ -157,13 +157,68 @@ class PrintReport:
         #Draw table data
         rindex = page_nr * self.lines_per_page
         offset = 0
-        addh=ROW_HEIGHT
+        
+        right_txt = RIGHT_EDGE
+        cr.move_to(right_txt, TABLE_TOP)
+        cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
+        
+        self.pangolayout.set_text("----")
+        (width, height) = self.pangolayout.get_size()
+        self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
+        
+        for i in range(0, 3):
+            right_txt -= MARGIN + LINE
+            cr.move_to (right_txt -(width / pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / pango.SCALE))/2)
+            self.pangocairo.show_layout(self.pangolayout)    
+            right_txt -= self.cols_width[i]
+            cr.move_to(right_txt, TABLE_TOP)
+            cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
+        
+        right_txt -= MARGIN + LINE
+        self.pangolayout.set_text(_("Sum of previous page"))
+        (width, height) = self.pangolayout.get_size()
+        self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
+        cr.move_to (right_txt -(width / pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / pango.SCALE))/2)
+        self.pangocairo.show_layout(self.pangolayout)    
+        right_txt -= self.cols_width[3]
+        cr.move_to(right_txt, TABLE_TOP)
+        cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
+        
+        right_txt -= MARGIN + LINE
+        if page_nr == 0:
+            self.pangolayout.set_text("0")
+            self.debt_sum = 0
+        else:
+            self.pangolayout.set_text(utility.showNumber(self.debt_sum))
+        (width, height) = self.pangolayout.get_size()
+        self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
+        cr.move_to (right_txt -(width / pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / pango.SCALE))/2)
+        self.pangocairo.show_layout(self.pangolayout)    
+        right_txt -= self.cols_width[4]
+        cr.move_to(right_txt, TABLE_TOP)
+        cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
+        
+        right_txt -= MARGIN + LINE
+        if page_nr == 0:
+            self.pangolayout.set_text("0")
+            self.credit_sum = 0
+        else:
+            self.pangolayout.set_text(utility.showNumber(self.credit_sum))
+        (width, height) = self.pangolayout.get_size()
+        self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
+        cr.move_to (right_txt -(width / pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / pango.SCALE))/2)
+        self.pangocairo.show_layout(self.pangolayout)    
+        right_txt -= self.cols_width[5]
+        cr.move_to(right_txt, TABLE_TOP)
+        cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
+        
+        addh= ROW_HEIGHT + TABLE_TOP
         try:
             while (offset < self.lines_per_page):
                 row = self.content[rindex + offset]
-            
-                cr.move_to(RIGHT_EDGE, TABLE_TOP+addh)
-                cr.line_to(RIGHT_EDGE, TABLE_TOP+addh+ROW_HEIGHT)
+                
+                cr.move_to(RIGHT_EDGE, addh)
+                cr.line_to(RIGHT_EDGE, addh+ROW_HEIGHT)
                 
                 right_txt = RIGHT_EDGE
                 dindex = 0
@@ -172,106 +227,158 @@ class PrintReport:
                     self.pangolayout.set_text(data)
                     (width, height) = self.pangolayout.get_size()
                     self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
-                    cr.move_to (right_txt -(width / pango.SCALE), TABLE_TOP+addh+ (ROW_HEIGHT-(height / pango.SCALE))/2)
+                    cr.move_to (right_txt -(width / pango.SCALE), addh + (ROW_HEIGHT-(height / pango.SCALE))/2)
                     self.pangocairo.show_layout(self.pangolayout)
                 
                     right_txt -= self.cols_width[dindex]
-                    cr.move_to(right_txt, TABLE_TOP+addh)
-                    cr.line_to(right_txt, TABLE_TOP+addh+ROW_HEIGHT)
+                    cr.move_to(right_txt, addh)
+                    cr.line_to(right_txt, addh + ROW_HEIGHT)
                     
                     dindex += 1
+                    
+                self.debt_sum += int(row[4].replace(",", ""))
+                self.credit_sum += int(row[5].replace(",", ""))
                 
                 addh += ROW_HEIGHT
                 offset += 1
-                getattr(self, self.specificfunc)(offset, page_nr)
         except IndexError:
             pass
+        
+        right_txt = RIGHT_EDGE
+        cr.move_to(right_txt, addh)
+        cr.line_to(right_txt, addh + ROW_HEIGHT)
+        
+        self.pangolayout.set_text("----")
+        (width, height) = self.pangolayout.get_size()
+        self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
+        
+        for i in range(0, 3):
+            right_txt -= MARGIN + LINE
+            cr.move_to (right_txt -(width / pango.SCALE), addh + (ROW_HEIGHT-(height / pango.SCALE))/2)
+            self.pangocairo.show_layout(self.pangolayout)    
+            right_txt -= self.cols_width[i]
+            cr.move_to(right_txt, addh)
+            cr.line_to(right_txt, addh + ROW_HEIGHT)
+        
+        right_txt -= MARGIN + LINE
+        self.pangolayout.set_text(_("Sum"))
+        (width, height) = self.pangolayout.get_size()
+        self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
+        cr.move_to (right_txt -(width / pango.SCALE), addh + (ROW_HEIGHT-(height / pango.SCALE))/2)
+        self.pangocairo.show_layout(self.pangolayout)    
+        right_txt -= self.cols_width[3]
+        cr.move_to(right_txt, addh)
+        cr.line_to(right_txt, addh + ROW_HEIGHT)
+        
+        right_txt -= MARGIN + LINE
+        self.pangolayout.set_text(utility.showNumber(self.debt_sum))
+        (width, height) = self.pangolayout.get_size()
+        self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
+        cr.move_to (right_txt -(width / pango.SCALE), addh + (ROW_HEIGHT-(height / pango.SCALE))/2)
+        self.pangocairo.show_layout(self.pangolayout)    
+        right_txt -= self.cols_width[4]
+        cr.move_to(right_txt, addh)
+        cr.line_to(right_txt, addh + ROW_HEIGHT)
+        
+        right_txt -= MARGIN + LINE
+        self.pangolayout.set_text(utility.showNumber(self.credit_sum))
+        (width, height) = self.pangolayout.get_size()
+        self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
+        cr.move_to (right_txt -(width / pango.SCALE), addh + (ROW_HEIGHT-(height / pango.SCALE))/2)
+        self.pangocairo.show_layout(self.pangolayout)    
+        right_txt -= self.cols_width[5]
+        cr.move_to(right_txt, addh)
+        cr.line_to(right_txt, addh + ROW_HEIGHT)
+        
+        cr.move_to(self.page_margin, addh + ROW_HEIGHT)
+        cr.line_to(RIGHT_EDGE, addh + ROW_HEIGHT)
             
         cr.stroke()
         
-    def setSpecificFunction(self, func):
-        self.specificfunc = func
+    def setDrawFunction(self, func):
+        self.drawfunction = func
          
-    def dailySpecific(self, pos, page):
-        right_txt = 570
-        MARGIN = self.cell_margin
-        LINE = self.line
-        ROW_HEIGHT = self.row_height
-        TABLE_TOP = self.header_height + self.heading_height + self.page_margin
-        cr = self.cairo_context
-        
-        row_nr = page * self.lines_per_page + pos
-        try:
-            self.debt_sum += int(self.content[row_nr-1][4].replace(",", ""))
-            self.credit_sum += int(self.content[row_nr-1][5].replace(",", ""))
-        except AttributeError:
-            self.debt_sum = int(self.content[row_nr-1][4].replace(",", ""))
-            self.credit_sum = int(self.content[row_nr-1][5].replace(",", ""))
-           
-        if pos == 1 or pos == self.lines_per_page or row_nr == len(self.content):
-            if pos != 1:
-                TABLE_TOP += (pos + 1) * ROW_HEIGHT
-                cr.move_to(self.page_margin, TABLE_TOP + ROW_HEIGHT)
-                cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
-                
-            cr.move_to(right_txt, TABLE_TOP)
-            cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
-            
-            self.pangolayout.set_text("----")
-            (width, height) = self.pangolayout.get_size()
-            self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
-            
-            for i in range(0, 3):
-                right_txt -= MARGIN + LINE
-                cr.move_to (right_txt -(width / pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / pango.SCALE))/2)
-                self.pangocairo.show_layout(self.pangolayout)    
-                right_txt -= self.cols_width[i]
-                cr.move_to(right_txt, TABLE_TOP)
-                cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
-            
-            right_txt -= MARGIN + LINE
-            if pos == 1:
-                self.pangolayout.set_text(_("Sum of previous page"))
-            else:
-                self.pangolayout.set_text(_("Sum"))    
-                
-            (width, height) = self.pangolayout.get_size()
-            self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
-            cr.move_to (right_txt -(width / pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / pango.SCALE))/2)
-            self.pangocairo.show_layout(self.pangolayout)    
-            right_txt -= self.cols_width[3]
-            cr.move_to(right_txt, TABLE_TOP)
-            cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
-            
-            right_txt -= MARGIN + LINE
-            if page == 0 and pos == 1:
-                self.pangolayout.set_text("0")
-            else:
-                self.pangolayout.set_text(utility.showNumber(self.debt_sum))
-            (width, height) = self.pangolayout.get_size()
-            self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
-            cr.move_to (right_txt -(width / pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / pango.SCALE))/2)
-            self.pangocairo.show_layout(self.pangolayout)    
-            right_txt -= self.cols_width[4]
-            cr.move_to(right_txt, TABLE_TOP)
-            cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
-            
-            right_txt -= MARGIN + LINE
-            if page == 0 and pos == 1:
-                self.pangolayout.set_text("0")
-            else:
-                self.pangolayout.set_text(utility.showNumber(self.credit_sum))
-            (width, height) = self.pangolayout.get_size()
-            self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
-            cr.move_to (right_txt -(width / pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / pango.SCALE))/2)
-            self.pangocairo.show_layout(self.pangolayout)    
-            right_txt -= self.cols_width[5]
-            cr.move_to(right_txt, TABLE_TOP)
-            cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
+#    def dailySpecific(self, pos, page):
+#        right_txt = 570
+#        MARGIN = self.cell_margin
+#        LINE = self.line
+#        ROW_HEIGHT = self.row_height
+#        TABLE_TOP = self.header_height + self.heading_height + self.page_margin
+#        cr = self.cairo_context
+#        
+#        row_nr = page * self.lines_per_page + pos
+#        try:
+#            self.debt_sum += int(self.content[row_nr-1][4].replace(",", ""))
+#            self.credit_sum += int(self.content[row_nr-1][5].replace(",", ""))
+#        except AttributeError:
+#            self.debt_sum = int(self.content[row_nr-1][4].replace(",", ""))
+#            self.credit_sum = int(self.content[row_nr-1][5].replace(",", ""))
+#           
+#        if pos == 1 or pos == self.lines_per_page or row_nr == len(self.content):
+#            if pos != 1:
+#                TABLE_TOP += (pos + 1) * ROW_HEIGHT
+#                cr.move_to(self.page_margin, TABLE_TOP + ROW_HEIGHT)
+#                cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
+#                
+#            cr.move_to(right_txt, TABLE_TOP)
+#            cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
+#            
+#            self.pangolayout.set_text("----")
+#            (width, height) = self.pangolayout.get_size()
+#            self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
+#            
+#            for i in range(0, 3):
+#                right_txt -= MARGIN + LINE
+#                cr.move_to (right_txt -(width / pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / pango.SCALE))/2)
+#                self.pangocairo.show_layout(self.pangolayout)    
+#                right_txt -= self.cols_width[i]
+#                cr.move_to(right_txt, TABLE_TOP)
+#                cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
+#            
+#            right_txt -= MARGIN + LINE
+#            if pos == 1:
+#                self.pangolayout.set_text(_("Sum of previous page"))
+#            else:
+#                self.pangolayout.set_text(_("Sum"))    
+#                
+#            (width, height) = self.pangolayout.get_size()
+#            self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
+#            cr.move_to (right_txt -(width / pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / pango.SCALE))/2)
+#            self.pangocairo.show_layout(self.pangolayout)    
+#            right_txt -= self.cols_width[3]
+#            cr.move_to(right_txt, TABLE_TOP)
+#            cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
+#            
+#            right_txt -= MARGIN + LINE
+#            if page == 0 and pos == 1:
+#                self.pangolayout.set_text("0")
+#            else:
+#                self.pangolayout.set_text(utility.showNumber(self.debt_sum))
+#            (width, height) = self.pangolayout.get_size()
+#            self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
+#            cr.move_to (right_txt -(width / pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / pango.SCALE))/2)
+#            self.pangocairo.show_layout(self.pangolayout)    
+#            right_txt -= self.cols_width[4]
+#            cr.move_to(right_txt, TABLE_TOP)
+#            cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
+#            
+#            right_txt -= MARGIN + LINE
+#            if page == 0 and pos == 1:
+#                self.pangolayout.set_text("0")
+#            else:
+#                self.pangolayout.set_text(utility.showNumber(self.credit_sum))
+#            (width, height) = self.pangolayout.get_size()
+#            self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
+#            cr.move_to (right_txt -(width / pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / pango.SCALE))/2)
+#            self.pangocairo.show_layout(self.pangolayout)    
+#            right_txt -= self.cols_width[5]
+#            cr.move_to(right_txt, TABLE_TOP)
+#            cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
     
     def subjectSpecific(self, pos, page):
         pass
         
-
+    def docSpecific(self, pos, page):
+        pass
             
     

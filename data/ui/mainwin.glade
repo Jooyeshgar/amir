@@ -20,8 +20,8 @@
                     <child>
                       <object class="GtkImageMenuItem" id="manualmenuitem">
                         <property name="visible">True</property>
-                        <property name="related_action">manualAction</property>
                         <property name="use_action_appearance">True</property>
+                        <property name="related_action">manualAction</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <accelerator key="F9" signal="activate"/>
@@ -30,8 +30,8 @@
                     <child>
                       <object class="GtkImageMenuItem" id="quitmenuitem">
                         <property name="visible">True</property>
-                        <property name="related_action">quitAction</property>
                         <property name="use_action_appearance">True</property>
+                        <property name="related_action">quitAction</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                       </object>
@@ -63,7 +63,7 @@
                     <child>
                       <object class="GtkMenuItem" id="menuitem3">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">Notebook reports</property>
+                        <property name="label" translatable="yes">Notebooks</property>
                         <property name="use_underline">True</property>
                         <child type="submenu">
                           <object class="GtkMenu" id="menu8">
@@ -71,29 +71,36 @@
                             <child>
                               <object class="GtkMenuItem" id="dailyreportitem">
                                 <property name="visible">True</property>
-                                <property name="related_action">dailyreportaction</property>
                                 <property name="use_action_appearance">True</property>
+                                <property name="related_action">dailyreportaction</property>
                                 <accelerator key="d" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                               </object>
                             </child>
                             <child>
                               <object class="GtkMenuItem" id="ledgerreportitem">
                                 <property name="visible">True</property>
-                                <property name="related_action">ledgerreportaction</property>
                                 <property name="use_action_appearance">True</property>
+                                <property name="related_action">ledgerreportaction</property>
                                 <accelerator key="l" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                               </object>
                             </child>
                             <child>
                               <object class="GtkMenuItem" id="subledgerreportitem">
                                 <property name="visible">True</property>
-                                <property name="related_action">subledgerreportaction</property>
                                 <property name="use_action_appearance">True</property>
+                                <property name="related_action">subledgerreportaction</property>
                                 <accelerator key="s" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                               </object>
                             </child>
                           </object>
                         </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="menuitem5">
+                        <property name="visible">True</property>
+                        <property name="use_action_appearance">True</property>
+                        <property name="related_action">docreportaction</property>
                       </object>
                     </child>
                   </object>
@@ -111,8 +118,8 @@
                     <child>
                       <object class="GtkImageMenuItem" id="subjectsmenuitem">
                         <property name="visible">True</property>
-                        <property name="related_action">subjectsAction</property>
                         <property name="use_action_appearance">True</property>
+                        <property name="related_action">subjectsAction</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                       </object>
@@ -120,8 +127,8 @@
                     <child>
                       <object class="GtkImageMenuItem" id="settingmenuitem">
                         <property name="visible">True</property>
-                        <property name="related_action">settingAction</property>
                         <property name="use_action_appearance">True</property>
+                        <property name="related_action">settingAction</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                       </object>
@@ -141,8 +148,8 @@
                     <child>
                       <object class="GtkImageMenuItem" id="aboutmenuitem">
                         <property name="visible">True</property>
-                        <property name="related_action">aboutAction</property>
                         <property name="use_action_appearance">True</property>
+                        <property name="related_action">aboutAction</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                       </object>
@@ -365,5 +372,9 @@
   <object class="GtkAction" id="ledgerreportaction">
     <property name="label">Ledgers Notebook</property>
     <signal name="activate" handler="subjectNotebookReport"/>
+  </object>
+  <object class="GtkAction" id="docreportaction">
+    <property name="label">Document</property>
+    <signal name="activate" handler="documentReport"/>
   </object>
 </interface>

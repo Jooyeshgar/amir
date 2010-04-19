@@ -9,6 +9,7 @@ import gettext,locale
 import subjects
 import addeditdoc
 import notebookreport
+import docreport
      
 class MainWindow:
 
@@ -24,6 +25,9 @@ class MainWindow:
     def subjectNotebookReport(self, sender):
         reportwin = notebookreport.NotebookReport(notebookreport.NotebookReport.LEDGER)
             
+    def documentReport(self, sender):
+        reportwin = docreport.DocumentReport()
+        
     def aboutAmir(self, sender):
         pass
     def manageSubjects(self, sender):
