@@ -7,10 +7,11 @@ from sqlalchemy.sql import between
 from sqlalchemy.sql.functions import sum
 
 import numberentry
-from dateentry import *
 import subjects
 import utility
+import printreport
 from database import *
+from dateentry import *
 
 class NotebookReport:
     DAILY = 1
@@ -63,6 +64,9 @@ class NotebookReport:
         self.builder.get_object("allcontent").set_active(True)
         
         self.type = type
+        self.subcode = ""
+        self.subname = ""
+        
         self.session = db.session
         self.window.show_all()
         self.builder.connect_signals(self)
@@ -73,16 +77,36 @@ class NotebookReport:
     def createReport(self):
         report_header = []
         report_data = []
+        col_width = []
         remaining = 0
         query1 = self.session.query(Notebook, Subject.code, Bill)
         query1 = query1.select_from(outerjoin(outerjoin(Notebook, Subject, Notebook.subject_id == Subject.id), 
                                             Bill, Notebook.bill_id == Bill.id))
         query2 = self.session.query(sum(Notebook.value)).select_from(outerjoin(Notebook, Bill, Notebook.bill_id == Bill.id))
         
+        # Check if the subject code is valid in ledger and subledger reports
+        if self.type != self.__class__.DAILY:
+            code = self.code.get_text()
+            query3 = self.session.query(Subject.name)
+            query3 = query3.select_from(Subject).filter(Subject.code == code)
+            names = query3.first()
+            if names == None:
+                errorstr = _("No subject is registered with the code: %s") % code
+                msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK, errorstr)
+                msgbox.set_title(_("No subjects found"))
+                msgbox.run()
+                msgbox.destroy()
+                return
+            else:
+                self.subname = names[0]
+                self.subcode = code
+                query1 = query1.filter(Subject.code == code)
+                query2 = query2.filter(Subject.code == code)
+            
+        # Check the report parameters  
         if self.builder.get_object("allcontent").get_active() == True:
             query1 = query1.order_by(Bill.date, Bill.number)
             remaining = 0
-            pass
         else:
             if self.builder.get_object("atdate").get_active() == True:
                 date = self.date.getDateObject()
@@ -94,7 +118,7 @@ class NotebookReport:
                     tdate = self.tdate.getDateObject()
                     if tdate < fdate:
                         msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 
-                                                   "Second date value shouldn't precede the first one.")
+                                                   _("Second date value shouldn't precede the first one."))
                         msgbox.set_title(_("Invalid date order"))
                         msgbox.run()
                         msgbox.destroy()
@@ -106,7 +130,7 @@ class NotebookReport:
                     tnumber = int(self.tnum.get_text())
                     if tnumber < fnumber:
                         msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 
-                                                   "Second document number shouldn't be greater than the first one.")
+                                                   _("Second document number shouldn't be greater than the first one."))
                         msgbox.set_title(_("Invalid document order"))
                         msgbox.run()
                         msgbox.destroy()
@@ -114,9 +138,11 @@ class NotebookReport:
                     query1 = query1.filter(Bill.number.between(fnumber, tnumber)).order_by(Bill.date, Bill.number)
                     query2 = query2.filter(Bill.number < fnumber)
         
+        #Prepare report data for PrintReport class
         res = query1.all()
         if self.type == self.__class__.DAILY:
-            report_header = [_("Document Number"), _("Date"), _("Subject Code"), _("Description"), _("Debt"), _("Credit")]
+            report_header = [_("Doc. Number"), _("Date"), _("Subject Code"), _("Description"), _("Debt"), _("Credit")]
+            col_width = [55, 64, 62, 188, 80, 80 ]
             for n, code, b in res:
                 if n.value < 0:
                     credit = "0"
@@ -125,48 +151,65 @@ class NotebookReport:
                     credit = utility.showNumber(n.value)
                     debt = "0"
                     n.desc = "    " + n.desc
-                report_data.append((b.number, dateToString(b.date), code, n.desc, debt, credit))
+                report_data.append((str(b.number), dateToString(b.date), code, n.desc, debt, credit))
         else:
-            remaining = query2.first()
+            remaining = query2.first()[0]
             diagnose = ""
             
             if self.type == self.__class__.LEDGER:
-                report_header = [_("Document Number"), _("Date"), _("Description"), _("Debt"), _("Credit"), _("Diagnosis"), _("Remaining")]
+                report_header = [_("Doc. Number"), _("Date"), _("Description"), _("Debt"), _("Credit"), _("Diagnosis"), _("Remaining")]
+                col_width = [55, 64, 174, 70, 70, 20, 70]
                 for n, code, b in res:
                     if n.value < 0:
                         credit = "0"
                         debt = utility.showNumber(-(n.value))
-                        diagnose = _("deb.")
+                        diagnose = _("deb")
                     else:
                         credit = utility.showNumber(n.value)
                         debt = "0"
-                        diagnose = _("cre.")
+                        diagnose = _("cre")
                     remaining += n.value
-                    report_data.append((b.number, dateToString(b.date), n.desc, debt, credit, diagnose, utility.showNumber(remaining)))
+                    report_data.append((str(b.number), dateToString(b.date), n.desc, debt, credit, diagnose, utility.showNumber(remaining)))
             else:
                 if self.type == self.__class__.SUBLEDGER:
-                    report_header = [_("Document Number"), _("Date"), _("Description"), _("Debt"), _("Credit"), _("Diagnosis"), _("Remaining")]
+                    report_header = [_("Doc. Number"), _("Date"), _("Description"), _("Debt"), _("Credit"), _("Diagnosis"), _("Remaining")]
+                    col_width = [55, 64, 174, 70, 70, 20, 70]
                     for n, code, b in res:
                         if n.value < 0:
                             credit = "0"
                             debt = utility.showNumber(-(n.value))
-                            diagnose = _("deb.")
+                            diagnose = _("deb")
                         else:
                             credit = utility.showNumber(n.value)
                             debt = "0"
-                            diagnose = _("deb.")
+                            diagnose = _("cre")
                         remaining += n.value
-                        report_data.append((b.number, dateToString(b.date), n.desc, debt, credit, diagnose, utility.showNumber(remaining)))
-        
-        return {"header":report_header, "data":report_data}
+                        report_data.append((str(b.number), dateToString(b.date), n.desc, debt, credit, diagnose, utility.showNumber(remaining)))
+         
+        return {"data":report_data, "col-width":col_width ,"heading":report_header}
                 
     
     def previewReport(self, sender):
         report = self.createReport()
-        print report["data"]
     
     def printReport(self, sender):
-        self.createReport()
+        todaystr = dateToString(date.today())
+        report = self.createReport()
+        if report == None:
+            return
+        printjob = printreport.PrintReport(report["data"], report["col-width"], report["heading"])
+        if self.type == self.__class__.DAILY:
+            printjob.setHeader(_("Daily Notebook"), {_("Date"):todaystr})
+            printjob.setSpecificFunction("dailySpecific")
+        else:
+            if self.type == self.__class__.LEDGER:
+                printjob.setHeader(_("Ledger Notebook"), {_("Subject Name"):self.subname, _("Subject Code"):self.subcode})
+            else:
+                printjob.setHeader(_("Sub-Leger Notebook"), {_("Subject Name"):self.subname, _("Subject Code"):self.subcode})
+            printjob.setSpecificFunction("subjectSpecific")
+        
+        printjob.doPrint()
+        
     
     def exportToCSV(self, sender):
         self.createReport()

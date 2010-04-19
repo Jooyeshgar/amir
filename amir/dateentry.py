@@ -8,15 +8,23 @@ from settings import *
 from calverter import calverter
 
 def dateToString(date):
+    if Settings.datetype == "jalali":
+        jd = DateEntry.cal.gregorian_to_jd(date.year, date.month, date.day)
+        (year, month, day) = DateEntry.cal.jd_to_jalali(jd)
+    else:
+        (year, month, day) = (date.year, date.month, date.day)
+        
     datelist = ["", "", ""]
-    datelist[Settings.datefields["year"]] = date.year
-    datelist[Settings.datefields["month"]] = date.month
-    datelist[Settings.datefields["day"]] = date.day
+    datelist[Settings.datefields["year"]] = year
+    datelist[Settings.datefields["month"]] = month
+    datelist[Settings.datefields["day"]] = day
         
     datestring = str(datelist[0]) + Settings.datedelim + str(datelist[1]) + Settings.datedelim + str(datelist[2])
     return datestring
     
 class DateEntry(gtk.Entry):
+    
+    cal = calverter()
     
     def __init__(self, init_date=None):
         """
