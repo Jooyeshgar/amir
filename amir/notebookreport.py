@@ -156,36 +156,51 @@ class NotebookReport:
             remaining = query2.first()[0]
             diagnose = ""
             
-            if self.type == self.__class__.LEDGER:
-                report_header = [_("Doc. Number"), _("Date"), _("Description"), _("Debt"), _("Credit"), _("Diagnosis"), _("Remaining")]
-                col_width = [55, 64, 174, 70, 70, 20, 70]
-                for n, code, b in res:
-                    if n.value < 0:
-                        credit = "0"
-                        debt = utility.showNumber(-(n.value))
-                        diagnose = _("deb")
+            #if self.type == self.__class__.LEDGER:
+            report_header = [_("Doc. Number"), _("Date"), _("Description"), _("Debt"), _("Credit"), _("Diagnosis"), _("Remaining")]
+            col_width = [55, 64, 174, 70, 70, 20, 70]
+            for n, code, b in res:
+                if n.value < 0:
+                    credit = "0"
+                    debt = utility.showNumber(-(n.value))
+                else:
+                    credit = utility.showNumber(n.value)
+                    debt = "0"
+                    
+                remaining += n.value
+                if remaining < 0:
+                    diagnose = _("deb")
+                    report_data.append((str(b.number), dateToString(b.date), n.desc, debt, credit, diagnose, utility.showNumber(-(remaining))))
+                else:
+                    if remaining == 0:
+                        diagnose = _("equ")
                     else:
-                        credit = utility.showNumber(n.value)
-                        debt = "0"
                         diagnose = _("cre")
-                    remaining += n.value
                     report_data.append((str(b.number), dateToString(b.date), n.desc, debt, credit, diagnose, utility.showNumber(remaining)))
-            else:
-                if self.type == self.__class__.SUBLEDGER:
-                    report_header = [_("Doc. Number"), _("Date"), _("Description"), _("Debt"), _("Credit"), _("Diagnosis"), _("Remaining")]
-                    col_width = [55, 64, 174, 70, 70, 20, 70]
-                    for n, code, b in res:
-                        if n.value < 0:
-                            credit = "0"
-                            debt = utility.showNumber(-(n.value))
-                            diagnose = _("deb")
-                        else:
-                            credit = utility.showNumber(n.value)
-                            debt = "0"
-                            diagnose = _("cre")
-                        remaining += n.value
-                        report_data.append((str(b.number), dateToString(b.date), n.desc, debt, credit, diagnose, utility.showNumber(remaining)))
-         
+    
+#            else:
+#                if self.type == self.__class__.SUBLEDGER:
+#                    report_header = [_("Doc. Number"), _("Date"), _("Description"), _("Debt"), _("Credit"), _("Diagnosis"), _("Remaining")]
+#                    col_width = [55, 64, 174, 70, 70, 20, 70]
+#                    for n, code, b in res:
+#                        if n.value < 0:
+#                            credit = "0"
+#                            debt = utility.showNumber(-(n.value))
+#                        else:
+#                            credit = utility.showNumber(n.value)
+#                            debt = "0"
+#
+#                        remaining += n.value
+#                        if remaining < 0:
+#                            diagnose = _("deb")
+#                            report_data.append((str(b.number), dateToString(b.date), n.desc, debt, credit, diagnose, utility.showNumber(-(remaining))))
+#                        else:
+#                            if remaining == 0:
+#                                diagnose = _("equ")
+#                            else:
+#                                diagnose = _("cre")
+#                            report_data.append((str(b.number), dateToString(b.date), n.desc, debt, credit, diagnose, utility.showNumber(remaining)))
+
         return {"data":report_data, "col-width":col_width ,"heading":report_header}
                 
     

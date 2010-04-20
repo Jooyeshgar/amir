@@ -76,7 +76,7 @@ class DocumentReport:
         datestr = dateToString(self.docdate)
         printjob = printreport.PrintReport(report["data"], report["col-width"], report["heading"])
         printjob.setHeader(_("Accounting Document"), {_("Document Number"):self.docnumber, _("Date"):datestr})
-        printjob.setSpecificFunction("docSpecific")
+        printjob.setDrawFunction("drawDocument")
         
         printjob.doPrint()
     
