@@ -5,6 +5,7 @@ from datetime import date
 from sqlalchemy.orm.util import outerjoin
 from sqlalchemy.sql import between
 from sqlalchemy.sql.functions import sum
+from sqlalchemy.sql.expression import ColumnOperators
 
 import numberentry
 import subjects
@@ -100,8 +101,8 @@ class NotebookReport:
             else:
                 self.subname = names[0]
                 self.subcode = code
-                query1 = query1.filter(Subject.code == code)
-                query2 = query2.filter(Subject.code == code)
+                query1 = query1.filter(Subject.code.startswith(code))
+                query2 = query2.filter(Subject.code.startswith(code))
             
         # Check the report parameters  
         if self.builder.get_object("allcontent").get_active() == True:
