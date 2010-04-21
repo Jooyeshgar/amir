@@ -53,9 +53,13 @@ class Notebook(Base):
         self.desc = desc
 
 class Database:
-    def __init__(self):
+    def __init__(self, file=None):
         print ("db constructed")
-        engine = create_engine('sqlite:///../data/tutorial.db', echo=True)
+        if file != None:
+            print file
+            engine = create_engine('sqlite:///%s' % file , echo=True)
+        else:
+            engine = create_engine('sqlite:///../data/tutorial.db', echo=True)
         metadata = Base.metadata
         metadata.create_all(engine)
     #--------------------------------------------------------------------------
