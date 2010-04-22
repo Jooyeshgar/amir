@@ -283,7 +283,7 @@ class AddEditDoc:
                 if value == 0 :
                     credit = self.liststore.get(iter, 4)[0].replace(",", "")
                     value = int(credit)
-                desctxt = self.liststore.get(iter, 5)[0]
+                desctxt = unicode(self.liststore.get(iter, 5)[0])
                 
                 query = self.session.query(Subject).select_from(Subject)
                 query = query.filter(Subject.code == code)

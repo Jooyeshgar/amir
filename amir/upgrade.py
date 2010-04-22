@@ -70,8 +70,8 @@ def update(inputfile, outputfile):
         if row[0] != parent_id:
             lastcode += 1
             if lastcode > 99:
-                print "Ledgers with numbers greater than %d are not imported to the new database" \
-                      "Because you can have just 99 Ledgers (level one subject)" % (row[0])
+                print ("Ledgers with numbers greater than %d are not imported to the new database" \
+                      "Because you can have just 99 Ledgers (level one subject)" % row[0])
                 break
             pcode = "%02d" % lastcode
             parentsub = Subject(pcode, row[1], 0, 2)
@@ -89,8 +89,8 @@ def update(inputfile, outputfile):
         if row[3] != None:
             childcode += 1
             if childcode > 99:
-                print "SubLedgers with number %d is not imported to the new database" \
-                      "Because you can have just 99 subjects per level" % row[5]
+                print ("SubLedgers with number %d is not imported to the new database" \
+                      "Because you can have just 99 subjects per level" % row[5])
                 continue 
             childsub = Subject(pcode + "%02d" % childcode, row[4], pid, 2)
             outsession.add(childsub)

@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy import Column, ForeignKey, ColumnDefault
-from sqlalchemy import Integer, String, Date, Boolean
+from sqlalchemy import Integer, String, Date, Boolean, Unicode
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
  
@@ -14,7 +14,7 @@ class Subject(Base):
     __tablename__ = "subject"
     id = Column(Integer, primary_key=True)
     code = Column(String(20), nullable=False)
-    name = Column(String(60), nullable=False)
+    name = Column(Unicode(60), nullable=False)
     parent_id = Column(Integer, ColumnDefault(0), ForeignKey('subject.id'), nullable=False)
     type = Column(Integer)      # 0 for Debtor, 1 for Creditor, 2 for both
     
@@ -43,7 +43,7 @@ class Notebook(Base):
     id = Column(Integer, primary_key=True)
     subject_id = Column(None, ForeignKey('subject.id'))
     bill_id = Column(None, ForeignKey('bill.id'))
-    desc = Column(String, ColumnDefault(""))
+    desc = Column(Unicode, ColumnDefault(""))
     value = Column(Integer, ColumnDefault(0), nullable = False)
     
     def __init__(self, subject_id, bill_id, value, desc):

@@ -77,7 +77,7 @@ class Subjects(gobject.GObject):
                 else:
                     type = 2
              
-            self.saveLedger(entry.get_text(), type, None, False, dialog)
+            self.saveLedger(unicode(entry.get_text()), type, None, False, dialog)
         dialog.hide()
         
     def addSubLedger(self, sender):
@@ -103,13 +103,14 @@ class Subjects(gobject.GObject):
                     else:
                         type = 2
                     
-                self.saveLedger(entry.get_text(), type, parent, False, dialog)
+                self.saveLedger(unicode(entry.get_text()), type, parent, False, dialog)
             dialog.hide()
         else :
-            msg =  gtk.MessageDialog(parent, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_CLOSE,
+            msgbox =  gtk.MessageDialog(parent, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_CLOSE,
                                     _("Please select an item from the list, to add subject for it."))
-            msg.run()
-            msg.destroy()
+            msgbox.set_title(_("Select a subject"))
+            msgbox.run()
+            msgbox.destroy()
     
     def editLedger(self, sender):
         dialog = self.builder.get_object("dialog1")
@@ -124,7 +125,7 @@ class Subjects(gobject.GObject):
             both = False
             
             if type == self.__class__.subjecttypes[0]:
-               self.builder.get_object("debtor").set_active(True)
+                self.builder.get_object("debtor").set_active(True)
             else:
                 if type == self.__class__.subjecttypes[1]:
                     self.builder.get_object("creditor").set_active(True)
@@ -147,7 +148,7 @@ class Subjects(gobject.GObject):
                         type = 1
                     else:
                         type = 2
-                self.saveLedger(entry.get_text(), type, iter, True, dialog)
+                self.saveLedger(unicode(entry.get_text()), type, iter, True, dialog)
             dialog.hide()
     
     def deleteLedger(self, sender):
@@ -165,22 +166,22 @@ class Subjects(gobject.GObject):
             print (result)
             
             if result[1] != 0 :
-                msg =  gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
+                msgbox =  gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
                                     _("Subject can not be deleted, because it has some child subjects."))
-                msg.set_title(_("Error deleting subject"))
-                msg.run()
-                msg.destroy()
+                msgbox.set_title(_("Error deleting subject"))
+                msgbox.run()
+                msgbox.destroy()
             else :
                 # check to see if there is any document registered for this ledger.
                 query = self.session.query(count(Notebook.id))
                 query = query.filter(Notebook.subject_id == result[0])
                 rowcount = query.first()[0]
                 if rowcount != 0 :
-                    msg =  gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
+                    msgbox =  gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
                                     _("Subject can not be deleted, because there are some documents registered for it."))
-                    msg.set_title(_("Error deleting subject"))
-                    msg.run()
-                    msg.destroy()
+                    msgbox.set_title(_("Error deleting subject"))
+                    msgbox.run()
+                    msgbox.destroy()
                 else :
                     # Now it's OK to delete ledger
                     row = self.session.query(Subject).filter(Subject.id == result[0]).first()
@@ -191,10 +192,11 @@ class Subjects(gobject.GObject):
     def saveLedger(self, name, type, iter, edit, widget):
         print "type = %d" % type
         if name == "" :
-            msg = gtk.MessageDialog(widget, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
-                                    _("Subject name should not be empty"))
-            msg.run()
-            msg.destroy()
+            msgbox = gtk.MessageDialog(widget, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
+                                    _("Subject name should not be empty."))
+            msgbox.set_title(_("Empty subject name"))
+            msgbox.run()
+            msgbox.destroy()
         else :
             #Check to see if a subject with the given name exists already.
             if iter == None :
@@ -218,13 +220,35 @@ class Subjects(gobject.GObject):
             result = query.first()
             
             if result[0] != 0 :
-                msg = gtk.MessageDialog(widget, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
-                                        _("A ledger with this name already exists."))
-                msg.run()
-                msg.destroy()
+                msgbox = gtk.MessageDialog(widget, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
+                                        _("A subject with this name already exists in the current level."))
+                msgbox.set_title(_("Duplicate subject name"))
+                msgbox.run()
+                msgbox.destroy()
             else :
                 #Find last subject code.
                 if edit == True:
+                    query = self.session.query(count(Notebook.id)).select_from(Notebook)
+                    query = query.filter(Notebook.subject_id == iter_id)                    
+                    rowcount = 0
+                    msg = ""
+                    if type == 1:
+                        rowcounts = query.filter(Notebook.value < 0).first()
+                        rowcount = rowcounts[0]
+                        msg = _("The type of this subject can not be changed to 'creditor', Because there are \
+                                %d documents that use it as debtor.") % rowcount
+                    elif type == 0:
+                        rowcounts = query.filter(Notebook.value > 0).first()
+                        rowcount = rowcounts[0]
+                        msg = _("The type of this subject can not be changed to 'debtor', Because there are \
+                                %d documents that use it as creditor.") % rowcount
+                    if (rowcount > 0):
+                        msgbox = gtk.MessageDialog(widget, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE, msg)
+                        msgbox.set_title(_("Can not change subject type"))
+                        msgbox.run()
+                        msgbox.destroy()
+                        return
+                    
                     sub.name = name
                     sub.type = type
                     self.session.commit()
