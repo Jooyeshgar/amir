@@ -50,17 +50,18 @@ class DocumentReport:
         
         self.docdate = res[0][0].date
         report_header = [_("Index"), _("Subject Code"), _("Subject Name"), _("Description"), _("Debt"), _("Credit")]
-        col_width = [30, 62, 79, 198, 80, 80 ]
+        col_width = [30, 54, 80, 215, 75, 75 ]
         index = 1
         for b, n, s in res:
+            desc = n.desc
             if n.value < 0:
                 credit = "0"
                 debt = utility.showNumber(-(n.value))
             else:
                 credit = utility.showNumber(n.value)
                 debt = "0"
-                n.desc = "    " + n.desc
-            report_data.append((str(index), s.code, s.name, n.desc, debt, credit))
+                desc = "   " + desc
+            report_data.append((str(index), s.code, s.name, desc, debt, credit))
             index += 1
         
         return {"data":report_data, "col-width":col_width ,"heading":report_header}

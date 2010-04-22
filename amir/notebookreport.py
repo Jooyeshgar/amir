@@ -143,23 +143,24 @@ class NotebookReport:
         res = query1.all()
         if self.type == self.__class__.DAILY:
             report_header = [_("Doc. Number"), _("Date"), _("Subject Code"), _("Description"), _("Debt"), _("Credit")]
-            col_width = [55, 64, 62, 188, 80, 80 ]
+            col_width = [55, 56, 58, 220, 70, 70 ]
             for n, code, b in res:
+                desc = n.desc
                 if n.value < 0:
                     credit = "0"
                     debt = utility.showNumber(-(n.value))
                 else:
                     credit = utility.showNumber(n.value)
                     debt = "0"
-                    n.desc = "    " + n.desc
-                report_data.append((str(b.number), dateToString(b.date), code, n.desc, debt, credit))
+                    desc = "   " + desc
+                report_data.append((str(b.number), dateToString(b.date), code, desc, debt, credit))
         else:
             remaining = query2.first()[0]
             diagnose = ""
             
             #if self.type == self.__class__.LEDGER:
             report_header = [_("Doc. Number"), _("Date"), _("Description"), _("Debt"), _("Credit"), _("Diagnosis"), _("Remaining")]
-            col_width = [55, 64, 174, 70, 70, 20, 70]
+            col_width = [55, 56, 182, 70, 70, 20, 70]
             for n, code, b in res:
                 if n.value < 0:
                     credit = "0"
