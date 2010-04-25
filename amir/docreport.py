@@ -11,6 +11,7 @@ import utility
 import printreport
 from database import *
 from dateentry import *
+from amirconfig import config
 
 class DocumentReport:
     
@@ -26,7 +27,7 @@ class DocumentReport:
         box.add(self.number)
         self.number.show()
         
-        self.session = db.session
+        self.session = config.db.session
         self.window.show_all()
         self.builder.connect_signals(self)
 

@@ -8,6 +8,7 @@ from sqlalchemy.sql.functions import count
 from sqlalchemy.sql import and_
 from sqlalchemy.orm import sessionmaker, join
 from database import *
+from amirconfig import config
 
 class Subjects(gobject.GObject):
     
@@ -39,7 +40,7 @@ class Subjects(gobject.GObject):
         self.treeview.append_column(column)
         self.treeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
         
-        self.session = db.session
+        self.session = config.db.session
         
         Subject1 = aliased(Subject, name="s1")
         Subject2 = aliased(Subject, name="s2")

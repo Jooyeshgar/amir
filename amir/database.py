@@ -57,8 +57,10 @@ class Database:
         print ("db constructed")
         if file != None:
             print file
+            self.dbfile = file
             engine = create_engine('sqlite:///%s' % file , echo=True)
         else:
+            self.dbfile = '../data/tutorial.db'
             engine = create_engine('sqlite:///../data/tutorial.db', echo=True)
         metadata = Base.metadata
         metadata.create_all(engine)
@@ -94,8 +96,8 @@ class Database:
         # rows = res.fetchall()
         # for row in rows :
         #     print row.name, "is old enough."
-try:
-    db
-except NameError:
-    db = Database()
 
+#try:
+#    db
+#except NameError:
+#    db = Database()

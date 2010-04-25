@@ -9,6 +9,7 @@ import dateentry
 import subjects
 import utility
 from database import *
+from amirconfig import config
 
 class AddEditDoc:
         
@@ -51,7 +52,7 @@ class AddEditDoc:
         column.set_resizable(True)
         
         money_cell_renderer = gtk.CellRendererText()
-        money_cell_renderer.set_alignment(1.0, 0.5)
+        #money_cell_renderer.set_alignment(1.0, 0.5) #incompatible with pygtk2.16
         
         self.treeview.append_column(column)
         column = gtk.TreeViewColumn(_("Debt"), money_cell_renderer, text=3)
@@ -69,7 +70,7 @@ class AddEditDoc:
 
         self.treeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
         
-        self.session = db.session
+        self.session = config.db.session
         self.debt_sum = 0
         self.credit_sum = 0
         self.numrows = 0

@@ -5,11 +5,13 @@ pygtk.require('2.0')
 import gtk
 import database
 import gettext,locale
+import gobject
 
 import subjects
 import addeditdoc
 import notebookreport
 import docreport
+import setting
      
 class MainWindow:
 
@@ -34,7 +36,7 @@ class MainWindow:
         dialog = subjects.Subjects()
         
     def settingsDialog(self, sender):
-        pass
+        window = setting.Setting()
     
     def view_toolbar(self, sender):
         dialog = subjects.Subjects()
@@ -65,6 +67,8 @@ class MainWindow:
         gtk.main_quit()
 
     def __init__(self):
+        gobject.threads_init()
+
         self.builder = gtk.Builder()
         self.builder.set_translation_domain("amir")
         self.builder.add_from_file("../data/ui/mainwin.glade")

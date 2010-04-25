@@ -1,23 +1,103 @@
 import sys
 import os
 import getopt
+import re
 from datetime import date
 
 from sqlalchemy import create_engine
-from sqlalchemy import MetaData, Column, Table
+from sqlalchemy import MetaData, Table, Column, ForeignKey, ColumnDefault
+from sqlalchemy import Integer, String, Date, Boolean, Unicode
+from sqlalchemy import exc
 from sqlalchemy.sql import select
-from sqlalchemy.orm import outerjoin
+from sqlalchemy.orm import outerjoin, sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 
-from database import *
 import calverter
 
+Base = declarative_base()
+ 
+class Subject(Base):
+    __tablename__ = "subject"
+    id = Column(Integer, primary_key=True)
+    code = Column(String(20), nullable=False)
+    name = Column(Unicode(60), nullable=False)
+    parent_id = Column(Integer, ColumnDefault(0), ForeignKey('subject.id'), nullable=False)
+    type = Column(Integer)      # 0 for Debtor, 1 for Creditor, 2 for both
+    
+    def __init__(self, code, name, parent_id, type):
+        self.code = code
+        self.name = name
+        self.parent_id = parent_id
+        self.type = type
+
+class Bill(Base):
+    __tablename__ = "bill"
+    id = Column(Integer, primary_key=True)
+    number = Column(Integer, nullable = False)
+    creation_date = Column(Date, nullable = False)
+    lastedit_date = Column(Date, nullable = False)
+    date = Column(Date, nullable = False)   #date of transactions in the bill
+    
+    def __init__(self, number, creation_date, lastedit_date, date):
+        self.number = number
+        self.creation_date = creation_date
+        self.lastedit_date = lastedit_date
+        self.date = date    
+    
+class Notebook(Base):
+    __tablename__ = "notebook"
+    id = Column(Integer, primary_key=True)
+    subject_id = Column(None, ForeignKey('subject.id'))
+    bill_id = Column(None, ForeignKey('bill.id'))
+    desc = Column(Unicode, ColumnDefault(""))
+    value = Column(Integer, ColumnDefault(0), nullable = False)
+    
+    def __init__(self, subject_id, bill_id, value, desc):
+        self.subject_id = subject_id
+        self.bill_id = bill_id
+        self.value = value
+        self.desc = desc
+
+class Database:
+    def __init__(self, file=None):
+        print ("db constructed")
+        if file != None:
+            print file
+            engine = create_engine('sqlite:///%s' % file , echo=True)
+        else:
+            engine = create_engine('sqlite:///../data/tutorial.db', echo=True)
+        metadata = Base.metadata
+        metadata.create_all(engine)
+        Session = sessionmaker(engine)
+        self.session = Session()
+
+def checkInputDb(inputfile):
+    try:
+        engine = create_engine('sqlite:///%s' % inputfile, echo=True)
+    except exc.DatabaseError:
+        print sys.exc_info()
+        return -2
+    metadata = MetaData(bind=engine)
+    
+    try:
+        table = Table('ledger', metadata, autoload=True)
+        table = Table('sub_ledger', metadata, autoload=True)
+        table = Table('moin', metadata, autoload=True)
+    
+#    except exc.DatabaseError:
+#        print sys.exc_info()
+#        return -2
+    except exc.NoSuchTableError:
+        return -1
+    return 0
+    
 def update(inputfile, outputfile):
-    outdb =  Database(outputfile)
-    outsession = outdb.session
-    
-    
+        
     engine = create_engine('sqlite:///%s' % inputfile, echo=True)
     metadata = MetaData(bind=engine)
+    
+    outdb =  Database(outputfile)
+    outsession = outdb.session
     
     ledger = Table('ledger', metadata,
         Column('id', Integer, primary_key = True),
@@ -109,7 +189,8 @@ def update(inputfile, outputfile):
     
     for row in result:
         if row.number != bnumber:
-            fields = row.date.split(":")
+            
+            fields = re.split(r"[:-]+",row.date)
             jd = cal.jalali_to_jd(int(fields[0]), int(fields[1]), int(fields[2]))
             (gyear, gmonth, gday) = cal.jd_to_gregorian(jd)
             ndate = date(gyear, gmonth, gday)
@@ -134,24 +215,6 @@ def update(inputfile, outputfile):
         n = Notebook(subid, bid, value, row.des)
         outsession.add(n)
     outsession.commit()
-
-        
-#        sub = Subject(lastcode, row.name, 0, 2)
-#        outsession.add(sub)
-#        if lastcode == "99":
-#            print "Ledgers with numbers greater than %d are not imported to the new database" \
-#                "Because you can have just 99 Ledgers (level one subject)" % (row.id + 1)
-#            break
-#        lastcode = "%02d" % (int(lastcode) + 1)
-#    outsession.commit()
-    
-#    query = outsession.query(Subject.code).select_from(Subject).order_by(Subject.id.desc())
-#    code = query.filter(Subject.parent_id == parent_id).first()
-#    if code == None :
-#        lastcode = "01"
-#    else :
-#        lastcode = "%02d" % (int(code[0][-2:]) + 1)
-#    lastcode = iter_code + lastcode
         
 def main(argv):
     
@@ -184,7 +247,13 @@ def main(argv):
         outputfile = "../data/" + filename
         print outputfile
         
-    update(inputfile, outputfile)     
+    flag = checkInputDb(inputfile)
+    if flag < 0:
+        print("input database is not compatible with amir v0.5")
+        sys.exit(2)
+    result = update(inputfile, outputfile)
+        
+         
         
 if __name__ == "__main__":
     

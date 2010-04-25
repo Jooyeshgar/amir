@@ -27,6 +27,7 @@ __amir_data_directory__ = '../data/'
 import os,optparse,logging
 from optparse import IndentedHelpFormatter
 import textwrap
+import database
 
 class IndentedHelpFormatterWithNL(IndentedHelpFormatter):
     def format_option(self, option):
@@ -82,15 +83,22 @@ class AmirConfig:
         parser = optparse.OptionParser(version="%prog %ver",formatter=IndentedHelpFormatterWithNL() )
         parser.add_option("-v", "--verbose", action="store_const", const=1, dest="verbose", help="Show debug messages")
         parser.add_option("-n", "--noisy", action="store_const", const=2, dest="verbose", help="Show all debug messages")
-        parser.add_option("-d", "--database", metavar="URL", action="store", dest="database", help="Set costume url for database (RFC-1738)\n\nExamples:\n\n-d sqlite:////absolute/path/to/foo.db\n\n-d sqlite:///:memory:\n\n-d mysql://user:pass@localhost/foo")
+        parser.add_option("-d", "--database", metavar="URL", action="store", dest="database", help="Set custom url for database (RFC-1738)\n\nExamples:\n\n-d sqlite:////absolute/path/to/foo.db\n\n-d sqlite:///:memory:\n\n-d mysql://user:pass@localhost/foo")
         (self.options, self.args) = parser.parse_args()
         
         #set the logging level to show debug messages
         if self.options.verbose:
             logging.basicConfig(level=logging.DEBUG)
             logging.debug('logging enabled')
-
+            
+        if self.options.database == None:
+            self.db = database.Database()
+        else:
+            self.db = database.Database(self.options.database)
+        
+        
 try:
     config
 except NameError:
     config = AmirConfig()
+
