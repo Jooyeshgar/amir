@@ -53,51 +53,13 @@ class Notebook(Base):
         self.desc = desc
 
 class Database:
-    def __init__(self, file=None):
-        print ("db constructed")
-        if file != None:
-            print file
-            self.dbfile = file
-            engine = create_engine('sqlite:///%s' % file , echo=True)
-        else:
-            self.dbfile = '../data/tutorial.db'
-            engine = create_engine('sqlite:///../data/tutorial.db', echo=True)
+    def __init__(self, file, echoresults):
+        
+        self.dbfile = file
+        engine = create_engine('sqlite:///%s' % file , echo=echoresults)
+        
         metadata = Base.metadata
         metadata.create_all(engine)
-    #--------------------------------------------------------------------------
-    # create a database connection
-    # conn = engine.connect()
-    # add user to database by executing SQL
-    # conn.execute(users_table.insert(), [
-    #    {"name": "Ted", "age":10, "password":"dink"},
-    #    {"name": "Asahina", "age":25, "password":"nippon"},
-    #    {"name": "Evan", "age":40, "password":"macaca"}
-    #])
     
         Session = sessionmaker(engine)
         self.session = Session()
-        
-        #=======================================================================
-        # user_goli = User("goli",18,"nmvcn")
-        # self.session.add(user_goli)
-        # self.session.commit()
-        # 
-        # user_sheri = User("shahrzad", 24, "fhkss")
-        # self.session.add(user_sheri)
-        # 
-        # all_users = self.session.query(User).all()
-        # for user in all_users :
-        #    user.age = user.age + 3;
-        #    
-        # self.session.commit()
-        #=======================================================================
-        # s = select([users_table.c.name], users_table.c.age>10)
-        # res = conn.execute(s)
-        # rows = res.fetchall()
-        # for row in rows :
-        #     print row.name, "is old enough."
-
-#try:
-#    db
-#except NameError:
-#    db = Database()

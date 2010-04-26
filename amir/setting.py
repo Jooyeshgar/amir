@@ -21,6 +21,9 @@ class Setting:
         self.filename = self.builder.get_object("filename")
         self.olddb = self.builder.get_object("olddb")
         self.newdb = self.builder.get_object("newdb")
+        self.infolabel = self.builder.get_object("infolabel")
+        
+        self.infolabel.set_text(self.infolabel.get_text() + config.db.dbfile)
         
         self.window.show_all()
         self.builder.connect_signals(self)
@@ -69,7 +72,8 @@ class Setting:
                 return
             else:
                 config.db.session.close()
-                config.db = database.Database(dbfile)
+                config.db = database.Database(dbfile, config.echodbresult)
+                self.infolabel.set_text(self.infolabel.get_text() + dbfile)
         
         olddb = self.olddb.get_text()
         newdb = self.newdb.get_text()

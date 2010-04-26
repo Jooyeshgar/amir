@@ -316,10 +316,6 @@ class AddEditDoc:
         
     def subjectSelected(self, sender, id, code, name):
         self.code.set_text(code)
-        sender.window.destroy()
-        #print(id)
-        #print(code)
-        #print(name)
-        
+        sender.window.destroy()        
 
         

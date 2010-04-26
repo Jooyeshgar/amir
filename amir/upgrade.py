@@ -2,6 +2,7 @@ import sys
 import os
 import getopt
 import re
+import logging
 from datetime import date
 
 from sqlalchemy import create_engine
@@ -59,13 +60,11 @@ class Notebook(Base):
         self.desc = desc
 
 class Database:
-    def __init__(self, file=None):
-        print ("db constructed")
-        if file != None:
-            print file
-            engine = create_engine('sqlite:///%s' % file , echo=True)
-        else:
-            engine = create_engine('sqlite:///../data/tutorial.db', echo=True)
+    def __init__(self, file):
+        
+        logging.info(file)
+        engine = create_engine('sqlite:///%s' % file , echo=True)
+        
         metadata = Base.metadata
         metadata.create_all(engine)
         Session = sessionmaker(engine)
@@ -75,7 +74,7 @@ def checkInputDb(inputfile):
     try:
         engine = create_engine('sqlite:///%s' % inputfile, echo=True)
     except exc.DatabaseError:
-        print sys.exc_info()
+        logging.error(sys.exc_info()[0])
         return -2
     metadata = MetaData(bind=engine)
     
@@ -84,9 +83,9 @@ def checkInputDb(inputfile):
         table = Table('sub_ledger', metadata, autoload=True)
         table = Table('moin', metadata, autoload=True)
     
-#    except exc.DatabaseError:
-#        print sys.exc_info()
-#        return -2
+    except exc.DatabaseError:
+        logging.error(sys.exc_info()[0])
+        return -2
     except exc.NoSuchTableError:
         return -1
     return 0
@@ -150,7 +149,7 @@ def update(inputfile, outputfile):
         if row[0] != parent_id:
             lastcode += 1
             if lastcode > 99:
-                print ("Ledgers with numbers greater than %d are not imported to the new database" \
+                logging.error("Ledgers with numbers greater than %d are not imported to the new database" \
                       "Because you can have just 99 Ledgers (level one subject)" % row[0])
                 break
             pcode = "%02d" % lastcode
@@ -169,7 +168,7 @@ def update(inputfile, outputfile):
         if row[3] != None:
             childcode += 1
             if childcode > 99:
-                print ("SubLedgers with number %d is not imported to the new database" \
+                logging.error("SubLedgers with number %d is not imported to the new database" \
                       "Because you can have just 99 subjects per level" % row[5])
                 continue 
             childsub = Subject(pcode + "%02d" % childcode, row[4], pid, 2)
@@ -239,17 +238,17 @@ def main(argv):
     
     if inputfile == "":
         #inputfile = "../../1389_01_31.amirdb"
-        print("you sholud specify an input database")
+        logging.error("you sholud specify an input database")
         sys.exit(2)
         
     if outputfile == "":
         (filepath, filename) = os.path.split(inputfile)
         outputfile = "../data/" + filename
-        print outputfile
+        logging.info("output file: " + outputfile)
         
     flag = checkInputDb(inputfile)
     if flag < 0:
-        print("input database is not compatible with amir v0.5")
+        logging.error("input database is not compatible with amir v0.5")
         sys.exit(2)
     result = update(inputfile, outputfile)
         

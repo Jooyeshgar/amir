@@ -2,6 +2,7 @@ import pygtk
 import gtk
 import pango
 import pangocairo
+import logging
 
 import utility
 
@@ -57,7 +58,7 @@ class PrintReport:
         LINE_HEIGHT = 25
         MARGIN = self.page_margin
         cwidth = context.get_width()
-        print cwidth
+        logging.info("Paper width: " + str(cwidth))
         cr = self.cairo_context
         
         fontsize = 12

@@ -49,7 +49,6 @@ class Subjects(gobject.GObject):
         query = self.session.query(Subject1.code, Subject1.name, Subject1.type, count(Subject2.id))
         query = query.select_from(outerjoin(Subject1, Subject2, Subject1.id == Subject2.parent_id))
         result = query.filter(Subject1.parent_id == 0).group_by(Subject1.id).all()
-        print (result)
         for a in result :
             type = _(self.__class__.subjecttypes[a[2]])
             iter = self.treestore.append(None, (a[0], a[1], type))
@@ -164,7 +163,6 @@ class Subjects(gobject.GObject):
             query = self.session.query(Subject1.id, count(Subject2.id))
             query = query.select_from(outerjoin(Subject1, Subject2, Subject1.id == Subject2.parent_id))
             result = query.filter(Subject1.code == code[0]).first()
-            print (result)
             
             if result[1] != 0 :
                 msgbox =  gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
@@ -191,7 +189,6 @@ class Subjects(gobject.GObject):
                     self.treestore.remove(iter)
     
     def saveLedger(self, name, type, iter, edit, widget):
-        print "type = %d" % type
         if name == "" :
             msgbox = gtk.MessageDialog(widget, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
                                     _("Subject name should not be empty."))
@@ -261,8 +258,7 @@ class Subjects(gobject.GObject):
                         lastcode = "01"
                     else :
                         lastcode = "%02d" % (int(code[0][-2:]) + 1)
-                        
-                    print lastcode
+                    
                     lastcode = iter_code + lastcode
                     
                     # If row have not been expanded yet, function 'populateChidren' will be executed and adds children
@@ -283,7 +279,6 @@ class Subjects(gobject.GObject):
                     
                 
     def populateChildren(self, treeview, iter, path):
-        print("row expanded")
         chiter = self.treestore.iter_children(iter)
         if chiter != None :
             value = self.treestore.get(chiter, 0)[0]
@@ -299,7 +294,6 @@ class Subjects(gobject.GObject):
                 query = self.session.query(Sub.code, Sub.name, Sub.type, count(Child.id))
                 query = query.select_from(outerjoin(outerjoin(Parent, Sub, Sub.parent_id == Parent.id), Child, Sub.id == Child.parent_id))
                 result = query.filter(Parent.code == value).group_by(Sub.id).all()
-                print result
                 for row in result :
                     type = _(self.__class__.subjecttypes[row[2]])
                     chiter = self.treestore.append(iter, (row[0], row[1], type))

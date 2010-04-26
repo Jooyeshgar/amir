@@ -32,14 +32,14 @@
                         <property name="visible">True</property>
                         <property name="spacing">8</property>
                         <child>
-                          <object class="GtkLabel" id="label7">
+                          <object class="GtkLabel" id="infolabel">
                             <property name="visible">True</property>
                             <property name="xalign">0</property>
                             <property name="xpad">10</property>
-                            <property name="label" translatable="yes">Before you change the database, Make sure you don't have any unsaved data.</property>
-                            <attributes>
-                              <attribute name="style" value="normal"/>
-                            </attributes>
+                            <property name="ypad">4</property>
+                            <property name="label" translatable="yes">Before you change the database, Make sure you don't have any unsaved data.
+
+Current database: </property>
                           </object>
                           <packing>
                             <property name="position">0</property>
@@ -66,7 +66,6 @@
                                 <property name="invisible_char">&#x25CF;</property>
                               </object>
                               <packing>
-                                <property name="expand">False</property>
                                 <property name="position">1</property>
                               </packing>
                             </child>

@@ -24,11 +24,42 @@
 __amir_data_directory__ = '../data/'
 
 
-import os,optparse,logging
+import os, optparse, logging, sys
 from optparse import IndentedHelpFormatter
 import textwrap
+import tempfile
+import shutil
+
 import database
 
+class ConfigFile:
+    def __init__(self, file):
+        self.filename = file
+        
+    def returnStringValue(self, key):
+        file = open(self.filename, 'r')
+        value = ''
+        for line in file:
+            if line.startswith(key + "="):
+                value = line[len(key)+1 :]
+                break
+        file.close()
+        return value
+    
+    def insertStringValue(self, key, value):
+        input = open(self.filename, 'r')
+        (outfile, outname) = tempfile.mkstemp()
+        output = open(outname, 'w')
+        for line in input:
+            if line.startswith(key + "="):
+                line = key + "=" + value
+            output.write(line)
+        input.close()
+        output.close()
+        
+        os.remove(self.filename)
+        shutil.move(outname, self.filename)
+    
 class IndentedHelpFormatterWithNL(IndentedHelpFormatter):
     def format_option(self, option):
         result = []
@@ -87,14 +118,26 @@ class AmirConfig:
         (self.options, self.args) = parser.parse_args()
         
         #set the logging level to show debug messages
+        self.echodbresult = False
         if self.options.verbose:
             logging.basicConfig(level=logging.DEBUG)
             logging.debug('logging enabled')
+            if self.options.verbose == 2:
+                self.echodbresult = True
             
+        dbfile = ''
+        self.configfile = ConfigFile(os.path.join(self.data_path, 'amir.conf'))
+        
         if self.options.database == None:
-            self.db = database.Database()
+            dbfile = self.configfile.returnStringValue("database")
+            if dbfile == '':
+                dbfile = os.path.join(self.data_path, 'amir.db')
+                logging.error("No database registered in config file. The default database %s will be opened for use." % dbfile)                 
         else:
-            self.db = database.Database(self.options.database)
+            dbfile = self.options.database
+            
+        self.db = database.Database(dbfile, self.echodbresult)
+        logging.info('database path: ' + dbfile)
         
         
 try:

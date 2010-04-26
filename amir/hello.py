@@ -6,12 +6,14 @@ import gtk
 import database
 import gettext,locale
 import gobject
+import os
 
 import subjects
 import addeditdoc
 import notebookreport
 import docreport
 import setting
+from amirconfig import config
      
 class MainWindow:
 
@@ -40,9 +42,6 @@ class MainWindow:
     
     def view_toolbar(self, sender):
         dialog = subjects.Subjects()
-        
-    def hello(self, widget, data=None):
-        print ("Hello World")
 
     def delete_event(self, widget, event, data=None):
         
@@ -63,7 +62,8 @@ class MainWindow:
         # with a "delete_event".
 
     def destroy(self, widget, data=None):
-        print ("destroy signal occurred")
+        conffile = config.configfile
+        conffile.insertStringValue("database", config.db.dbfile)
         gtk.main_quit()
 
     def __init__(self):
