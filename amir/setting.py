@@ -25,6 +25,21 @@ class Setting:
         
         self.infolabel.set_text(self.infolabel.get_text() + config.db.dbfile)
         
+        model = gtk.ListStore(str)
+        self.dateformat = self.builder.get_object("dateformat")
+        self.comboInsertItems(self.dateformat, config.datetypes)
+        self.dateformat.set_active(config.datetype)
+        
+        self.delimiter = self.builder.get_object("delimiter")
+        self.comboInsertItems(self.delimiter, config.datedelims)
+        self.delimiter.set_active(config.datedelim)
+        
+        self.dateorder = self.builder.get_object("dateorder")
+        self.comboInsertItems(self.dateorder, [])
+        for order in config.dateorders:
+            self.dateorder.append_text(order[0] + " - " + order[1] + " - " + order[2])
+        self.dateorder.set_active(config.dateorder)
+        
         self.window.show_all()
         self.builder.connect_signals(self)
         
@@ -73,7 +88,7 @@ class Setting:
             else:
                 config.db.session.close()
                 config.db = database.Database(dbfile, config.echodbresult)
-                self.infolabel.set_text(self.infolabel.get_text() + dbfile)
+                self.infolabel.set_text(_("Current database: ") + dbfile)
         
         olddb = self.olddb.get_text()
         newdb = self.newdb.get_text()
@@ -151,3 +166,21 @@ class Setting:
         self.msgbox.run()
         self.msgbox.destroy()
         return False
+    
+    def applyFormatSetting(self, sender):
+        config.datetype = self.dateformat.get_active()
+        config.datedelim = self.delimiter.get_active()
+        config.dateorder = self.dateorder.get_active()
+        for i in range(0,3):
+            field = config.dateorders[config.dateorder][i]
+            config.datefields[field] = i
+
+    def comboInsertItems(self, combo, items):
+        ls = gtk.ListStore(str)
+        for i in items:
+            ls.append([str(i)])
+        combo.set_model(ls)
+        cellr = gtk.CellRendererText()
+        combo.pack_start(cellr)
+        combo.add_attribute(cellr, 'text', 0)
+    

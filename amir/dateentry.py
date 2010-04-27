@@ -4,22 +4,23 @@ import gobject
 import string
 from datetime import date
 
-from settings import *
+from amirconfig import config
 from calverter import calverter
 
 def dateToString(date):
-    if Settings.datetype == "jalali":
+    if config.datetypes[config.datetype] == "jalali":
         jd = DateEntry.cal.gregorian_to_jd(date.year, date.month, date.day)
         (year, month, day) = DateEntry.cal.jd_to_jalali(jd)
     else:
         (year, month, day) = (date.year, date.month, date.day)
         
     datelist = ["", "", ""]
-    datelist[Settings.datefields["year"]] = year
-    datelist[Settings.datefields["month"]] = month
-    datelist[Settings.datefields["day"]] = day
+    datelist[config.datefields["year"]] = year
+    datelist[config.datefields["month"]] = month
+    datelist[config.datefields["day"]] = day
         
-    datestring = str(datelist[0]) + Settings.datedelim + str(datelist[1]) + Settings.datedelim + str(datelist[2])
+    delim = config.datedelims[config.datedelim]
+    datestring = str(datelist[0]) + delim + str(datelist[1]) + delim + str(datelist[2])
     return datestring
     
 class DateEntry(gtk.Entry):
@@ -40,7 +41,7 @@ class DateEntry(gtk.Entry):
             (self.year, self.month, self.day) = init_date
         else:
             today = date.today()
-            if Settings.datetype == "jalali":
+            if config.datetypes[config.datetype] == "jalali":
                 jd = self.cal.gregorian_to_jd (today.year, today.month, today.day)
                 jalali = self.cal.jd_to_jalali(jd)
                 (self.year, self.month, self.day) = jalali
@@ -53,11 +54,12 @@ class DateEntry(gtk.Entry):
         
     def showDate(self, year, month, day):
         datelist = ["", "", ""]
-        datelist[Settings.datefields["year"]] = year
-        datelist[Settings.datefields["month"]] = month
-        datelist[Settings.datefields["day"]] = day
+        datelist[config.datefields["year"]] = year
+        datelist[config.datefields["month"]] = month
+        datelist[config.datefields["day"]] = day
         
-        datestring = str(datelist[0]) + Settings.datedelim + str(datelist[1]) + Settings.datedelim + str(datelist[2])
+        delim = config.datedelims[config.datedelim]
+        datestring = str(datelist[0]) + delim + str(datelist[1]) + delim + str(datelist[2])
         self.set_text(datestring)
         self.year = year
         self.month = month
@@ -65,7 +67,7 @@ class DateEntry(gtk.Entry):
         
     #Assuming that date objects show gregorian date.
     def showDateObject(self, date):
-        if Settings.datetype == "jalali":
+        if config.datetypes[config.datetype] == "jalali":
             jd = self.cal.gregorian_to_jd(date.year, date.month, date.day)
             (jyear, jmonth, jday) = self.cal.jd_to_jalali(jd)
             self.showDate(jyear, jmonth, jday)
@@ -73,7 +75,7 @@ class DateEntry(gtk.Entry):
             self.showDate(date.year, date.month, date.day)
         
     def getDateObject(self):
-        if Settings.datetype == "jalali":
+        if config.datetypes[config.datetype] == "jalali":
             jd = self.cal.jalali_to_jd(self.year, self.month, self.day)
             (gyear, gmonth, gday) = self.cal.jd_to_gregorian(jd)
             return date(gyear, gmonth, gday)
@@ -82,21 +84,21 @@ class DateEntry(gtk.Entry):
         
     def correctDate(self, sender, event):
         text = self.get_text()
-        datelist = string.split(text, Settings.datedelim) 
+        datelist = string.split(text, config.datedelims[config.datedelim]) 
         try:
-            tyear = datelist[Settings.datefields["year"]]
+            tyear = datelist[config.datefields["year"]]
         except IndexError:
             tyear = ""
         try:
-            tmonth =  datelist[Settings.datefields["month"]]
+            tmonth =  datelist[config.datefields["month"]]
         except IndexError:
             tmonth = ""
         try:
-            tday = datelist[Settings.datefields["day"]]
+            tday = datelist[config.datefields["day"]]
         except IndexError:
             tday = ""
         
-        if Settings.datetype == "jalali":
+        if config.datetypes[config.datetype] == "jalali":
             minyear = 1349
             baseyear = "1300"
         else:
@@ -134,7 +136,7 @@ class DateEntry(gtk.Entry):
         except ValueError:
             day = 1
                 
-        if Settings.datetype == "jalali":
+        if config.datetypes[config.datetype] == "jalali":
             jd = self.cal.jalali_to_jd(year, month, day)
             (gyear, gmonth, gday) = self.cal.jd_to_gregorian(jd)
         else:

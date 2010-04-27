@@ -63,7 +63,7 @@ class MainWindow:
 
     def destroy(self, widget, data=None):
         conffile = config.configfile
-        conffile.insertStringValue("database", config.db.dbfile)
+        config.updateConfigFile()
         gtk.main_quit()
 
     def __init__(self):

@@ -44,16 +44,21 @@ class ConfigFile:
                 value = line[len(key)+1 :]
                 break
         file.close()
-        return value
+        return value.strip()
     
-    def insertStringValue(self, key, value):
+    def update(self, keys, values):
         input = open(self.filename, 'r')
         (outfile, outname) = tempfile.mkstemp()
         output = open(outname, 'w')
         for line in input:
-            if line.startswith(key + "="):
-                line = key + "=" + value
+            i = 0
+            for key in keys:
+                if line.startswith(key + "="):
+                    line = key + "=" + values[i] + "\n"
+                    break
+                i += 1
             output.write(line)
+             
         input.close()
         output.close()
         
@@ -97,6 +102,12 @@ class AmirConfig:
     """
     data_path = ''
     #options = None
+    datetypes = ["jalali", "gregorian"]
+    datedelims = [":", "/", "-"]
+    datefields = {"year":0, "month":1, "day":2}
+    dateorders = [('year', 'month', 'day'), ('month', 'year', 'day'),
+                  ('day', 'year', 'month'), ('year', 'day', 'month'),
+                  ('day', 'month', 'year'), ('month', 'day', 'year')]
     
     def __init__(self):
     # get pathname absolute or relative
@@ -139,7 +150,17 @@ class AmirConfig:
         self.db = database.Database(dbfile, self.echodbresult)
         logging.info('database path: ' + dbfile)
         
+        self.datetype = self.datetypes.index(self.configfile.returnStringValue("dateformat"))
+        self.datedelim = self.datedelims.index(self.configfile.returnStringValue("delimiter"))
+        self.dateorder = int(self.configfile.returnStringValue("dateorder"))
+        for i in range(0,3):
+            field = self.dateorders[self.dateorder][i]
+            self.datefields[field] = i
         
+    def updateConfigFile(self):
+        keys = ['database', 'dateformat', 'delimiter', 'dateorder']
+        values = [self.db.dbfile, self.datetypes[self.datetype], self.datedelims[self.datedelim], str(self.dateorder)]
+        self.configfile.update(keys, values) 
 try:
     config
 except NameError:
