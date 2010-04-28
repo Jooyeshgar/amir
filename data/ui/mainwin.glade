@@ -364,11 +364,11 @@
   </object>
   <object class="GtkAction" id="subledgerreportaction">
     <property name="label">Sub-ledgers Notebook</property>
-    <signal name="activate" handler="subjectNotebookReport"/>
+    <signal name="activate" handler="subledgerNotebookReport"/>
   </object>
   <object class="GtkAction" id="ledgerreportaction">
     <property name="label">Ledgers Notebook</property>
-    <signal name="activate" handler="subjectNotebookReport"/>
+    <signal name="activate" handler="ledgerNotebookReport"/>
   </object>
   <object class="GtkAction" id="docreportaction">
     <property name="label">Document</property>

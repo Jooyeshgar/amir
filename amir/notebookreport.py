@@ -250,7 +250,10 @@ class NotebookReport:
         self.createReport()
     
     def selectSubject(self, sender):
-        subject_win = subjects.Subjects()
+        if self.type == self.__class__.LEDGER:
+            subject_win = subjects.Subjects(True)
+        else:
+            subject_win = subjects.Subjects()
         subject_win.connect("subject-selected", self.subjectSelected)
     
     def subjectSelected(self, sender, id, code, name):

@@ -14,7 +14,7 @@ class Subjects(gobject.GObject):
     
     subjecttypes = ["Debtor", "Creditor", "Both"]
     
-    def __init__ (self):
+    def __init__ (self, ledgers_only=False):
         gobject.GObject.__init__(self)
         
         self.builder = gtk.Builder()
@@ -52,10 +52,14 @@ class Subjects(gobject.GObject):
         for a in result :
             type = _(self.__class__.subjecttypes[a[2]])
             iter = self.treestore.append(None, (a[0], a[1], type))
-            if (a[3] != 0) :
+            if (a[3] != 0 and ledgers_only == False) :
                 #Add empty subledger to show expander for ledgers which have chidren
                 self.treestore.append(iter, ("", "", ""))
-            
+        
+        if ledgers_only == True:
+            btn = self.builder.get_object("addsubtoolbutton")
+            btn.hide()
+        
         self.treeview.set_model(self.treestore)
         self.window.show_all()
         self.builder.connect_signals(self)

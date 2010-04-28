@@ -27,8 +27,11 @@ class MainWindow:
     def dailyNotebookReport(self, sender):
         reportwin = notebookreport.NotebookReport()
     
-    def subjectNotebookReport(self, sender):
+    def ledgerNotebookReport(self, sender):
         reportwin = notebookreport.NotebookReport(notebookreport.NotebookReport.LEDGER)
+    
+    def subledgerNotebookReport(self, sender):
+        reportwin = notebookreport.NotebookReport(notebookreport.NotebookReport.SUBLEDGER)
             
     def documentReport(self, sender):
         reportwin = docreport.DocumentReport()
