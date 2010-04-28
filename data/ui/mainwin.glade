@@ -20,8 +20,8 @@
                     <child>
                       <object class="GtkImageMenuItem" id="manualmenuitem">
                         <property name="visible">True</property>
-                        <property name="use_action_appearance">True</property>
                         <property name="related_action">manualAction</property>
+                        <property name="use_action_appearance">True</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <accelerator key="F9" signal="activate"/>
@@ -30,24 +30,12 @@
                     <child>
                       <object class="GtkImageMenuItem" id="quitmenuitem">
                         <property name="visible">True</property>
-                        <property name="use_action_appearance">True</property>
                         <property name="related_action">quitAction</property>
+                        <property name="use_action_appearance">True</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                       </object>
                     </child>
-                  </object>
-                </child>
-              </object>
-            </child>
-            <child>
-              <object class="GtkMenuItem" id="menuitem2">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">_View</property>
-                <property name="use_underline">True</property>
-                <child type="submenu">
-                  <object class="GtkMenu" id="menu2">
-                    <property name="visible">True</property>
                   </object>
                 </child>
               </object>
@@ -71,24 +59,24 @@
                             <child>
                               <object class="GtkMenuItem" id="dailyreportitem">
                                 <property name="visible">True</property>
-                                <property name="use_action_appearance">True</property>
                                 <property name="related_action">dailyreportaction</property>
+                                <property name="use_action_appearance">True</property>
                                 <accelerator key="d" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                               </object>
                             </child>
                             <child>
                               <object class="GtkMenuItem" id="ledgerreportitem">
                                 <property name="visible">True</property>
-                                <property name="use_action_appearance">True</property>
                                 <property name="related_action">ledgerreportaction</property>
+                                <property name="use_action_appearance">True</property>
                                 <accelerator key="l" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                               </object>
                             </child>
                             <child>
                               <object class="GtkMenuItem" id="subledgerreportitem">
                                 <property name="visible">True</property>
-                                <property name="use_action_appearance">True</property>
                                 <property name="related_action">subledgerreportaction</property>
+                                <property name="use_action_appearance">True</property>
                                 <accelerator key="s" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                               </object>
                             </child>
@@ -99,8 +87,8 @@
                     <child>
                       <object class="GtkMenuItem" id="menuitem5">
                         <property name="visible">True</property>
-                        <property name="use_action_appearance">True</property>
                         <property name="related_action">docreportaction</property>
+                        <property name="use_action_appearance">True</property>
                       </object>
                     </child>
                   </object>
@@ -118,17 +106,24 @@
                     <child>
                       <object class="GtkImageMenuItem" id="subjectsmenuitem">
                         <property name="visible">True</property>
-                        <property name="use_action_appearance">True</property>
                         <property name="related_action">subjectsAction</property>
+                        <property name="use_action_appearance">True</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                       </object>
                     </child>
                     <child>
+                      <object class="GtkMenuItem" id="editdocmenuitem">
+                        <property name="visible">True</property>
+                        <property name="related_action">editdocaction</property>
+                        <property name="use_action_appearance">True</property>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkImageMenuItem" id="settingmenuitem">
                         <property name="visible">True</property>
-                        <property name="use_action_appearance">True</property>
                         <property name="related_action">settingAction</property>
+                        <property name="use_action_appearance">True</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                       </object>
@@ -148,8 +143,8 @@
                     <child>
                       <object class="GtkImageMenuItem" id="aboutmenuitem">
                         <property name="visible">True</property>
-                        <property name="use_action_appearance">True</property>
                         <property name="related_action">aboutAction</property>
+                        <property name="use_action_appearance">True</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                       </object>
@@ -253,7 +248,7 @@
         <child>
           <object class="GtkImage" id="image1">
             <property name="visible">True</property>
-            <property name="stock">gtk-missing-image</property>
+            <property name="pixbuf">../media/background.png</property>
           </object>
           <packing>
             <property name="position">2</property>
@@ -376,5 +371,100 @@
   <object class="GtkAction" id="docreportaction">
     <property name="label">Document</property>
     <signal name="activate" handler="documentReport"/>
+  </object>
+  <object class="GtkAction" id="editdocaction">
+    <property name="label">Edit Document</property>
+    <signal name="activate" handler="editDocument"/>
+  </object>
+  <object class="GtkDialog" id="selectdoc">
+    <property name="border_width">5</property>
+    <property name="title" translatable="yes">Select document to edit</property>
+    <property name="window_position">mouse</property>
+    <property name="type_hint">dialog</property>
+    <property name="transient_for">window1</property>
+    <property name="has_separator">False</property>
+    <child internal-child="vbox">
+      <object class="GtkVBox" id="dialog-vbox2">
+        <property name="visible">True</property>
+        <property name="spacing">2</property>
+        <child>
+          <object class="GtkHBox" id="hbox1">
+            <property name="visible">True</property>
+            <property name="spacing">5</property>
+            <child>
+              <object class="GtkLabel" id="label2">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Document Number: </property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkHBox" id="numbox">
+                <property name="visible">True</property>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="padding">5</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child internal-child="action_area">
+          <object class="GtkHButtonBox" id="dialog-action_area2">
+            <property name="visible">True</property>
+            <property name="layout_style">end</property>
+            <child>
+              <object class="GtkButton" id="button4">
+                <property name="label">gtk-cancel</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="button3">
+                <property name="label">gtk-open</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="can_default">True</property>
+                <property name="has_default">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="-6">button4</action-widget>
+      <action-widget response="-5">button3</action-widget>
+    </action-widgets>
   </object>
 </interface>

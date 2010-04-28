@@ -9,6 +9,7 @@ import gobject
 import os
 
 import subjects
+import numberentry
 import addeditdoc
 import notebookreport
 import docreport
@@ -36,6 +37,14 @@ class MainWindow:
         pass
     def manageSubjects(self, sender):
         dialog = subjects.Subjects()
+        
+    def editDocument(self, sender):
+        dialog = self.builder.get_object("selectdoc")        
+        res = dialog.run()
+        dialog.hide()
+        if res != gtk.RESPONSE_CANCEL:
+            dialog = addeditdoc.AddEditDoc(int(self.numentry.get_text()))
+            
         
     def settingsDialog(self, sender):
         window = setting.Setting()
@@ -73,6 +82,12 @@ class MainWindow:
         self.builder.set_translation_domain("amir")
         self.builder.add_from_file("../data/ui/mainwin.glade")
         self.window = self.builder.get_object("window1")
+        
+        self.numentry = numberentry.NumberEntry()
+        box = self.builder.get_object("numbox")
+        box.add(self.numentry)
+        self.numentry.show()
+        
         initial = self.builder.get_object("menubar2")
         initial.hide()
         self.builder.connect_signals(self)

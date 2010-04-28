@@ -75,8 +75,24 @@ class AddEditDoc:
         self.credit_sum = 0
         self.numrows = 0
         if number > 0:
-            self.showRows(number)
+            query = self.session.query(Bill).select_from(Bill)
+            bill = query.filter(Bill.number == number).first()
+            self.docnumber = number
+            if bill == None:
+                msg = "No document found with number %d\nDo you want to register a document with this number?" % number
+                msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, msg)
+                msgbox.set_title(_("No Documents found"))
+                result = msgbox.run()
+                msgbox.destroy()
+                if result == gtk.RESPONSE_CANCEL:
+                    return
+                else:
+                    self.docid = 0
+                    self.builder.get_object("docnumber").set_text (str(self.docnumber))
+            else:
+                self.showRows(number)
         else:
+            self.docnumber = 0
             self.docid = 0
     
         self.treeview.set_model(self.liststore)
@@ -253,24 +269,25 @@ class AddEditDoc:
             msgbox.destroy()
             return
         else:
-            number = 0
+            #number = 0
             today = date.today()
             if self.docid > 0 :
                 query = self.session.query(Bill).select_from(Bill)
                 bill = query.filter(Bill.id == self.docid).first()
                 bill.lasteditdate = today
                 bill.date = self.date.getDateObject()
-                number = bill.number
+                #number = bill.number
                 query = self.session.query(Notebook).filter(Notebook.bill_id == bill.id).delete()
             else :
-                query = self.session.query(Bill.number).select_from(Bill)
-                lastnumbert = query.order_by(Bill.number.desc()).first()
-                if lastnumbert != None:
-                    number = lastnumbert[0]
-                number += 1
+                if self.docnumber == 0:
+                    query = self.session.query(Bill.number).select_from(Bill)
+                    lastnumbert = query.order_by(Bill.number.desc()).first()
+                    if lastnumbert != None:
+                        number = lastnumbert[0]
+                    self.docnumber = number + 1
                 
                 #TODO if number is not equal to the maximum BigInteger value, prevent bill registration.
-                bill = Bill (number, today, today, self.date.getDateObject())
+                bill = Bill (self.docnumber, today, today, self.date.getDateObject())
                 self.session.add(bill)
                 self.session.commit()
                 self.docid = bill.id
@@ -295,7 +312,7 @@ class AddEditDoc:
                 iter = self.liststore.iter_next(iter)
                 
             self.session.commit()
-            self.builder.get_object("docnumber").set_text (str(number))
+            self.builder.get_object("docnumber").set_text (str(self.docnumber))
         
     def deleteDocument(self, sender):
         msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, _("Are you sure to delete the whole document?"))
