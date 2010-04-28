@@ -184,3 +184,5 @@ class Setting:
         combo.pack_start(cellr)
         combo.add_attribute(cellr, 'text', 0)
     
+    def closeSettingWindow(self, sender):
+        self.window.destroy()

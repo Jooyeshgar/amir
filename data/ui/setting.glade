@@ -33,6 +33,7 @@
                         <property name="spacing">8</property>
                         <child>
                           <object class="GtkLabel" id="infolabel">
+                            <property name="width_request">550</property>
                             <property name="visible">True</property>
                             <property name="xalign">0</property>
                             <property name="xpad">10</property>
@@ -42,6 +43,7 @@
 Current database: </property>
                           </object>
                           <packing>
+                            <property name="expand">False</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
@@ -51,7 +53,9 @@ Current database: </property>
                             <property name="spacing">5</property>
                             <child>
                               <object class="GtkLabel" id="label5">
+                                <property name="width_request">170</property>
                                 <property name="visible">True</property>
+                                <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Choose database: </property>
                               </object>
                               <packing>
@@ -61,11 +65,13 @@ Current database: </property>
                             </child>
                             <child>
                               <object class="GtkEntry" id="filename">
+                                <property name="width_request">380</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="invisible_char">&#x25CF;</property>
                               </object>
                               <packing>
+                                <property name="expand">False</property>
                                 <property name="position">1</property>
                               </packing>
                             </child>
@@ -127,7 +133,9 @@ Current database: </property>
                             <property name="spacing">5</property>
                             <child>
                               <object class="GtkLabel" id="label3">
+                                <property name="width_request">170</property>
                                 <property name="visible">True</property>
+                                <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Old Database:  </property>
                               </object>
                               <packing>
@@ -137,12 +145,14 @@ Current database: </property>
                             </child>
                             <child>
                               <object class="GtkEntry" id="olddb">
+                                <property name="width_request">380</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="tooltip_text" translatable="yes">The database file to convert.</property>
                                 <property name="invisible_char">&#x25CF;</property>
                               </object>
                               <packing>
+                                <property name="expand">False</property>
                                 <property name="position">1</property>
                               </packing>
                             </child>
@@ -171,7 +181,9 @@ Current database: </property>
                             <property name="spacing">5</property>
                             <child>
                               <object class="GtkLabel" id="label6">
+                                <property name="width_request">170</property>
                                 <property name="visible">True</property>
+                                <property name="xalign">0</property>
                                 <property name="label" translatable="yes">New Database Path: </property>
                               </object>
                               <packing>
@@ -181,12 +193,14 @@ Current database: </property>
                             </child>
                             <child>
                               <object class="GtkEntry" id="newdb">
+                                <property name="width_request">380</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="tooltip_text" translatable="yes">A directory to put the result of conversion.</property>
                                 <property name="invisible_char">&#x25CF;</property>
                               </object>
                               <packing>
+                                <property name="expand">False</property>
                                 <property name="position">1</property>
                               </packing>
                             </child>
@@ -232,7 +246,19 @@ Current database: </property>
                 <property name="spacing">5</property>
                 <property name="layout_style">end</property>
                 <child>
-                  <placeholder/>
+                  <object class="GtkButton" id="button8">
+                    <property name="label">gtk-close</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="use_stock">True</property>
+                    <signal name="clicked" handler="closeSettingWindow"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">0</property>
+                  </packing>
                 </child>
                 <child>
                   <object class="GtkButton" id="button5">
@@ -407,7 +433,6 @@ Current database: </property>
                 </child>
               </object>
               <packing>
-                <property name="expand">False</property>
                 <property name="padding">4</property>
                 <property name="position">0</property>
               </packing>
@@ -418,7 +443,19 @@ Current database: </property>
                 <property name="spacing">5</property>
                 <property name="layout_style">end</property>
                 <child>
-                  <placeholder/>
+                  <object class="GtkButton" id="button7">
+                    <property name="label">gtk-close</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="use_stock">True</property>
+                    <signal name="clicked" handler="closeSettingWindow"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">0</property>
+                  </packing>
                 </child>
                 <child>
                   <object class="GtkButton" id="button6">
