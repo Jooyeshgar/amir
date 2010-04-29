@@ -157,11 +157,19 @@ class AmirConfig:
             field = self.dateorders[self.dateorder][i]
             self.datefields[field] = i
             
-        self.digittype = 1  # 0 for latin, 1 for persian 
+        uselatin = self.configfile.returnStringValue("use_latin_numbers")
+        if uselatin.lower() == "no":
+            self.digittype = 1  # 0 for latin, 1 for persian 
+        else:
+            self.digittype = 0
         
     def updateConfigFile(self):
-        keys = ['database', 'dateformat', 'delimiter', 'dateorder']
-        values = [self.db.dbfile, self.datetypes[self.datetype], self.datedelims[self.datedelim], str(self.dateorder)]
+        if self.digittype == 1:
+            uselatin = "no"
+        else:
+            uselatin = "yes"
+        keys = ['database', 'dateformat', 'delimiter', 'dateorder', 'use_latin_numbers']
+        values = [self.db.dbfile, self.datetypes[self.datetype], self.datedelims[self.datedelim], str(self.dateorder), uselatin]
         self.configfile.update(keys, values) 
 try:
     config

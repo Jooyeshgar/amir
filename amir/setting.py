@@ -40,6 +40,12 @@ class Setting:
             self.dateorder.append_text(order[0] + " - " + order[1] + " - " + order[2])
         self.dateorder.set_active(config.dateorder)
         
+        self.uselatin = self.builder.get_object("uselatin")
+        if config.digittype == 0:
+            self.uselatin.set_active(True)
+        else:
+            self.uselatin.set_active(False)
+        
         self.window.show_all()
         self.builder.connect_signals(self)
         
@@ -174,6 +180,10 @@ class Setting:
         for i in range(0,3):
             field = config.dateorders[config.dateorder][i]
             config.datefields[field] = i
+        if self.uselatin.get_active() == True:
+            config.digittype = 0
+        else:
+            config.digittype = 1
 
     def comboInsertItems(self, combo, items):
         ls = gtk.ListStore(str)
