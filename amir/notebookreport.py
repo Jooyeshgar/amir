@@ -107,12 +107,12 @@ class NotebookReport:
             
         # Check the report parameters  
         if self.builder.get_object("allcontent").get_active() == True:
-            query1 = query1.order_by(Bill.date.desc(), Bill.number.desc())
+            query1 = query1.order_by(Bill.date.asc(), Bill.number.asc())
             remaining = 0
         else:
             if self.builder.get_object("atdate").get_active() == True:
                 date = self.date.getDateObject()
-                query1 = query1.filter(Bill.date == date).order_by(Bill.number.desc())
+                query1 = query1.filter(Bill.date == date).order_by(Bill.number.asc())
                 query2 = query2.filter(Bill.date < date)
             else:
                 if self.builder.get_object("betweendates").get_active() == True:
@@ -125,7 +125,7 @@ class NotebookReport:
                         msgbox.run()
                         msgbox.destroy()
                         return
-                    query1 = query1.filter(Bill.date.between(fdate, tdate)).order_by(Bill.date.desc(), Bill.number.desc())
+                    query1 = query1.filter(Bill.date.between(fdate, tdate)).order_by(Bill.date.asc(), Bill.number.asc())
                     query2 = query2.filter(Bill.date < fdate)
                 else:
                     fnumber = int(unicode(self.fnum.get_text()))
@@ -137,7 +137,7 @@ class NotebookReport:
                         msgbox.run()
                         msgbox.destroy()
                         return
-                    query1 = query1.filter(Bill.number.between(fnumber, tnumber)).order_by(Bill.date.desc(), Bill.number.desc())
+                    query1 = query1.filter(Bill.number.between(fnumber, tnumber)).order_by(Bill.date.asc(), Bill.number.asc())
                     query2 = query2.filter(Bill.number < fnumber)
         
         #Prepare report data for PrintReport class

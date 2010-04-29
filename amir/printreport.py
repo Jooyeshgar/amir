@@ -160,7 +160,7 @@ class PrintReport:
         fdesc.set_size(fontsize * pango.SCALE)
         self.pangolayout.set_font_description(fdesc)
         if page_nr == 0:
-            self.pangolayout.set_text("0")
+            self.pangolayout.set_text(utility.showNumber(0))
             self.debt_sum = 0
         else:
             self.pangolayout.set_text(utility.showNumber(self.debt_sum))
@@ -174,7 +174,7 @@ class PrintReport:
         
         right_txt -= MARGIN + LINE
         if page_nr == 0:
-            self.pangolayout.set_text("0")
+            self.pangolayout.set_text(utility.showNumber(0))
             self.credit_sum = 0
         else:
             self.pangolayout.set_text(utility.showNumber(self.credit_sum))
@@ -348,7 +348,7 @@ class PrintReport:
         fdesc.set_size(fontsize * pango.SCALE)
         self.pangolayout.set_font_description(fdesc)
         if page_nr == 0:
-            self.pangolayout.set_text("0")
+            self.pangolayout.set_text(utility.showNumber(0))
             self.debt_sum = 0
         else:
             self.pangolayout.set_text(utility.showNumber(self.debt_sum))
@@ -362,7 +362,7 @@ class PrintReport:
         
         right_txt -= MARGIN + LINE
         if page_nr == 0:
-            self.pangolayout.set_text("0")
+            self.pangolayout.set_text(utility.showNumber(0))
             self.credit_sum = 0
         else:
             self.pangolayout.set_text(utility.showNumber(self.credit_sum))
