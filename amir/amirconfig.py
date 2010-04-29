@@ -55,10 +55,19 @@ class ConfigFile:
             for key in keys:
                 if line.startswith(key + "="):
                     line = key + "=" + values[i] + "\n"
+                    del keys[i]
+                    del values[i]
                     break
                 i += 1
             output.write(line)
-             
+            
+        # Insert keys not found in config file, at the end of output file   
+        i = 0
+        for key in keys:
+            line = key + "=" + values[i] + "\n"
+            i += 1
+            output.write(line)
+            
         input.close()
         output.close()
         
@@ -150,9 +159,24 @@ class AmirConfig:
         self.db = database.Database(dbfile, self.echodbresult)
         logging.info('database path: ' + dbfile)
         
-        self.datetype = self.datetypes.index(self.configfile.returnStringValue("dateformat"))
-        self.datedelim = self.datedelims.index(self.configfile.returnStringValue("delimiter"))
-        self.dateorder = int(self.configfile.returnStringValue("dateorder"))
+        str = self.configfile.returnStringValue("dateformat")
+        if str == '':
+            self.datetype = 0
+        else:
+            self.datetype = self.datetypes.index(str)
+            
+        str = self.configfile.returnStringValue("delimiter")
+        if str == '':
+            self.datedelim = 0
+        else:
+            self.datedelim = self.datedelims.index(str)
+            
+        str = self.configfile.returnStringValue("dateorder")
+        if str == '':
+            self.dateorder = 0
+        else:
+            self.dateorder = int(str)
+            
         for i in range(0,3):
             field = self.dateorders[self.dateorder][i]
             self.datefields[field] = i
