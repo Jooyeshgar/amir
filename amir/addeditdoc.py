@@ -37,7 +37,7 @@ class AddEditDoc:
         self.amount.show()
         
         self.treeview = self.builder.get_object("treeview")
-        self.liststore = gtk.ListStore(int, str, str, str, str, str)
+        self.liststore = gtk.ListStore(str, str, str, str, str, str)
         
         column = gtk.TreeViewColumn(_("Index"), gtk.CellRendererText(), text=0)
         column.set_spacing(5)
@@ -88,7 +88,10 @@ class AddEditDoc:
                     return
                 else:
                     self.docid = 0
-                    self.builder.get_object("docnumber").set_text (str(self.docnumber))
+                    docnum = str(self.docnumber)
+                    if config.digittype == 1:
+                        docnum = utility.convertToPersian(docnum)
+                    self.builder.get_object("docnumber").set_text (docnum)
             else:
                 self.showRows(number)
         else:
@@ -113,16 +116,24 @@ class AddEditDoc:
             if n.value < 0:
                 value = -(n.value)
                 debt = utility.showNumber(value)
-                credit = "0"
+                credit = utility.convertToPersian("0")
                 self.debt_sum += value
             else:
                 credit = utility.showNumber(n.value)
-                debt = "0"
+                debt = utility.convertToPersian("0")
                 self.credit_sum += n.value
                 
-            self.liststore.append((self.numrows, s.code, s.name, debt, credit, n.desc))
+            code = s.code
+            numrows = str(self.numrows)
+            if config.digittype == 1:
+                code = utility.convertToPersian(code)
+                numrows = utility.convertToPersian(numrows)
+            self.liststore.append((numrows, code, s.name, debt, credit, n.desc))
             
-        self.builder.get_object("docnumber").set_text (str(docnumber))
+        docnum = str(docnumber)
+        if config.digittype == 1:
+            docnum = utility.convertToPersian(docnum)
+        self.builder.get_object("docnumber").set_text (docnum)
         self.builder.get_object("debtsum").set_text (utility.showNumber(self.debt_sum))
         self.builder.get_object("creditsum").set_text (utility.showNumber(self.credit_sum))
         if self.debt_sum > self.credit_sum:
@@ -145,7 +156,9 @@ class AddEditDoc:
                 type = 0
             else:
                 type = 1;
-            self.saveRow(self.code.get_text(), int(self.amount.get_text()), type, desc.get_text())
+            
+            self.saveRow(utility.convertToLatin(self.code.get_text()), int(unicode(self.amount.get_text())), 
+                         type, desc.get_text())
         
         dialog.hide()
     
@@ -161,7 +174,7 @@ class AddEditDoc:
             credit = self.liststore.get(iter, 4)[0].replace(",", "")
             desctxt = self.liststore.get(iter, 5)[0]
             
-            if debt != "0":
+            if int(unicode(debt)) != 0:
                 self.builder.get_object("debtor").set_active(True)
                 self.amount.set_text(debt)
             else:
@@ -178,12 +191,13 @@ class AddEditDoc:
                 else:
                     type = 1
                     
-                if debt != "0":
-                    self.debt_sum -= int(debt)
+                if int(unicode(debt)) != 0:
+                    self.debt_sum -= int(unicode(debt))
                 else:
-                    self.credit_sum -= int(credit)
+                    self.credit_sum -= int(unicode(credit))
                     
-                self.saveRow(self.code.get_text(), int(self.amount.get_text()), type, desc.get_text(), iter)
+                self.saveRow(utility.convertToLatin(self.code.get_text()), int(unicode(self.amount.get_text())), 
+                             type, desc.get_text(), iter)
             
             dialog.hide()
         
@@ -202,8 +216,13 @@ class AddEditDoc:
             
         if sub.type != 2:
             type = sub.type
-        debt = 0
-        credit = 0
+        
+        debt = "0"
+        credit = "0"
+        if config.digittype == 1:
+            debt = utility.convertToPersian(debt)
+            credit = utility.convertToPersian(credit)
+            code = utility.convertToPersian(code)
         
         if type == 0:
             debt = utility.showNumber(amount)
@@ -217,7 +236,10 @@ class AddEditDoc:
             self.liststore.set (iter, 1, code, 2, sub.name, 3, debt, 4, credit, 5, desc)
         else :
             self.numrows += 1
-            self.liststore.append ((self.numrows, code, sub.name, debt, credit, desc))
+            numrows = str(self.numrows)
+            if config.digittype == 1:
+                numrows = utility.convertToPersian(numrows)
+            self.liststore.append ((numrows, code, sub.name, debt, credit, desc))
             
         self.builder.get_object("debtsum").set_text (utility.showNumber(self.debt_sum))
         self.builder.get_object("creditsum").set_text (utility.showNumber(self.credit_sum))
@@ -237,14 +259,17 @@ class AddEditDoc:
             result = msgbox.run();
             if result == gtk.RESPONSE_OK :
                 
-                debt = int(self.liststore.get(iter, 3)[0].replace(",", ""))
-                credit = int(self.liststore.get(iter, 4)[0].replace(",", ""))
-                index = self.liststore.get(iter, 0)[0]
+                debt = int(unicode(self.liststore.get(iter, 3)[0].replace(",", "")))
+                credit = int(unicode(self.liststore.get(iter, 4)[0].replace(",", "")))
+                index = int(unicode(self.liststore.get(iter, 0)[0]))
                 res = self.liststore.remove(iter)
                 #Update index of next rows
                 if res:
                     while iter != None:
-                        self.liststore.set_value (iter, 0, index)
+                        strindex = str(index)
+                        if config.digittype == 1:
+                            strindex = utility.convertToPersian(strindex)
+                        self.liststore.set_value (iter, 0, strindex)
                         index += 1
                         iter = self.liststore.iter_next(iter)
                 self.numrows -= 1;
@@ -295,11 +320,11 @@ class AddEditDoc:
             iter = self.liststore.get_iter_first()
             
             while iter != None :
-                code = self.liststore.get(iter, 1)[0]
-                debt = self.liststore.get(iter, 3)[0].replace(",", "")
+                code = utility.convertToLatin(self.liststore.get(iter, 1)[0])
+                debt = unicode(self.liststore.get(iter, 3)[0].replace(",", ""))
                 value = -(int(debt))
                 if value == 0 :
-                    credit = self.liststore.get(iter, 4)[0].replace(",", "")
+                    credit = unicode(self.liststore.get(iter, 4)[0].replace(",", ""))
                     value = int(credit)
                 desctxt = unicode(self.liststore.get(iter, 5)[0])
                 
@@ -312,7 +337,10 @@ class AddEditDoc:
                 iter = self.liststore.iter_next(iter)
                 
             self.session.commit()
-            self.builder.get_object("docnumber").set_text (str(self.docnumber))
+            docnum = str(self.docnumber)
+            if config.digittype == 1:
+                docnum = utility.convertToPersian(docnum)
+            self.builder.get_object("docnumber").set_text (docnum)
         
     def deleteDocument(self, sender):
         msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, _("Are you sure to delete the whole document?"))

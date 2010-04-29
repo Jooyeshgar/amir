@@ -39,7 +39,7 @@ class DocumentReport:
         query1 = self.session.query(Bill, Notebook, Subject)
         query1 = query1.select_from(outerjoin(outerjoin(Notebook, Subject, Notebook.subject_id == Subject.id), 
                                             Bill, Notebook.bill_id == Bill.id))
-        query1 = query1.filter(Bill.number == int(self.docnumber)).order_by(Notebook.id.asc())
+        query1 = query1.filter(Bill.number == int(unicode(self.docnumber))).order_by(Notebook.id.asc())
         res = query1.all()
         if len(res) == 0:
             msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 
@@ -56,13 +56,19 @@ class DocumentReport:
         for b, n, s in res:
             desc = n.desc
             if n.value < 0:
-                credit = "0"
+                credit = utility.showNumber(0)
                 debt = utility.showNumber(-(n.value))
             else:
                 credit = utility.showNumber(n.value)
-                debt = "0"
+                debt = utility.showNumber(0)
                 desc = "   " + desc
-            report_data.append((str(index), s.code, s.name, desc, debt, credit))
+                
+            code = s.code
+            strindex = str(index)
+            if config.digittype == 1:
+                code = utility.convertToPersian(code)
+                strindex = utility.convertToPersian(strindex)
+            report_data.append((strindex, code, s.name, desc, debt, credit))
             index += 1
         
         return {"data":report_data, "col-width":col_width ,"heading":report_header}
@@ -76,8 +82,12 @@ class DocumentReport:
             return
         #if len(report["data"]) == 0:
         datestr = dateToString(self.docdate)
+        docnumber = self.docnumber
+        if config.digittype == 1:
+            docnumber = utility.convertToPersian(docnumber)
+            
         printjob = printreport.PrintReport(report["data"], report["col-width"], report["heading"])
-        printjob.setHeader(_("Accounting Document"), {_("Document Number"):self.docnumber, _("Date"):datestr})
+        printjob.setHeader(_("Accounting Document"), {_("Document Number"):docnumber, _("Date"):datestr})
         printjob.setDrawFunction("drawDocument")
         
         printjob.doPrint()

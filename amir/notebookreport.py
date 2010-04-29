@@ -88,12 +88,12 @@ class NotebookReport:
         
         # Check if the subject code is valid in ledger and subledger reports
         if self.type != self.__class__.DAILY:
-            code = self.code.get_text()
+            code = utility.convertToLatin(self.code.get_text())
             query3 = self.session.query(Subject.name)
             query3 = query3.select_from(Subject).filter(Subject.code == code)
             names = query3.first()
             if names == None:
-                errorstr = _("No subject is registered with the code: %s") % code
+                errorstr = _("No subject is registered with the code: %s") % self.code.get_text()
                 msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK, errorstr)
                 msgbox.set_title(_("No subjects found"))
                 msgbox.run()
@@ -128,8 +128,8 @@ class NotebookReport:
                     query1 = query1.filter(Bill.date.between(fdate, tdate)).order_by(Bill.date.desc(), Bill.number.desc())
                     query2 = query2.filter(Bill.date < fdate)
                 else:
-                    fnumber = int(self.fnum.get_text())
-                    tnumber = int(self.tnum.get_text())
+                    fnumber = int(unicode(self.fnum.get_text()))
+                    tnumber = int(unicode(self.tnum.get_text()))
                     if tnumber < fnumber:
                         msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 
                                                    _("Second document number shouldn't be greater than the first one."))
@@ -148,13 +148,18 @@ class NotebookReport:
             for n, code, b in res:
                 desc = n.desc
                 if n.value < 0:
-                    credit = "0"
+                    credit = utility.convertToPersian("0")
                     debt = utility.showNumber(-(n.value))
                 else:
                     credit = utility.showNumber(n.value)
-                    debt = "0"
+                    debt = utility.convertToPersian("0")
                     desc = "   " + desc
-                report_data.append((str(b.number), dateToString(b.date), code, desc, debt, credit))
+                
+                billnumber = str(b.number)   
+                if config.digittype == 1:
+                    code = utility.convertToPersian(code)
+                    billnumber = utility.convertToPersian(billnumber)
+                report_data.append((billnumber, dateToString(b.date), code, desc, debt, credit))
         else:
             remaining = query2.first()[0]
             diagnose = ""
@@ -164,22 +169,25 @@ class NotebookReport:
             col_width = [55, 56, 182, 70, 70, 20, 70]
             for n, code, b in res:
                 if n.value < 0:
-                    credit = "0"
+                    credit = utility.convertToPersian("0")
                     debt = utility.showNumber(-(n.value))
                 else:
                     credit = utility.showNumber(n.value)
-                    debt = "0"
+                    debt = utility.convertToPersian("0")
                     
                 remaining += n.value
+                billnumber = str(b.number)
+                if config.digittype == 1:
+                    billnumber = utility.convertToPersian(billnumber)
                 if remaining < 0:
                     diagnose = _("deb")
-                    report_data.append((str(b.number), dateToString(b.date), n.desc, debt, credit, diagnose, utility.showNumber(-(remaining))))
+                    report_data.append((billnumber, dateToString(b.date), n.desc, debt, credit, diagnose, utility.showNumber(-(remaining))))
                 else:
                     if remaining == 0:
                         diagnose = _("equ")
                     else:
                         diagnose = _("cre")
-                    report_data.append((str(b.number), dateToString(b.date), n.desc, debt, credit, diagnose, utility.showNumber(remaining)))
+                    report_data.append((billnumber, dateToString(b.date), n.desc, debt, credit, diagnose, utility.showNumber(remaining)))
     
 #            else:
 #                if self.type == self.__class__.SUBLEDGER:
@@ -231,16 +239,21 @@ class NotebookReport:
             msgbox.destroy()
             return
         
-        todaystr = dateToString(date.today())
         printjob = printreport.PrintReport(report["data"], report["col-width"], report["heading"])
         if self.type == self.__class__.DAILY:
+            todaystr = dateToString(date.today())
             printjob.setHeader(_("Daily Notebook"), {_("Date"):todaystr})
             printjob.setDrawFunction("drawDailyNotebook")
         else:
-            if self.type == self.__class__.LEDGER:
-                printjob.setHeader(_("Ledger Notebook"), {_("Subject Name"):self.subname, _("Subject Code"):self.subcode})
+            if config.digittype == 1:
+                code = utility.convertToPersian(self.subcode)
             else:
-                printjob.setHeader(_("Sub-Leger Notebook"), {_("Subject Name"):self.subname, _("Subject Code"):self.subcode})
+                code = self.subcode
+                
+            if self.type == self.__class__.LEDGER:
+                printjob.setHeader(_("Ledger Notebook"), {_("Subject Name"):self.subname, _("Subject Code"):code})
+            else:
+                printjob.setHeader(_("Sub-Leger Notebook"), {_("Subject Name"):self.subname, _("Subject Code"):code})
             printjob.setDrawFunction("drawSubjectNotebook")
         
         printjob.doPrint()
@@ -257,6 +270,8 @@ class NotebookReport:
         subject_win.connect("subject-selected", self.subjectSelected)
     
     def subjectSelected(self, sender, id, code, name):
+        if config.digittype == 1:
+            code = utility.convertToPersian(code)
         self.code.set_text(code)
         sender.window.destroy()
         

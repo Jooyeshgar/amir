@@ -4,6 +4,7 @@ import gobject
 import string
 from datetime import date
 
+import utility
 from amirconfig import config
 from calverter import calverter
 
@@ -21,6 +22,8 @@ def dateToString(date):
         
     delim = config.datedelims[config.datedelim]
     datestring = str(datelist[0]) + delim + str(datelist[1]) + delim + str(datelist[2])
+    if config.digittype == 1:
+        datestring = utility.convertToPersian(datestring)
     return datestring
     
 class DateEntry(gtk.Entry):
@@ -29,7 +32,7 @@ class DateEntry(gtk.Entry):
     
     def __init__(self, init_date=None):
         """
-        date is a tuple containing the default DatEntry value. date is in the form of (YYYY, MM, DD) as three integers. 
+        date is a tuple containing the default DateEntry value. date is in the form of (YYYY, MM, DD) as three integers. 
         """
         gtk.Entry.__init__(self)
         self.set_alignment(0.5)
@@ -60,6 +63,8 @@ class DateEntry(gtk.Entry):
         
         delim = config.datedelims[config.datedelim]
         datestring = str(datelist[0]) + delim + str(datelist[1]) + delim + str(datelist[2])
+        if config.digittype == 1:
+            datestring = utility.convertToPersian(datestring)
         self.set_text(datestring)
         self.year = year
         self.month = month
@@ -87,14 +92,17 @@ class DateEntry(gtk.Entry):
         datelist = string.split(text, config.datedelims[config.datedelim]) 
         try:
             tyear = datelist[config.datefields["year"]]
+            tyear = utility.convertToLatin(tyear)
         except IndexError:
             tyear = ""
         try:
-            tmonth =  datelist[config.datefields["month"]]
+            tmonth = datelist[config.datefields["month"]]
+            tmonth = utility.convertToLatin(tmonth)
         except IndexError:
             tmonth = ""
         try:
             tday = datelist[config.datefields["day"]]
+            tday = utility.convertToLatin(tday)
         except IndexError:
             tday = ""
         

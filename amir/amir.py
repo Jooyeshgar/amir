@@ -46,7 +46,7 @@ class MainWindow:
         res = dialog.run()
         dialog.hide()
         if res != gtk.RESPONSE_CANCEL:
-            dialog = addeditdoc.AddEditDoc(int(self.numentry.get_text()))
+            dialog = addeditdoc.AddEditDoc(int(unicode(self.numentry.get_text())))
             
         
     def settingsDialog(self, sender):
@@ -80,6 +80,7 @@ class MainWindow:
 
     def __init__(self):
         gobject.threads_init()
+        #gtk.widget_set_default_direction(gtk.TEXT_DIR_RTL)
 
         self.builder = gtk.Builder()
         self.builder.set_translation_domain("amir")

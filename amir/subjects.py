@@ -7,6 +7,8 @@ from sqlalchemy.orm.query import aliased
 from sqlalchemy.sql.functions import count
 from sqlalchemy.sql import and_
 from sqlalchemy.orm import sessionmaker, join
+
+import utility
 from database import *
 from amirconfig import config
 
@@ -51,7 +53,10 @@ class Subjects(gobject.GObject):
         result = query.filter(Subject1.parent_id == 0).group_by(Subject1.id).all()
         for a in result :
             type = _(self.__class__.subjecttypes[a[2]])
-            iter = self.treestore.append(None, (a[0], a[1], type))
+            code = a[0]
+            if config.digittype == 1:
+                code = utility.convertToPersian(code)
+            iter = self.treestore.append(None, (code, a[1], type))
             if (a[3] != 0 and ledgers_only == False) :
                 #Add empty subledger to show expander for ledgers which have chidren
                 self.treestore.append(iter, ("", "", ""))
@@ -162,11 +167,11 @@ class Subjects(gobject.GObject):
             Subject1 = aliased(Subject, name="s1")
             Subject2 = aliased(Subject, name="s2")
             
-            code = self.treestore.get(iter, 0)
+            code = utility.convertToLatin(self.treestore.get(iter, 0)[0])
             #Check to see if there is any subledger for this ledger.
             query = self.session.query(Subject1.id, count(Subject2.id))
             query = query.select_from(outerjoin(Subject1, Subject2, Subject1.id == Subject2.parent_id))
-            result = query.filter(Subject1.code == code[0]).first()
+            result = query.filter(Subject1.code == code).first()
             
             if result[1] != 0 :
                 msgbox =  gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
@@ -205,7 +210,7 @@ class Subjects(gobject.GObject):
                 iter_code = ""
                 parent_id = 0
             else :
-                iter_code = self.treestore.get(iter, 0)[0]
+                iter_code = utility.convertToLatin(self.treestore.get(iter, 0)[0])
                 query = self.session.query(Subject).select_from(Subject)
                 query = query.filter(Subject.code == iter_code)
                 sub = query.first()
@@ -275,6 +280,8 @@ class Subjects(gobject.GObject):
                     self.session.add(ledger)
                     self.session.commit()
                     
+                    if config.digittype == 1:
+                        lastcode = utility.convertToPersian(lastcode)
                     child = self.treestore.append(iter, (lastcode, name, _(self.__class__.subjecttypes[type])))
                     
                     self.temppath = self.treestore.get_path(child)
@@ -285,9 +292,9 @@ class Subjects(gobject.GObject):
     def populateChildren(self, treeview, iter, path):
         chiter = self.treestore.iter_children(iter)
         if chiter != None :
-            value = self.treestore.get(chiter, 0)[0]
+            value = utility.convertToLatin(self.treestore.get(chiter, 0)[0])
             if value == "" :
-                value = self.treestore.get(iter, 0)[0]
+                value =  utility.convertToLatin(self.treestore.get(iter, 0)[0])
                 #remove empty subledger to add real children instead
                 self.treestore.remove(chiter)
                 
@@ -299,8 +306,11 @@ class Subjects(gobject.GObject):
                 query = query.select_from(outerjoin(outerjoin(Parent, Sub, Sub.parent_id == Parent.id), Child, Sub.id == Child.parent_id))
                 result = query.filter(Parent.code == value).group_by(Sub.id).all()
                 for row in result :
+                    code = row[0]
+                    if config.digittype == 1:
+                        code = utility.convertToPersian(code)
                     type = _(self.__class__.subjecttypes[row[2]])
-                    chiter = self.treestore.append(iter, (row[0], row[1], type))
+                    chiter = self.treestore.append(iter, (code, row[1], type))
                     if row[3] != 0 :
                         #add empty subledger for those children which have subledgers in turn. (to show expander)
                         self.treestore.append(chiter, ("", "", ""))
@@ -308,7 +318,7 @@ class Subjects(gobject.GObject):
     
     def selectSubjectFromList(self, treeview, path, view_column):
         iter = self.treestore.get_iter(path)
-        code = self.treestore.get(iter, 0)[0]
+        code = utility.convertToLatin(self.treestore.get(iter, 0)[0])
         name = self.treestore.get(iter, 1)[0]
         
         query = self.session.query(Subject).select_from(Subject)

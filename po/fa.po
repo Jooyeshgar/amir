@@ -51,7 +51,7 @@ msgstr "سرفصلی با این نام موجود است"
 
 #: data/mainwin.glade:16
 msgid "_Actions"
-msgstr "_Actions"
+msgstr "_عملیات"
 
 #: data/mainwin.glade:45
 msgid "_View"

@@ -2,6 +2,8 @@ import pygtk
 import gtk
 import gobject
 
+import utility
+
 class NumberEntry(gtk.Entry):
     
     def __init__(self):
@@ -11,7 +13,8 @@ class NumberEntry(gtk.Entry):
     def insert(self, widget, text, pos):
     # the next three lines set up the text. this is done because we
     # can't use insert_text(): it always inserts at position zero.
-        orig_text = widget.get_text()
+        orig_text = unicode(widget.get_text())
+        text = unicode(text)
         try:
             num = int(text)
         except ValueError:

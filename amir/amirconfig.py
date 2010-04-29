@@ -156,6 +156,8 @@ class AmirConfig:
         for i in range(0,3):
             field = self.dateorders[self.dateorder][i]
             self.datefields[field] = i
+            
+        self.digittype = 1  # 0 for latin, 1 for persian 
         
     def updateConfigFile(self):
         keys = ['database', 'dateformat', 'delimiter', 'dateorder']
