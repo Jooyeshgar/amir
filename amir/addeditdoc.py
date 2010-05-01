@@ -79,7 +79,10 @@ class AddEditDoc:
             bill = query.filter(Bill.number == number).first()
             self.docnumber = number
             if bill == None:
-                msg = "No document found with number %d\nDo you want to register a document with this number?" % number
+                numstring = str(number)
+                if config.digittype == 1:
+                    numstring = utility.convertToPersian(numstring)
+                msg = _("No document found with number %s\nDo you want to register a document with this number?") % numstring
                 msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, msg)
                 msgbox.set_title(_("No Documents found"))
                 result = msgbox.run()
@@ -207,6 +210,8 @@ class AddEditDoc:
         query = query.filter(Subject.code == code)
         sub = query.first()
         if sub == None:
+            if config.digittype == 1:
+                code = utility.convertToPersian(code)
             errorstr = _("No subject is registered with the code: %s") % code
             msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK, errorstr)
             msgbox.set_title(_("No subjects found"))

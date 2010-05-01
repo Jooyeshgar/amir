@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-15 12:51+0330\n"
+"POT-Creation-Date: 2010-05-01 11:34+0430\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,136 +16,582 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/subjects.py:24
+#: amir/addeditdoc.py:22
+msgid "Register new document"
+msgstr ""
+
+#: amir/addeditdoc.py:42 amir/docreport.py:53
+msgid "Index"
+msgstr ""
+
+#: amir/addeditdoc.py:46 amir/docreport.py:53 amir/notebookreport.py:146
+#: amir/notebookreport.py:254 amir/notebookreport.py:256 amir/subjects.py:31
 msgid "Subject Code"
 msgstr ""
 
-#: src/subjects.py:26
+#: amir/addeditdoc.py:50 amir/docreport.py:53 amir/notebookreport.py:254
+#: amir/notebookreport.py:256 amir/subjects.py:35
 msgid "Subject Name"
 msgstr ""
 
-#: src/subjects.py:28
+#: amir/addeditdoc.py:58 amir/docreport.py:53 amir/notebookreport.py:146
+#: amir/notebookreport.py:168 data/ui/document.glade:395
+msgid "Debt"
+msgstr ""
+
+#: amir/addeditdoc.py:62 amir/docreport.py:53 amir/notebookreport.py:146
+#: amir/notebookreport.py:168 data/ui/document.glade:408
+msgid "Credit"
+msgstr ""
+
+#: amir/addeditdoc.py:66 amir/docreport.py:53 amir/notebookreport.py:146
+#: amir/notebookreport.py:168
+msgid "Description"
+msgstr ""
+
+#: amir/addeditdoc.py:85
+#, python-format
+msgid ""
+"No document found with number %s\n"
+"Do you want to register a document with this number?"
+msgstr ""
+
+#: amir/addeditdoc.py:87
+msgid "No Documents found"
+msgstr ""
+
+#: amir/addeditdoc.py:151
+msgid "Add new row"
+msgstr ""
+
+#: amir/addeditdoc.py:170 data/ui/document.glade:34
+msgid "Edit row"
+msgstr ""
+
+#: amir/addeditdoc.py:215 amir/notebookreport.py:96
+#, python-format
+msgid "No subject is registered with the code: %s"
+msgstr ""
+
+#: amir/addeditdoc.py:217 amir/notebookreport.py:98
+msgid "No subjects found"
+msgstr ""
+
+#: amir/addeditdoc.py:262
+msgid "Are you sure to remove this row?"
+msgstr ""
+
+#: amir/addeditdoc.py:263 amir/addeditdoc.py:352
+msgid "Are you sure?"
+msgstr ""
+
+#: amir/addeditdoc.py:296
+msgid "Debt sum and Credit sum should be equal"
+msgstr ""
+
+#: amir/addeditdoc.py:297
+msgid "Can not save document"
+msgstr ""
+
+#: amir/addeditdoc.py:351
+msgid "Are you sure to delete the whole document?"
+msgstr ""
+
+#: amir/docreport.py:46
+msgid "No document found with the requested number."
+msgstr ""
+
+#: amir/docreport.py:47
+msgid "Invalid document number"
+msgstr ""
+
+#: amir/docreport.py:90
+msgid "Accounting Document"
+msgstr ""
+
+#: amir/docreport.py:90
+msgid "Document Number"
+msgstr ""
+
+#: amir/docreport.py:90 amir/notebookreport.py:146 amir/notebookreport.py:168
+#: amir/notebookreport.py:245
+msgid "Date"
+msgstr ""
+
+#: amir/notebookreport.py:29
+msgid "Daily NoteBook"
+msgstr ""
+
+#: amir/notebookreport.py:123
+msgid "Second date value shouldn't precede the first one."
+msgstr ""
+
+#: amir/notebookreport.py:124
+msgid "Invalid date order"
+msgstr ""
+
+#: amir/notebookreport.py:135
+msgid "Second document number shouldn't be greater than the first one."
+msgstr ""
+
+#: amir/notebookreport.py:136
+msgid "Invalid document order"
+msgstr ""
+
+#: amir/notebookreport.py:146 amir/notebookreport.py:168
+msgid "Doc. Number"
+msgstr ""
+
+#: amir/notebookreport.py:168
+msgid "Diagnosis"
+msgstr ""
+
+#: amir/notebookreport.py:168
+msgid "Remaining"
+msgstr ""
+
+#: amir/notebookreport.py:183 amir/printreport.py:379 amir/printreport.py:384
+msgid "deb"
+msgstr ""
+
+#: amir/notebookreport.py:187 amir/printreport.py:387
+msgid "equ"
+msgstr ""
+
+#: amir/notebookreport.py:189 amir/printreport.py:389
+msgid "cre"
+msgstr ""
+
+#: amir/notebookreport.py:224 amir/notebookreport.py:236
+msgid "The requested notebook is empty."
+msgstr ""
+
+#: amir/notebookreport.py:225 amir/notebookreport.py:237
+msgid "Empty notebook"
+msgstr ""
+
+#: amir/notebookreport.py:245
+msgid "Daily Notebook"
+msgstr ""
+
+#: amir/notebookreport.py:254
+msgid "Ledger Notebook"
+msgstr ""
+
+#: amir/notebookreport.py:256
+msgid "Sub-Leger Notebook"
+msgstr ""
+
+#: amir/printreport.py:149 amir/printreport.py:337
+msgid "Sum of previous page"
+msgstr ""
+
+#: amir/printreport.py:254 amir/printreport.py:480 amir/printreport.py:616
+msgid "Sum"
+msgstr ""
+
+#: amir/setting.py:82
+msgid ""
+"Can not connect to the database. The selected database file may not be a "
+"sqlite database or be corrupt."
+msgstr ""
+
+#: amir/setting.py:84
+msgid ""
+"The selected file is compatible with older versions of Amir. First convert "
+"it to the new version."
+msgstr ""
+
+#: amir/setting.py:86
+msgid "The requested database file doesn' exist."
+msgstr ""
+
+#: amir/setting.py:90
+msgid "Error opening new database"
+msgstr ""
+
+#: amir/setting.py:97
+msgid "Current database: "
+msgstr ""
+
+#: amir/setting.py:107
+msgid ""
+"Can not connect to the database. The selected file for convert may not be a "
+"sqlite database or be corrupt."
+msgstr ""
+
+#: amir/setting.py:109
+msgid "The selected file is not compatible with older versions of Amir."
+msgstr ""
+
+#: amir/setting.py:111
+msgid "The requested database file doesn't exist."
+msgstr ""
+
+#: amir/setting.py:115
+msgid "Error opening database for conversion"
+msgstr ""
+
+#: amir/setting.py:125
+msgid "Please select a directory for the converted database."
+msgstr ""
+
+#: amir/setting.py:132
+#, python-format
+msgid ""
+"File %s already exists in destination directory, Do you want to overwrite it?"
+msgstr ""
+
+#: amir/setting.py:134
+msgid "Overwrite destination file?"
+msgstr ""
+
+#: amir/setting.py:142
+msgid "Please wait.."
+msgstr ""
+
+#: amir/setting.py:144
+msgid "Converting database"
+msgstr ""
+
+#: amir/setting.py:159
+msgid "The requested directory doesn't exist."
+msgstr ""
+
+#: amir/setting.py:162
+msgid "Error opening destination"
+msgstr ""
+
+#: amir/setting.py:170
+#, python-format
+msgid ""
+"Convert Operation Completed!\n"
+"New database: %s"
+msgstr ""
+
+#: amir/subjects.py:39
 msgid "Debtor or Creditor"
 msgstr ""
 
-#: src/subjects.py:100
+#: amir/subjects.py:119
 msgid "Please select an item from the list, to add subject for it."
 msgstr ""
 
-#: src/subjects.py:157
-msgid "Subject can not be deleted, because of having some child subjects"
+#: amir/subjects.py:120
+msgid "Select a subject"
 msgstr ""
 
-#: src/subjects.py:167
+#: amir/subjects.py:178
+msgid "Subject can not be deleted, because it has some child subjects."
+msgstr ""
+
+#: amir/subjects.py:179 amir/subjects.py:190
+msgid "Error deleting subject"
+msgstr ""
+
+#: amir/subjects.py:189
 msgid ""
 "Subject can not be deleted, because there are some documents registered for "
-"it"
+"it."
 msgstr ""
 
-#: src/subjects.py:181
-msgid "Subject name should not be empty"
+#: amir/subjects.py:203
+msgid "Subject name should not be empty."
 msgstr ""
 
-#: src/subjects.py:208
-msgid "A ledger with this name already exists."
+#: amir/subjects.py:204
+msgid "Empty subject name"
 msgstr ""
 
-#: data/mainwin.glade:16
+#: amir/subjects.py:231
+msgid "A subject with this name already exists in the current level."
+msgstr ""
+
+#: amir/subjects.py:232
+msgid "Duplicate subject name"
+msgstr ""
+
+#: amir/subjects.py:245
+#, python-format
+msgid ""
+"The type of this subject can not be changed to 'creditor', Because there "
+"are                                 %d documents that use it as debtor."
+msgstr ""
+
+#: amir/subjects.py:250
+#, python-format
+msgid ""
+"The type of this subject can not be changed to 'debtor', Because there "
+"are                                 %d documents that use it as creditor."
+msgstr ""
+
+#: amir/subjects.py:254
+msgid "Can not change subject type"
+msgstr ""
+
+#: data/ui/document.glade:21
+msgid "Add row"
+msgstr ""
+
+#: data/ui/document.glade:47
+msgid "Remove row"
+msgstr ""
+
+#: data/ui/document.glade:69 data/ui/setting.glade:265
+#: data/ui/setting.glade:512
+msgid "Apply"
+msgstr ""
+
+#: data/ui/document.glade:82 data/ui/notebook.glade:277
+msgid "Delete"
+msgstr ""
+
+#: data/ui/document.glade:100
+msgid "Document Numebr:"
+msgstr ""
+
+#: data/ui/document.glade:111 data/ui/document.glade:190
+#: data/ui/document.glade:222 data/ui/document.glade:260
+msgid "----"
+msgstr ""
+
+#: data/ui/document.glade:132
+msgid "Date:"
+msgstr ""
+
+#: data/ui/document.glade:181
+msgid "Debt Sum: "
+msgstr ""
+
+#: data/ui/document.glade:211
+msgid "Credit Sum: "
+msgstr ""
+
+#: data/ui/document.glade:250
+msgid "Difference: "
+msgstr ""
+
+#: data/ui/document.glade:299 data/ui/report.glade:29
+msgid "Subject Code: "
+msgstr ""
+
+#: data/ui/document.glade:323 data/ui/report.glade:52
+#: data/ui/setting.glade:593
+msgid "Select"
+msgstr ""
+
+#: data/ui/document.glade:354
+msgid "Amount: "
+msgstr ""
+
+#: data/ui/document.glade:426
+msgid "Transaction type"
+msgstr ""
+
+#: data/ui/document.glade:444
+msgid "Description:"
+msgstr ""
+
+#: data/ui/mainwin.glade:16
 msgid "_Actions"
 msgstr ""
 
-#: data/mainwin.glade:45
-msgid "_View"
-msgstr ""
-
-#: data/mainwin.glade:57
+#: data/ui/mainwin.glade:47
 msgid "_Reports"
 msgstr ""
 
-#: data/mainwin.glade:86
+#: data/ui/mainwin.glade:55
+msgid "Notebooks"
+msgstr ""
+
+#: data/ui/mainwin.glade:102
 msgid "_Management"
 msgstr ""
 
-#: data/mainwin.glade:115 data/mainwin.glade:201
+#: data/ui/mainwin.glade:139 data/ui/mainwin.glade:226
 msgid "_Help"
 msgstr ""
 
-#: data/mainwin.glade:144
+#: data/ui/mainwin.glade:169
 msgid "_Initial Settings"
 msgstr ""
 
-#: data/mainwin.glade:264 data/notebook.glade:40
+#: data/ui/mainwin.glade:289 data/ui/notebook.glade:40
 msgid "label"
 msgstr ""
 
-#: data/mainwin.glade:317
-msgid "_Quit"
+#: data/ui/mainwin.glade:383
+msgid "Select document to edit"
 msgstr ""
 
-#: data/mainwin.glade:323
-msgid "_About Amir"
+#: data/ui/mainwin.glade:399 data/ui/report.glade:446
+msgid "Document Number: "
 msgstr ""
 
-#: data/mainwin.glade:328 data/notebook.glade:212
-msgid "Notebook Subjects"
-msgstr ""
-
-#: data/mainwin.glade:332
-msgid "_Settings"
-msgstr ""
-
-#: data/notebook.glade:7 data/notebook.glade:228
+#: data/ui/notebook.glade:7 data/ui/notebook.glade:228
 msgid "Add ledger"
 msgstr ""
 
-#: data/notebook.glade:28
+#: data/ui/notebook.glade:28
 msgid "Sub-ledger from:"
 msgstr ""
 
-#: data/notebook.glade:59
+#: data/ui/notebook.glade:59
 msgid "Ledger name:"
 msgstr ""
 
-#: data/notebook.glade:101
+#: data/ui/notebook.glade:101
 msgid "Debtor"
 msgstr ""
 
-#: data/notebook.glade:114
+#: data/ui/notebook.glade:114
 msgid "Creditor"
 msgstr ""
 
-#: data/notebook.glade:128
+#: data/ui/notebook.glade:128
 msgid "Both"
 msgstr ""
 
-#: data/notebook.glade:147
+#: data/ui/notebook.glade:147
 msgid "Ledger type"
 msgstr ""
 
-#: data/notebook.glade:168
-msgid "gtk-cancel"
+#: data/ui/notebook.glade:212
+msgid "Notebook Subjects"
 msgstr ""
 
-#: data/notebook.glade:182
-msgid "gtk-ok"
-msgstr ""
-
-#: data/notebook.glade:227
+#: data/ui/notebook.glade:227
 msgid "Insert"
 msgstr ""
 
-#: data/notebook.glade:241
+#: data/ui/notebook.glade:241
 msgid "Add sub-ledger"
 msgstr ""
 
-#: data/notebook.glade:262
+#: data/ui/notebook.glade:262
 msgid "Edit"
 msgstr ""
 
-#: data/notebook.glade:276
+#: data/ui/notebook.glade:276
 msgid "Ctrl+D"
 msgstr ""
 
-#: data/notebook.glade:277
-msgid "Delete"
+#: data/ui/report.glade:70
+msgid "Subject"
+msgstr ""
+
+#: data/ui/report.glade:100
+msgid "Show the whole content"
+msgstr ""
+
+#: data/ui/report.glade:118
+msgid "Show content at date: "
+msgstr ""
+
+#: data/ui/report.glade:174
+msgid "Show content between dates: "
+msgstr ""
+
+#: data/ui/report.glade:207 data/ui/report.glade:289
+msgid "to"
+msgstr ""
+
+#: data/ui/report.glade:257
+msgid "Show content between document numbers"
+msgstr ""
+
+#: data/ui/report.glade:330
+msgid "Report parameters"
+msgstr ""
+
+#: data/ui/report.glade:348 data/ui/report.glade:490
+msgid "Preview"
+msgstr ""
+
+#: data/ui/report.glade:384 data/ui/report.glade:526
+msgid "Print"
+msgstr ""
+
+#: data/ui/report.glade:402 data/ui/report.glade:544
+msgid "Export to CSV format"
+msgstr ""
+
+#: data/ui/report.glade:426
+msgid "Select Document"
+msgstr ""
+
+#: data/ui/setting.glade:7
+msgid "Settings"
+msgstr ""
+
+#: data/ui/setting.glade:41
+msgid ""
+"Before you change the database, Make sure you don't have any unsaved data.\n"
+"\n"
+"Current database: "
+msgstr ""
+
+#: data/ui/setting.glade:59
+msgid "Choose database: "
+msgstr ""
+
+#: data/ui/setting.glade:80 data/ui/setting.glade:161
+#: data/ui/setting.glade:209
+msgid "Browse"
+msgstr ""
+
+#: data/ui/setting.glade:103
+msgid "Change database"
+msgstr ""
+
+#: data/ui/setting.glade:139
+msgid "Old Database:  "
+msgstr ""
+
+#: data/ui/setting.glade:151
+msgid "The database file to convert."
+msgstr ""
+
+#: data/ui/setting.glade:187
+msgid "New Database Path: "
+msgstr ""
+
+#: data/ui/setting.glade:199
+msgid "A directory to put the result of conversion."
+msgstr ""
+
+#: data/ui/setting.glade:233
+msgid "Convert database"
+msgstr ""
+
+#: data/ui/setting.glade:288
+msgid "Database"
+msgstr ""
+
+#: data/ui/setting.glade:323
+msgid "Date Format: "
+msgstr ""
+
+#: data/ui/setting.glade:366
+msgid "Date Order: "
+msgstr ""
+
+#: data/ui/setting.glade:395
+msgid "Separate by: "
+msgstr ""
+
+#: data/ui/setting.glade:430
+msgid "Date Format"
+msgstr ""
+
+#: data/ui/setting.glade:459
+msgid "Use latin characters for numbers."
+msgstr ""
+
+#: data/ui/setting.glade:480
+msgid "Number Format"
+msgstr ""
+
+#: data/ui/setting.glade:538
+msgid "Format"
 msgstr ""
