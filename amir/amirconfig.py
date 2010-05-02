@@ -22,6 +22,7 @@
 # where your project will head for your data (for instance, images and ui files)
 # by default, this is ../data, relative your trunk layout
 __amir_data_directory__ = '../data/'
+__license__ = 'GPL-3'
 
 
 import os, optparse, logging, sys
