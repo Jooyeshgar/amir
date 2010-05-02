@@ -14,7 +14,6 @@ Package: amir
 Architecture: all
 XB-Python-Version: ${python:Versions}
 Depends: ${misc:Depends},
- ${python:Depends}${misc:Depends},
  ${python:Depends},
  python-gobject,
  python-gtk2
