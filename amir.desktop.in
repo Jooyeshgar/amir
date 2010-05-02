@@ -3,6 +3,6 @@ Name=Amir
 Comment=Amir application
 Categories=GNOME;Utility;
 Exec=amir
-Icon=amir
+Icon=/usr/share/amir/media/icon.png
 Terminal=false
 Type=Application

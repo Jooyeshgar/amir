@@ -1,20 +1,41 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+# Copyright (C) 2010 <jooyeshgar> <info@jooyeshgar.com>
+#This program is free software: you can redistribute it and/or modify it 
+#under the terms of the GNU General Public License version 3, as published 
+#by the Free Software Foundation.
+#
+#This program is distributed in the hope that it will be useful, but 
+#WITHOUT ANY WARRANTY; without even the implied warranties of 
+#MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR 
+#PURPOSE.  See the GNU General Public License for more details.
+#
+#You should have received a copy of the GNU General Public License along 
+#with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 #!/usr/bin/env python
 
+import sys
+import os
 import pygtk
 pygtk.require('2.0')
 import gtk
-import database
 import gettext,locale
 import gobject
-import os
 
-import subjects
-import numberentry
-import addeditdoc
-import notebookreport
-import docreport
-import setting
-from amirconfig import config
+# Check if we are working in the source tree or from the installed 
+# package and mangle the python path accordingly
+if os.path.dirname(sys.argv[0]) != ".":
+    if sys.argv[0][0] == "/":
+        fullPath = os.path.dirname(sys.argv[0])
+    else:
+        fullPath = os.getcwd() + "/" + os.path.dirname(sys.argv[0])
+else:
+    fullPath = os.getcwd()
+sys.path.insert(0, os.path.dirname(fullPath))
+
+from amir.amirconfig import config
+from amir import subjects, addeditdoc, database, numberentry, notebookreport, docreport, setting
      
 class MainWindow:
 
@@ -84,7 +105,7 @@ class MainWindow:
 
         self.builder = gtk.Builder()
         self.builder.set_translation_domain("amir")
-        self.builder.add_from_file("../data/ui/mainwin.glade")
+        self.builder.add_from_file(config.data_path+"/ui/mainwin.glade")
         self.window = self.builder.get_object("window1")
         
         self.numentry = numberentry.NumberEntry()

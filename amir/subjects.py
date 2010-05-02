@@ -21,7 +21,7 @@ class Subjects(gobject.GObject):
         
         self.builder = gtk.Builder()
         self.builder.set_translation_domain("amir")
-        self.builder.add_from_file("../data/ui/notebook.glade")
+        self.builder.add_from_file(config.data_path+"/ui/notebook.glade")
         
         self.window = self.builder.get_object("subjectswindow")
         self.window.set_modal(True)
