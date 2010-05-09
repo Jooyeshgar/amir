@@ -5,126 +5,630 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: amir\n"
-"POT-Creation-Date: 2010-03-04 17:34+IRST\n"
-"PO-Revision-Date: 2010-03-05 12:52+0330\n"
-"Last-Translator: Hadi Aminzadeh <ha_60@yahoo.com>\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-05-01 11:34+0430\n"
+"PO-Revision-Date: 2010-05-01 09:22+0000\n"
+"Last-Translator: Golnaz Nilieh <g382nilieh@gmail.com>\n"
 "Language-Team: persian <info@jooyeshgar.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2010-05-01 09:28+0000\n"
+"X-Generator: Launchpad (build Unknown)\n"
 "Generated-By: pygettext.py 1.5\n"
-"Report-Msgid-Bugs-To: \n"
 
-#: src/subjects.py:24
+#: amir/addeditdoc.py:22
+msgid "Register new document"
+msgstr "ثبت سند جدید"
+
+#: amir/addeditdoc.py:42 amir/docreport.py:53
+msgid "Index"
+msgstr "ردیف"
+
+#: amir/addeditdoc.py:46 amir/docreport.py:53 amir/notebookreport.py:146
+#: amir/notebookreport.py:254 amir/notebookreport.py:256 amir/subjects.py:31
 msgid "Subject Code"
 msgstr "کد سرفصل"
 
-#: src/subjects.py:26
+#: amir/addeditdoc.py:50 amir/docreport.py:53 amir/notebookreport.py:254
+#: amir/notebookreport.py:256 amir/subjects.py:35
 msgid "Subject Name"
 msgstr "عنوان سرفصل"
 
-#: src/subjects.py:28
-msgid "Debtor or Creditor"
-msgstr "بدهکار بستانکار"
+#: amir/addeditdoc.py:58 amir/docreport.py:53 amir/notebookreport.py:146
+#: amir/notebookreport.py:168 data/ui/document.glade:395
+msgid "Debt"
+msgstr "بدهکاری"
 
-#: src/subjects.py:100
+#: amir/addeditdoc.py:62 amir/docreport.py:53 amir/notebookreport.py:146
+#: amir/notebookreport.py:168 data/ui/document.glade:408
+msgid "Credit"
+msgstr "بستانکاری"
+
+#: amir/addeditdoc.py:66 amir/docreport.py:53 amir/notebookreport.py:146
+#: amir/notebookreport.py:168
+msgid "Description"
+msgstr "توضیح"
+
+#: amir/addeditdoc.py:85
+#, python-format
+msgid ""
+"No document found with number %s\n"
+"Do you want to register a document with this number?"
+msgstr ""
+"سندی با شماره %s پیدا نشد\n"
+"آیا مایلید سندی با این شماره ثبت کنید؟"
+
+#: amir/addeditdoc.py:87
+msgid "No Documents found"
+msgstr "هیچ سندی پیدا نشد"
+
+#: amir/addeditdoc.py:151
+msgid "Add new row"
+msgstr "اضافه کردن سطر جدید"
+
+#: amir/addeditdoc.py:170 data/ui/document.glade:34
+msgid "Edit row"
+msgstr "ویرایش سطر"
+
+#: amir/addeditdoc.py:215 amir/notebookreport.py:96
+#, python-format
+msgid "No subject is registered with the code: %s"
+msgstr "هیچ سرفصلی با کد %s ثبت نشده است"
+
+#: amir/addeditdoc.py:217 amir/notebookreport.py:98
+msgid "No subjects found"
+msgstr "هیچ سرفصلی پیدا نشد"
+
+#: amir/addeditdoc.py:262
+msgid "Are you sure to remove this row?"
+msgstr "آیا از حذف این ردیف مطمئن هستید؟"
+
+#: amir/addeditdoc.py:263 amir/addeditdoc.py:352
+msgid "Are you sure?"
+msgstr "آیا مطمئن هستید؟"
+
+#: amir/addeditdoc.py:296
+msgid "Debt sum and Credit sum should be equal"
+msgstr "جمع بدهکاری و جمع بستانکاری باید با هم برابر باشند"
+
+#: amir/addeditdoc.py:297
+msgid "Can not save document"
+msgstr "امکان ذخیره سند وجود ندارد"
+
+#: amir/addeditdoc.py:351
+msgid "Are you sure to delete the whole document?"
+msgstr "آیا از حذف کامل سند اطمینان دارید؟"
+
+#: amir/docreport.py:46
+msgid "No document found with the requested number."
+msgstr "سندی با شماره خواسته شده پیدا نشد."
+
+#: amir/docreport.py:47
+msgid "Invalid document number"
+msgstr "شماره سند نادرست است"
+
+#: amir/docreport.py:90
+msgid "Accounting Document"
+msgstr "سند حسابداری"
+
+#: amir/docreport.py:90
+msgid "Document Number"
+msgstr "شماره سند"
+
+#: amir/docreport.py:90 amir/notebookreport.py:146 amir/notebookreport.py:168
+#: amir/notebookreport.py:245
+msgid "Date"
+msgstr "تاریخ"
+
+#: amir/notebookreport.py:29
+msgid "Daily NoteBook"
+msgstr "دفتر روزنامه‌ای"
+
+#: amir/notebookreport.py:123
+msgid "Second date value shouldn't precede the first one."
+msgstr "تاریخ دوم نباید از تاریخ اول عقب‌تر باشد"
+
+#: amir/notebookreport.py:124
+msgid "Invalid date order"
+msgstr "ترتیب نادرست تاریخ"
+
+#: amir/notebookreport.py:135
+msgid "Second document number shouldn't be greater than the first one."
+msgstr "شماره سند دوم نباید از شماره سند اول کوچکتر باشد."
+
+#: amir/notebookreport.py:136
+msgid "Invalid document order"
+msgstr "ترتیب نادرست شماره سند"
+
+#: amir/notebookreport.py:146 amir/notebookreport.py:168
+msgid "Doc. Number"
+msgstr "شماره سند"
+
+#: amir/notebookreport.py:168
+msgid "Diagnosis"
+msgstr "ت.ش"
+
+#: amir/notebookreport.py:168
+msgid "Remaining"
+msgstr "مانده"
+
+#: amir/notebookreport.py:183 amir/printreport.py:379 amir/printreport.py:384
+msgid "deb"
+msgstr "بد"
+
+#: amir/notebookreport.py:187 amir/printreport.py:387
+msgid "equ"
+msgstr "بی"
+
+#: amir/notebookreport.py:189 amir/printreport.py:389
+msgid "cre"
+msgstr "بس"
+
+#: amir/notebookreport.py:224 amir/notebookreport.py:236
+msgid "The requested notebook is empty."
+msgstr "دفتر درخواست شده خالی است."
+
+#: amir/notebookreport.py:225 amir/notebookreport.py:237
+msgid "Empty notebook"
+msgstr "دفتر خالی"
+
+#: amir/notebookreport.py:245
+msgid "Daily Notebook"
+msgstr "دفتر روزنامه‌ای"
+
+#: amir/notebookreport.py:254
+msgid "Ledger Notebook"
+msgstr "دفتر کل"
+
+#: amir/notebookreport.py:256
+msgid "Sub-Leger Notebook"
+msgstr "دفتر معین"
+
+#: amir/printreport.py:149 amir/printreport.py:337
+msgid "Sum of previous page"
+msgstr "مجموع صفحه قبل"
+
+#: amir/printreport.py:254 amir/printreport.py:480 amir/printreport.py:616
+msgid "Sum"
+msgstr "جمع"
+
+#: amir/setting.py:82
+msgid ""
+"Can not connect to the database. The selected database file may not be a "
+"sqlite database or be corrupt."
+msgstr ""
+"امکان اتصال به پایگاه داده وجود ندارد. فایل انتخاب شده ممکن است خراب بوده و "
+"یا پایگاه داده‌ي از نوع sqlite نباشد."
+
+#: amir/setting.py:84
+msgid ""
+"The selected file is compatible with older versions of Amir. First convert "
+"it to the new version."
+msgstr ""
+"فایل انتخاب شده با نسخه‌های قبلی امیر سازگار است. برای استفاده لطفا آن را به "
+"نسخه جدید تبدیل کنید."
+
+#: amir/setting.py:86
+msgid "The requested database file doesn' exist."
+msgstr "فایل پایگاه داده‌ي  درخواست شده موجود نمی‌باشد."
+
+#: amir/setting.py:90
+msgid "Error opening new database"
+msgstr "خطا در باز کردن پایگاه داده جدید"
+
+#: amir/setting.py:97
+msgid "Current database: "
+msgstr "پایگاه داده فعلی: "
+
+#: amir/setting.py:107
+msgid ""
+"Can not connect to the database. The selected file for convert may not be a "
+"sqlite database or be corrupt."
+msgstr ""
+"امکان اتصال به پایگاه داده وجود ندارد. فایل انتخاب شده برای تبدیل ممکن است "
+"خراب بوده و یا پایگاه داده‌ي از نوع sqlite نباشد."
+
+#: amir/setting.py:109
+msgid "The selected file is not compatible with older versions of Amir."
+msgstr "فایل انتخاب شده با نسخه‌های قدیمی امیر سازگاری ندارد."
+
+#: amir/setting.py:111
+msgid "The requested database file doesn't exist."
+msgstr "فایل پایگاه داده‌ي  درخواست شده موجود نمی‌باشد."
+
+#: amir/setting.py:115
+msgid "Error opening database for conversion"
+msgstr "خطا در باز کردن پایگاه داده برای تبدیل"
+
+#: amir/setting.py:125
+msgid "Please select a directory for the converted database."
+msgstr "لطفا یک مسیر برای پایگاه داده تبدیل شده انتخاب کنید."
+
+#: amir/setting.py:132
+#, python-format
+msgid ""
+"File %s already exists in destination directory, Do you want to overwrite it?"
+msgstr ""
+"فایل %s  در پوشه مقصد وجود دارد. مایلید آن را با فایل جدید جایگزین کنید؟"
+
+#: amir/setting.py:134
+msgid "Overwrite destination file?"
+msgstr "فایل خروجی جایگزین شود؟"
+
+#: amir/setting.py:142
+msgid "Please wait.."
+msgstr "لطفا صبر کنید .."
+
+#: amir/setting.py:144
+msgid "Converting database"
+msgstr "تیدیل پایگاه داده"
+
+#: amir/setting.py:159
+msgid "The requested directory doesn't exist."
+msgstr "پوشه خواسته شده وجود ندارد."
+
+#: amir/setting.py:162
+msgid "Error opening destination"
+msgstr "خطا در باز کردن مسیر مقصد"
+
+#: amir/setting.py:170
+#, python-format
+msgid ""
+"Convert Operation Completed!\n"
+"New database: %s"
+msgstr ""
+"عملیات تبدیل انجام شد.\n"
+"پایگاه داده جدید: %s"
+
+#: amir/subjects.py:39
+msgid "Debtor or Creditor"
+msgstr "بدهکار یا  بستانکار"
+
+#: amir/subjects.py:119
 msgid "Please select an item from the list, to add subject for it."
 msgstr "برای ایجاد سرفصل لطفا بخش بالایی را انتخاب کنید"
 
-#: src/subjects.py:145
-msgid "Subject can not be deleted, because of having some child subjects"
-msgstr "سرفصل به خاطر وجود زیر فصل قابل پاک کردن نیست"
+#: amir/subjects.py:120
+msgid "Select a subject"
+msgstr "یک سرفصل انتخاب کنید"
 
-#: src/subjects.py:155
+#: amir/subjects.py:178
+msgid "Subject can not be deleted, because it has some child subjects."
+msgstr "سرفصل قابل حذف کردن نیست،‌چون زیرفصل‌هایی برای آن ثبت شده است."
+
+#: amir/subjects.py:179 amir/subjects.py:190
+msgid "Error deleting subject"
+msgstr "خطا در حذف سرفصل"
+
+#: amir/subjects.py:189
 msgid ""
 "Subject can not be deleted, because there are some documents registered for "
-"it"
-msgstr "سرفصل قابل پاک کردن نیست زیرا سند هایی برای آن ثبت شده است."
+"it."
+msgstr "سرفصل قابل حذف کردن نیست،‌چون سندهایی با استفاده از آن ثبت شده است."
 
-#: src/subjects.py:169
-msgid "Subject name should not be empty"
-msgstr "نام سرفصل را وارد کنید"
+#: amir/subjects.py:203
+msgid "Subject name should not be empty."
+msgstr "نام سرفصل نباید خالی باشد."
 
-#: src/subjects.py:196
-msgid "A ledger with this name already exists."
-msgstr "سرفصلی با این نام موجود است"
+#: amir/subjects.py:204
+msgid "Empty subject name"
+msgstr "نام سرفصل خالی‌ است"
 
-#: data/mainwin.glade:16
+#: amir/subjects.py:231
+msgid "A subject with this name already exists in the current level."
+msgstr "یک سرفصل با همین نام در سطح جاری وجود دارد."
+
+#: amir/subjects.py:232
+msgid "Duplicate subject name"
+msgstr "نام سرفصل تکراری است"
+
+#: amir/subjects.py:245
+#, python-format
+msgid ""
+"The type of this subject can not be changed to 'creditor', Because there are "
+"                                %d documents that use it as debtor."
+msgstr ""
+"نوع این سرفصل نمی‌تواند به «بستانکار» تغییر کند، چون %d سند از آن به عنوان "
+"«بدهکار» استفاده کرده‌اند."
+
+#: amir/subjects.py:250
+#, python-format
+msgid ""
+"The type of this subject can not be changed to 'debtor', Because there are   "
+"                              %d documents that use it as creditor."
+msgstr ""
+"نوع این سرفصل نمی‌تواند به «بدهکار» تغییر کند، چون %d سند از آن به عنوان "
+"«بستانکار» استفاده کرده‌اند."
+
+#: amir/subjects.py:254
+msgid "Can not change subject type"
+msgstr "نوع سرفصل قابل تغییر نیست"
+
+#: data/ui/document.glade:21
+msgid "Add row"
+msgstr "اضافه کردن سطر"
+
+#: data/ui/document.glade:47
+msgid "Remove row"
+msgstr "پاک کردن سطر"
+
+#: data/ui/document.glade:69 data/ui/setting.glade:265
+#: data/ui/setting.glade:512
+msgid "Apply"
+msgstr "اِعمال شود"
+
+#: data/ui/document.glade:82 data/ui/notebook.glade:277
+msgid "Delete"
+msgstr "حذف"
+
+#: data/ui/document.glade:100
+msgid "Document Numebr:"
+msgstr "شماره سند:"
+
+#: data/ui/document.glade:111 data/ui/document.glade:190
+#: data/ui/document.glade:222 data/ui/document.glade:260
+msgid "----"
+msgstr "----"
+
+#: data/ui/document.glade:132
+msgid "Date:"
+msgstr "تاریخ:"
+
+#: data/ui/document.glade:181
+msgid "Debt Sum: "
+msgstr "جمع بدهکاری: "
+
+#: data/ui/document.glade:211
+msgid "Credit Sum: "
+msgstr "جمع بستانکاری: "
+
+#: data/ui/document.glade:250
+msgid "Difference: "
+msgstr "اختلاف: "
+
+#: data/ui/document.glade:299 data/ui/report.glade:29
+msgid "Subject Code: "
+msgstr "کد سرفصل: "
+
+#: data/ui/document.glade:323 data/ui/report.glade:52
+#: data/ui/setting.glade:593
+msgid "Select"
+msgstr "انتخاب"
+
+#: data/ui/document.glade:354
+msgid "Amount: "
+msgstr "مقدار: "
+
+#: data/ui/document.glade:426
+msgid "Transaction type"
+msgstr "نوع تراکنش"
+
+#: data/ui/document.glade:444
+msgid "Description:"
+msgstr "توضیح:"
+
+#: data/ui/mainwin.glade:16
 msgid "_Actions"
 msgstr "_عملیات"
 
-#: data/mainwin.glade:45
-msgid "_View"
-msgstr "_مشاهده"
-
-#: data/mainwin.glade:57
+#: data/ui/mainwin.glade:47
 msgid "_Reports"
-msgstr "_گزارشات"
+msgstr "_گزارش‌ها"
 
-#: data/mainwin.glade:86
+#: data/ui/mainwin.glade:55
+msgid "Notebooks"
+msgstr "دفتر‌ها"
+
+#: data/ui/mainwin.glade:102
 msgid "_Management"
 msgstr "_مدیریت"
 
-#: data/mainwin.glade:115 data/mainwin.glade:201
+#: data/ui/mainwin.glade:139 data/ui/mainwin.glade:226
 msgid "_Help"
 msgstr "_راهنما"
 
-#: data/mainwin.glade:144
+#: data/ui/mainwin.glade:169
 msgid "_Initial Settings"
 msgstr "_تنظیمات اولیه"
 
-#: data/mainwin.glade:264 data/notebook.glade:40
+#: data/ui/mainwin.glade:289 data/ui/notebook.glade:40
 msgid "label"
 msgstr "برچسب"
 
-#: data/notebook.glade:7 data/notebook.glade:228
+#: data/ui/mainwin.glade:383
+msgid "Select document to edit"
+msgstr "یک سند برای ویرایش انتخاب کنید"
+
+#: data/ui/mainwin.glade:399 data/ui/report.glade:446
+msgid "Document Number: "
+msgstr "شماره سند: "
+
+#: data/ui/notebook.glade:7 data/ui/notebook.glade:228
 msgid "Add ledger"
 msgstr "اضافه کردن سرفصل"
 
-#: data/notebook.glade:28
+#: data/ui/notebook.glade:28
 msgid "Sub-ledger from:"
-msgstr ""
+msgstr "زیرفصل از:"
 
-#: data/notebook.glade:59
+#: data/ui/notebook.glade:59
 msgid "Ledger name:"
 msgstr "نام سرفصل:"
 
-#: data/notebook.glade:101
+#: data/ui/notebook.glade:101
 msgid "Debtor"
 msgstr "بدهکار"
 
-#: data/notebook.glade:114
+#: data/ui/notebook.glade:114
 msgid "Creditor"
 msgstr "بستانکار"
 
-#: data/notebook.glade:128
+#: data/ui/notebook.glade:128
 msgid "Both"
-msgstr "هردو"
+msgstr "هر دو"
 
-#: data/notebook.glade:147
+#: data/ui/notebook.glade:147
 msgid "Ledger type"
-msgstr "نوع"
+msgstr "نوع سرفصل"
 
-#: data/notebook.glade:212
+#: data/ui/notebook.glade:212
 msgid "Notebook Subjects"
 msgstr "دفتر معین"
 
-#: data/notebook.glade:227
+#: data/ui/notebook.glade:227
 msgid "Insert"
 msgstr "درج"
 
-#: data/notebook.glade:241
+#: data/ui/notebook.glade:241
 msgid "Add sub-ledger"
-msgstr ""
+msgstr "افزودن زیرفصل"
 
-#: data/notebook.glade:262
+#: data/ui/notebook.glade:262
 msgid "Edit"
 msgstr "ویرایش"
 
-#: data/notebook.glade:276
+#: data/ui/notebook.glade:276
 msgid "Ctrl+D"
-msgstr ""
+msgstr "Ctrl+D"
 
-#: data/notebook.glade:277
-msgid "Delete"
-msgstr "حذف"
+#: data/ui/report.glade:70
+msgid "Subject"
+msgstr "سرفصل"
+
+#: data/ui/report.glade:100
+msgid "Show the whole content"
+msgstr "نمایش تمام محتوای دفتر"
+
+#: data/ui/report.glade:118
+msgid "Show content at date: "
+msgstr "نمایش محتوا در تاریخ: "
+
+#: data/ui/report.glade:174
+msgid "Show content between dates: "
+msgstr "نمایش محتوا بین تاریخ‌های: "
+
+#: data/ui/report.glade:207 data/ui/report.glade:289
+msgid "to"
+msgstr "تا"
+
+#: data/ui/report.glade:257
+msgid "Show content between document numbers"
+msgstr "نمایش محتوا بین شماره سند‌های:"
+
+#: data/ui/report.glade:330
+msgid "Report parameters"
+msgstr "ویژگی‌های گزارش"
+
+#: data/ui/report.glade:348 data/ui/report.glade:490
+msgid "Preview"
+msgstr "پیش‌نمایش"
+
+#: data/ui/report.glade:384 data/ui/report.glade:526
+msgid "Print"
+msgstr "چاپ"
+
+#: data/ui/report.glade:402 data/ui/report.glade:544
+msgid "Export to CSV format"
+msgstr "تبدیل به فرمت CSV"
+
+#: data/ui/report.glade:426
+msgid "Select Document"
+msgstr "انتخاب سند"
+
+#: data/ui/setting.glade:7
+msgid "Settings"
+msgstr "تنظیمات"
+
+#: data/ui/setting.glade:41
+msgid ""
+"Before you change the database, Make sure you don't have any unsaved data.\n"
+"\n"
+"Current database: "
+msgstr ""
+"قبل از این‌که پایگاه داده را تغییر دهید، مطمئن شوید که تمام اطلاعات را ذخیره "
+"کرده‌اید.\n"
+"\n"
+"پایگاه داده فعلی: "
+
+#: data/ui/setting.glade:59
+msgid "Choose database: "
+msgstr "انتخاب پایگاه داده: "
+
+#: data/ui/setting.glade:80 data/ui/setting.glade:161
+#: data/ui/setting.glade:209
+msgid "Browse"
+msgstr "جستجو"
+
+#: data/ui/setting.glade:103
+msgid "Change database"
+msgstr "تغییر پایگاه داده"
+
+#: data/ui/setting.glade:139
+msgid "Old Database:  "
+msgstr "پایگاه داده قدیمی  "
+
+#: data/ui/setting.glade:151
+msgid "The database file to convert."
+msgstr "فایل پایگاه داده‌ای که باید تبدیل شود."
+
+#: data/ui/setting.glade:187
+msgid "New Database Path: "
+msgstr "مسیر پایگاه داده جدید: "
+
+#: data/ui/setting.glade:199
+msgid "A directory to put the result of conversion."
+msgstr "پوشه‌ای که فایل به‌دست آمده از تبدیل در آن ذخیره می‌شود."
+
+#: data/ui/setting.glade:233
+msgid "Convert database"
+msgstr "تبدیل پایگاه داده"
+
+#: data/ui/setting.glade:288
+msgid "Database"
+msgstr "پایگاه داده"
+
+#: data/ui/setting.glade:323
+msgid "Date Format: "
+msgstr "روش نمایش تاریخ: "
+
+#: data/ui/setting.glade:366
+msgid "Date Order: "
+msgstr "ترتیب اعداد تاریخ: "
+
+#: data/ui/setting.glade:395
+msgid "Separate by: "
+msgstr "جدا کردن اعداد تاریخ با: "
+
+#: data/ui/setting.glade:430
+msgid "Date Format"
+msgstr "قالب تاریخ"
+
+#: data/ui/setting.glade:459
+msgid "Use latin characters for numbers."
+msgstr "برای اعداد از کاراکتر‌های لاتین استفاده شود."
+
+#: data/ui/setting.glade:480
+msgid "Number Format"
+msgstr "قالب اعداد"
+
+#: data/ui/setting.glade:538
+msgid "Format"
+msgstr "قالب"
+
+#~ msgid "Subject can not be deleted, because of having some child subjects"
+#~ msgstr "سرفصل به خاطر وجود زیر فصل قابل پاک کردن نیست"
+
+#~ msgid ""
+#~ "Subject can not be deleted, because there are some documents registered for "
+#~ "it"
+#~ msgstr "سرفصل قابل پاک کردن نیست زیرا سند هایی برای آن ثبت شده است."
+
+#~ msgid "Subject name should not be empty"
+#~ msgstr "نام سرفصل را وارد کنید"
+
+#~ msgid "A ledger with this name already exists."
+#~ msgstr "سرفصلی با این نام موجود است"
+
+#~ msgid "_View"
+#~ msgstr "_مشاهده"

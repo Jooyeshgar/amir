@@ -20,20 +20,19 @@
                     <property name="visible">True</property>
                     <child>
                       <object class="GtkImageMenuItem" id="manualmenuitem">
+                        <property name="label" translatable="yes">Manual Registration</property>
                         <property name="visible">True</property>
-                        <property name="use_action_appearance">True</property>
                         <property name="related_action">manualAction</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
+                        <property name="image">image2</property>
+                        <property name="use_stock">False</property>
                         <accelerator key="F9" signal="activate"/>
                       </object>
                     </child>
                     <child>
                       <object class="GtkImageMenuItem" id="quitmenuitem">
+                        <property name="label">gtk-quit</property>
                         <property name="visible">True</property>
-                        <property name="use_action_appearance">True</property>
                         <property name="related_action">quitAction</property>
-                        <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                       </object>
                     </child>
@@ -60,24 +59,24 @@
                             <child>
                               <object class="GtkMenuItem" id="dailyreportitem">
                                 <property name="visible">True</property>
-                                <property name="use_action_appearance">True</property>
                                 <property name="related_action">dailyreportaction</property>
+                                <property name="label" translatable="yes">Daily Notebook</property>
                                 <accelerator key="d" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                               </object>
                             </child>
                             <child>
                               <object class="GtkMenuItem" id="ledgerreportitem">
                                 <property name="visible">True</property>
-                                <property name="use_action_appearance">True</property>
                                 <property name="related_action">ledgerreportaction</property>
+                                <property name="label" translatable="yes">Ledgers Notebook</property>
                                 <accelerator key="l" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                               </object>
                             </child>
                             <child>
                               <object class="GtkMenuItem" id="subledgerreportitem">
                                 <property name="visible">True</property>
-                                <property name="use_action_appearance">True</property>
                                 <property name="related_action">subledgerreportaction</property>
+                                <property name="label" translatable="yes">Sub-ledgers Notebook</property>
                                 <accelerator key="s" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                               </object>
                             </child>
@@ -106,27 +105,27 @@
                     <property name="visible">True</property>
                     <child>
                       <object class="GtkImageMenuItem" id="subjectsmenuitem">
+                        <property name="label" translatable="yes">Notebook Subjects</property>
                         <property name="visible">True</property>
-                        <property name="use_action_appearance">True</property>
                         <property name="related_action">subjectsAction</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
+                        <property name="image">image3</property>
+                        <property name="use_stock">False</property>
                       </object>
                     </child>
                     <child>
                       <object class="GtkMenuItem" id="editdocmenuitem">
                         <property name="visible">True</property>
-                        <property name="use_action_appearance">True</property>
                         <property name="related_action">editdocaction</property>
+                        <property name="label" translatable="yes">Edit Document</property>
                       </object>
                     </child>
                     <child>
                       <object class="GtkImageMenuItem" id="settingmenuitem">
+                        <property name="label" translatable="yes">Setting</property>
                         <property name="visible">True</property>
-                        <property name="use_action_appearance">True</property>
                         <property name="related_action">settingAction</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
+                        <property name="image">image4</property>
+                        <property name="use_stock">False</property>
                       </object>
                     </child>
                   </object>
@@ -468,5 +467,17 @@
       <action-widget response="-6">button4</action-widget>
       <action-widget response="-5">button3</action-widget>
     </action-widgets>
+  </object>
+  <object class="GtkImage" id="image2">
+    <property name="visible">True</property>
+    <property name="stock">gtk-missing-image</property>
+  </object>
+  <object class="GtkImage" id="image3">
+    <property name="visible">True</property>
+    <property name="stock">gtk-missing-image</property>
+  </object>
+  <object class="GtkImage" id="image4">
+    <property name="visible">True</property>
+    <property name="stock">gtk-preferences</property>
   </object>
 </interface>

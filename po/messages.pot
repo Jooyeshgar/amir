@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-01 11:34+0430\n"
+"POT-Creation-Date: 2010-05-01 14:22+0430\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -170,7 +170,7 @@ msgstr ""
 msgid "Empty notebook"
 msgstr ""
 
-#: amir/notebookreport.py:245
+#: amir/notebookreport.py:245 data/ui/mainwin.glade:63
 msgid "Daily Notebook"
 msgstr ""
 
@@ -396,35 +396,59 @@ msgstr ""
 msgid "_Actions"
 msgstr ""
 
-#: data/ui/mainwin.glade:47
+#: data/ui/mainwin.glade:23
+msgid "Manual Registration"
+msgstr ""
+
+#: data/ui/mainwin.glade:46
 msgid "_Reports"
 msgstr ""
 
-#: data/ui/mainwin.glade:55
+#: data/ui/mainwin.glade:54
 msgid "Notebooks"
 msgstr ""
 
-#: data/ui/mainwin.glade:102
+#: data/ui/mainwin.glade:71
+msgid "Ledgers Notebook"
+msgstr ""
+
+#: data/ui/mainwin.glade:79
+msgid "Sub-ledgers Notebook"
+msgstr ""
+
+#: data/ui/mainwin.glade:101
 msgid "_Management"
 msgstr ""
 
-#: data/ui/mainwin.glade:139 data/ui/mainwin.glade:226
+#: data/ui/mainwin.glade:108 data/ui/notebook.glade:212
+msgid "Notebook Subjects"
+msgstr ""
+
+#: data/ui/mainwin.glade:119
+msgid "Edit Document"
+msgstr ""
+
+#: data/ui/mainwin.glade:124
+msgid "Setting"
+msgstr ""
+
+#: data/ui/mainwin.glade:138 data/ui/mainwin.glade:225
 msgid "_Help"
 msgstr ""
 
-#: data/ui/mainwin.glade:169
+#: data/ui/mainwin.glade:168
 msgid "_Initial Settings"
 msgstr ""
 
-#: data/ui/mainwin.glade:289 data/ui/notebook.glade:40
+#: data/ui/mainwin.glade:288 data/ui/notebook.glade:40
 msgid "label"
 msgstr ""
 
-#: data/ui/mainwin.glade:383
+#: data/ui/mainwin.glade:382
 msgid "Select document to edit"
 msgstr ""
 
-#: data/ui/mainwin.glade:399 data/ui/report.glade:446
+#: data/ui/mainwin.glade:398 data/ui/report.glade:446
 msgid "Document Number: "
 msgstr ""
 
@@ -454,10 +478,6 @@ msgstr ""
 
 #: data/ui/notebook.glade:147
 msgid "Ledger type"
-msgstr ""
-
-#: data/ui/notebook.glade:212
-msgid "Notebook Subjects"
 msgstr ""
 
 #: data/ui/notebook.glade:227

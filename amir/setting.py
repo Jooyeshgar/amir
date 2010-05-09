@@ -23,7 +23,7 @@ class Setting:
         self.newdb = self.builder.get_object("newdb")
         self.infolabel = self.builder.get_object("infolabel")
         
-        self.infolabel.set_text(self.infolabel.get_text() + config.db.dbfile)
+        self.infolabel.set_text(config.db.dbfile)
         
         model = gtk.ListStore(str)
         self.dateformat = self.builder.get_object("dateformat")
@@ -94,7 +94,7 @@ class Setting:
             else:
                 config.db.session.close()
                 config.db = database.Database(dbfile, config.echodbresult)
-                self.infolabel.set_text(_("Current database: ") + dbfile)
+                self.infolabel.set_text(dbfile)
         
         olddb = self.olddb.get_text()
         newdb = self.newdb.get_text()
