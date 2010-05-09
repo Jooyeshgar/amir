@@ -73,10 +73,7 @@ class DocumentReport:
         
         return {"data":report_data, "col-width":col_width ,"heading":report_header}
     
-    def previewReport(self, sender):
-        self.createReport()
-    
-    def printReport(self, sender):
+    def createPrintJob(self):
         report = self.createReport()
         if report == None:
             return
@@ -89,8 +86,17 @@ class DocumentReport:
         printjob = printreport.PrintReport(report["data"], report["col-width"], report["heading"])
         printjob.setHeader(_("Accounting Document"), {_("Document Number"):docnumber, _("Date"):datestr})
         printjob.setDrawFunction("drawDocument")
-        
-        printjob.doPrint()
+        return printjob
+    
+    def previewReport(self, sender):
+        printjob = self.createPrintJob()
+        if printjob != None:
+            printjob.doPrintJob(gtk.PRINT_OPERATION_ACTION_PREVIEW)
+    
+    def printReport(self, sender):
+        printjob = self.createPrintJob()
+        if printjob != None:
+            printjob.doPrintJob(gtk.PRINT_OPERATION_ACTION_PRINT_DIALOG)
     
     def exportToCSV(self, sender):
         self.createReport()

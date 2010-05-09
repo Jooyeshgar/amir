@@ -37,8 +37,8 @@ class PrintReport:
         pages = ((len(self.content) - 1) / self.lines_per_page ) + 1
         operation.set_n_pages(pages)
     
-    def doPrint(self):
-        self.operation.run(gtk.PRINT_OPERATION_ACTION_PRINT_DIALOG)
+    def doPrintJob(self, action):
+        self.operation.run(action)
         
     def drawPage(self, operation, context, page_nr):
         pass

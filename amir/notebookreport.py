@@ -214,20 +214,7 @@ class NotebookReport:
 
         return {"data":report_data, "col-width":col_width ,"heading":report_header}
                 
-    
-    def previewReport(self, sender):
-        report = self.createReport()
-        if report == None:
-            return
-        if len(report["data"]) == 0:
-            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 
-                                       _("The requested notebook is empty."))
-            msgbox.set_title(_("Empty notebook"))
-            msgbox.run()
-            msgbox.destroy()
-            return
-    
-    def printReport(self, sender):
+    def createPrintJob(self):
         report = self.createReport()
         if report == None:
             return
@@ -255,10 +242,18 @@ class NotebookReport:
             else:
                 printjob.setHeader(_("Sub-Leger Notebook"), {_("Subject Name"):self.subname, _("Subject Code"):code})
             printjob.setDrawFunction("drawSubjectNotebook")
-        
-        printjob.doPrint()
-        
+        return printjob
+            
+    def previewReport(self, sender):
+        printjob = self.createPrintJob()
+        if printjob != None:
+            printjob.doPrintJob(gtk.PRINT_OPERATION_ACTION_PREVIEW)
     
+    def printReport(self, sender):
+        printjob = self.createPrintJob()
+        if printjob != None:
+            printjob.doPrintJob(gtk.PRINT_OPERATION_ACTION_PRINT_DIALOG)
+        
     def exportToCSV(self, sender):
         self.createReport()
     
