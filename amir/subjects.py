@@ -11,6 +11,7 @@ from sqlalchemy.orm import sessionmaker, join
 import utility
 from database import *
 from amirconfig import config
+from helpers import get_builder
 
 class Subjects(gobject.GObject):
     
@@ -18,10 +19,8 @@ class Subjects(gobject.GObject):
     
     def __init__ (self, ledgers_only=False):
         gobject.GObject.__init__(self)
-        
-        self.builder = gtk.Builder()
-        self.builder.set_translation_domain("amir")
-        self.builder.add_from_file(config.data_path+"/ui/notebook.glade")
+
+        self.builder = get_builder("notebook")
         
         self.window = self.builder.get_object("subjectswindow")
         self.window.set_modal(True)

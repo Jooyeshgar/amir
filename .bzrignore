@@ -3,3 +3,4 @@
 *.db
 *.pyc
 *.sqlite
+data/amir.conf

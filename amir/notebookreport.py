@@ -14,6 +14,7 @@ import printreport
 from database import *
 from dateentry import *
 from amirconfig import config
+from helpers import get_builder
 
 class NotebookReport:
     DAILY = 1
@@ -21,9 +22,7 @@ class NotebookReport:
     SUBLEDGER = 3
     
     def __init__(self, type=1):
-        self.builder = gtk.Builder()
-        self.builder.set_translation_domain("amir")
-        self.builder.add_from_file(config.data_path+"/ui/report.glade")
+        self.builder = get_builder("report")
         
         self.window = self.builder.get_object("window1")
         self.window.set_title(_("Daily NoteBook"))
