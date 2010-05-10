@@ -14,7 +14,7 @@ class Setting:
     def __init__(self):
         self.builder = gtk.Builder()
         self.builder.set_translation_domain("amir")
-        self.builder.add_from_file("../data/ui/setting.glade")
+        self.builder.add_from_file(config.data_path+"/ui/setting.glade")
         self.window = self.builder.get_object("window1")
         
         self.filechooser = self.builder.get_object("filechooser")

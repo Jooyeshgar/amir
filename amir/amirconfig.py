@@ -22,6 +22,7 @@
 # where your project will head for your data (for instance, images and ui files)
 # by default, this is ../data, relative your trunk layout
 __amir_data_directory__ = '../data/'
+__license__ = 'GPL-3'
 
 
 import os, optparse, logging, sys
@@ -34,6 +35,13 @@ import database
 
 class ConfigFile:
     def __init__(self, file):
+        if not os.path.isfile(file):
+            configdir = os.path.dirname(file)
+            if not os.path.isdir(configdir):
+                os.mkdir(configdir)
+            hfile = open(file, 'a')
+            hfile.close()
+            logging.debug("Config file created. '%s'" % file)        
         self.filename = file
         
     def returnStringValue(self, key):
@@ -129,7 +137,7 @@ class AmirConfig:
         if os.path.exists(abs_data_path):
             self.data_path = abs_data_path
         else:
-            logging.error('project path not found')
+            logging.error('Project path not found. "%s"' % abs_data_path)
         
         parser = optparse.OptionParser(version="%prog %ver",formatter=IndentedHelpFormatterWithNL() )
         parser.add_option("-v", "--verbose", action="store_const", const=1, dest="verbose", help="Show debug messages")
@@ -146,18 +154,26 @@ class AmirConfig:
                 self.echodbresult = True
             
         dbfile = ''
-        self.configfile = ConfigFile(os.path.join(self.data_path, 'amir.conf'))
+        confpath = os.path.join(os.path.expanduser('~'), '.amir', 'amir.conf')
+        logging.debug('Reading configuration "%s"' % confpath)
+        self.configfile = ConfigFile(confpath)
         
-        if self.options.database == None:
-            dbfile = self.configfile.returnStringValue("database")
-            if dbfile == '':
-                dbfile = os.path.join(self.data_path, 'amir.db')
-                logging.error("No database registered in config file. The default database %s will be opened for use." % dbfile)                 
-        else:
+        if self.options.database != None:
             dbfile = self.options.database
+        elif self.configfile.returnStringValue("database") == None:
+            logging.error("Database registered in config file (%s) does not exist." % self.configfile.returnStringValue("database"))
+        else :
+            dbfile = self.configfile.returnStringValue("database")
             
-        self.db = database.Database(dbfile, self.echodbresult)
+        if dbfile == '':
+            dbfile = os.path.join(os.path.expanduser('~'), '.amir', 'amir.sqlite')
+            logging.error("No database path found. the default database %s will be opened for use." % dbfile)
+            
         logging.info('database path: ' + dbfile)
+        try:
+            self.db = database.Database(dbfile, self.echodbresult)
+        except:
+            sys.exit("Cannot open database.")
         
         str = self.configfile.returnStringValue("dateformat")
         if str == '':

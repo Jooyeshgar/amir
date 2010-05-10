@@ -1,0 +1,14 @@
+Format-Specification: http://wiki.debian.org/Proposals/CopyrightFormat
+Upstream-Name: amir
+Upstream-Maintainer: jooyeshgar <info@jooyeshgar.com>
+Upstream-Source: https://launchpad.net/amir
+
+Files: *
+Copyright: (C)]
+Copyright: (C) 2008 Mehdi Bayazee"
+Copyright: (C) 2008 Mehdi Bayazee (Bayazee@Gmail.com)
+Copyright: (C) 2010 <jooyeshgar> <info@jooyeshgar.com>
+Copyright: (C) YEAR ORGANIZATION
+License: GPL-3
+ The full text of the GPL is distributed in
+ /usr/share/common-licenses/GPL-3 on Debian systems.

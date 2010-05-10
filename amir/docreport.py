@@ -18,7 +18,7 @@ class DocumentReport:
     def __init__(self):
         self.builder = gtk.Builder()
         self.builder.set_translation_domain("amir")
-        self.builder.add_from_file("../data/ui/report.glade")
+        self.builder.add_from_file(config.data_path+"/ui/report.glade")
         
         self.window = self.builder.get_object("window2")
         
