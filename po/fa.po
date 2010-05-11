@@ -6,14 +6,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: amir\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-01 11:34+0430\n"
-"PO-Revision-Date: 2010-05-01 09:22+0000\n"
+"POT-Creation-Date: 2010-05-01 14:22+0430\n"
+"PO-Revision-Date: 2010-05-10 07:02+0000\n"
 "Last-Translator: Golnaz Nilieh <g382nilieh@gmail.com>\n"
 "Language-Team: persian <info@jooyeshgar.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-05-01 09:28+0000\n"
+"X-Launchpad-Export-Date: 2010-05-11 04:48+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 "Generated-By: pygettext.py 1.5\n"
 
@@ -173,7 +173,7 @@ msgstr "دفتر درخواست شده خالی است."
 msgid "Empty notebook"
 msgstr "دفتر خالی"
 
-#: amir/notebookreport.py:245
+#: amir/notebookreport.py:245 data/ui/mainwin.glade:63
 msgid "Daily Notebook"
 msgstr "دفتر روزنامه‌ای"
 
@@ -412,35 +412,59 @@ msgstr "توضیح:"
 msgid "_Actions"
 msgstr "_عملیات"
 
-#: data/ui/mainwin.glade:47
+#: data/ui/mainwin.glade:23
+msgid "Manual Registration"
+msgstr "ثبت دستی سند"
+
+#: data/ui/mainwin.glade:46
 msgid "_Reports"
 msgstr "_گزارش‌ها"
 
-#: data/ui/mainwin.glade:55
+#: data/ui/mainwin.glade:54
 msgid "Notebooks"
 msgstr "دفتر‌ها"
 
-#: data/ui/mainwin.glade:102
+#: data/ui/mainwin.glade:71
+msgid "Ledgers Notebook"
+msgstr "دفتر کل"
+
+#: data/ui/mainwin.glade:79
+msgid "Sub-ledgers Notebook"
+msgstr "دفتر معین - تفصیلی"
+
+#: data/ui/mainwin.glade:101
 msgid "_Management"
 msgstr "_مدیریت"
 
-#: data/ui/mainwin.glade:139 data/ui/mainwin.glade:226
+#: data/ui/mainwin.glade:108 data/ui/notebook.glade:212
+msgid "Notebook Subjects"
+msgstr "دفتر معین"
+
+#: data/ui/mainwin.glade:119
+msgid "Edit Document"
+msgstr "ویرایش سند"
+
+#: data/ui/mainwin.glade:124
+msgid "Setting"
+msgstr "تنظیم"
+
+#: data/ui/mainwin.glade:138 data/ui/mainwin.glade:225
 msgid "_Help"
 msgstr "_راهنما"
 
-#: data/ui/mainwin.glade:169
+#: data/ui/mainwin.glade:168
 msgid "_Initial Settings"
 msgstr "_تنظیمات اولیه"
 
-#: data/ui/mainwin.glade:289 data/ui/notebook.glade:40
+#: data/ui/mainwin.glade:288 data/ui/notebook.glade:40
 msgid "label"
 msgstr "برچسب"
 
-#: data/ui/mainwin.glade:383
+#: data/ui/mainwin.glade:382
 msgid "Select document to edit"
 msgstr "یک سند برای ویرایش انتخاب کنید"
 
-#: data/ui/mainwin.glade:399 data/ui/report.glade:446
+#: data/ui/mainwin.glade:398 data/ui/report.glade:446
 msgid "Document Number: "
 msgstr "شماره سند: "
 
@@ -471,10 +495,6 @@ msgstr "هر دو"
 #: data/ui/notebook.glade:147
 msgid "Ledger type"
 msgstr "نوع سرفصل"
-
-#: data/ui/notebook.glade:212
-msgid "Notebook Subjects"
-msgstr "دفتر معین"
 
 #: data/ui/notebook.glade:227
 msgid "Insert"
