@@ -33,6 +33,7 @@
                         <property name="label">gtk-quit</property>
                         <property name="visible">True</property>
                         <property name="related_action">quitAction</property>
+                        <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                       </object>
                     </child>
@@ -87,8 +88,8 @@
                     <child>
                       <object class="GtkMenuItem" id="menuitem5">
                         <property name="visible">True</property>
-                        <property name="use_action_appearance">True</property>
                         <property name="related_action">docreportaction</property>
+                        <property name="use_action_appearance">True</property>
                       </object>
                     </child>
                   </object>
@@ -143,8 +144,8 @@
                     <child>
                       <object class="GtkImageMenuItem" id="aboutmenuitem">
                         <property name="visible">True</property>
-                        <property name="use_action_appearance">True</property>
                         <property name="related_action">aboutAction</property>
+                        <property name="use_action_appearance">True</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                       </object>
@@ -434,7 +435,6 @@
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="fill">False</property>
                 <property name="position">0</property>
               </packing>
             </child>
@@ -450,7 +450,6 @@
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="fill">False</property>
                 <property name="position">1</property>
               </packing>
             </child>

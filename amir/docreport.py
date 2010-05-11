@@ -24,6 +24,7 @@ class DocumentReport:
         self.number = numberentry.NumberEntry()
         box = self.builder.get_object("numbox")
         box.add(self.number)
+        self.number.set_activates_default(True)
         self.number.show()
         
         self.session = config.db.session

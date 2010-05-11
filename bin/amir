@@ -63,10 +63,11 @@ class MainWindow:
         dialog = subjects.Subjects()
         
     def editDocument(self, sender):
-        dialog = self.builder.get_object("selectdoc")        
+        dialog = self.builder.get_object("selectdoc")
+        self.numentry.set_activates_default(True)        
         res = dialog.run()
         dialog.hide()
-        if res != gtk.RESPONSE_CANCEL:
+        if res == gtk.RESPONSE_OK:
             dialog = addeditdoc.AddEditDoc(int(unicode(self.numentry.get_text())))
             
         

@@ -10,13 +10,12 @@ import subjects
 import utility
 from database import *
 from amirconfig import config
+from helpers import get_builder
 
 class AddEditDoc:
         
     def __init__(self, number=0):
-        self.builder = gtk.Builder()
-        self.builder.set_translation_domain("amir")
-        self.builder.add_from_file(config.data_path+"/ui/document.glade")
+        self.builder = get_builder("document")
         
         self.window = self.builder.get_object("window1")
         self.window.set_title(_("Register new document"))
@@ -30,10 +29,12 @@ class AddEditDoc:
         box = self.builder.get_object("codebox")
         box.add(self.code)
         self.code.show()
+        self.code.connect("activate", self.selectSubject)
         
         self.amount = numberentry.NumberEntry()
         box = self.builder.get_object("amountbox")
         box.add(self.amount)
+        self.amount.set_activates_default(True)
         self.amount.show()
         
         self.treeview = self.builder.get_object("treeview")
