@@ -95,6 +95,12 @@ class Setting:
                 config.db.session.close()
                 config.db = database.Database(dbfile, config.echodbresult)
                 self.infolabel.set_text(dbfile)
+                
+                msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 
+                                   _("Database changed successfully.\nNew database: %s") % dbfile )
+                msgbox.set_title(_("Successfully changed"))
+                msgbox.run()
+                msgbox.destroy()
         
         olddb = self.olddb.get_text()
         newdb = self.newdb.get_text()
@@ -184,6 +190,12 @@ class Setting:
             config.digittype = 0
         else:
             config.digittype = 1
+            
+        msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 
+                                   _("Format settings changed successfully.") )
+        msgbox.set_title(_("Successfully changed"))
+        msgbox.run()
+        msgbox.destroy()
 
     def comboInsertItems(self, combo, items):
         ls = gtk.ListStore(str)

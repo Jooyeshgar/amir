@@ -347,6 +347,12 @@ class AddEditDoc:
             if config.digittype == 1:
                 docnum = utility.convertToPersian(docnum)
             self.builder.get_object("docnumber").set_text (docnum)
+            
+            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 
+                                       _("Document saved with number %s.") % docnum)
+            msgbox.set_title(_("Successfully saved"))
+            msgbox.run()
+            msgbox.destroy()
         
     def deleteDocument(self, sender):
         msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, _("Are you sure to delete the whole document?"))
