@@ -315,6 +315,52 @@ class Subjects(gobject.GObject):
                         self.treestore.append(chiter, ("", "", ""))
         return False
     
+    def match_func(self, iter, data):
+        (column, key) = data   # data is a tuple containing column number, key
+        value = self.treestore.get_value(iter, column)
+        if value < key:
+            return -1
+        elif value == key:
+            return 0
+        else:
+            return 1
+
+    def highlightSubject(self, code):
+        i = 2
+        part = code[0:i]
+        iter = self.treestore.get_iter_first()
+        parent = iter
+        
+        while iter:
+            res = self.match_func(iter, (0, part))
+            if res < 0:
+                iter = self.treestore.iter_next(iter)
+            elif res == 0:
+                if len(code) > i:
+                    parent = iter
+                    iter = self.treestore.iter_children(parent)
+                    if iter:
+                        if self.treestore.get_value(iter, 0) == "":
+                            self.populateChildren(self.treeview, parent, None)
+                            iter = self.treestore.iter_children(parent)
+                        i += 2
+                        part = code[0:i]
+                else:
+                    break
+            else:
+                break
+
+        if not iter:
+            iter = parent
+            
+        if iter:
+            path = self.treestore.get_path(iter)
+            self.treeview.expand_to_path(path)
+            self.treeview.scroll_to_cell(path, None, False, 0, 0)
+            self.treeview.set_cursor(path, None, False)
+            self.treeview.grab_focus()
+            
+            
     def selectSubjectFromList(self, treeview, path, view_column):
         iter = self.treestore.get_iter(path)
         code = utility.convertToLatin(self.treestore.get(iter, 0)[0])

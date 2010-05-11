@@ -363,6 +363,9 @@ class AddEditDoc:
 
     def selectSubject(self, sender):
         subject_win = subjects.Subjects()
+        code = self.code.get_text()
+        if code != '':
+            subject_win.highlightSubject(code)
         subject_win.connect("subject-selected", self.subjectSelected)
         
     def subjectSelected(self, sender, id, code, name):
