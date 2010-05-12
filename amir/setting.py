@@ -51,6 +51,7 @@ class Setting:
         
     def selectDbFile(self, sender):
         self.filechooser.set_action(gtk.FILE_CHOOSER_ACTION_OPEN)
+        self.filechooser.set_current_folder (os.path.dirname (config.db.dbfile))
         result = self.filechooser.run()
         if result == gtk.RESPONSE_OK:
             self.filename.set_text(self.filechooser.get_filename())

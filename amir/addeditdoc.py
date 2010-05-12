@@ -120,11 +120,11 @@ class AddEditDoc:
             if n.value < 0:
                 value = -(n.value)
                 debt = utility.showNumber(value)
-                credit = utility.convertToPersian("0")
+                credit = utility.showNumber(0)
                 self.debt_sum += value
             else:
                 credit = utility.showNumber(n.value)
-                debt = utility.convertToPersian("0")
+                debt = utility.showNumber(0)
                 self.credit_sum += n.value
                 
             code = s.code

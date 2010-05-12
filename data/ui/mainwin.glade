@@ -29,6 +29,13 @@
                       </object>
                     </child>
                     <child>
+                      <object class="GtkMenuItem" id="editdocmenuitem">
+                        <property name="visible">True</property>
+                        <property name="related_action">editdocaction</property>
+                        <property name="label" translatable="yes">Edit Document</property>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkImageMenuItem" id="quitmenuitem">
                         <property name="label">gtk-quit</property>
                         <property name="visible">True</property>
@@ -111,13 +118,6 @@
                         <property name="related_action">subjectsAction</property>
                         <property name="image">image3</property>
                         <property name="use_stock">False</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkMenuItem" id="editdocmenuitem">
-                        <property name="visible">True</property>
-                        <property name="related_action">editdocaction</property>
-                        <property name="label" translatable="yes">Edit Document</property>
                       </object>
                     </child>
                     <child>

@@ -3,7 +3,7 @@
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy project-wide -->
   <object class="GtkWindow" id="window1">
-    <property name="width_request">700</property>
+    <property name="width_request">980</property>
     <property name="height_request">400</property>
     <child>
       <object class="GtkVBox" id="vbox1">
@@ -12,6 +12,7 @@
           <object class="GtkHBox" id="hbox1">
             <property name="height_request">74</property>
             <property name="visible">True</property>
+            <property name="spacing">5</property>
             <child>
               <object class="GtkToolbar" id="toolbar1">
                 <property name="visible">True</property>
@@ -67,7 +68,7 @@
                 <child>
                   <object class="GtkToolButton" id="apply">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Apply</property>
+                    <property name="label" translatable="yes">Save Document</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-apply</property>
                     <signal name="clicked" handler="saveDocument"/>
@@ -80,7 +81,7 @@
                 <child>
                   <object class="GtkToolButton" id="delete">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Delete</property>
+                    <property name="label" translatable="yes">Delete Document</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-delete</property>
                     <signal name="clicked" handler="deleteDocument"/>

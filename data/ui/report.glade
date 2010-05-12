@@ -508,7 +508,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <accelerator key="Return" signal="clicked"/>
                 <signal name="clicked" handler="printReport"/>
                 <child>
                   <object class="GtkHBox" id="hbox11">
