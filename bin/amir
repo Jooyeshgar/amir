@@ -58,7 +58,10 @@ class MainWindow:
         reportwin = docreport.DocumentReport()
         
     def aboutAmir(self, sender):
-        pass
+    	aboutwin = self.builder.get_object("aboutdialog")
+    	aboutwin.run()
+    	aboutwin.hide()
+        
     def manageSubjects(self, sender):
         dialog = subjects.Subjects()
         
@@ -104,6 +107,20 @@ class MainWindow:
         gobject.threads_init()
         #gtk.widget_set_default_direction(gtk.TEXT_DIR_RTL)
 
+        icondir = os.path.join(config.data_path, "media", "icon")
+        
+        try:
+        	icon16 = gtk.gdk.pixbuf_new_from_file(os.path.join(icondir, "16.png"))
+        	icon22 = gtk.gdk.pixbuf_new_from_file(os.path.join(icondir, "22.png"))
+        	icon32 = gtk.gdk.pixbuf_new_from_file(os.path.join(icondir, "32.png"))
+        	icon48 = gtk.gdk.pixbuf_new_from_file(os.path.join(icondir, "48.png"))
+        	icon64 = gtk.gdk.pixbuf_new_from_file(os.path.join(icondir, "64.png"))
+        	icon128 = gtk.gdk.pixbuf_new_from_file(os.path.join(icondir, "128.png"))
+        except GError:
+        	pass
+        
+        gtk.window_set_default_icon_list(icon16, icon22, icon32, icon48, icon64, icon128)
+        
         self.builder = helpers.get_builder("mainwin")
         self.window = self.builder.get_object("window1")
         self.numentry = numberentry.NumberEntry()

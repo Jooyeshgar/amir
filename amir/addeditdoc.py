@@ -378,4 +378,3 @@ class AddEditDoc:
         self.code.set_text(code)
         sender.window.destroy()        
 
-        

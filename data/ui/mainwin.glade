@@ -481,4 +481,46 @@
     <property name="visible">True</property>
     <property name="stock">gtk-preferences</property>
   </object>
+  <object class="GtkAboutDialog" id="aboutdialog">
+    <property name="width_request">400</property>
+    <property name="border_width">5</property>
+    <property name="window_position">center</property>
+    <property name="type_hint">normal</property>
+    <property name="transient_for">window1</property>
+    <property name="has_separator">False</property>
+    <property name="program_name">Amir</property>
+    <property name="version">0.1</property>
+    <property name="copyright" translatable="yes">Copyright (C) 2010 Jooyeshgar &lt;info@jooyeshgar.com&gt;</property>
+    <property name="comments" translatable="yes">Just another accounting software designed mainly for persian users</property>
+    <property name="license" translatable="yes">Amir is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
+
+Amir is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Amir; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA</property>
+    <property name="authors">Golnaz Nilieh &lt;g382nilieh@gmail.com&gt;
+Hadi Aminzadeh &lt;hadi60@gmail.com&gt;</property>
+    <property name="artists">Roozbeh Shafiee &lt;Roozbeh@RoozbehOnline.org&gt;</property>
+    <property name="logo">../media/icon/48.png</property>
+    <property name="wrap_license">True</property>
+    <child internal-child="vbox">
+      <object class="GtkVBox" id="dialog-vbox3">
+        <property name="visible">True</property>
+        <property name="spacing">2</property>
+        <child>
+          <placeholder/>
+        </child>
+        <child internal-child="action_area">
+          <object class="GtkHButtonBox" id="dialog-action_area3">
+            <property name="visible">True</property>
+            <property name="layout_style">end</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
 </interface>
