@@ -359,7 +359,42 @@ class Subjects(gobject.GObject):
             self.treeview.scroll_to_cell(path, None, False, 0, 0)
             self.treeview.set_cursor(path, None, False)
             self.treeview.grab_focus()
-            
+     
+    def on_key_release_event(self, sender, event):
+        expand = 0
+        selection = self.treeview.get_selection()
+        iter = selection.get_selected()[1]
+        if iter != None :
+            if gtk.gdk.keyval_name(event.keyval) == "Left":
+                if self.treeview.get_direction() != gtk.TEXT_DIR_LTR:
+                    expand = 1
+                else:
+                    expand = -1
+                    
+            if gtk.gdk.keyval_name(event.keyval) == "Right":
+                if self.treeview.get_direction() != gtk.TEXT_DIR_RTL:
+                    expand = 1
+                else:
+                    expand = -1
+             
+            if expand == 1:
+                if self.treestore.iter_has_child(iter):
+                    path = self.treestore.get_path(iter)
+                    self.treeview.expand_row(path, False)
+                    return
+            elif expand == -1:
+                path = self.treestore.get_path(iter)
+                if self.treeview.row_expanded(path):
+                   self.treeview.collapse_row(path)
+                else: 
+                    parent = self.treestore.iter_parent(iter)
+                    if parent != None:
+                        path = self.treestore.get_path(parent)
+                        self.treeview.collapse_row(path)
+                        self.treeview.set_cursor(path, None, False)
+                        self.treeview.grab_focus()
+                return
+#            if gtk.gdk.keyval_name(event.keyval) == Ri:
             
     def selectSubjectFromList(self, treeview, path, view_column):
         iter = self.treestore.get_iter(path)

@@ -306,6 +306,7 @@
                 <property name="enable_tree_lines">True</property>
                 <signal name="test_expand_row" handler="populateChildren"/>
                 <signal name="row_activated" handler="selectSubjectFromList"/>
+                <signal name="key_release_event" handler="on_key_release_event"/>
               </object>
             </child>
           </object>
