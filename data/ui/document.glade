@@ -99,7 +99,7 @@
             <child>
               <object class="GtkLabel" id="label9">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Document Numebr:</property>
+                <property name="label" translatable="yes">Document Number:</property>
               </object>
               <packing>
                 <property name="expand">False</property>
