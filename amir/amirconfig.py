@@ -131,7 +131,7 @@ class AmirConfig:
         if __amir_data_directory__.startswith('/'):
             pathname = __amir_data_directory__
         else:
-            pathname = os.path.dirname(__file__) + '/' + __amir_data_directory__
+            pathname = os.path.join(os.path.dirname(__file__) , __amir_data_directory__)
         
         abs_data_path = os.path.abspath(pathname)
         if os.path.exists(abs_data_path):

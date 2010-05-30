@@ -26,13 +26,16 @@ except ImportError:
 
 assert DistUtilsExtra.auto.__version__ >= '2.10', 'needs DistUtilsExtra.auto >= 2.10'
 import os
-
+import sys
+import shutil
 
 def update_data_path(prefix, oldvalue=None):
 
     try:
-        fin = file('amir/amirconfig.py', 'r')
-        fout = file(fin.name + '.new', 'w')
+        #fin = file('amir/amirconfig.py', 'r')
+        #fout = file(fin.name + '.new', 'w')
+        fin = open(os.path.join(os.path.dirname(__file__), "amir", "amirconfig.py"), 'r')
+        fout = open(os.path.join(os.path.dirname(__file__), "amir", "amirconfig.py.new"), 'w')
 
         for line in fin:            
             fields = line.split(' = ') # Separate variable from value
@@ -48,8 +51,11 @@ def update_data_path(prefix, oldvalue=None):
         fout.flush()
         fout.close()
         fin.close()
-        os.rename(fout.name, fin.name)
-    except (OSError, IOError), e:
+        
+        configname = fin.name
+        os.remove(fin.name)
+        shutil.move(fout.name, configname)
+    except (OSError, IOError):
         print ("ERROR: Can't find amir/amirconfig.py")
         sys.exit(1)
     return oldvalue
@@ -58,18 +64,23 @@ def update_data_path(prefix, oldvalue=None):
 def update_desktop_file(datadir):
 
     try:
-        fin = file('amir.desktop.in', 'r')
-        fout = file(fin.name + '.new', 'w')
+        #fin = file('amir.desktop.in', 'r')
+        #fout = file(fin.name + '.new', 'w')
+        fin = open(os.path.join(os.path.dirname(__file__), "amir", "amir.desktop.in"), 'r')
+        fout = open(os.path.join(os.path.dirname(__file__), "amir", "amir.desktop.in.new"), 'w')
 
         for line in fin:            
             if 'Icon=' in line:
-                line = "Icon=%s\n" % (datadir + 'media/icon.png')
+                line = "Icon=%s\n" % (os.path.join(datadir, 'media', 'icon.png'))
             fout.write(line)
         fout.flush()
         fout.close()
         fin.close()
-        os.rename(fout.name, fin.name)
-    except (OSError, IOError), e:
+        
+        desktopname = fin.name
+        os.remove(fin.name)
+        shutil.move(fout.name, desktopname)
+    except (OSError, IOError):
         print ("ERROR: Can't find amir.desktop.in")
         sys.exit(1)
 
@@ -80,8 +91,8 @@ class InstallAndUpdateDataDirectory(DistUtilsExtra.auto.install_auto):
             print "WARNING: You don't use a standard --prefix installation, take care that you eventually " \
             "need to update quickly/quicklyconfig.py file to adjust __quickly_data_directory__. You can " \
             "ignore this warning if you are packaging and uses --prefix."
-        previous_value = update_data_path(self.prefix + '/share/amir/')
-        update_desktop_file(self.prefix + '/share/amir/')
+        previous_value = update_data_path(os.path.join(self.prefix, 'share', 'amir'))
+        update_desktop_file(os.path.join(self.prefix, 'share', 'amir'))
         DistUtilsExtra.auto.install_auto.run(self)
         update_data_path(self.prefix, previous_value)
 
