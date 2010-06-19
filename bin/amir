@@ -116,10 +116,9 @@ class MainWindow:
         	icon48 = gtk.gdk.pixbuf_new_from_file(os.path.join(icondir, "48.png"))
         	icon64 = gtk.gdk.pixbuf_new_from_file(os.path.join(icondir, "64.png"))
         	icon128 = gtk.gdk.pixbuf_new_from_file(os.path.join(icondir, "128.png"))
-        except GError:
+        	gtk.window_set_default_icon_list(icon16, icon22, icon32, icon48, icon64, icon128)
+        except gobject.GError:
         	pass
-        
-        gtk.window_set_default_icon_list(icon16, icon22, icon32, icon48, icon64, icon128)
         
         self.builder = helpers.get_builder("mainwin")
         self.window = self.builder.get_object("window1")

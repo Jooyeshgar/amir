@@ -21,7 +21,7 @@
 
 # where your project will head for your data (for instance, images and ui files)
 # by default, this is ../data, relative your trunk layout
-__amir_data_directory__ = '../data/'
+__amir_data_directory__ = r'/usr/share/amir'
 __license__ = 'GPL-3'
 
 
@@ -128,10 +128,10 @@ class AmirConfig:
     
     def __init__(self):
     # get pathname absolute or relative
-        if __amir_data_directory__.startswith('/'):
-            pathname = __amir_data_directory__
-        else:
+        if __amir_data_directory__.startswith('..'):
             pathname = os.path.join(os.path.dirname(__file__) , __amir_data_directory__)
+        else:
+            pathname = __amir_data_directory__
         
         abs_data_path = os.path.abspath(pathname)
         if os.path.exists(abs_data_path):

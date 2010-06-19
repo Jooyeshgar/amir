@@ -28,6 +28,7 @@ assert DistUtilsExtra.auto.__version__ >= '2.10', 'needs DistUtilsExtra.auto >= 
 import os
 import sys
 import shutil
+from glob import glob
 
 def update_data_path(prefix, oldvalue=None):
 
@@ -43,7 +44,7 @@ def update_data_path(prefix, oldvalue=None):
                 # update to prefix, store oldvalue
                 if not oldvalue:
                     oldvalue = fields[1]
-                    line = "%s = '%s'\n" % (fields[0], prefix)
+                    line = "%s = r'%s'\n" % (fields[0], prefix)
                 else: # restore oldvalue
                     line = "%s = %s" % (fields[0], oldvalue)
             fout.write(line)
@@ -66,8 +67,8 @@ def update_desktop_file(datadir):
     try:
         #fin = file('amir.desktop.in', 'r')
         #fout = file(fin.name + '.new', 'w')
-        fin = open(os.path.join(os.path.dirname(__file__), "amir", "amir.desktop.in"), 'r')
-        fout = open(os.path.join(os.path.dirname(__file__), "amir", "amir.desktop.in.new"), 'w')
+        fin = open(os.path.join(os.path.dirname(__file__), "amir.desktop.in"), 'r')
+        fout = open(os.path.join(os.path.dirname(__file__), "amir.desktop.in.new"), 'w')
 
         for line in fin:            
             if 'Icon=' in line:
@@ -94,7 +95,7 @@ class InstallAndUpdateDataDirectory(DistUtilsExtra.auto.install_auto):
         previous_value = update_data_path(os.path.join(self.prefix, 'share', 'amir'))
         update_desktop_file(os.path.join(self.prefix, 'share', 'amir'))
         DistUtilsExtra.auto.install_auto.run(self)
-        update_data_path(self.prefix, previous_value)
+        #update_data_path(self.prefix, previous_value)
 
 
         
@@ -111,6 +112,19 @@ DistUtilsExtra.auto.setup(
     description='Amir accounting software',
     long_description='Just another accounting software for persian',
     url='https://launchpad.net/amir',
+    
+    packages=['amir'],
+    data_files = [
+        ('share/applications', ['amir.desktop.in']),
+        
+        ('share/amir/media', glob('data/media/*.png') ),
+        ('share/amir/media/icon', glob('data/media/icon/*.png') ),
+        ('share/amir/ui', glob('data/ui/*.*') ),
+      ],
+    extra = {
+        "windows" : [{
+        'script' : 'bin/amir',
+        }],
+    },
     cmdclass={'install': InstallAndUpdateDataDirectory}
     )
-

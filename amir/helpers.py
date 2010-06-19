@@ -13,7 +13,7 @@ import os
 import gtk
 
 #from amir.amirconfig import get_data_file
-from amir.amirconfig import config
+from amirconfig import config
 
 import gettext
 from gettext import gettext as _
