@@ -1,3 +1,4 @@
 project = amir
 template = ubuntu-application
 version = 0.4.2
+dependencies = 

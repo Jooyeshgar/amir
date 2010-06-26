@@ -4,7 +4,7 @@ import gobject
 
 from sqlalchemy.orm.util import outerjoin
 from sqlalchemy.orm.query import aliased
-from sqlalchemy.sql.functions import count
+from sqlalchemy.sql.functions import *
 from sqlalchemy.sql import and_
 from sqlalchemy.orm import sessionmaker, join
 
@@ -26,7 +26,7 @@ class Subjects(gobject.GObject):
         self.window.set_modal(True)
         
         self.treeview = self.builder.get_object("treeview")
-        self.treestore = gtk.TreeStore(str, str, str)
+        self.treestore = gtk.TreeStore(str, str, str, str)
         column = gtk.TreeViewColumn(_("Subject Code"), gtk.CellRendererText(), text=0)
         column.set_spacing(5)
         column.set_resizable(True)
@@ -39,6 +39,10 @@ class Subjects(gobject.GObject):
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
+        column = gtk.TreeViewColumn(_("Sum"), gtk.CellRendererText(), text=3)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        self.treeview.append_column(column)
         self.treeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
         
         self.session = config.db.session
@@ -47,7 +51,7 @@ class Subjects(gobject.GObject):
         Subject2 = aliased(Subject, name="s2")
         
         #Find top level ledgers (with parent_id equal to 0)
-        query = self.session.query(Subject1.code, Subject1.name, Subject1.type, count(Subject2.id))
+        query = self.session.query(Subject1.code, Subject1.name, Subject1.type, Subject1.lft, Subject1.rgt, count(Subject2.id))
         query = query.select_from(outerjoin(Subject1, Subject2, Subject1.id == Subject2.parent_id))
         result = query.filter(Subject1.parent_id == 0).group_by(Subject1.id).all()
         for a in result :
@@ -55,10 +59,23 @@ class Subjects(gobject.GObject):
             code = a[0]
             if config.digittype == 1:
                 code = utility.convertToPersian(code)
-            iter = self.treestore.append(None, (code, a[1], type))
-            if (a[3] != 0 and ledgers_only == False) :
+            #--------
+            subject_sum = self.session.query(sum(Notebook.value)).select_from(outerjoin(Subject, Notebook, Subject.id == Notebook.subject_id))
+            subject_sum = subject_sum.filter(and_(Subject.lft >= a.lft, Subject.lft <= a.rgt)).first()
+            subject_sum = subject_sum[0]
+            
+            if(subject_sum == None):
+                subject_sum = '';
+            else :
+                if(subject_sum < 0):
+                    subject_sum = "(" + str(subject_sum) + ")"
+                else :
+                    subject_sum = subject_sum
+                
+            iter = self.treestore.append(None, (code, a[1], type, subject_sum))
+            if (a[5] != 0 and ledgers_only == False) :
                 #Add empty subledger to show expander for ledgers which have chidren
-                self.treestore.append(iter, ("", "", ""))
+                self.treestore.append(iter, ("", "", "", ""))
         
         if ledgers_only == True:
             btn = self.builder.get_object("addsubtoolbutton")
@@ -67,6 +84,7 @@ class Subjects(gobject.GObject):
         self.treeview.set_model(self.treestore)
         self.window.show_all()
         self.builder.connect_signals(self)
+        self.rebuild_nested_set(0, 0)  
         
     def addLedger(self, sender):
         dialog = self.builder.get_object("dialog1")
@@ -274,20 +292,28 @@ class Subjects(gobject.GObject):
                     # end of the tree.
                     if iter != None:
                         self.treeview.expand_row(self.treestore.get_path(iter), False)
-                        
-                    ledger = Subject(lastcode, name, parent_id, type)
+                        sub_right = self.session.query(Subject.rgt).select_from(Subject).filter(Subject.parent_id == parent_id).first();
+                    else :
+                        sub_right = self.session.query(Subject.rgt).select_from(Subject).order_by(Subject.rgt.desc()).first();
+                    
+                    if(sub_right == None):
+                        sub_left = 1;
+                    else:
+                        sub_left = sub_right[0]+1
+                    sub_right = sub_left+1
+                    
+                    ledger = Subject(lastcode, name, parent_id, sub_left, sub_right, type)
                     self.session.add(ledger)
                     self.session.commit()
                     
                     if config.digittype == 1:
                         lastcode = utility.convertToPersian(lastcode)
-                    child = self.treestore.append(iter, (lastcode, name, _(self.__class__.subjecttypes[type])))
+                    child = self.treestore.append(iter, (lastcode, name, _(self.__class__.subjecttypes[type]), 0))
                     
                     self.temppath = self.treestore.get_path(child)
                     self.treeview.scroll_to_cell(self.temppath, None, False, 0, 0)
                     self.treeview.set_cursor(self.temppath, None, False)
-                    
-                
+                                  
     def populateChildren(self, treeview, iter, path):
         chiter = self.treestore.iter_children(iter)
         if chiter != None :
@@ -301,7 +327,7 @@ class Subjects(gobject.GObject):
                 Child = aliased(Subject, name="c")
                 Parent = aliased(Subject, name="p")
                 
-                query = self.session.query(Sub.code, Sub.name, Sub.type, count(Child.id))
+                query = self.session.query(Sub.code, Sub.name, Sub.type, count(Child.id), Sub.lft, Sub.rgt)
                 query = query.select_from(outerjoin(outerjoin(Parent, Sub, Sub.parent_id == Parent.id), Child, Sub.id == Child.parent_id))
                 result = query.filter(Parent.code == value).group_by(Sub.id).all()
                 for row in result :
@@ -309,10 +335,23 @@ class Subjects(gobject.GObject):
                     if config.digittype == 1:
                         code = utility.convertToPersian(code)
                     type = _(self.__class__.subjecttypes[row[2]])
-                    chiter = self.treestore.append(iter, (code, row[1], type))
+                    
+                    #--------
+                    subject_sum = self.session.query(sum(Notebook.value)).select_from(outerjoin(Subject, Notebook, Subject.id == Notebook.subject_id))
+                    subject_sum = subject_sum.filter(and_(Subject.lft >= row[4], Subject.lft <= row.rgt)).first()
+                    subject_sum = subject_sum[0]
+                    if(subject_sum == None):
+                        subject_sum = _("equ")
+                    else :
+                        if(subject_sum < 0):
+                            subject_sum = "(" + str(subject_sum) + ")"
+                        else :
+                            subject_sum = subject_sum
+                            
+                    chiter = self.treestore.append(iter, (code, row[1], type, subject_sum))
                     if row[3] != 0 :
                         #add empty subledger for those children which have subledgers in turn. (to show expander)
-                        self.treestore.append(chiter, ("", "", ""))
+                        self.treestore.append(chiter, ("", "", "", ""))
         return False
     
     def match_func(self, iter, data):
@@ -405,6 +444,18 @@ class Subjects(gobject.GObject):
         query = query.filter(Subject.code == code)
         sub_id = query.first().id
         self.emit("subject-selected", sub_id, code, name)
+    
+    def rebuild_nested_set(self, parent, left): 
+        right = left+1;
+        # get all children of this node  
+        result = self.session.query(Subject.id).select_from(Subject).filter(Subject.parent_id == parent).all()
+        for a in result :
+            right = self.rebuild_nested_set(a[0], right);
+ 
+        self.session.query(Subject).filter(Subject.id == parent).update(values = dict(lft = left,rgt = right))
+        self.session.commit()
+        
+        return right+1;  
                             
 gobject.type_register(Subjects)
 gobject.signal_new("subject-selected", Subjects, gobject.SIGNAL_RUN_LAST,
