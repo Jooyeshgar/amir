@@ -311,6 +311,7 @@ class AddEditDoc:
                 query = self.session.query(Notebook).filter(Notebook.bill_id == bill.id).delete()
             else :
                 if self.docnumber == 0:
+                    number = 0
                     query = self.session.query(Bill.number).select_from(Bill)
                     lastnumbert = query.order_by(Bill.number.desc()).first()
                     if lastnumbert != None:

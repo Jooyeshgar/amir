@@ -16,12 +16,16 @@ class Subject(Base):
     code = Column(String(20), nullable=False)
     name = Column(Unicode(60), nullable=False)
     parent_id = Column(Integer, ColumnDefault(0), ForeignKey('subject.id'), nullable=False)
+    lft = Column(Integer, nullable=False)
+    rgt = Column(Integer, nullable=False)
     type = Column(Integer)      # 0 for Debtor, 1 for Creditor, 2 for both
     
-    def __init__(self, code, name, parent_id, type):
+    def __init__(self, code, name, parent_id, left, right, type):
         self.code = code
         self.name = name
         self.parent_id = parent_id
+        self.lft = left
+        self.rgt = right
         self.type = type
 
 class Bill(Base):
