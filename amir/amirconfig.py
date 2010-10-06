@@ -175,6 +175,12 @@ class AmirConfig:
         except:
             sys.exit("Cannot open database.")
         
+        str = self.configfile.returnStringValue("repair_at_start")
+        if str.lower() == 'yes':
+            self.repair_atstart = True
+        else:
+            self.repair_atstart = False
+            
         str = self.configfile.returnStringValue("dateformat")
         if str == '':
             self.datetype = 0
@@ -208,8 +214,14 @@ class AmirConfig:
             uselatin = "no"
         else:
             uselatin = "yes"
-        keys = ['database', 'dateformat', 'delimiter', 'dateorder', 'use_latin_numbers']
-        values = [self.db.dbfile, self.datetypes[self.datetype], self.datedelims[self.datedelim], str(self.dateorder), uselatin]
+            
+        if self.repair_atstart == True:
+            repair = "yes"
+        else:
+            repair = "no"
+            
+        keys = ['database', 'dateformat', 'delimiter', 'dateorder', 'use_latin_numbers', 'repair_at_start']
+        values = [self.db.dbfile, self.datetypes[self.datetype], self.datedelims[self.datedelim], str(self.dateorder), uselatin, repair]
         self.configfile.update(keys, values) 
 try:
     config

@@ -46,6 +46,9 @@ class Setting:
         else:
             self.uselatin.set_active(False)
         
+        self.repair_atstart = self.builder.get_object("repair_atstart")
+        self.repair_atstart.set_active(config.repair_atstart)
+            
         self.window.show_all()
         self.builder.connect_signals(self)
         
@@ -71,7 +74,30 @@ class Setting:
             self.newdb.set_text(self.filechooser.get_filename())
         self.filechooser.hide()
             
+    def repairDatabaseNow(self, sender):
+        msg = _("Please wait...")
+        self.msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_NONE, msg)
+        self.msgbox.set_title(_("Repairing database"))
+        self.msgbox.show_all()
+        
+        while gtk.events_pending():
+            gtk.main_iteration_do(False)
+
+        gobject.timeout_add(1000, self.repairDbFunc)
+        
+    def repairDbFunc(self):
+        config.db.rebuild_nested_set(0, 0)
+                    
+        self.msgbox.set_markup(_("Repair Operation Completed!"))
+        self.msgbox.add_button(gtk.STOCK_OK, -5)
+        self.msgbox.run()
+        self.msgbox.destroy()
+        return False
+        
     def applyDatabaseSetting(self, sender):
+        
+        config.repair_atstart = self.repair_atstart.get_active()
+            
         dbfile = self.filename.get_text()
         if dbfile != "":
             msg = ""
@@ -146,7 +172,7 @@ class Setting:
                         else:
                             os.remove(newdb)
                 
-                    msg = _("Please wait..")
+                    msg = _("Please wait...")
                     self.msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_NONE, msg)
                     self.msgbox.set_title(_("Converting database"))
                     self.msgbox.show_all()

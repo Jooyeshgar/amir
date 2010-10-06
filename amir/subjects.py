@@ -84,7 +84,7 @@ class Subjects(gobject.GObject):
         self.treeview.set_model(self.treestore)
         self.window.show_all()
         self.builder.connect_signals(self)
-        self.rebuild_nested_set(0, 0)  
+        #self.rebuild_nested_set(0, 0)  
         
     def addLedger(self, sender):
         dialog = self.builder.get_object("dialog1")
@@ -478,18 +478,7 @@ class Subjects(gobject.GObject):
         query = query.filter(Subject.code == code)
         sub_id = query.first().id
         self.emit("subject-selected", sub_id, code, name)
-    
-    def rebuild_nested_set(self, parent, left): 
-        right = left+1;
-        # get all children of this node  
-        result = self.session.query(Subject.id).select_from(Subject).filter(Subject.parent_id == parent).all()
-        for a in result :
-            right = self.rebuild_nested_set(a[0], right);
- 
-        self.session.query(Subject).filter(Subject.id == parent).update(values = dict(lft = left,rgt = right))
-        self.session.commit()
-        
-        return right+1;  
+  
                             
 gobject.type_register(Subjects)
 gobject.signal_new("subject-selected", Subjects, gobject.SIGNAL_RUN_LAST,
