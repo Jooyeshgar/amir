@@ -210,7 +210,19 @@ class Subjects(gobject.GObject):
                 else :
                     # Now it's OK to delete ledger
                     row = self.session.query(Subject).filter(Subject.id == result[0]).first()
+                    sub_left = row.lft
                     self.session.delete(row)
+                    
+                    rlist = self.session.query(Subject).filter(Subject.rgt > sub_left).all()
+                    for r in rlist:
+                        r.rgt -= 2
+                        self.session.add(r)
+                        
+                    llist = self.session.query(Subject).filter(Subject.lft > sub_left).all()
+                    for l in llist:
+                        l.lft -= 2
+                        self.session.add(l)
+                    
                     self.session.commit()
                     self.treestore.remove(iter)
     
