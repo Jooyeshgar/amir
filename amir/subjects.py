@@ -8,6 +8,7 @@ from sqlalchemy.sql.functions import *
 from sqlalchemy.sql import and_
 from sqlalchemy.orm import sessionmaker, join
 
+import numberentry
 import utility
 from database import *
 from amirconfig import config
@@ -44,6 +45,11 @@ class Subjects(gobject.GObject):
         column.set_resizable(True)
         self.treeview.append_column(column)
         self.treeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
+        
+        self.code = numberentry.NumberEntry()
+        box = self.builder.get_object("codebox")
+        box.add(self.code)
+        self.code.show()
         
         self.session = config.db.session
         
@@ -90,8 +96,21 @@ class Subjects(gobject.GObject):
         dialog = self.builder.get_object("dialog1")
         hbox = self.builder.get_object("hbox3")
         hbox.hide()
-        entry = self.builder.get_object("entry1")
+        entry = self.builder.get_object("ledgername")
         entry.set_text("")
+        
+        query = self.session.query(Subject.code).select_from(Subject).order_by(Subject.id.desc())
+        code = query.filter(Subject.parent_id == 0).first()
+        if code == None :
+            lastcode = "01"
+        else:
+            lastcode = "%02d" % (int(code[0][-2:]) + 1)
+            
+        if config.digittype == 1:
+                lastcode = utility.convertToPersian(lastcode)
+        self.code.set_text(lastcode)
+        self.builder.get_object("parentcode").set_text("")
+        
 #        dialog.show_all()
         result = dialog.run()
         if result == 1 :
@@ -114,10 +133,29 @@ class Subjects(gobject.GObject):
         parent = selection.get_selected()[1]
         
         if parent != None :
-            parentname = self.treestore.get(parent, 1)[0]
+            pcode = self.treestore.get(parent, 0)[0]
+            self.builder.get_object("parentcode").set_text(pcode)
+            pcode = utility.convertToLatin(pcode)
+            
+            query = self.session.query(Subject).select_from(Subject)
+            query = query.filter(Subject.code == pcode)
+            psub = query.first()
+            
+            #parentname = self.treestore.get(parent, 1)[0]
             label = self.builder.get_object("label3")
-            label.set_text(parentname)
-            entry = self.builder.get_object("entry1")
+            label.set_text(psub.name)
+            entry = self.builder.get_object("ledgername")
+            
+            query = self.session.query(Subject.code).select_from(Subject).order_by(Subject.id.desc())
+            code = query.filter(Subject.parent_id == psub.id).first()
+            if code == None :
+                lastcode = "01"
+            else :
+                lastcode = "%02d" % (int(code[0][-2:]) + 1)
+                
+            if config.digittype == 1:
+                lastcode = utility.convertToPersian(lastcode) 
+            self.code.set_text(lastcode)
             
             result = dialog.run()
             if result == 1 :
@@ -159,7 +197,7 @@ class Subjects(gobject.GObject):
                     self.builder.get_object("both").set_active(True) 
             #label = self.builder.get_object("label3")
             #label.set_text(name)
-            entry = self.builder.get_object("entry1")
+            entry = self.builder.get_object("ledgername")
             entry.set_text(name)
             
             hbox = self.builder.get_object("hbox3")
@@ -294,14 +332,25 @@ class Subjects(gobject.GObject):
                     self.session.commit()
                     self.treestore.set(iter, 1, name, 2, _(self.__class__.subjecttypes[type]))
                 else:
-                    query = self.session.query(Subject.code).select_from(Subject).order_by(Subject.id.desc())
-                    code = query.filter(Subject.parent_id == parent_id).first()
-                    if code == None :
-                        lastcode = "01"
-                    else :
-                        lastcode = "%02d" % (int(code[0][-2:]) + 1)
+#                    query = self.session.query(Subject.code).select_from(Subject).order_by(Subject.id.desc())
+#                    code = query.filter(Subject.parent_id == parent_id).first()
+#                    if code == None :
+#                        lastcode = "01"
+#                    else :
+#                        lastcode = "%02d" % (int(code[0][-2:]) + 1)
+                    lastcode = utility.convertToLatin(self.code.get_text())[0:2]
+                    lastcode = iter_code + lastcode[0:2]
+                    query = self.session.query(count(Subject.id)).select_from(Subject)
+                    query = query.filter(and_(Subject.parent_id == parent_id, Subject.code == lastcode))
+                    result = query.first()
                     
-                    lastcode = iter_code + lastcode
+                    if result[0] != 0 :
+                        msgbox = gtk.MessageDialog(widget, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
+                                                _("A subject with this code already exists."))
+                        msgbox.set_title(_("Duplicate subject code"))
+                        msgbox.run()
+                        msgbox.destroy()
+                        return
                     
                     # If row have not been expanded yet, function 'populateChidren' will be executed and adds children
                     # to the row, then we insert new child in the database and call treeview.append to add it to the 
