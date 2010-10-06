@@ -227,6 +227,7 @@ class Subjects(gobject.GObject):
                 iter_code = ""
                 parent_id = 0
                 parent_right = 0
+                parent_left = 0
             else :
                 iter_code = utility.convertToLatin(self.treestore.get(iter, 0)[0])
                 query = self.session.query(Subject).select_from(Subject)
@@ -238,6 +239,7 @@ class Subjects(gobject.GObject):
                 else : 
                     parent_id = sub.id
                     parent_right = sub.rgt
+                    parent_left = sub.lft
                 
             query = self.session.query(count(Subject.id)).select_from(Subject)
             query = query.filter(and_(Subject.name == name, Subject.parent_id == parent_id))
@@ -297,7 +299,7 @@ class Subjects(gobject.GObject):
                         sub_right = self.session.query(max(Subject.rgt)).select_from(Subject).filter(Subject.parent_id == parent_id).first()
                         sub_right = sub_right[0]
                         if sub_right == None :
-                            sub_right = parent_right
+                            sub_right = parent_left
                             
                     else :
                         #sub_right = self.session.query(Subject.rgt).select_from(Subject).order_by(Subject.rgt.desc()).first();
