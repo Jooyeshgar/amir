@@ -182,6 +182,17 @@ class Subjects(gobject.GObject):
         iter = selection.get_selected()[1]
         
         if iter != None :
+            if config.digittype == 1:
+                code = utility.convertToLatin(self.treestore.get(iter, 0)[0])
+                pcode = utility.convertToPersian(code[0:-2])
+                ccode = utility.convertToPersian(code[-2:])
+            else:
+                code = self.treestore.get(iter, 0)[0]
+                pcode = code[0:-2]
+                ccode = code[-2:]
+            self.builder.get_object("parentcode").set_text(pcode)
+            self.code.set_text(ccode)
+            
             name = self.treestore.get(iter, 1)[0]
             type = self.treestore.get(iter, 2)[0]
             debtor = False
@@ -286,6 +297,10 @@ class Subjects(gobject.GObject):
                 if edit == True:
                     iter_id = sub.id
                     parent_id = sub.parent_id
+                    temp_code = iter_code
+                    iter_code = iter_code[0:-2]
+                    parent_right = sub.rgt
+                    parent_left = sub.lft
                 else : 
                     parent_id = sub.id
                     parent_right = sub.rgt
@@ -303,99 +318,131 @@ class Subjects(gobject.GObject):
                 msgbox.set_title(_("Duplicate subject name"))
                 msgbox.run()
                 msgbox.destroy()
-            else :
-                #Find last subject code.
-                if edit == True:
-                    query = self.session.query(count(Notebook.id)).select_from(Notebook)
-                    query = query.filter(Notebook.subject_id == iter_id)                    
-                    rowcount = 0
-                    msg = ""
-                    if type == 1:
-                        rowcounts = query.filter(Notebook.value < 0).first()
-                        rowcount = rowcounts[0]
-                        msg = _("The type of this subject can not be changed to 'creditor', Because there are \
-                                %d documents that use it as debtor.") % rowcount
-                    elif type == 0:
-                        rowcounts = query.filter(Notebook.value > 0).first()
-                        rowcount = rowcounts[0]
-                        msg = _("The type of this subject can not be changed to 'debtor', Because there are \
-                                %d documents that use it as creditor.") % rowcount
-                    if (rowcount > 0):
-                        msgbox = gtk.MessageDialog(widget, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE, msg)
-                        msgbox.set_title(_("Can not change subject type"))
-                        msgbox.run()
-                        msgbox.destroy()
-                        return
-                    
-                    sub.name = name
-                    sub.type = type
-                    self.session.commit()
-                    self.treestore.set(iter, 1, name, 2, _(self.__class__.subjecttypes[type]))
+                return
+            
+            lastcode = utility.convertToLatin(self.code.get_text())[0:2]
+            lastcode = iter_code + lastcode[0:2]
+            query = self.session.query(count(Subject.id)).select_from(Subject)
+            query = query.filter(and_(Subject.parent_id == parent_id, Subject.code == lastcode))
+            if edit== True:
+                query = query.filter(Subject.id != iter_id)
+            result = query.first()
+            
+            if result[0] != 0 :
+                msgbox = gtk.MessageDialog(widget, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
+                                        _("A subject with this code already exists."))
+                msgbox.set_title(_("Duplicate subject code"))
+                msgbox.run()
+                msgbox.destroy()
+                return
+            
+            if edit == True:
+                query = self.session.query(count(Notebook.id)).select_from(Notebook)
+                query = query.filter(Notebook.subject_id == iter_id)                    
+                rowcount = 0
+                msg = ""
+                if type == 1:
+                    rowcounts = query.filter(Notebook.value < 0).first()
+                    rowcount = rowcounts[0]
+                    msg = _("The type of this subject can not be changed to 'creditor', Because there are \
+                            %d documents that use it as debtor.") % rowcount
+                elif type == 0:
+                    rowcounts = query.filter(Notebook.value > 0).first()
+                    rowcount = rowcounts[0]
+                    msg = _("The type of this subject can not be changed to 'debtor', Because there are \
+                            %d documents that use it as creditor.") % rowcount
+                if (rowcount > 0):
+                    msgbox = gtk.MessageDialog(widget, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE, msg)
+                    msgbox.set_title(_("Can not change subject type"))
+                    msgbox.run()
+                    msgbox.destroy()
+                    return
+                
+                sub.code = lastcode
+                sub.name = name
+                sub.type = type
+                
+                #update subledger codes if parent ledger code has changed
+                if temp_code != lastcode:
+                    query = self.session.query(Subject).select_from(Subject)
+                    query = query.filter(and_(Subject.lft > parent_left, Subject.rgt < parent_right))
+                    result = query.all()
+                    for child in result:
+                        child.code = lastcode + child.code[-2:]
+                        self.session.add(child)
+                
+                self.session.commit()
+                
+                #TODO show updated children on screen
+                if config.digittype == 1:
+                    basecode = utility.convertToPersian(lastcode)
                 else:
+                    basecode = lastcode
+                    
+                if temp_code != lastcode:
+                    chiter = self.treestore.iter_children(iter)
+                    while chiter:
+                        chcode = self.treestore.get(chiter, 0)[0]
+                        chcode = utility.convertToLatin(chcode)[-2:]
+                        if config.digittype == 1:
+                            chcode = utility.convertToPersian(chcode)
+                        self.treestore.set(chiter, 0, basecode + chcode )
+                        chiter = self.treestore.iter_next(chiter)
+                        
+                self.treestore.set(iter, 0, basecode, 1, name, 2, _(self.__class__.subjecttypes[type]))
+                
+            else:
 #                    query = self.session.query(Subject.code).select_from(Subject).order_by(Subject.id.desc())
 #                    code = query.filter(Subject.parent_id == parent_id).first()
 #                    if code == None :
 #                        lastcode = "01"
 #                    else :
 #                        lastcode = "%02d" % (int(code[0][-2:]) + 1)
-                    lastcode = utility.convertToLatin(self.code.get_text())[0:2]
-                    lastcode = iter_code + lastcode[0:2]
-                    query = self.session.query(count(Subject.id)).select_from(Subject)
-                    query = query.filter(and_(Subject.parent_id == parent_id, Subject.code == lastcode))
-                    result = query.first()
-                    
-                    if result[0] != 0 :
-                        msgbox = gtk.MessageDialog(widget, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
-                                                _("A subject with this code already exists."))
-                        msgbox.set_title(_("Duplicate subject code"))
-                        msgbox.run()
-                        msgbox.destroy()
-                        return
-                    
-                    # If row have not been expanded yet, function 'populateChidren' will be executed and adds children
-                    # to the row, then we insert new child in the database and call treeview.append to add it to the 
-                    # end of the tree.
-                    if iter != None:
-                        self.treeview.expand_row(self.treestore.get_path(iter), False)
-                        sub_right = self.session.query(max(Subject.rgt)).select_from(Subject).filter(Subject.parent_id == parent_id).first()
-                        sub_right = sub_right[0]
-                        if sub_right == None :
-                            sub_right = parent_left
-                            
-                    else :
-                        #sub_right = self.session.query(Subject.rgt).select_from(Subject).order_by(Subject.rgt.desc()).first();
-                        sub_right = self.session.query(max(Subject.rgt)).select_from(Subject).first()
-                        sub_right = sub_right[0]
-                        if sub_right == None :
-                            sub_right = 0
-                    
-                    #Update subjects which we want to place new subject before them:
-                    rlist = self.session.query(Subject).filter(Subject.rgt > sub_right).all()
-                    for r in rlist:
-                        r.rgt += 2
-                        self.session.add(r)
+                
+                # If row have not been expanded yet, function 'populateChidren' will be executed and adds children
+                # to the row, then we insert new child in the database and call treeview.append to add it to the 
+                # end of the tree.
+                if iter != None:
+                    self.treeview.expand_row(self.treestore.get_path(iter), False)
+                    sub_right = self.session.query(max(Subject.rgt)).select_from(Subject).filter(Subject.parent_id == parent_id).first()
+                    sub_right = sub_right[0]
+                    if sub_right == None :
+                        sub_right = parent_left
                         
-                    llist = self.session.query(Subject).filter(Subject.lft > sub_right).all()
-                    for l in llist:
-                        l.lft += 2
-                        self.session.add(l)
+                else :
+                    #sub_right = self.session.query(Subject.rgt).select_from(Subject).order_by(Subject.rgt.desc()).first();
+                    sub_right = self.session.query(max(Subject.rgt)).select_from(Subject).first()
+                    sub_right = sub_right[0]
+                    if sub_right == None :
+                        sub_right = 0
+                
+                #Update subjects which we want to place new subject before them:
+                rlist = self.session.query(Subject).filter(Subject.rgt > sub_right).all()
+                for r in rlist:
+                    r.rgt += 2
+                    self.session.add(r)
                     
-                    sub_left = sub_right + 1
-                    sub_right = sub_left + 1
-                    
-                    #Now create new subject:
-                    ledger = Subject(lastcode, name, parent_id, sub_left, sub_right, type)
-                    self.session.add(ledger)
-                    
-                    self.session.commit()
-                    
-                    if config.digittype == 1:
-                        lastcode = utility.convertToPersian(lastcode)
-                    child = self.treestore.append(iter, (lastcode, name, _(self.__class__.subjecttypes[type]), 0))
-                    
-                    self.temppath = self.treestore.get_path(child)
-                    self.treeview.scroll_to_cell(self.temppath, None, False, 0, 0)
-                    self.treeview.set_cursor(self.temppath, None, False)
+                llist = self.session.query(Subject).filter(Subject.lft > sub_right).all()
+                for l in llist:
+                    l.lft += 2
+                    self.session.add(l)
+                
+                sub_left = sub_right + 1
+                sub_right = sub_left + 1
+                
+                #Now create new subject:
+                ledger = Subject(lastcode, name, parent_id, sub_left, sub_right, type)
+                self.session.add(ledger)
+                
+                self.session.commit()
+                
+                if config.digittype == 1:
+                    lastcode = utility.convertToPersian(lastcode)
+                child = self.treestore.append(iter, (lastcode, name, _(self.__class__.subjecttypes[type]), 0))
+                
+                self.temppath = self.treestore.get_path(child)
+                self.treeview.scroll_to_cell(self.temppath, None, False, 0, 0)
+                self.treeview.set_cursor(self.temppath, None, False)
                                   
     def populateChildren(self, treeview, iter, path):
         chiter = self.treestore.iter_children(iter)
