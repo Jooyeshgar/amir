@@ -2,6 +2,7 @@ import pygtk
 import gtk
 from datetime import date
 
+from sqlalchemy import or_
 from sqlalchemy.orm.util import outerjoin
 from sqlalchemy.sql import between
 from sqlalchemy.sql.functions import sum
@@ -110,6 +111,17 @@ class NotebookReport:
                 query1 = query1.filter(Subject.code.startswith(code))
                 query2 = query2.filter(Subject.code.startswith(code))
             
+        searchkey = unicode(self.builder.get_object("searchentry").get_text())
+        if searchkey != "":
+            try:
+                value = int(utility.convertToLatin(searchkey))
+            except UnicodeEncodeError:
+                value = 0
+                
+            if value != 0:
+                query1 = query1.filter(or_(Notebook.desc.match(searchkey), Notebook.value == value))
+            else:
+                query1 = query1.filter(Notebook.desc.match(searchkey))
         # Check the report parameters  
         if self.builder.get_object("allcontent").get_active() == True:
             query1 = query1.order_by(Bill.date.asc(), Bill.number.asc())

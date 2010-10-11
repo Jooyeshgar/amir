@@ -67,3 +67,15 @@ class Database:
     
         Session = sessionmaker(engine)
         self.session = Session()
+        
+    def rebuild_nested_set(self, parent=0, left=0): 
+        right = left+1;
+        # get all children of this node  
+        result = self.session.query(Subject.id).select_from(Subject).filter(Subject.parent_id == parent).all()
+        for a in result :
+            right = self.rebuild_nested_set(a[0], right);
+ 
+        self.session.query(Subject).filter(Subject.id == parent).update(values = dict(lft = left,rgt = right))
+        self.session.commit()
+        
+        return right+1;

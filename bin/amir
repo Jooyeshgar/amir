@@ -135,7 +135,27 @@ class MainWindow:
         self.window.connect("destroy", self.destroy)
         self.window.set_border_width(10)
         self.window.show()
+        
+        if config.repair_atstart == True:
+        	msg = _("Repairing database, Please wait...")
+        	self.msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_NONE, msg)
+        	self.msgbox.set_title(_("Repairing database"))
+        	self.msgbox.show_all()
+        
+        	while gtk.events_pending():
+        		gtk.main_iteration_do(False)
 
+       		gobject.timeout_add(1000, self.repairDbFunc)
+
+    def repairDbFunc(self):
+        config.db.rebuild_nested_set(0, 0)
+                    
+        self.msgbox.set_markup(_("Repair Operation Completed!"))
+        self.msgbox.add_button(gtk.STOCK_OK, -5)
+        self.msgbox.run()
+        self.msgbox.destroy()
+        return False
+        
     def main(self):
         gtk.main()
 
