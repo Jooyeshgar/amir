@@ -88,6 +88,7 @@ class Subjects(gobject.GObject):
             btn.hide()
         
         self.treeview.set_model(self.treestore)
+        self.treestore.set_sort_column_id(0, gtk.SORT_ASCENDING)
         self.window.show_all()
         self.builder.connect_signals(self)
         #self.rebuild_nested_set(0, 0)  
