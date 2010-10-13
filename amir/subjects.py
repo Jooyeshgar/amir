@@ -512,6 +512,7 @@ class Subjects(gobject.GObject):
 
     def highlightSubject(self, code):
         i = 2
+        code = code.decode('utf-8')
         part = code[0:i]
         iter = self.treestore.get_iter_first()
         parent = iter
