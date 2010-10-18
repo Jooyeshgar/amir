@@ -584,6 +584,7 @@ class Subjects(gobject.GObject):
 #            if gtk.gdk.keyval_name(event.keyval) == Ri:
             
     def selectSubjectFromList(self, treeview, path, view_column):
+        print "???",path
         iter = self.treestore.get_iter(path)
         code = utility.convertToLatin(self.treestore.get(iter, 0)[0])
         name = self.treestore.get(iter, 1)[0]

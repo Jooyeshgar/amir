@@ -79,3 +79,49 @@ class Database:
         self.session.commit()
         
         return right+1;
+
+class Products(Base):
+    __tablename__ = "products"
+    id              = Column(   Integer,                            primary_key = True      )
+    code            = Column(   String,                             nullable    = False     )
+    name            = Column(   Unicode(60),                        nullable    = False     )
+    accGroup        = Column(   Integer,                            ForeignKey('groups.id') )
+    location        = Column(   Unicode(50),                        nullable    = True      )
+    quantity        = Column(   Integer,        ColumnDefault(0),   nullable    = False     )
+    qntyWarning     = Column(   Integer,        ColumnDefault(0),   nullable    = True      )
+    oversell        = Column(   Boolean,        ColumnDefault(0)                            )
+    purchacePrice   = Column(   Integer,        ColumnDefault(0),   nullable    = False     )
+    sellingPrice    = Column(   Integer,        ColumnDefault(0),   nullable    = False     )
+    discountFormula = Column(   Unicode(100),                       nullable    = True      )
+    productDesc     = Column(   Unicode(200),                       nullable    = True      )
+
+    def __init__(   self,   code,   name,   warn,   over,   pLoc,
+                    qnty,   purc,   sell,   accg,   desc,   disc    ):
+        self.code       = code
+        self.name       = name
+        self.oversell   = over
+        self.location   = pLoc
+        self.quantity   = qnty
+        self.accGroup   = accg
+        self.productDesc    = desc
+        self.qntyWarning    = warn
+        self.sellingPrice       = sell
+        self.purchacePrice      = purc
+        self.discountFormula    = disc
+        
+
+class Groups(   Base    ):
+    __tablename__ = "groups"
+    id      = Column(   Integer,        primary_key = True          )
+    code    = Column(   String(20),     nullable    = False         )
+    name    = Column(   Unicode(60),    nullable    = False         )
+    buyId   = Column(   Integer,        ForeignKey('subject.id')    )
+    sellId  = Column(   Integer,        ForeignKey('subject.id')    )
+
+    def __init__(   self,   code,   name,   buyId,  sellId  ):
+        self.code   = code
+        self.name   = name
+        self.buyId  = buyId
+        self.sellId = sellId
+        
+

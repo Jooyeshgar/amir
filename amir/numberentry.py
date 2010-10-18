@@ -38,5 +38,14 @@ class NumberEntry(gtk.Entry):
         widget.emit_stop_by_name("insert_text")
         gobject.idle_add(self.insert, widget, text, pos)
 
-
-       
+    def get_int( self ):
+        #--- This method will return the integer format of the entered  
+        #--- value. If there is no text entered, 0 will be returned.
+        try:
+            val = int(  self.get_text() )
+        except ValueError:
+            val = 0
+        except:
+            val = 0
+            print "Unknown Value entered."
+        return val

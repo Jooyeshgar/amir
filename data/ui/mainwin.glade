@@ -11,7 +11,7 @@
           <object class="GtkMenuBar" id="menubar1">
             <property name="visible">True</property>
             <child>
-              <object class="GtkMenuItem" id="jobsMenuItem">
+              <object class="GtkMenuItem" id="actionsMenuItem">
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">_Actions</property>
                 <property name="use_underline">True</property>
@@ -95,8 +95,8 @@
                     <child>
                       <object class="GtkMenuItem" id="menuitem5">
                         <property name="visible">True</property>
-                        <property name="related_action">docreportaction</property>
                         <property name="use_action_appearance">True</property>
+                        <property name="related_action">docreportaction</property>
                       </object>
                     </child>
                   </object>
@@ -134,7 +134,55 @@
               </object>
             </child>
             <child>
-              <object class="GtkMenuItem" id="menuitem4">
+              <object class="GtkMenuItem" id="warehousingMenuItem">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">_Warehousing</property>
+                <property name="use_underline">True</property>
+                <child type="submenu">
+                  <object class="GtkMenu" id="warehousingSub">
+                    <property name="visible">True</property>
+                    <child>
+                      <object class="GtkImageMenuItem" id="allProductsMenuItem">
+                        <property name="label" translatable="yes">View All Products</property>
+                        <property name="visible">True</property>
+                        <property name="related_action">allProductsAction</property>
+                        <property name="image">image5</property>
+                        <property name="use_stock">False</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="addProductMenuItem">
+                        <property name="label" translatable="yes">Add Product</property>
+                        <property name="visible">True</property>
+                        <property name="related_action">addProductAction</property>
+                        <property name="image">image6</property>
+                        <property name="use_stock">False</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="addGroupsMenuItem">
+                        <property name="label" translatable="yes">Add Group</property>
+                        <property name="visible">True</property>
+                        <property name="related_action">addGroupAction</property>
+                        <property name="image">image7</property>
+                        <property name="use_stock">False</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="allGroupsMenuItem">
+                        <property name="label" translatable="yes">View All Groups</property>
+                        <property name="visible">True</property>
+                        <property name="related_action">viewGroupsAction</property>
+                        <property name="image">image8</property>
+                        <property name="use_stock">False</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuItem" id="helpMenuItem">
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">_Help</property>
                 <property name="use_underline">True</property>
@@ -144,8 +192,8 @@
                     <child>
                       <object class="GtkImageMenuItem" id="aboutmenuitem">
                         <property name="visible">True</property>
-                        <property name="related_action">aboutAction</property>
                         <property name="use_action_appearance">True</property>
+                        <property name="related_action">aboutAction</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                       </object>
@@ -522,5 +570,37 @@ Hadi Aminzadeh &lt;hadi60@gmail.com&gt;</property>
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkImage" id="image5">
+    <property name="visible">True</property>
+    <property name="stock">gtk-open</property>
+  </object>
+  <object class="GtkImage" id="image6">
+    <property name="visible">True</property>
+    <property name="stock">gtk-goto-top</property>
+  </object>
+  <object class="GtkAction" id="allProductsAction">
+    <property name="label">View All Products</property>
+    <signal name="activate" handler="viewAllProducts"/>
+  </object>
+  <object class="GtkAction" id="addProductAction">
+    <property name="label">Add Product</property>
+    <signal name="activate" handler="addNewProduct"/>
+  </object>
+  <object class="GtkImage" id="image7">
+    <property name="visible">True</property>
+    <property name="stock">gtk-edit</property>
+  </object>
+  <object class="GtkAction" id="addGroupAction">
+    <property name="label">Add Group</property>
+    <signal name="activate" handler="addNewGroup"/>
+  </object>
+  <object class="GtkImage" id="image8">
+    <property name="visible">True</property>
+    <property name="stock">gtk-dnd-multiple</property>
+  </object>
+  <object class="GtkAction" id="viewGroupsAction">
+    <property name="label">View Groups</property>
+    <signal name="activate" handler="viewGroups"/>
   </object>
 </interface>
