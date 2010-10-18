@@ -88,12 +88,14 @@ class Subjects(gobject.GObject):
             btn.hide()
         
         self.treeview.set_model(self.treestore)
+        self.treestore.set_sort_column_id(0, gtk.SORT_ASCENDING)
         self.window.show_all()
         self.builder.connect_signals(self)
         #self.rebuild_nested_set(0, 0)  
         
     def addLedger(self, sender):
         dialog = self.builder.get_object("dialog1")
+        dialog.set_title(_("Add Ledger"))
         hbox = self.builder.get_object("hbox3")
         hbox.hide()
         entry = self.builder.get_object("ledgername")
@@ -127,6 +129,7 @@ class Subjects(gobject.GObject):
         
     def addSubLedger(self, sender):
         dialog = self.builder.get_object("dialog1")
+        dialog.set_title(_("Add Sub-ledger"))
         hbox = self.builder.get_object("hbox3")
         hbox.show()
         selection = self.treeview.get_selection()
@@ -178,6 +181,7 @@ class Subjects(gobject.GObject):
     
     def editLedger(self, sender):
         dialog = self.builder.get_object("dialog1")
+        dialog.set_title(_("Edit Ledger"))
         selection = self.treeview.get_selection()
         iter = selection.get_selected()[1]
         
@@ -363,12 +367,13 @@ class Subjects(gobject.GObject):
                 sub.type = type
                 
                 #update subledger codes if parent ledger code has changed
+                length = len(lastcode)
                 if temp_code != lastcode:
                     query = self.session.query(Subject).select_from(Subject)
                     query = query.filter(and_(Subject.lft > parent_left, Subject.rgt < parent_right))
                     result = query.all()
                     for child in result:
-                        child.code = lastcode + child.code[-2:]
+                        child.code = lastcode + child.code[length:]
                         self.session.add(child)
                 
                 self.session.commit()
@@ -380,14 +385,16 @@ class Subjects(gobject.GObject):
                     basecode = lastcode
                     
                 if temp_code != lastcode:
-                    chiter = self.treestore.iter_children(iter)
-                    while chiter:
-                        chcode = self.treestore.get(chiter, 0)[0]
-                        chcode = utility.convertToLatin(chcode)[-2:]
-                        if config.digittype == 1:
-                            chcode = utility.convertToPersian(chcode)
-                        self.treestore.set(chiter, 0, basecode + chcode )
-                        chiter = self.treestore.iter_next(chiter)
+#                    chiter = self.treestore.iter_children(iter)
+                    tempstore = self.treestore.filter_new(self.treestore.get_path(iter))
+                    tempstore.foreach(self.editChildCodes, (basecode, length))
+#                    while chiter:
+#                        chcode = self.treestore.get(chiter, 0)[0]
+#                        chcode = utility.convertToLatin(chcode)[-2:]
+#                        if config.digittype == 1:
+#                            chcode = utility.convertToPersian(chcode)
+#                        self.treestore.set(chiter, 0, basecode + chcode )
+#                        chiter = self.treestore.iter_next(chiter)
                         
                 self.treestore.set(iter, 0, basecode, 1, name, 2, _(self.__class__.subjecttypes[type]))
                 
@@ -447,7 +454,8 @@ class Subjects(gobject.GObject):
     def populateChildren(self, treeview, iter, path):
         chiter = self.treestore.iter_children(iter)
         if chiter != None :
-            value = utility.convertToLatin(self.treestore.get(chiter, 0)[0])
+            #Checks name field(second) because code field(first) may have changed during parent code edition.
+            value = utility.convertToLatin(self.treestore.get(chiter, 1)[0])
             if value == "" :
                 value =  utility.convertToLatin(self.treestore.get(iter, 0)[0])
                 #remove empty subledger to add real children instead
@@ -483,7 +491,16 @@ class Subjects(gobject.GObject):
                         #add empty subledger for those children which have subledgers in turn. (to show expander)
                         self.treestore.append(chiter, ("", "", "", ""))
         return False
-    
+ 
+    def editChildCodes(self, model, path, iter, data):
+        basecode = data[0]
+        length = data[1]
+        chcode = model.get(iter, 0)[0]
+        chcode = utility.convertToLatin(chcode)[length:]
+        if config.digittype == 1:
+            chcode = utility.convertToPersian(chcode)
+        self.treestore.set(model.convert_iter_to_child_iter(iter), 0, basecode + chcode )
+        
     def match_func(self, iter, data):
         (column, key) = data   # data is a tuple containing column number, key
         value = self.treestore.get_value(iter, column)
@@ -496,6 +513,7 @@ class Subjects(gobject.GObject):
 
     def highlightSubject(self, code):
         i = 2
+        code = code.decode('utf-8')
         part = code[0:i]
         iter = self.treestore.get_iter_first()
         parent = iter

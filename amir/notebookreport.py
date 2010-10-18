@@ -121,7 +121,7 @@ class NotebookReport:
             if value != 0:
                 query1 = query1.filter(or_(Notebook.desc.match(searchkey), Notebook.value == value))
             else:
-                query1 = query1.filter(Notebook.desc.match(searchkey))
+                query1 = query1.filter(Notebook.desc.match(searchkey))        
         # Check the report parameters  
         if self.builder.get_object("allcontent").get_active() == True:
             query1 = query1.order_by(Bill.date.asc(), Bill.number.asc())
