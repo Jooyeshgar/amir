@@ -1,6 +1,8 @@
 import pygtk
 import gtk
 from datetime import date
+import os
+import platform
 
 from sqlalchemy import or_
 from sqlalchemy.orm.util import outerjoin
@@ -12,6 +14,7 @@ import numberentry
 import subjects
 import utility
 import printreport
+import previewreport
 from database import *
 from dateentry import *
 from amirconfig import config
@@ -26,13 +29,13 @@ class NotebookReport:
         self.builder = get_builder("report")
         
         self.window = self.builder.get_object("window1")
-        self.window.set_title(_("Daily NoteBook"))
         
         self.code = numberentry.NumberEntry()
         box = self.builder.get_object("codebox")
         box.add(self.code)
         self.code.show()
         self.code.connect("activate", self.selectSubject)
+        self.code.set_tooltip_text(_("Press Enter to see available subjects."))
         
         self.date = DateEntry()
         box = self.builder.get_object("datebox")
@@ -75,27 +78,33 @@ class NotebookReport:
         self.subcode = ""
         self.subname = ""
         
-        self.session = config.db.session
         self.window.show_all()
         self.builder.connect_signals(self)
         
         if type == self.__class__.DAILY:
             self.builder.get_object("subjectbox").hide()
+            self.window.set_title(_("Daily NoteBook"))
+        elif type == self.__class__.LEDGER:
+            self.window.set_title(_("Ledgers NoteBook"))
+        else:
+            self.window.set_title(_("Sub-ledgers NoteBook"))
             
     def createReport(self):
         report_header = []
         report_data = []
         col_width = []
-        remaining = 0
-        query1 = self.session.query(Notebook, Subject.code, Bill)
+        remaining = 1
+        query1 = config.db.session.query(Notebook, Subject.code, Bill)
         query1 = query1.select_from(outerjoin(outerjoin(Notebook, Subject, Notebook.subject_id == Subject.id), 
                                             Bill, Notebook.bill_id == Bill.id))
-        query2 = self.session.query(sum(Notebook.value)).select_from(outerjoin(Notebook, Bill, Notebook.bill_id == Bill.id))
+        query2 = config.db.session.query(sum(Notebook.value))
+        query2 = query2.select_from(outerjoin(outerjoin(Notebook, Subject, Notebook.subject_id == Subject.id), 
+                                            Bill, Notebook.bill_id == Bill.id))
         
         # Check if the subject code is valid in ledger and subledger reports
         if self.type != self.__class__.DAILY:
             code = utility.convertToLatin(self.code.get_text())
-            query3 = self.session.query(Subject.name)
+            query3 = config.db.session.query(Subject.name)
             query3 = query3.select_from(Subject).filter(Subject.code == code)
             names = query3.first()
             if names == None:
@@ -115,13 +124,10 @@ class NotebookReport:
         if searchkey != "":
             try:
                 value = int(utility.convertToLatin(searchkey))
-            except UnicodeEncodeError:
-                value = 0
-                
-            if value != 0:
-                query1 = query1.filter(or_(Notebook.desc.match(searchkey), Notebook.value == value))
-            else:
-                query1 = query1.filter(Notebook.desc.match(searchkey))        
+            except (UnicodeEncodeError, ValueError):  #search key is not a number
+                query1 = query1.filter(Notebook.desc.like("%"+searchkey+"%"))
+            else:        
+                query1 = query1.filter(or_(Notebook.desc.like("%"+searchkey+"%"), Notebook.value == value, Notebook.value == -value))
         # Check the report parameters  
         if self.builder.get_object("allcontent").get_active() == True:
             query1 = query1.order_by(Bill.date.asc(), Bill.number.asc())
@@ -145,6 +151,14 @@ class NotebookReport:
                     query1 = query1.filter(Bill.date.between(fdate, tdate)).order_by(Bill.date.asc(), Bill.number.asc())
                     query2 = query2.filter(Bill.date < fdate)
                 else:
+                    if unicode(self.fnum.get_text()) == '' or unicode(self.tnum.get_text()) == '':
+                        msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 
+                                                   _("One of document numbers are empty."))
+                        msgbox.set_title(_("Invalid document order"))
+                        msgbox.run()
+                        msgbox.destroy()
+                        return
+                    
                     fnumber = int(unicode(self.fnum.get_text()))
                     tnumber = int(unicode(self.tnum.get_text()))
                     if tnumber < fnumber:
@@ -161,15 +175,16 @@ class NotebookReport:
         res = query1.all()
         if self.type == self.__class__.DAILY:
             report_header = [_("Doc. Number"), _("Date"), _("Subject Code"), _("Description"), _("Debt"), _("Credit")]
-            col_width = [55, 56, 58, 220, 70, 70 ]
+            #define the percentage of table width that each column needs
+            col_width = [10, 10, 11, 43, 13, 13 ]
             for n, code, b in res:
                 desc = n.desc
                 if n.value < 0:
-                    credit = utility.convertToPersian("0")
+                    credit = utility.showNumber("0")
                     debt = utility.showNumber(-(n.value))
                 else:
                     credit = utility.showNumber(n.value)
-                    debt = utility.convertToPersian("0")
+                    debt = utility.showNumber("0")
                     desc = "   " + desc
                 
                 billnumber = str(b.number)   
@@ -178,19 +193,21 @@ class NotebookReport:
                     billnumber = utility.convertToPersian(billnumber)
                 report_data.append((billnumber, dateToString(b.date), code, desc, debt, credit))
         else:
-            remaining = query2.first()[0]
             diagnose = ""
+            if remaining != 0:
+                remaining = query2.first()[0]
             
             #if self.type == self.__class__.LEDGER:
             report_header = [_("Doc. Number"), _("Date"), _("Description"), _("Debt"), _("Credit"), _("Diagnosis"), _("Remaining")]
-            col_width = [55, 56, 182, 70, 70, 20, 70]
+            #define the percentage of table width that each column needs
+            col_width = [10, 10, 37, 13, 13, 4, 13]
             for n, code, b in res:
                 if n.value < 0:
-                    credit = utility.convertToPersian("0")
+                    credit = utility.showNumber("0")
                     debt = utility.showNumber(-(n.value))
                 else:
                     credit = utility.showNumber(n.value)
-                    debt = utility.convertToPersian("0")
+                    debt = utility.showNumber("0")
                     
                 remaining += n.value
                 billnumber = str(b.number)
@@ -255,16 +272,46 @@ class NotebookReport:
                 code = self.subcode
                 
             if self.type == self.__class__.LEDGER:
-                printjob.setHeader(_("Ledger Notebook"), {_("Subject Name"):self.subname, _("Subject Code"):code})
+                printjob.setHeader(_("Ledgers Notebook"), {_("Subject Name"):self.subname, _("Subject Code"):code})
             else:
-                printjob.setHeader(_("Sub-Leger Notebook"), {_("Subject Name"):self.subname, _("Subject Code"):code})
+                printjob.setHeader(_("Sub-ledgers Notebook"), {_("Subject Name"):self.subname, _("Subject Code"):code})
             printjob.setDrawFunction("drawSubjectNotebook")
         return printjob
             
+    def createPreviewJob(self):
+        report = self.createReport()
+        if report == None:
+            return
+        if len(report["data"]) == 0:
+            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 
+                                       _("The requested notebook is empty."))
+            msgbox.set_title(_("Empty notebook"))
+            msgbox.run()
+            msgbox.destroy()
+            return
+            
+        preview = previewreport.PreviewReport(report["data"], report["heading"])
+        if self.type == self.__class__.DAILY:
+            todaystr = dateToString(date.today())
+            preview.setDrawFunction("drawDailyNotebook")
+        else:
+            if config.digittype == 1:
+                code = utility.convertToPersian(self.subcode)
+            else:
+                code = self.subcode
+                
+            preview.setDrawFunction("drawSubjectNotebook")
+        return preview
+    
     def previewReport(self, sender):
-        printjob = self.createPrintJob()
-        if printjob != None:
-            printjob.doPrintJob(gtk.PRINT_OPERATION_ACTION_PREVIEW)
+        if platform.system() == 'Windows':
+            printjob = self.createPreviewJob()
+            if printjob != None:
+                printjob.doPreviewJob()
+        else:
+            printjob = self.createPrintJob()
+            if printjob != None:
+                printjob.doPrintJob(gtk.PRINT_OPERATION_ACTION_PREVIEW)
     
     def printReport(self, sender):
         printjob = self.createPrintJob()
@@ -272,13 +319,36 @@ class NotebookReport:
             printjob.doPrintJob(gtk.PRINT_OPERATION_ACTION_PRINT_DIALOG)
         
     def exportToCSV(self, sender):
-        self.createReport()
+        report = self.createReport()
+        if report == None:
+            return
+        
+        content = ""
+        for key in report["heading"]:
+            content += key.replace(",", "") + ","
+        content += "\n"
+           
+        for data in report["data"]:
+            for item in data:
+                content += item.replace(",", "") + ","
+            content += "\n"
+            
+        dialog = gtk.FileChooserDialog(None, self.window, gtk.FILE_CHOOSER_ACTION_SAVE, (gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
+                                                                                         gtk.STOCK_SAVE, gtk.RESPONSE_ACCEPT))
+        dialog.run()
+        filename = os.path.splitext(dialog.get_filename())[0]
+        file = open(filename + ".csv", "w")
+        file.write(content)
+        file.close()
+        dialog.destroy()
     
     def selectSubject(self, sender):
         if self.type == self.__class__.LEDGER:
             subject_win = subjects.Subjects(True)
         else:
             subject_win = subjects.Subjects()
+        code = self.code.get_text()
+        subject_win.highlightSubject(code)
         subject_win.connect("subject-selected", self.subjectSelected)
     
     def subjectSelected(self, sender, id, code, name):

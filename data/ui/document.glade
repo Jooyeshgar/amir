@@ -1,10 +1,10 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy project-wide -->
   <object class="GtkWindow" id="window1">
-    <property name="width_request">980</property>
-    <property name="height_request">400</property>
+    <property name="default_width">980</property>
+    <property name="default_height">400</property>
     <child>
       <object class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
@@ -12,17 +12,18 @@
           <object class="GtkHBox" id="hbox1">
             <property name="height_request">74</property>
             <property name="visible">True</property>
-            <property name="spacing">5</property>
             <child>
-              <object class="GtkToolbar" id="toolbar1">
+              <object class="GtkToolbar" id="editable">
                 <property name="visible">True</property>
                 <property name="toolbar_style">both</property>
                 <child>
                   <object class="GtkToolButton" id="addrow">
                     <property name="visible">True</property>
+                    <property name="can_focus">True</property>
                     <property name="label" translatable="yes">Add row</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-add</property>
+                    <accelerator key="Insert" signal="clicked"/>
                     <signal name="clicked" handler="addRow"/>
                   </object>
                   <packing>
@@ -33,9 +34,11 @@
                 <child>
                   <object class="GtkToolButton" id="editrow">
                     <property name="visible">True</property>
+                    <property name="can_focus">True</property>
                     <property name="label" translatable="yes">Edit row</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-edit</property>
+                    <accelerator key="e" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
                     <signal name="clicked" handler="editRow"/>
                   </object>
                   <packing>
@@ -46,9 +49,11 @@
                 <child>
                   <object class="GtkToolButton" id="delrow">
                     <property name="visible">True</property>
+                    <property name="can_focus">True</property>
                     <property name="label" translatable="yes">Remove row</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-remove</property>
+                    <accelerator key="Delete" signal="clicked"/>
                     <signal name="clicked" handler="deleteRow"/>
                   </object>
                   <packing>
@@ -62,16 +67,31 @@
                   </object>
                   <packing>
                     <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkToolButton" id="apply">
                     <property name="visible">True</property>
+                    <property name="can_focus">True</property>
                     <property name="label" translatable="yes">Save Document</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-apply</property>
+                    <accelerator key="s" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
                     <signal name="clicked" handler="saveDocument"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="permanent">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes" comments="Convert to permanent document">Make permanent</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">gtk-convert</property>
+                    <accelerator key="p" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
+                    <signal name="clicked" handler="makePermanent"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -81,6 +101,7 @@
                 <child>
                   <object class="GtkToolButton" id="delete">
                     <property name="visible">True</property>
+                    <property name="can_focus">True</property>
                     <property name="label" translatable="yes">Delete Document</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-delete</property>
@@ -97,25 +118,24 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="label9">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">Document Number:</property>
+              <object class="GtkToolbar" id="non-editable">
+                <property name="toolbar_style">both</property>
+                <child>
+                  <object class="GtkToolButton" id="temporary">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes" comments="Convert to temporary document">Make tepmporary</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">gtk-revert-to-saved</property>
+                    <signal name="clicked" handler="makeTemporary"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
               </object>
               <packing>
-                <property name="expand">False</property>
-                <property name="padding">4</property>
                 <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="docnumber">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">----</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="padding">4</property>
-                <property name="position">2</property>
               </packing>
             </child>
             <child>
@@ -124,32 +144,86 @@
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="padding">8</property>
-                <property name="position">3</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="label1">
+              <object class="GtkVBox" id="vbox3">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Date:</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="padding">4</property>
-                <property name="position">4</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkHBox" id="datebox">
-                <property name="visible">True</property>
+                <property name="spacing">5</property>
+                <property name="homogeneous">True</property>
                 <child>
-                  <placeholder/>
+                  <object class="GtkHBox" id="hbox12">
+                    <property name="visible">True</property>
+                    <property name="spacing">5</property>
+                    <child>
+                      <object class="GtkLabel" id="label1">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Date:</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="padding">4</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkHBox" id="datebox">
+                        <property name="visible">True</property>
+                        <child>
+                          <placeholder/>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="padding">4</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="padding">5</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkHBox" id="hbox11">
+                    <property name="visible">True</property>
+                    <property name="spacing">5</property>
+                    <child>
+                      <object class="GtkLabel" id="label9">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Document Number:</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="docnumber">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">----</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="padding">4</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="padding">5</property>
+                    <property name="position">1</property>
+                  </packing>
                 </child>
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="padding">4</property>
-                <property name="position">5</property>
+                <property name="padding">5</property>
+                <property name="position">3</property>
               </packing>
             </child>
           </object>
@@ -159,11 +233,19 @@
           </packing>
         </child>
         <child>
-          <object class="GtkTreeView" id="treeview">
+          <object class="GtkScrolledWindow" id="scrolledwindow1">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="rules_hint">True</property>
-            <property name="enable_grid_lines">vertical</property>
+            <property name="hscrollbar_policy">automatic</property>
+            <property name="vscrollbar_policy">automatic</property>
+            <child>
+              <object class="GtkTreeView" id="treeview">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="rules_hint">True</property>
+                <property name="enable_grid_lines">vertical</property>
+              </object>
+            </child>
           </object>
           <packing>
             <property name="position">1</property>
@@ -234,6 +316,38 @@
                 <property name="position">1</property>
               </packing>
             </child>
+            <child>
+              <object class="GtkHBox" id="hbox10">
+                <property name="visible">True</property>
+                <property name="homogeneous">True</property>
+                <child>
+                  <object class="GtkLabel" id="label5">
+                    <property name="visible">True</property>
+                    <property name="xalign">1</property>
+                    <property name="label" translatable="yes">Difference: </property>
+                  </object>
+                  <packing>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="difference">
+                    <property name="visible">True</property>
+                    <property name="xalign">0</property>
+                    <property name="label" translatable="yes">----</property>
+                  </object>
+                  <packing>
+                    <property name="padding">3</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="padding">8</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -242,34 +356,24 @@
           </packing>
         </child>
         <child>
-          <object class="GtkHBox" id="hbox10">
+          <object class="GtkStatusbar" id="statusbar1">
             <property name="visible">True</property>
-            <property name="homogeneous">True</property>
+            <property name="spacing">2</property>
             <child>
-              <object class="GtkLabel" id="label5">
+              <object class="GtkLabel" id="label10">
                 <property name="visible">True</property>
-                <property name="xalign">1</property>
-                <property name="label" translatable="yes">Difference: </property>
+                <property name="xalign">0</property>
+                <property name="xpad">5</property>
+                <property name="label" translatable="yes">Insert: Add row    Ctrl+E: Edit row    Del: Delete row    Ctrl+S: Save document    Ctrl+P: Make permanent</property>
               </object>
               <packing>
                 <property name="position">0</property>
               </packing>
             </child>
-            <child>
-              <object class="GtkLabel" id="difference">
-                <property name="visible">True</property>
-                <property name="xalign">0</property>
-                <property name="label" translatable="yes">----</property>
-              </object>
-              <packing>
-                <property name="padding">3</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="padding">8</property>
+            <property name="padding">5</property>
             <property name="position">3</property>
           </packing>
         </child>
@@ -278,14 +382,13 @@
   </object>
   <object class="GtkDialog" id="dialog1">
     <property name="border_width">5</property>
-    <property name="window_position">center-on-parent</property>
-    <property name="type_hint">normal</property>
+    <property name="destroy_with_parent">True</property>
+    <property name="type_hint">dialog</property>
     <property name="transient_for">window1</property>
-    <property name="has_separator">False</property>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox1">
         <property name="visible">True</property>
-        <property name="spacing">2</property>
+        <property name="spacing">5</property>
         <child>
           <object class="GtkVBox" id="vbox2">
             <property name="visible">True</property>
@@ -454,7 +557,7 @@
                   <object class="GtkEntry" id="desc">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="invisible_char">&#x25CF;</property>
+                    <property name="invisible_char">●</property>
                     <property name="activates_default">True</property>
                   </object>
                   <packing>
@@ -471,7 +574,28 @@
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="position">1</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkStatusbar" id="statusbar2">
+            <property name="visible">True</property>
+            <property name="spacing">2</property>
+            <child>
+              <object class="GtkLabel" id="label11">
+                <property name="visible">True</property>
+                <property name="xalign">0</property>
+                <property name="xpad">5</property>
+                <property name="label" translatable="yes">Enter, Ctrl+S: Save    Escape: Cancel</property>
+              </object>
+              <packing>
+                <property name="position">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="position">2</property>
           </packing>
         </child>
         <child internal-child="action_area">
@@ -501,6 +625,7 @@
                 <property name="has_default">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
+                <accelerator key="s" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -512,7 +637,7 @@
           <packing>
             <property name="expand">False</property>
             <property name="pack_type">end</property>
-            <property name="position">0</property>
+            <property name="position">1</property>
           </packing>
         </child>
       </object>

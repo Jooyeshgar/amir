@@ -25,6 +25,19 @@ def dateToString(date):
     if config.digittype == 1:
         datestring = utility.convertToPersian(datestring)
     return datestring
+
+def stringToDate(dateString):
+    delim = config.datedelims[config.datedelim]
+    dateList = dateString.split(delim)
+    if len(dateList) != 3:
+        print "Error in the date string format!"
+        pass
+    else:
+        dy = dateList[0]
+        dm = dateList[1]
+        dd = dateList[2]
+        dateObj = date(int(dy),int(dm),int(dd))
+        return dateObj 
     
 class DateEntry(gtk.Entry):
     
@@ -37,6 +50,7 @@ class DateEntry(gtk.Entry):
         gtk.Entry.__init__(self)
         self.set_alignment(0.5)
         self.connect("focus-out-event", self.correctDate)
+#        self.connect("hide", self.correctDate)
         
         self.cal = calverter()
 
@@ -163,7 +177,3 @@ class DateEntry(gtk.Entry):
         self.year = year
         self.month = month
         self.day = day
-            
-            
-        
-    

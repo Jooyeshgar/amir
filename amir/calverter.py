@@ -20,7 +20,6 @@
 ##   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ##   GNU General Public License for more details.
 
-
 __author__ = "Mehdi Bayazee"
 __copyright__ = "Copyright (C) 2008 Mehdi Bayazee"
 
@@ -292,5 +291,3 @@ class calverter:
              
           day = int(jd - self.jalali_to_jd(year, month, 1)) + 1
           return year, month, day
-     
-     

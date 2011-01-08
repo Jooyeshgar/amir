@@ -30,6 +30,7 @@ class AddEditDoc:
         box.add(self.code)
         self.code.show()
         self.code.connect("activate", self.selectSubject)
+        self.code.set_tooltip_text(_("Press Enter to see available subjects."))
         
         self.amount = numberentry.NumberEntry()
         box = self.builder.get_object("amountbox")
@@ -38,17 +39,25 @@ class AddEditDoc:
         self.amount.show()
         
         self.treeview = self.builder.get_object("treeview")
+        self.treeview.set_direction(gtk.TEXT_DIR_LTR)
+        if gtk.widget_get_default_direction() == gtk.TEXT_DIR_RTL :
+            halign = 1
+        else:
+            halign = 0
         self.liststore = gtk.ListStore(str, str, str, str, str, str)
         
         column = gtk.TreeViewColumn(_("Index"), gtk.CellRendererText(), text=0)
+        column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
         column = gtk.TreeViewColumn(_("Subject Code"), gtk.CellRendererText(), text=1)
+        column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
         column = gtk.TreeViewColumn(_("Subject Name"), gtk.CellRendererText(), text=2)
+        column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
         
@@ -57,26 +66,31 @@ class AddEditDoc:
         
         self.treeview.append_column(column)
         column = gtk.TreeViewColumn(_("Debt"), money_cell_renderer, text=3)
+        column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
         column = gtk.TreeViewColumn(_("Credit"), money_cell_renderer, text=4)
+        column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
         column = gtk.TreeViewColumn(_("Description"), gtk.CellRendererText(), text=5)
+        column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
 
         self.treeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
         
-        self.session = config.db.session
+#        self.session = config.db.session
         self.debt_sum = 0
         self.credit_sum = 0
         self.numrows = 0
+        self.permanent = False 
+        
         if number > 0:
-            query = self.session.query(Bill).select_from(Bill)
+            query = config.db.session.query(Bill).select_from(Bill)
             bill = query.filter(Bill.number == number).first()
             self.docnumber = number
             if bill == None:
@@ -98,21 +112,31 @@ class AddEditDoc:
                     self.builder.get_object("docnumber").set_text (docnum)
             else:
                 self.showRows(number)
+                self.permanent = bill.permanent
+                self.window.set_title(_("Edit document"))
         else:
             self.docnumber = 0
             self.docid = 0
     
         self.treeview.set_model(self.liststore)
         self.window.show_all()
+        if self.permanent:
+            self.builder.get_object("editable").hide()
+            self.builder.get_object("non-editable").show()
+        else:
+            self.builder.get_object("editable").show()
+            self.builder.get_object("non-editable").hide()
+        
         self.builder.connect_signals(self)
+#        self.connect("database-changed", self.dbChanged)
         
     def showRows(self, docnumber):
-        query = self.session.query(Bill).select_from(Bill)
+        query = config.db.session.query(Bill).select_from(Bill)
         bill = query.filter(Bill.number == docnumber).first()
         self.date.showDateObject(bill.date)
         self.docid = bill.id
         
-        query = self.session.query(Notebook, Subject)
+        query = config.db.session.query(Notebook, Subject)
         query = query.select_from(outerjoin(Notebook, Subject, Notebook.subject_id == Subject.id))
         rows = query.filter(Notebook.bill_id == bill.id).all()
         for n, s in rows:
@@ -160,9 +184,11 @@ class AddEditDoc:
                 type = 0
             else:
                 type = 1;
-            
-            self.saveRow(utility.convertToLatin(self.code.get_text()), int(unicode(self.amount.get_text())), 
-                         type, desc.get_text())
+                
+            code = self.code.get_text()
+            amount = self.amount.get_text()
+            if code != '' and amount != '':
+                self.saveRow(utility.convertToLatin(code), int(unicode(amount)), type, desc.get_text())
         
         dialog.hide()
     
@@ -200,14 +226,16 @@ class AddEditDoc:
                 else:
                     self.credit_sum -= int(unicode(credit))
                     
-                self.saveRow(utility.convertToLatin(self.code.get_text()), int(unicode(self.amount.get_text())), 
-                             type, desc.get_text(), iter)
+                code = self.code.get_text()
+                amount = self.amount.get_text()
+                if code != '' and amount != '':
+                    self.saveRow(utility.convertToLatin(code), int(unicode(amount)), type, desc.get_text(), iter)
             
             dialog.hide()
         
     #TODO add progress bar
     def saveRow(self, code, amount, type, desc, iter=None):
-        query = self.session.query(Subject).select_from(Subject)
+        query = config.db.session.query(Subject).select_from(Subject)
         query = query.filter(Subject.code == code)
         sub = query.first()
         if sub == None:
@@ -292,7 +320,26 @@ class AddEditDoc:
             msgbox.destroy()
     
     def saveDocument(self, sender):
-        if self.debt_sum != self.credit_sum:
+        sender.grab_focus()
+        if self.numrows == 0:
+            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 
+                                       _("Document should not be empty"))
+            msgbox.set_title(_("Can not save document"))
+            msgbox.run()
+            msgbox.destroy()
+            return
+        
+        iter = self.liststore.get_iter_first()
+        debt_sum = 0
+        credit_sum = 0
+        while iter != None :
+            value = unicode(self.liststore.get(iter, 3)[0].replace(",", ""))
+            debt_sum += int(value)
+            value = unicode(self.liststore.get(iter, 4)[0].replace(",", ""))
+            credit_sum += int(value)
+            iter = self.liststore.iter_next(iter)
+                
+        if debt_sum != credit_sum:        
             msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 
                                        _("Debt sum and Credit sum should be equal"))
             msgbox.set_title(_("Can not save document"))
@@ -303,25 +350,25 @@ class AddEditDoc:
             #number = 0
             today = date.today()
             if self.docid > 0 :
-                query = self.session.query(Bill).select_from(Bill)
+                query = config.db.session.query(Bill).select_from(Bill)
                 bill = query.filter(Bill.id == self.docid).first()
-                bill.lasteditdate = today
+                bill.lastedit_date = today
                 bill.date = self.date.getDateObject()
                 #number = bill.number
-                query = self.session.query(Notebook).filter(Notebook.bill_id == bill.id).delete()
+                query = config.db.session.query(Notebook).filter(Notebook.bill_id == bill.id).delete()
             else :
                 if self.docnumber == 0:
                     number = 0
-                    query = self.session.query(Bill.number).select_from(Bill)
+                    query = config.db.session.query(Bill.number).select_from(Bill)
                     lastnumbert = query.order_by(Bill.number.desc()).first()
                     if lastnumbert != None:
                         number = lastnumbert[0]
                     self.docnumber = number + 1
                 
                 #TODO if number is not equal to the maximum BigInteger value, prevent bill registration.
-                bill = Bill (self.docnumber, today, today, self.date.getDateObject())
-                self.session.add(bill)
-                self.session.commit()
+                bill = Bill (self.docnumber, today, today, self.date.getDateObject(), False)
+                config.db.session.add(bill)
+                config.db.session.commit()
                 self.docid = bill.id
                 
             iter = self.liststore.get_iter_first()
@@ -335,15 +382,15 @@ class AddEditDoc:
                     value = int(credit)
                 desctxt = unicode(self.liststore.get(iter, 5)[0])
                 
-                query = self.session.query(Subject).select_from(Subject)
+                query = config.db.session.query(Subject).select_from(Subject)
                 query = query.filter(Subject.code == code)
                 sub = query.first().id
                 
                 row = Notebook (sub, self.docid, value, desctxt)
-                self.session.add(row)
+                config.db.session.add(row)
                 iter = self.liststore.iter_next(iter)
                 
-            self.session.commit()
+            config.db.session.commit()
             docnum = str(self.docnumber)
             if config.digittype == 1:
                 docnum = utility.convertToPersian(docnum)
@@ -355,27 +402,71 @@ class AddEditDoc:
             msgbox.run()
             msgbox.destroy()
         
+    def makePermanent(self, sender):
+        if self.docid > 0 :
+            query = config.db.session.query(Bill).select_from(Bill)
+            bill = query.filter(Bill.id == self.docid).first()
+            bill.permanent = True
+            config.db.session.add(bill)
+            config.db.session.commit()
+            self.builder.get_object("editable").hide()
+            self.builder.get_object("non-editable").show()
+        else:
+            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 
+                                   _("You should save the document before make it permanent"))
+            msgbox.set_title(_("Document is not saved"))
+            msgbox.run()
+            msgbox.destroy() 
+ 
+    def makeTemporary(self, sender):
+        msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, 
+                                   _("Are you sure to make this document temporary?"))
+        msgbox.set_title(_("Are you sure?"))
+        result = msgbox.run();
+        msgbox.destroy()
+        
+        if result == gtk.RESPONSE_OK :
+            if self.docid > 0 :
+                query = config.db.session.query(Bill).select_from(Bill)
+                bill = query.filter(Bill.id == self.docid).first()
+                bill.permanent = False
+                config.db.session.add(bill)
+                config.db.session.commit()
+                self.builder.get_object("non-editable").hide()
+                self.builder.get_object("editable").show()
+#            else:
+#                msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 
+#                                       _("You should save the document before make it permanent"))
+#                msgbox.set_title(_("Document is not saved"))
+#                msgbox.run()
+#                msgbox.destroy()
+                           
     def deleteDocument(self, sender):
+        if self.docid <= 0 :
+            return
+        
         msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, _("Are you sure to delete the whole document?"))
         msgbox.set_title(_("Are you sure?"))
         result = msgbox.run();
         
         if result == gtk.RESPONSE_OK :
-            if self.docid > 0 :
-                self.session.query(Notebook).filter(Notebook.bill_id == self.docid).delete()
-                self.session.query(Bill).filter(Bill.id == self.docid).delete()
-                self.session.commit()
+            config.db.session.query(Notebook).filter(Notebook.bill_id == self.docid).delete()
+            config.db.session.query(Bill).filter(Bill.id == self.docid).delete()
+            config.db.session.commit()
             self.window.destroy()
         msgbox.destroy() 
 
     def selectSubject(self, sender):
         subject_win = subjects.Subjects()
         code = self.code.get_text()
-        if code != '':
-            subject_win.highlightSubject(code)
+        subject_win.highlightSubject(code)
         subject_win.connect("subject-selected", self.subjectSelected)
         
     def subjectSelected(self, sender, id, code, name):
         self.code.set_text(code)
-        sender.window.destroy()        
+        sender.window.destroy()      
+          
+    def dbChanged(self, sender, active_dbpath):
+        self.window.destroy()
+        
 

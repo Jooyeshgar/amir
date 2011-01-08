@@ -45,6 +45,3 @@ def convertToPersian (input_string):
         output_string += c
         
     return output_string
-        
-            
-            

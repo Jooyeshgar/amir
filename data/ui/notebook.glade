@@ -1,18 +1,17 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy project-wide -->
   <object class="GtkDialog" id="dialog1">
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Add ledger</property>
-    <property name="modal">True</property>
+    <property name="destroy_with_parent">True</property>
     <property name="type_hint">dialog</property>
     <property name="transient_for">subjectswindow</property>
-    <property name="has_separator">False</property>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox3">
         <property name="visible">True</property>
-        <property name="spacing">2</property>
+        <property name="spacing">5</property>
         <child>
           <object class="GtkVBox" id="vbox1">
             <property name="visible">True</property>
@@ -107,7 +106,7 @@
                   <object class="GtkEntry" id="ledgername">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="invisible_char">&#x25CF;</property>
+                    <property name="invisible_char">●</property>
                     <property name="activates_default">True</property>
                   </object>
                   <packing>
@@ -196,7 +195,28 @@
             </child>
           </object>
           <packing>
-            <property name="position">1</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkStatusbar" id="statusbar2">
+            <property name="visible">True</property>
+            <property name="spacing">2</property>
+            <child>
+              <object class="GtkLabel" id="label7">
+                <property name="visible">True</property>
+                <property name="xalign">0</property>
+                <property name="xpad">5</property>
+                <property name="label" translatable="yes">Enter, Ctrl+S: OK    Escape: Cancel</property>
+              </object>
+              <packing>
+                <property name="position">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="position">2</property>
           </packing>
         </child>
         <child internal-child="action_area">
@@ -226,6 +246,7 @@
                 <property name="has_default">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
+                <accelerator key="s" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -237,7 +258,7 @@
           <packing>
             <property name="expand">False</property>
             <property name="pack_type">end</property>
-            <property name="position">0</property>
+            <property name="position">1</property>
           </packing>
         </child>
       </object>
@@ -249,9 +270,9 @@
   </object>
   <object class="GtkWindow" id="subjectswindow">
     <property name="title" translatable="yes">Notebook Subjects</property>
-    <property name="window_position">center-always</property>
     <property name="default_width">700</property>
     <property name="default_height">350</property>
+    <property name="type_hint">dialog</property>
     <child>
       <object class="GtkVBox" id="vbox29">
         <property name="visible">True</property>
@@ -264,11 +285,9 @@
               <object class="GtkToolButton" id="addtoolbutton">
                 <property name="visible">True</property>
                 <property name="has_tooltip">True</property>
-                <property name="tooltip_markup">Insert</property>
-                <property name="tooltip_text" translatable="yes">Insert</property>
                 <property name="label" translatable="yes">Add ledger</property>
                 <property name="stock_id">gtk-new</property>
-                <accelerator key="Insert" signal="clicked"/>
+                <accelerator key="l" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
                 <signal name="clicked" handler="addLedger"/>
               </object>
               <packing>
@@ -281,7 +300,7 @@
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Add sub-ledger</property>
                 <property name="stock_id">gtk-add</property>
-                <accelerator key="plus" signal="clicked"/>
+                <accelerator key="Insert" signal="clicked"/>
                 <signal name="clicked" handler="addSubLedger"/>
               </object>
               <packing>
@@ -302,6 +321,7 @@
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Edit</property>
                 <property name="stock_id">gtk-edit</property>
+                <accelerator key="e" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
                 <signal name="clicked" handler="editLedger"/>
               </object>
               <packing>
@@ -317,7 +337,7 @@
                 <property name="tooltip_text" translatable="yes">Ctrl+D</property>
                 <property name="label" translatable="yes">Delete</property>
                 <property name="stock_id">gtk-delete</property>
-                <accelerator key="d" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
+                <accelerator key="Delete" signal="clicked"/>
                 <signal name="clicked" handler="deleteLedger"/>
               </object>
               <packing>
@@ -338,10 +358,12 @@
             <property name="border_width">15</property>
             <property name="hscrollbar_policy">automatic</property>
             <property name="vscrollbar_policy">automatic</property>
+            <property name="shadow_type">in</property>
             <child>
               <object class="GtkTreeView" id="treeview">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="tooltip_text" translatable="yes">Use left/right arrow keys to expand/collapse subjects</property>
                 <property name="rules_hint">True</property>
                 <property name="enable_grid_lines">vertical</property>
                 <property name="enable_tree_lines">True</property>
@@ -359,6 +381,17 @@
           <object class="GtkStatusbar" id="statusbar1">
             <property name="visible">True</property>
             <property name="spacing">2</property>
+            <child>
+              <object class="GtkLabel" id="label6">
+                <property name="visible">True</property>
+                <property name="xalign">0</property>
+                <property name="xpad">5</property>
+                <property name="label" translatable="yes">Ctrl+L: Add ledger    Insert: Add sub-ledger    Ctrl+E: Edit    Del: Delete</property>
+              </object>
+              <packing>
+                <property name="position">0</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>

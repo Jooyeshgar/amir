@@ -1,6 +1,8 @@
 import pygtk
 import gtk
 from datetime import date
+import os
+import platform
 
 from sqlalchemy.orm.util import outerjoin
 from sqlalchemy.sql import between
@@ -9,6 +11,7 @@ from sqlalchemy.sql.functions import sum
 import numberentry
 import utility
 import printreport
+import previewreport
 from database import *
 from dateentry import *
 from amirconfig import config
@@ -27,16 +30,19 @@ class DocumentReport:
         self.number.set_activates_default(True)
         self.number.show()
         
-        self.session = config.db.session
+        config.db.session = config.db.session
         self.window.show_all()
         self.builder.connect_signals(self)
 
     def createReport(self):
         self.docnumber = self.number.get_text()
+        if self.docnumber == "":
+            return
+        
         report_header = []
         report_data = []
         col_width = []
-        query1 = self.session.query(Bill, Notebook, Subject)
+        query1 = config.db.session.query(Bill, Notebook, Subject)
         query1 = query1.select_from(outerjoin(outerjoin(Notebook, Subject, Notebook.subject_id == Subject.id), 
                                             Bill, Notebook.bill_id == Bill.id))
         query1 = query1.filter(Bill.number == int(unicode(self.docnumber))).order_by(Notebook.id.asc())
@@ -51,7 +57,8 @@ class DocumentReport:
         
         self.docdate = res[0][0].date
         report_header = [_("Index"), _("Subject Code"), _("Subject Name"), _("Description"), _("Debt"), _("Credit")]
-        col_width = [30, 54, 80, 215, 75, 75 ]
+        #define the percentage of table width that each column needs
+        col_width = [5, 11, 15, 43, 13, 13 ]
         index = 1
         for b, n, s in res:
             desc = n.desc
@@ -88,10 +95,30 @@ class DocumentReport:
         printjob.setDrawFunction("drawDocument")
         return printjob
     
+    def createPreviewJob(self):
+        report = self.createReport()
+        if report == None:
+            return
+        #if len(report["data"]) == 0:
+        datestr = dateToString(self.docdate)
+        docnumber = self.docnumber
+        if config.digittype == 1:
+            docnumber = utility.convertToPersian(docnumber)
+            
+        preview = previewreport.PreviewReport(report["data"], report["heading"])
+        #preview.setHeader(_("Accounting Document"), {_("Document Number"):docnumber, _("Date"):datestr})
+        preview.setDrawFunction("drawDocument")
+        return preview
+    
     def previewReport(self, sender):
-        printjob = self.createPrintJob()
-        if printjob != None:
-            printjob.doPrintJob(gtk.PRINT_OPERATION_ACTION_PREVIEW)
+        if platform.system() == 'Windows':
+            printjob = self.createPreviewJob()
+            if printjob != None:
+                printjob.doPreviewJob()
+        else:
+            printjob = self.createPrintJob()
+            if printjob != None:
+                printjob.doPrintJob(gtk.PRINT_OPERATION_ACTION_PREVIEW)
     
     def printReport(self, sender):
         printjob = self.createPrintJob()
@@ -99,4 +126,25 @@ class DocumentReport:
             printjob.doPrintJob(gtk.PRINT_OPERATION_ACTION_PRINT_DIALOG)
     
     def exportToCSV(self, sender):
-        self.createReport()
+        report = self.createReport()
+        if report == None:
+            return
+        
+        content = ""
+        for key in report["heading"]:
+            content += key.replace(",", "") + ","
+        content += "\n"
+           
+        for data in report["data"]:
+            for item in data:
+                content += item.replace(",", "") + ","
+            content += "\n"
+            
+        dialog = gtk.FileChooserDialog(None, self.window, gtk.FILE_CHOOSER_ACTION_SAVE, (gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
+                                                                                         gtk.STOCK_SAVE, gtk.RESPONSE_ACCEPT))
+        dialog.run()
+        filename = os.path.splitext(dialog.get_filename())[0]
+        file = open(filename + ".csv", "w")
+        file.write(content)
+        file.close()
+        dialog.destroy()

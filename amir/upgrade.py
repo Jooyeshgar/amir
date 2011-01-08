@@ -1,3 +1,5 @@
+# Should be moved to migrate scripts
+
 import sys
 import os
 import getopt
@@ -23,12 +25,16 @@ class Subject(Base):
     code = Column(String(20), nullable=False)
     name = Column(Unicode(60), nullable=False)
     parent_id = Column(Integer, ColumnDefault(0), ForeignKey('subject.id'), nullable=False)
+    lft = Column(Integer, nullable=False)
+    rgt = Column(Integer, nullable=False)
     type = Column(Integer)      # 0 for Debtor, 1 for Creditor, 2 for both
     
-    def __init__(self, code, name, parent_id, type):
+    def __init__(self, code, name, parent_id, left, right, type):
         self.code = code
         self.name = name
         self.parent_id = parent_id
+        self.lft = left
+        self.rgt = right
         self.type = type
 
 class Bill(Base):
@@ -38,12 +44,14 @@ class Bill(Base):
     creation_date = Column(Date, nullable = False)
     lastedit_date = Column(Date, nullable = False)
     date = Column(Date, nullable = False)   #date of transactions in the bill
+    permanent = Column(Boolean, ColumnDefault(False), nullable = False)
     
-    def __init__(self, number, creation_date, lastedit_date, date):
+    def __init__(self, number, creation_date, lastedit_date, date, permanent):
         self.number = number
         self.creation_date = creation_date
         self.lastedit_date = lastedit_date
-        self.date = date    
+        self.date = date
+        self.permanent = permanent  
     
 class Notebook(Base):
     __tablename__ = "notebook"
