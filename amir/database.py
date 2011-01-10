@@ -340,7 +340,7 @@ class BankAccounts(Base):
         self.accBankBranch  = accBankBranch
         self.accBankAddress = accBankAddress
         self.accBankPhone   = accBankPhone
-        self.accBankWebPage = accBankWebPage
+        self.accBankWebPage = accBankWebPage   #TODO change to unicode
         self.accDesc        = accDesc
 
 class Database:
@@ -359,6 +359,8 @@ class Database:
             
         if dbversion < self.version:
             api.upgrade('sqlite:///%s' % file, self.repository, self.version)
+        elif  dbversion > self.version:
+            api.downgrade('sqlite:///%s' % file, self.repository, self.version)
         
         engine = create_engine('sqlite:///%s' % file , echo=echoresults)
         
