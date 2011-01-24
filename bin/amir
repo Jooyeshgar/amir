@@ -63,7 +63,7 @@ gtk.glade.bindtextdomain('amir', config.locale_path)
 gtk.glade.textdomain('amir')
 gettext.install('amir', config.locale_path, unicode=1)
 
-from amir import subjects, addeditdoc, database, numberentry, notebookreport, docreport, tbalancereport, notebookutils, setting, helpers, warehousing, sellProducts, customers
+from amir import subjects, addeditdoc, database, numberentry, notebookreport, docreport, tbalancereport, notebookutils, setting, helpers, warehousing, sellProducts, customers, customergroup
      
 class MainWindow(gobject.GObject):
 
@@ -138,15 +138,15 @@ class MainWindow(gobject.GObject):
         obj.viewProducts(                           )
         
     def addNewGroup(        self,   sender  ):
-        obj = warehousing.Warehousing(              )
-        obj.addGroup(                               )
+        obj = customergroup.Group()
+        obj.addGroup()
 
     def viewGroups(         self,   sender  ):
-        obj = warehousing.Warehousing(              )
-        obj.viewGroups(                             )
+        obj = customergroup.Group()
+        obj.viewCustomerGroups()
 
     def addNewCustomer(         self,   sender  ):
-        obj = customers.Customer(                   )
+        obj = customers.Customer()
         
     def sellingForm(         self,   sender  ):
         obj = sellProducts.SellProducts(            )

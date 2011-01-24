@@ -5,72 +5,59 @@ import  warehousing
 import  numberentry
 import  dateentry
 import  subjects
+import  customergroup
 import  gobject
 import  pygtk
 import  gtk
 
 from    sqlalchemy.orm              import  sessionmaker, join
-from    helpers                     import  get_builder
 from    sqlalchemy.orm.util         import  outerjoin
+from    sqlalchemy.sql              import  and_, or_
+from    sqlalchemy.sql.functions    import  *
+
+from    helpers                     import  get_builder
 from    amirconfig                  import  config
 from    datetime                    import  date
-from    sqlalchemy.sql              import  and_
-from    sqlalchemy.sql.functions    import  *
 from    database                    import  *
-import __main__
 
 pygtk.require('2.0')
 
-class Customer(gobject.GObject):
-    
-    def __init__(self,buyerFlg=True,sellerFlg=True,mateFlg=True,agentFlg=True,show=True):
+class Customer(customergroup.Group):
+
+    def __init__(self,buyerFlg=True,sellerFlg=True,mateFlg=True,agentFlg=True):
         
         self.buyerFlg   = buyerFlg
         self.sellerFlg  = sellerFlg
         self.MateFlg    = mateFlg
         self.AgentFlg   = agentFlg
-        self.builder    = get_builder(      "customers"               )
+        self.builder    = get_builder("customers" )
         self.session    = config.db.session
         
-        self.viewCustWin = self.builder.get_object("viewCustomersWindow")
+        self.grpCodeEntry = numberentry.NumberEntry()
+        box = self.builder.get_object("grpCodeBox")
+        box.add(self.grpCodeEntry)
+        self.grpCodeEntry.show()
         
-        self.customersTreeView = self.builder.get_object("customersTreeView")
-        self.custsListStore = gtk.TreeStore(str,str,str,str)
-        self.custsListStore.clear()
-        self.customersTreeView.set_model(self.custsListStore)
+        self.window = self.builder.get_object("viewCustomersWindow")
         
-        headers = ("Code","Name","Balance","Credit")
+        self.treeview = self.builder.get_object("customersTreeView")
+        self.treestore = gtk.TreeStore(str,str,str,str)
+        self.treestore.clear()
+        self.treeview.set_model(self.treestore)
+        
+        headers = (_("Code"),_("Name"),_("Balance"),_("Credit"))
         txt = 0
         for header in headers:
-            column = gtk.TreeViewColumn(header,gtk.CellRendererText(),text = txt)
+            column = gtk.TreeViewColumn(header, gtk.CellRendererText(), text = txt)
             column.set_spacing(5)
             column.set_resizable(True)
-            self.customersTreeView.append_column(column)
+            self.treeview.append_column(column)
             txt += 1
-        self.customersTreeView.get_selection().set_mode(  gtk.SELECTION_SINGLE    )
+        self.treeview.get_selection().set_mode(  gtk.SELECTION_SINGLE    )
         
-        self.fillCustomersList()
+#        self.fillCustomersList()
         
-        self.custGroupsTreeView = self.builder.get_object("custGroupsTreeView")
-        self.custGrpListStore = gtk.ListStore(str,str,str)
-        self.custGrpListStore.clear()
-        self.custGroupsTreeView.set_model(self.custsListStore)
-
-        headers = ("Code","Name","Description")
-        txt = 0
-        for header in headers:
-            column = gtk.TreeViewColumn(header,gtk.CellRendererText(),text = txt)
-            column.set_spacing(5)
-            column.set_resizable(True)
-            self.custGroupsTreeView.append_column(column)
-            txt += 1
-        self.custGroupsTreeView.get_selection().set_mode(  gtk.SELECTION_SINGLE    )
-
-        self.fillCustGroupsList()
-
-        if show:
-            self.viewCustWin.show_all()
-        
+        self.window.show_all()
         self.builder.connect_signals(self)
         
     ############################################################################
@@ -89,7 +76,7 @@ class Customer(gobject.GObject):
             grpId   = group.custGrpId
             grpCode = group.custGrpCode
             grpName = group.custGrpName
-            grpIter = self.custsListStore.append(None,(grpCode,grpName,"",""))
+            grpIter = self.treestore.append(None, (grpCode, grpName, "", ""))
             
             customers   = self.session.query( Customers ).select_from( Customers )
             customers   = customers.filter( Customers.custGroup == grpId ).all()
@@ -99,7 +86,7 @@ class Customer(gobject.GObject):
                 nme = customer.custName
                 blnc    = customer.custBalance
                 crdt    = customer.custCredit
-                self.custsListStore.append(grpIter,(cde,nme,blnc,crdt))
+                self.treestore.append(grpIter, (cde, nme, blnc, crdt))
     
     def deleteCustAndGrps(self,sender=0):
         pass
@@ -243,17 +230,73 @@ class Customer(gobject.GObject):
     ##  Add Groups Window
     ############################################################################
     
-    def addCustomerGroup(self,sender=0,ev=0):
-        self.addCustGrpDlg = self.builder.get_object("addCustGrpDlg")        
-        self.addCustGrpDlg.show_all()
+#    def addCustomerGroup(self, sender):
+#        dialog = self.builder.get_object("addCustGrpDlg")
+#        self.builder.get_object("okGroup").set_label(_("Add"))
+#        dialog.run()
         
-    def groupOKPressed(self,sender=0,ev=0):
-        pass
+    def on_addCustomerGroup_response(self, sender, response_id):
+        if response_id == 1 :
+            grpcode = self.grpCodeEntry.get_text()
+            grpname = self.builder.get_object("grpNameEntry").get_text()
+            grpdesc = self.builder.get_object("grpDescEntry").get_text()
+            msg = ""
+            if grpname == "":
+                msg = _("Group name should not be empty")
+            elif grpcode == "":
+                msg = _("Group code should not be empty")
+                
+            if msg != "":
+                msgbox =  gtk.MessageDialog(sender, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, msg)
+                msgbox.set_title(_("Empty fields"))
+                msgbox.run()
+                msgbox.destroy()
+                return
+            else:
+                self.saveCustGroup(grpcode, unicode(grpname), unicode(grpdesc), False)
+        sender.hide()
+            
+        
+    #===========================================================================
+    # def groupOKPressed(self, sender):
+    #    grpcode = self.grpCodeEntry.get_int()
+    #    grpname = self.builder.get_object("grpNameEntry").get_text()
+    #    grpdesc = self.builder.get_object("grpDescEntry").get_text()
+    #    self.saveCustGroup(grpcode, unicode(grpname), unicode(grpdesc), False)
+    # 
+    # def groupCancelPressed(self,sender=0,ev=0):
+    #    self.addCustGrpDlg.hide_all()
+    #    return False
+    #===========================================================================
     
-    def groupCancelPressed(self,sender=0,ev=0):
-        self.addCustGrpDlg.hide_all()
-        return False
-    
+#    def saveCustGroup(self, code, name, desc, edit=False):
+#        query = config.db.session.query(CustGroups).select_from(CustGroups)
+#        query = query.filter(or_(CustGroups.custGrpCode == code, CustGroups.custGrpName == name))
+#        result = query.all()
+#        msg = ""
+#        for grp in result:
+#            if grp.custGrpCode == code:
+#                msg = _("A group with this code already exists.")
+#                break
+#            elif grp.custGrpName == name:
+#                msg = _("A group with this name already exists.")
+#                break
+#        if msg != "":
+#            msgbox =  gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE, msg)
+#            msgbox.set_title(_("Duplicate group"))
+#            msgbox.run()
+#            msgbox.destroy()
+#            return
+#        
+#        group = CustGroups(code, name, desc)
+#        config.db.session.add(group)
+#        config.db.session.commit()
+#        
+#        row = self.treestore.append(None, (code, name, "", ""))
+#        path = self.treestore.get_path(row)
+#        self.treeview.scroll_to_cell(path, None, False, 0, 0)
+#        self.treeview.set_cursor(path, None, False)
+        
     ############################################################################
     ##  Show Groups Window (Only Groups)
     ############################################################################
@@ -263,7 +306,7 @@ class Customer(gobject.GObject):
             grpCode = group.custGrpCode
             grpName = group.custGrpName
             grpDesc = group.custGrpDesc
-            grpIter = self.custGrpListStore.append((grpCode,grpName,grpDesc))
+            grpIter = self.custGrpListStore.append(None, (grpCode,grpName,grpDesc))
             
     def showCustGroups(self,sender=0,ev=0):
         self.viewGroupsWin = self.builder.get_object("viewCustGroupsWindow")

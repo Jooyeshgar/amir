@@ -230,7 +230,7 @@ class Cheques(Base):
 class CustGroups(Base):
     __tablename__ = "custGroups"
     custGrpId   = Column( Integer,      primary_key = True  )
-    custGrpCode = Column( String,       nullable = False    )
+    custGrpCode = Column( String(20),       nullable = False    )
     custGrpName = Column( Unicode(50),  nullable = False    )
     custGrpDesc = Column( Unicode(200), nullable = True     )
 
@@ -345,7 +345,7 @@ class BankAccounts(Base):
 
 class Database:
     def __init__(self, file, repository, echoresults):
-        self.version = 1
+        self.version = 2
         self.dbfile = file
         self.repository = repository
         

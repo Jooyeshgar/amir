@@ -40,6 +40,7 @@ def upgrade(migrate_engine):
     subject.create(checkfirst=True)
     bill.create(checkfirst=True)
     notebook.create(checkfirst=True)
+    
     logging.debug("upgrade to 1")
    
 
