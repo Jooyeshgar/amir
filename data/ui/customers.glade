@@ -6,9 +6,11 @@
     <property name="width_request">700</property>
     <property name="height_request">500</property>
     <property name="window_position">center-always</property>
+    <signal name="delete_event" handler="customerFormCanceled"/>
     <child>
       <object class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
+        <property name="spacing">5</property>
         <child>
           <object class="GtkNotebook" id="notebook1">
             <property name="visible">True</property>
@@ -20,20 +22,27 @@
                 <property name="visible">True</property>
                 <property name="n_rows">7</property>
                 <property name="n_columns">5</property>
+                <property name="column_spacing">5</property>
+                <property name="row_spacing">5</property>
                 <child>
                   <object class="GtkFrame" id="mainInfoFrame">
                     <property name="visible">True</property>
                     <property name="label_xalign">0</property>
-                    <property name="shadow_type">out</property>
+                    <property name="shadow_type">in</property>
                     <child>
                       <object class="GtkAlignment" id="alignment1">
                         <property name="visible">True</property>
-                        <property name="left_padding">12</property>
+                        <property name="top_padding">5</property>
+                        <property name="bottom_padding">5</property>
+                        <property name="left_padding">5</property>
+                        <property name="right_padding">5</property>
                         <child>
                           <object class="GtkTable" id="table4">
                             <property name="visible">True</property>
                             <property name="n_rows">2</property>
                             <property name="n_columns">4</property>
+                            <property name="column_spacing">5</property>
+                            <property name="row_spacing">5</property>
                             <child>
                               <object class="GtkLabel" id="custCodeLbl">
                                 <property name="width_request">140</property>
@@ -70,6 +79,7 @@
                             <child>
                               <object class="GtkHBox" id="hbox1">
                                 <property name="visible">True</property>
+                                <property name="spacing">3</property>
                                 <child>
                                   <object class="GtkEntry" id="custGrpEntry">
                                     <property name="visible">True</property>
@@ -167,7 +177,6 @@
                       <object class="GtkLabel" id="mainInfoLbl">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
-                        <property name="xpad">10</property>
                         <property name="label" translatable="yes">&lt;b&gt;  Main Information  &lt;/b&gt;</property>
                         <property name="use_markup">True</property>
                       </object>
@@ -178,23 +187,27 @@
                     <property name="bottom_attach">2</property>
                     <property name="y_options"></property>
                     <property name="x_padding">5</property>
-                    <property name="y_padding">10</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkFrame" id="contactInfoFrame">
                     <property name="visible">True</property>
                     <property name="label_xalign">0</property>
-                    <property name="shadow_type">out</property>
+                    <property name="shadow_type">in</property>
                     <child>
                       <object class="GtkAlignment" id="alignment2">
                         <property name="visible">True</property>
-                        <property name="left_padding">12</property>
+                        <property name="top_padding">5</property>
+                        <property name="bottom_padding">5</property>
+                        <property name="left_padding">5</property>
+                        <property name="right_padding">5</property>
                         <child>
                           <object class="GtkTable" id="table5">
                             <property name="visible">True</property>
                             <property name="n_rows">4</property>
                             <property name="n_columns">4</property>
+                            <property name="column_spacing">5</property>
+                            <property name="row_spacing">5</property>
                             <child>
                               <object class="GtkLabel" id="custPhoneLbl">
                                 <property name="width_request">140</property>
@@ -379,21 +392,26 @@
                     <property name="x_options">GTK_FILL</property>
                     <property name="y_options"></property>
                     <property name="x_padding">5</property>
-                    <property name="y_padding">10</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkFrame" id="connectionsFrame">
                     <property name="visible">True</property>
                     <property name="label_xalign">0</property>
-                    <property name="shadow_type">out</property>
+                    <property name="shadow_type">in</property>
                     <child>
                       <object class="GtkAlignment" id="alignment3">
                         <property name="visible">True</property>
+                        <property name="top_padding">5</property>
+                        <property name="bottom_padding">5</property>
+                        <property name="left_padding">5</property>
+                        <property name="right_padding">5</property>
                         <child>
                           <object class="GtkTable" id="table12">
                             <property name="visible">True</property>
                             <property name="n_columns">4</property>
+                            <property name="column_spacing">5</property>
+                            <property name="row_spacing">5</property>
                             <child>
                               <object class="GtkLabel" id="callResponsibleLbl">
                                 <property name="width_request">150</property>
@@ -456,7 +474,6 @@
                     <property name="x_options">GTK_FILL</property>
                     <property name="y_options"></property>
                     <property name="x_padding">5</property>
-                    <property name="y_padding">10</property>
                   </packing>
                 </child>
                 <child>
@@ -465,31 +482,42 @@
                     <property name="label_xalign">0</property>
                     <property name="shadow_type">out</property>
                     <child>
-                      <object class="GtkTable" id="table6">
+                      <object class="GtkAlignment" id="alignment7">
                         <property name="visible">True</property>
-                        <property name="n_columns">2</property>
+                        <property name="top_padding">5</property>
+                        <property name="bottom_padding">5</property>
+                        <property name="left_padding">5</property>
+                        <property name="right_padding">5</property>
                         <child>
-                          <object class="GtkLabel" id="custAddressLbl1">
-                            <property name="width_request">140</property>
+                          <object class="GtkTable" id="table6">
                             <property name="visible">True</property>
-                            <property name="xalign">0</property>
-                            <property name="xpad">10</property>
-                            <property name="label" translatable="yes">Description:</property>
+                            <property name="n_columns">2</property>
+                            <property name="column_spacing">5</property>
+                            <property name="row_spacing">5</property>
+                            <child>
+                              <object class="GtkLabel" id="custAddressLbl1">
+                                <property name="width_request">140</property>
+                                <property name="visible">True</property>
+                                <property name="xalign">0</property>
+                                <property name="xpad">10</property>
+                                <property name="label" translatable="yes">Description:</property>
+                              </object>
+                              <packing>
+                                <property name="x_options">GTK_FILL</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="custDescEntry">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="invisible_char">●</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="right_attach">2</property>
+                              </packing>
+                            </child>
                           </object>
-                          <packing>
-                            <property name="x_options">GTK_FILL</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkEntry" id="custDescEntry">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="invisible_char">●</property>
-                          </object>
-                          <packing>
-                            <property name="left_attach">1</property>
-                            <property name="right_attach">2</property>
-                          </packing>
                         </child>
                       </object>
                     </child>
@@ -507,7 +535,6 @@
                     <property name="x_options">GTK_FILL</property>
                     <property name="y_options"></property>
                     <property name="x_padding">5</property>
-                    <property name="y_padding">10</property>
                   </packing>
                 </child>
               </object>
@@ -1297,7 +1324,7 @@ Information</property>
                 <property name="label" translatable="yes">Add Customer</property>
                 <property name="stock_id">gtk-add</property>
                 <accelerator key="plus" signal="clicked"/>
-                <signal name="clicked" handler="addNewCustomer"/>
+                <signal name="clicked" handler="on_addCustomerBtn_clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1357,13 +1384,23 @@ Information</property>
           </packing>
         </child>
         <child>
-          <object class="GtkTreeView" id="customersTreeView">
+          <object class="GtkScrolledWindow" id="scrolledwindow2">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="rules_hint">True</property>
-            <property name="enable_grid_lines">vertical</property>
-            <property name="enable_tree_lines">True</property>
-            <signal name="row_activated" handler="selectCustomerFromList"/>
+            <property name="border_width">10</property>
+            <property name="hscrollbar_policy">automatic</property>
+            <property name="vscrollbar_policy">automatic</property>
+            <property name="shadow_type">in</property>
+            <child>
+              <object class="GtkTreeView" id="customersTreeView">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="rules_hint">True</property>
+                <property name="enable_grid_lines">vertical</property>
+                <property name="enable_tree_lines">True</property>
+                <signal name="row_activated" handler="selectCustomerFromList"/>
+              </object>
+            </child>
           </object>
           <packing>
             <property name="position">1</property>

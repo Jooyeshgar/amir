@@ -142,9 +142,14 @@ class MainWindow(gobject.GObject):
         obj.addGroup()
 
     def viewGroups(         self,   sender  ):
-        obj = customergroup.Group()
-        obj.viewCustomerGroups()
+        pass
+#        obj = customergroup.Group()
+#        obj.viewCustomerGroups()
 
+    def viewCustomers(         self,   sender  ):
+        obj = customers.Customer()
+        obj.viewCustomers()
+    
     def addNewCustomer(         self,   sender  ):
         obj = customers.Customer()
         
