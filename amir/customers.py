@@ -255,18 +255,18 @@ class Customer(customergroup.Group):
         config.db.session.commit()
         
         #Show new customer in table
-        parent_iter = self.treestore.get_iter_first()
-        while self.treestore.iter_is_valid(parent_iter):
-            itercode = self.treestore.get_value(parent_iter, 0)
-            if itercode == custGrp:
-                break
-            parent_iter = self.treestore.iter_next(parent_iter)
-            
-        if config.digittype == 1:
-            custCode = utility.convertToPersian(custCode)
-        self.treestore.append(parent_iter, (custCode, custName, "0.0", "0.0"))
+        if self.treestore != None:
+            parent_iter = self.treestore.get_iter_first()
+            while self.treestore.iter_is_valid(parent_iter):
+                itercode = self.treestore.get_value(parent_iter, 0)
+                if itercode == custGrp:
+                    break
+                parent_iter = self.treestore.iter_next(parent_iter)
+                
+            if config.digittype == 1:
+                custCode = utility.convertToPersian(custCode)
+            self.treestore.append(parent_iter, (custCode, custName, "0.0", "0.0"))
         return 0
-#===============================================================================
 
 #===============================================================================
 #    def fillCustGroupsList(self):

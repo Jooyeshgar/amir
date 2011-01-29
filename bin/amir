@@ -152,6 +152,7 @@ class MainWindow(gobject.GObject):
     
     def addNewCustomer(         self,   sender  ):
         obj = customers.Customer()
+        obj.addNewCustomer(sender)
         
     def sellingForm(         self,   sender  ):
         obj = sellProducts.SellProducts(            )
