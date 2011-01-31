@@ -23,6 +23,7 @@ pygtk.require('2.0')
 class Group(gobject.GObject):
     
     def __init__(self):
+        gobject.GObject.__init__(self)
         
         self.builder    = get_builder("customers" )
         self.window = None
@@ -205,5 +206,44 @@ class Group(gobject.GObject):
     #@param data: a tuple containing data to be saved
     def saveRow(self, treeiter, data):
         self.treestore.set(treeiter, 0, data[0], 1, data[1], 2, data[2])
+    
+    def highlightGroup(self, code):
+#        code = code.decode('utf-8')
+        iter = self.treestore.get_iter_first()
+        pre = iter
         
+        while iter:
+#            res = self.match_func(iter, (0, part))
+            itercode = self.treestore.get_value(iter, 0)
+            if  itercode < code:
+                pre = iter
+                iter = self.treestore.iter_next(iter)
+            elif itercode == code:
+                break
+            else:
+                iter = pre
+                break
+
+        if not iter:
+            iter = pre
+            
+        if iter:
+            path = self.treestore.get_path(iter)
+            self.treeview.scroll_to_cell(path, None, False, 0, 0)
+            self.treeview.set_cursor(path, None, False)
+            self.treeview.grab_focus()
+            
+    
+    def selectCustGroupFromList(self, treeview, path, view_column):
+        iter = self.treestore.get_iter(path)
+        code = utility.convertToLatin(self.treestore.get_value(iter, 0))
         
+        query = config.db.session.query(CustGroups).select_from(CustGroups)
+        query = query.filter(CustGroups.custGrpCode == code)
+        group_id = query.first().custGrpId
+        self.emit("group-selected", group_id, code)   
+
+   
+gobject.type_register(Group)
+gobject.signal_new("group-selected", Group, gobject.SIGNAL_RUN_LAST,
+                   gobject.TYPE_NONE, (gobject.TYPE_INT, gobject.TYPE_STRING))   

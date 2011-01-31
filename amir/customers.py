@@ -341,15 +341,24 @@ class Customer(customergroup.Group):
         if (iter != None and self.treestore.iter_parent(iter) == None):
                 pcode = self.treestore.get_value(iter, 0)
         self.addNewCustomer(sender, pcode)
-            
+        
+    def selectGroup(self, sender):
+        obj = customergroup.Group()
+        obj.connect("group-selected", self.groupSelected)
+        obj.viewCustomerGroups()
+        
+        code = self.builder.get_object("custGrpEntry").get_text()
+        obj.highlightGroup(code)
+    
+    def groupSelected(self, sender, id, code):
+        self.builder.get_object("custGrpEntry").set_text(code)
+        sender.window.destroy()  
+             
 #----------------------------------------------------------------------
 # Creating New Signal to return the selected group when double clicked!
 #----------------------------------------------------------------------
-gobject.type_register(                          Customer                )
-gobject.signal_new( "custGroup-selected",       Customer, 
-                    gobject.SIGNAL_RUN_LAST,    gobject.TYPE_NONE, 
-                    (gobject.TYPE_INT,          gobject.TYPE_STRING)    )
-
-gobject.signal_new( "customer-selected",        Customer, 
-                    gobject.SIGNAL_RUN_LAST,    gobject.TYPE_NONE, 
-                    (gobject.TYPE_INT,          gobject.TYPE_STRING)    )
+#gobject.type_register(                          Customer                )
+#
+#gobject.signal_new( "customer-selected",        Customer, 
+#                    gobject.SIGNAL_RUN_LAST,    gobject.TYPE_NONE, 
+#                    (gobject.TYPE_INT,          gobject.TYPE_STRING)    )
