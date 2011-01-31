@@ -105,8 +105,10 @@ class Group(gobject.GObject):
             else:
                 code = self.treestore.get(iter, 0)[0]
                 
-            name = self.treestore.get(iter, 1)[0]
-            desc = self.treestore.get(iter, 2)[0]
+            query = config.db.session.query(CustGroups).select_from(CustGroups)
+            group = query.filter(CustGroups.custGrpCode == code).first()
+            name = group.custGrpName
+            desc = group.custGrpDesc
             
             self.grpCodeEntry.set_text(code)
             self.builder.get_object("grpNameEntry").set_text(name)
@@ -187,15 +189,21 @@ class Group(gobject.GObject):
             msgbox.destroy()
             return
         
-        group = CustGroups(code, name, desc)
-        config.db.session.add(group)
-        config.db.session.commit()
         
         if edititer == None:
+            group = CustGroups(code, name, desc)
+            
             edititer = self.treestore.append(None)
             path = self.treestore.get_path(edititer)
             self.treeview.scroll_to_cell(path, None, False, 0, 0)
             self.treeview.set_cursor(path, None, False)
+        else:
+            group.custGrpCode = code
+            group.custGrpName = name
+            group.custGrpDesc = desc
+            
+        config.db.session.add(group)
+        config.db.session.commit()
         
         if config.digittype == 1:
             code = utility.convertToPersian(code)

@@ -25,6 +25,20 @@ pygtk.require('2.0')
 
 class Customer(customergroup.Group):
 
+    def __init__(self):
+        customergroup.Group.__init__(self)
+        
+        self.postalcodeEntry = numberentry.NumberEntry()
+        self.postalcodeEntry.set_max_length(10)
+        box = self.builder.get_object("postalcodebox")
+        box.add(self.postalcodeEntry)
+        self.postalcodeEntry.show()
+        
+        self.personalcodeEntry = numberentry.NumberEntry()
+        self.personalcodeEntry.set_max_length(10)
+        box = self.builder.get_object("personalcodebox")
+        box.add(self.personalcodeEntry)
+        self.personalcodeEntry.show()
 #===============================================================================
 #    def __init__(self,buyerFlg=True,sellerFlg=True,mateFlg=True,agentFlg=True):
 #        
@@ -113,13 +127,15 @@ class Customer(customergroup.Group):
                 last_gid = g.custGrpId
             if c != None:
                 self.treestore.append(grouprow, (c.custCode, c.custName, str(c.custBalance), str(c.custCredit)))
-            
+        
         self.window.show_all()    
 
 #    ############################################################################
 #    #  Add Customers Window
 #    ############################################################################
     def addNewCustomer(self, sender, pcode = ""):
+        self.editCustomer = False
+        
         self.customerForm = self.builder.get_object("customersWindow")
         self.customerForm.set_title(_("Add New Customer"))
         self.builder.get_object("addCustSubmitBtn").set_label(_("Add Customer"))
@@ -128,17 +144,20 @@ class Customer(customergroup.Group):
         self.builder.get_object("custNameEntry").set_text("")
         self.builder.get_object("custGrpEntry").set_text(pcode)
         
-        self.builder.get_object("custEcnmcsCodeEntry").set_text("")
+        self.builder.get_object("custEcnmcsCodeEntry").set_text("")        
         self.builder.get_object("custPhoneEntry").set_text("")
         self.builder.get_object("custCellEntry").set_text("")
         self.builder.get_object("custFaxEntry").set_text("")
         self.builder.get_object("custWebPageEntry").set_text("")
         self.builder.get_object("custEmailEntry").set_text("")
         self.builder.get_object("custRepViaEmailChk").set_active(False)
-        self.builder.get_object("custAddressEntry").set_text("")
+        self.builder.get_object("custAddressEntry").set_text("")        
         self.builder.get_object("callResponsibleEntry").set_text("")
         self.builder.get_object("custConnectorEntry").set_text("")
         self.builder.get_object("custDescEntry").set_text("")
+        self.personalcodeEntry.set_text("")
+        self.postalcodeEntry.set_text("")
+        
         self.customerForm.show_all()
         
     def customerFormCanceled(self,sender=0,ev=0):
@@ -162,9 +181,11 @@ class Customer(customergroup.Group):
             msg += _("Customer code should not be empty.\n")
         else:
             codeQuery = config.db.session.query( Customers ).select_from( Customers )
-            codeQuery = codeQuery.filter( Customers.custCode == custCode ).first()
-#            if self.editCustomer:
-#                codeQuery = self.filter( Customers.custId != )
+            codeQuery = codeQuery.filter( Customers.custCode == custCode )
+            if self.editCustomer:
+                codeQuery = codeQuery.filter( Customers.custId != self.customerId )
+            
+            codeQuery = codeQuery.first()
             if codeQuery:
                 msg += _("Customer code has been used before.\n")
                 
@@ -215,6 +236,7 @@ class Customer(customergroup.Group):
 #        self.custAccBank2Entry = self.builder.get_object("custAccBank2Entry")
 
         custEcnmcsCode     = self.builder.get_object("custEcnmcsCodeEntry").get_text()
+        custPersonalCode   = self.personalcodeEntry.get_text()
         custPhone          = self.builder.get_object("custPhoneEntry").get_text()
         custCell           = self.builder.get_object("custCellEntry").get_text()
         custFax            = self.builder.get_object("custFaxEntry").get_text()
@@ -222,6 +244,7 @@ class Customer(customergroup.Group):
         custEmail          = self.builder.get_object("custEmailEntry").get_text()
         custRepViaEmail    = self.builder.get_object("custRepViaEmailChk").get_active()
         custAddress        = self.builder.get_object("custAddressEntry").get_text()
+        custPostalCode     = self.postalcodeEntry.get_text()
         callResponsible    = self.builder.get_object("callResponsibleEntry").get_text()
         custConnector      = self.builder.get_object("custConnectorEntry").get_text()
         custDesc           = self.builder.get_object("custDescEntry").get_text()
@@ -229,6 +252,8 @@ class Customer(customergroup.Group):
         custPhone = utility.convertToLatin(custPhone)
         custCell = utility.convertToLatin(custCell)
         custFax = utility.convertToLatin(custFax)
+        custPersonalCode = utility.convertToLatin(custPersonalCode)
+        custPostalCode = utility.convertToLatin(custPostalCode)
         #----------------------------------
 #        self.custTypeBuyer = self.custTypeBuyerChk.get_active()
 #        self.custTypeSeller = self.custTypeSellerChk.get_active()
@@ -249,8 +274,29 @@ class Customer(customergroup.Group):
 #        self.custAccNo2 = self.custAccNo2Entry.get_text()
 #        self.custAccBank2 = self.custAccBank2Entry.get_text()
         
-        customer = Customers(custCode, unicode(custName), custPhone, custCell, custFax, unicode(custAddress), custEmail,
-                             custEcnmcsCode, custWebPage, unicode(callResponsible), unicode(custConnector), groupid, unicode(custDesc))
+        if not self.editCustomer:
+            customer = Customers(custCode, unicode(custName), custPhone, custCell, custFax, unicode(custAddress), custEmail,
+                             unicode(custEcnmcsCode), custWebPage, unicode(callResponsible), unicode(custConnector), groupid, 
+                             custPostalCode, custPersonalCode, unicode(custDesc))
+        else:
+            query = config.db.session.query(Customers).select_from(Customers)
+            customer = query.filter(Customers.custId == self.customerId).first()
+            customer.custCode = custCode
+            customer.custName = unicode(custName)
+            customer.custPhone = custPhone
+            customer.custCell = custCell
+            customer.custFax = custFax
+            customer.custAddress = unicode(custAddress)
+            customer.custPostalCode = custPostalCode
+            customer.custEmail = custEmail
+            customer.custEcnmcsCode = unicode(custEcnmcsCode)
+            customer.custPersonalCode = custPersonalCode
+            customer.custWebPage = custWebPage
+            customer.custResponsible = unicode(callResponsible)
+            customer.custConnector = unicode(custConnector)
+            customer.custGroup = groupid
+            customer.custDesc = unicode(custDesc)
+            
         config.db.session.add(customer)
         config.db.session.commit()
         
@@ -265,64 +311,75 @@ class Customer(customergroup.Group):
                 
             if config.digittype == 1:
                 custCode = utility.convertToPersian(custCode)
-            self.treestore.append(parent_iter, (custCode, custName, "0.0", "0.0"))
+            
+            if not self.editCustomer:
+                self.treestore.append(parent_iter, (custCode, custName, "0.0", "0.0"))
+            else:
+                self.treestore.set(self.editIter, 0, custCode, 1, custName)
+                
         return 0
 
-#===============================================================================
-#    def fillCustGroupsList(self):
-#        groups  = self.session.query( CustGroups ).select_from( CustGroups ).order_by(CustGroups.custGrpCode.desc()).all()
-#        for group in groups:
-#            grpCode = group.custGrpCode
-#            grpName = group.custGrpName
-#            grpDesc = group.custGrpDesc
-#            grpIter = self.custGrpListStore.append(None, (grpCode,grpName,grpDesc))
-#            
-#    def showCustGroups(self,sender=0,ev=0):
-#        self.viewGroupsWin = self.builder.get_object("viewCustGroupsWindow")
-#        self.viewGroupsWin.show_all()
-#        
-#    def closeGroups(self,sender=0,ev=0):
-#        self.viewGroupsWin.hide_all()
-#        return False
-#        
-#    #---------------------------------------------------
-#    def slctCustGrp(         self,   sender  = 0     ):
-#        grps_win    = self.showCustGroups()
-#        self.handid = self.connect( "custGroup-selected",
-#                                    self.setSelectedCustGrp )
-#    #--------------------------------------------------------
-#    def setSelectedCustGrp(  self,   sender,     id,     code    ):
-#        self.custGrpEntry.set_text( code )
-# #        self.accGroupCode   = code
-# #        self.accGroupID     = id
-#        sender.viewGroupsWin.destroy(                                      )
-#        self.disconnect(            self.handid         )
-#    #----------------------------------------------------------------
-#    def selectCustGroupFromList(self, treeview, path, view_column ):
-#        iter = self.custGrpListStore.get_iter(path)
-#        code = self.custGrpListStore.get(iter, 0)[0]
-#        name = self.custGrpListStore.get(iter, 1)[0]
-#        
-#        query = self.session.query( CustGroups ).select_from( CustGroups )
-#        query = query.filter(CustGroups.custGrpCode == code)
-#        grp_id = query.first().custGrpId
-# 
-#        self.emit("custGroup-selected", grp_id, code )
-#    #--------------------------------------------------------------
-#    def selectCustomerFromList(self, treeview, path, view_column ):
-#        iter = self.custsListStore.get_iter(path)
-#        code = self.custsListStore.get(iter, 0)[0]
-#        name = self.custsListStore.get(iter, 1)[0]
-#        blnc = self.custsListStore.get(iter, 2)[0]
-#        if blnc:
-#            query = self.session.query( Customers ).select_from( Customers )
-#            query = query.filter(Customers.custCode == code)
-#            cust_id = query.first().custId
-#            self.emit("customer-selected", cust_id, code )
-#        else:
-#            pass
-#        
-#===============================================================================
+    def editCustAndGrps(self, sender):
+        selection = self.treeview.get_selection()
+        iter = selection.get_selected()[1]
+        
+        if self.treestore.iter_parent(iter) == None:
+            #Iter points to a customer group
+            self.editCustomerGroup(sender)
+        else:            
+            code = self.treestore.get_value(iter, 0)
+            code = utility.convertToLatin(code)
+            query = config.db.session.query(Customers, CustGroups.custGrpCode)
+            query = query.select_from(outerjoin(CustGroups, Customers, CustGroups.custGrpId == Customers.custGroup))
+            result = query.filter(Customers.custCode == code).first()
+            customer = result[0]
+            groupcode = result[1]
+            
+            if config.digittype == 1:
+                custCode = utility.convertToPersian(customer.custCode)
+                custGrp = utility.convertToPersian(groupcode)
+                custPhone = utility.convertToPersian(customer.custPhone)
+                custCell = utility.convertToPersian(customer.custCell)
+                custFax = utility.convertToPersian(customer.custFax)
+                custPersonalCode = utility.convertToPersian(customer.custPersonalCode)
+                custPostalCode = utility.convertToPersian(customer.custPostalCode)
+            else:
+                custCode = customer.custCode
+                custGrp = groupcode
+                custPhone = customer.custPhone
+                custCell = customer.custCell
+                custFax = customer.custFax
+                custPersonalCode = customer.custPersonalCode
+                custPostalCode = customer.custPostalCode
+            
+            self.customerForm = self.builder.get_object("customersWindow")
+            self.customerForm.set_title(_("Edit Customer"))
+            self.builder.get_object("addCustSubmitBtn").set_label(_("Save Customer"))
+            
+            self.builder.get_object("custCodeEntry").set_text(custCode)
+            self.builder.get_object("custNameEntry").set_text(customer.custName)
+            self.builder.get_object("custGrpEntry").set_text(groupcode)
+            
+            self.builder.get_object("custEcnmcsCodeEntry").set_text(customer.custEcnmcsCode)
+            self.builder.get_object("custPhoneEntry").set_text(custPhone)
+            self.builder.get_object("custCellEntry").set_text(custCell)
+            self.builder.get_object("custFaxEntry").set_text(custFax)
+            self.builder.get_object("custWebPageEntry").set_text(customer.custWebPage)
+            self.builder.get_object("custEmailEntry").set_text(customer.custEmail)
+            self.builder.get_object("custRepViaEmailChk").set_active(customer.custRepViaEmail)
+            self.builder.get_object("custAddressEntry").set_text(customer.custAddress)
+            self.builder.get_object("callResponsibleEntry").set_text(customer.custResposible)
+            self.builder.get_object("custConnectorEntry").set_text(customer.custConnector)
+            self.builder.get_object("custDescEntry").set_text(customer.custDesc)
+            self.personalcodeEntry.set_text(custPersonalCode)
+            self.postalcodeEntry.set_text(custPostalCode)
+            
+            self.customerForm.show_all()
+            
+            self.editCustomer = True
+            self.customerId = customer.custId
+            self.editIter = iter
+        
     def deleteCustAndGrps(self, sender):
         selection = self.treeview.get_selection()
         iter = selection.get_selected()[1]

@@ -249,8 +249,10 @@ class Customers(Base):
     custCell        = Column( String,       nullable = True     )
     custFax         = Column( String,       nullable = True     )
     custAddress     = Column( Unicode(100), nullable = True     )
+    custPostalCode  = Column( String(15),   nullable = True     )
     custEmail       = Column( String,       nullable = True     )
-    custEcnmcsCode  = Column( String,       nullable = True     )
+    custEcnmcsCode  = Column( Unicode(20),      nullable = True     )
+    custPersonalCode = Column( String(15),      nullable = True     )
     custWebPage     = Column( String,       nullable = True     )
     custResposible  = Column( Unicode(50),  nullable = True     )
     custConnector   = Column( Unicode(50),  nullable = True     )
@@ -275,10 +277,10 @@ class Customers(Base):
     custReason      = Column( Unicode(200), nullable = True )
     custDiscRate    = Column( String,       nullable = True )
 
-    def __init__( self, custCode, custName, custPhone, custCell, custFax, custAddress, 
+    def __init__( self, custCode, custName, custPhone, custCell, custFax, custAddress,
                   custEmail, custEcnmcsCode, custWebPage, custResposible, custConnector, 
-                  custGroup, custDesc="", custBalance=float(0), custCredit=float(0), custRepViaEmail=False, 
-                  custAccName1="", custAccNo1="", custAccBank1="", custAccName2="", custAccNo2="", 
+                  custGroup, custPostalCode="", custPersonalCode="", custDesc="", custBalance=float(0), custCredit=float(0), 
+                  custRepViaEmail=False, custAccName1="", custAccNo1="", custAccBank1="", custAccName2="", custAccNo2="", 
                   custAccBank2="", custTypeBuyer=True, custTypeSeller=True, custTypeMate=False, custTypeAgent=False, 
                   custIntroducer="", custCommission="", custMarked=False, custReason="", custDiscRate="" ):
 
@@ -288,8 +290,10 @@ class Customers(Base):
         self.custCell        = custCell
         self.custFax         = custFax
         self.custAddress     = custAddress
+        self.custPostalCode  = custPostalCode
         self.custEmail       = custEmail
         self.custEcnmcsCode  = custEcnmcsCode
+        self.custPersonalCode = custPersonalCode
         self.custWebPage     = custWebPage
         self.custResposible  = custResposible
         self.custConnector   = custConnector
