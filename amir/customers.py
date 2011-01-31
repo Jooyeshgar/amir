@@ -323,7 +323,26 @@ class Customer(customergroup.Group):
 #            pass
 #        
 #===============================================================================
+    def deleteCustAndGrps(self, sender):
+        selection = self.treeview.get_selection()
+        iter = selection.get_selected()[1]
         
+        if self.treestore.iter_parent(iter) == None:
+            #Iter points to a customer group
+            self.deleteCustomerGroup(sender)
+        else:
+            #Iter points to a customer
+            code = self.treestore.get_value(iter, 0)
+            query = config.db.session.query(Customers).select_from(Customers)
+            customer = query.filter(Customers.custCode == code).first()
+            
+            #TODO check if this customer is used somewhere else
+            
+            config.db.session.delete(customer)
+            config.db.session.commit()
+            self.treestore.remove(iter)
+                
+    
     #@param treeiter: the TreeIter which data should be saved in
     #@param data: a tuple containing data to be saved
     def saveRow(self, treeiter, data):

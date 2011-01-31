@@ -163,6 +163,7 @@
                                 <property name="visible">True</property>
                                 <property name="label" translatable="yes">Add New Customer</property>
                                 <property name="use_underline">True</property>
+                                <accelerator key="F6" signal="activate"/>
                                 <signal name="activate" handler="addNewCustomer"/>
                               </object>
                             </child>
