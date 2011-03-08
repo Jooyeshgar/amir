@@ -356,7 +356,7 @@ class Database:
         #migrate code
         try:
             dbversion = api.db_version('sqlite:///%s' % file, self.repository)
-            print dbversion
+            //print dbversion
         except exceptions.DatabaseNotControlledError:
             dbversion = 0
             api.version_control('sqlite:///%s' % file, self.repository, dbversion)

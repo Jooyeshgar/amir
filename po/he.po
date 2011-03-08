@@ -1,187 +1,202 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Hebrew translation for amir
+# Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
+# This file is distributed under the same license as the amir package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Project-Id-Version: amir\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2010-05-17 16:48+0430\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2010-05-13 14:55+0000\n"
+"Last-Translator: Yaron <sh.yaron@gmail.com>\n"
+"Language-Team: Hebrew <he@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2011-01-12 09:28+0000\n"
+"X-Generator: Launchpad (build 12176)\n"
 
-#: amir/addeditdoc.py:21
+#: ../amir/addeditdoc.py:21
 msgid "Register new document"
 msgstr ""
 
-#: amir/addeditdoc.py:43 amir/docreport.py:53
+#: ../amir/docreport.py:59 ../amir/addeditdoc.py:49
 msgid "Index"
 msgstr ""
 
-#: amir/addeditdoc.py:47 amir/docreport.py:53 amir/notebookreport.py:151
-#: amir/notebookreport.py:246 amir/notebookreport.py:248 amir/subjects.py:30
+#: ../amir/docreport.py:59 ../amir/addeditdoc.py:54
+#: ../amir/notebookreport.py:177 ../amir/notebookreport.py:275
+#: ../amir/notebookreport.py:277 ../amir/subjects.py:37
 msgid "Subject Code"
 msgstr ""
 
-#: amir/addeditdoc.py:51 amir/docreport.py:53 amir/notebookreport.py:246
-#: amir/notebookreport.py:248 amir/subjects.py:34
+#: ../amir/docreport.py:59 ../amir/addeditdoc.py:59
+#: ../amir/notebookreport.py:275 ../amir/notebookreport.py:277
+#: ../amir/subjects.py:42
 msgid "Subject Name"
 msgstr ""
 
-#: amir/addeditdoc.py:59 amir/docreport.py:53 amir/notebookreport.py:151
-#: amir/notebookreport.py:173 data/ui/document.glade:397
+#: ../amir/docreport.py:59 ../amir/addeditdoc.py:68
+#: ../amir/notebookreport.py:177 ../amir/notebookreport.py:201
+#: ../amir/tbalancereport.py:53
 msgid "Debt"
 msgstr ""
 
-#: amir/addeditdoc.py:63 amir/docreport.py:53 amir/notebookreport.py:151
-#: amir/notebookreport.py:173 data/ui/document.glade:410
+#: ../amir/docreport.py:59 ../amir/addeditdoc.py:73
+#: ../amir/notebookreport.py:177 ../amir/notebookreport.py:201
+#: ../amir/tbalancereport.py:53
 msgid "Credit"
 msgstr ""
 
-#: amir/addeditdoc.py:67 amir/docreport.py:53 amir/notebookreport.py:151
-#: amir/notebookreport.py:173
+#: ../amir/docreport.py:59 ../amir/addeditdoc.py:78
+#: ../amir/notebookreport.py:177 ../amir/notebookreport.py:201
 msgid "Description"
-msgstr ""
+msgstr "תיאור"
 
-#: amir/addeditdoc.py:86
+#: ../amir/addeditdoc.py:100
 #, python-format
 msgid ""
 "No document found with number %s\n"
 "Do you want to register a document with this number?"
 msgstr ""
+"לא נמצאו מסמכים עם המספר %s\n"
+"האם ברצונך לרשום מסמך עם מספר זה?"
 
-#: amir/addeditdoc.py:88
+#: ../amir/addeditdoc.py:102
 msgid "No Documents found"
-msgstr ""
+msgstr "לא נמצאו מסמכים"
 
-#: amir/addeditdoc.py:152
+#: ../amir/addeditdoc.py:176
 msgid "Add new row"
-msgstr ""
+msgstr "הוספת שורה חדשה"
 
-#: amir/addeditdoc.py:171 data/ui/document.glade:36
+#: ../amir/addeditdoc.py:197
 msgid "Edit row"
-msgstr ""
+msgstr "עריכת שורה"
 
-#: amir/addeditdoc.py:216 amir/notebookreport.py:101
+#: ../amir/addeditdoc.py:244 ../amir/notebookreport.py:111
 #, python-format
 msgid "No subject is registered with the code: %s"
-msgstr ""
+msgstr "לא נרשם נושא עם הקוד: %s"
 
-#: amir/addeditdoc.py:218 amir/notebookreport.py:103
+#: ../amir/addeditdoc.py:246 ../amir/notebookreport.py:113
 msgid "No subjects found"
-msgstr ""
+msgstr "לא נמצאו נושאים"
 
-#: amir/addeditdoc.py:263
+#: ../amir/addeditdoc.py:291
 msgid "Are you sure to remove this row?"
 msgstr ""
 
-#: amir/addeditdoc.py:264 amir/addeditdoc.py:359
+#: ../amir/addeditdoc.py:292 ../amir/addeditdoc.py:424
+#: ../amir/addeditdoc.py:449 ../amir/setting.py:179 ../amir/setting.py:225
+#: ../bin/amir.py:131 ../bin/amir.py:211
 msgid "Are you sure?"
-msgstr ""
+msgstr "מוסכם?"
 
-#: amir/addeditdoc.py:297
+#: ../amir/addeditdoc.py:344
 msgid "Debt sum and Credit sum should be equal"
-msgstr ""
+msgstr "רצוי שסך החובות וסך הזכויות יהיו שווים"
 
-#: amir/addeditdoc.py:298
+#: ../amir/addeditdoc.py:327 ../amir/addeditdoc.py:345
 msgid "Can not save document"
-msgstr ""
+msgstr "לא ניתן לשמור את המסמך"
 
-#: amir/addeditdoc.py:352
+#: ../amir/addeditdoc.py:400
 #, python-format
 msgid "Document saved with number %s."
 msgstr ""
 
-#: amir/addeditdoc.py:353
+#: ../amir/addeditdoc.py:401
 msgid "Successfully saved"
 msgstr ""
 
-#: amir/addeditdoc.py:358
+#: ../amir/addeditdoc.py:448
 msgid "Are you sure to delete the whole document?"
-msgstr ""
+msgstr "האם למחוק את המסמך כולו?"
 
-#: amir/docreport.py:46
+#: ../amir/docreport.py:52
 msgid "No document found with the requested number."
-msgstr ""
+msgstr "לא נמצא מסמך במספר המבוקש"
 
-#: amir/docreport.py:47
+#: ../amir/docreport.py:53
 msgid "Invalid document number"
-msgstr ""
+msgstr "מספר המסמך שגוי"
 
-#: amir/docreport.py:87
+#: ../amir/docreport.py:94
 msgid "Accounting Document"
-msgstr ""
+msgstr "מסמך חשבונאות"
 
-#: amir/docreport.py:87
+#: ../amir/docreport.py:94
 msgid "Document Number"
-msgstr ""
+msgstr "מספר המסמך"
 
-#: amir/docreport.py:87 amir/notebookreport.py:151 amir/notebookreport.py:173
-#: amir/notebookreport.py:237
+#: ../amir/docreport.py:94 ../amir/notebookreport.py:177
+#: ../amir/notebookreport.py:201 ../amir/notebookreport.py:266
+#: ../amir/tbalancereport.py:119
 msgid "Date"
-msgstr ""
+msgstr "תאריך"
 
-#: amir/notebookreport.py:28
+#: ../amir/notebookreport.py:86
 msgid "Daily NoteBook"
-msgstr ""
+msgstr "המחברת היומית"
 
-#: amir/notebookreport.py:128
+#: ../amir/notebookreport.py:146 ../amir/tbalancereport.py:75
 msgid "Second date value shouldn't precede the first one."
-msgstr ""
+msgstr "על ערך התאריך השני להיות עוקב לראשון."
 
-#: amir/notebookreport.py:129
+#: ../amir/notebookreport.py:147 ../amir/tbalancereport.py:76
 msgid "Invalid date order"
-msgstr ""
+msgstr "סדר התאריכים שגוי"
 
-#: amir/notebookreport.py:140
+#: ../amir/notebookreport.py:166
 msgid "Second document number shouldn't be greater than the first one."
-msgstr ""
+msgstr "מספר המסמך השני לא יכול להיות גדול יותר ממספרו של הראשון."
 
-#: amir/notebookreport.py:141
+#: ../amir/notebookreport.py:157 ../amir/notebookreport.py:167
 msgid "Invalid document order"
-msgstr ""
+msgstr "סדר המסמכים שגוי"
 
-#: amir/notebookreport.py:151 amir/notebookreport.py:173
+#. if self.type == self.__class__.LEDGER:
+#: ../amir/notebookreport.py:177 ../amir/notebookreport.py:201
 msgid "Doc. Number"
 msgstr ""
 
-#: amir/notebookreport.py:173
+#: ../amir/notebookreport.py:201
 msgid "Diagnosis"
-msgstr ""
+msgstr "אבחנה"
 
-#: amir/notebookreport.py:173
+#: ../amir/notebookreport.py:201 ../amir/tbalancereport.py:53
 msgid "Remaining"
-msgstr ""
+msgstr "נותר"
 
-#: amir/notebookreport.py:188 amir/printreport.py:379 amir/printreport.py:384
+#: ../amir/printreport.py:417 ../amir/printreport.py:422
+#: ../amir/previewreport.py:103 ../amir/previewreport.py:108
+#: ../amir/notebookreport.py:217
 msgid "deb"
-msgstr ""
+msgstr "deb"
 
-#: amir/notebookreport.py:192 amir/printreport.py:387
+#: ../amir/printreport.py:426 ../amir/previewreport.py:112
+#: ../amir/notebookreport.py:221
 msgid "equ"
-msgstr ""
+msgstr "equ"
 
-#: amir/notebookreport.py:194 amir/printreport.py:389
+#: ../amir/printreport.py:428 ../amir/previewreport.py:114
+#: ../amir/notebookreport.py:223
 msgid "cre"
-msgstr ""
+msgstr "cre"
 
-#: amir/notebookreport.py:228
+#: ../amir/notebookreport.py:257 ../amir/notebookreport.py:287
 msgid "The requested notebook is empty."
-msgstr ""
+msgstr "המחברת הנבחרת ריקה."
 
-#: amir/notebookreport.py:229
+#: ../amir/notebookreport.py:258 ../amir/notebookreport.py:288
 msgid "Empty notebook"
-msgstr ""
+msgstr "המחברת ריקה"
 
-#: amir/notebookreport.py:237 data/ui/mainwin.glade:71
+#: ../amir/notebookreport.py:266
 msgid "Daily Notebook"
-msgstr ""
+msgstr "מחברת יומית"
 
 #: amir/notebookreport.py:246
 msgid "Ledger Notebook"
@@ -191,33 +206,40 @@ msgstr ""
 msgid "Sub-Leger Notebook"
 msgstr ""
 
-#: amir/printreport.py:149 amir/printreport.py:337
+#: ../amir/printreport.py:181 ../amir/printreport.py:375
+#: ../amir/previewreport.py:91 ../amir/previewreport.py:119
 msgid "Sum of previous page"
-msgstr ""
+msgstr "סכום העמוד הקודם"
 
-#: amir/printreport.py:254 amir/printreport.py:480 amir/printreport.py:616
+#: ../amir/printreport.py:286 ../amir/printreport.py:519
+#: ../amir/printreport.py:662 ../amir/previewreport.py:95
+#: ../amir/previewreport.py:126 ../amir/previewreport.py:136
+#: ../amir/subjects.py:52
 msgid "Sum"
-msgstr ""
+msgstr "סך הכל"
 
-#: amir/setting.py:83
+#: ../amir/setting.py:158
 msgid ""
 "Can not connect to the database. The selected database file may not be a "
 "sqlite database or be corrupt."
 msgstr ""
+"לא ניתן להתחבר אל מסד הנתונים. קובץ מסד הנתונים הנבחר אינו מסד נתונים מסוג "
+"sqlite או שהוא פגום."
 
-#: amir/setting.py:85
+#: ../amir/setting.py:160
 msgid ""
 "The selected file is compatible with older versions of Amir. First convert "
 "it to the new version."
 msgstr ""
+"הקובץ הנבחר תואם לגרסת ישנות של אמיר. ראית יש להמיר אותו לגרסה החדשה."
 
-#: amir/setting.py:87
+#: ../amir/setting.py:162
 msgid "The requested database file doesn' exist."
-msgstr ""
+msgstr "קובץ מסד הנתונים המבוקש אינו קיים."
 
-#: amir/setting.py:91
+#: ../amir/setting.py:166
 msgid "Error opening new database"
-msgstr ""
+msgstr "שגיאה בפתיחת מסד נתונים חדש"
 
 #: amir/setting.py:101
 #, python-format
@@ -226,7 +248,8 @@ msgid ""
 "New database: %s"
 msgstr ""
 
-#: amir/setting.py:102 amir/setting.py:197
+#: ../amir/setting.py:356 ../amir/setting.py:384 ../amir/setting.py:414
+#: ../bin/amir.py:222
 msgid "Successfully changed"
 msgstr ""
 
@@ -235,48 +258,50 @@ msgid ""
 "Can not connect to the database. The selected file for convert may not be a "
 "sqlite database or be corrupt."
 msgstr ""
+"לא ניתן להתחבר אל מסד הנתונים. הקובץ הנבחר להמרה אינו מסד נתונים מסוג sqlite "
+"או שהוא פגום."
 
 #: amir/setting.py:116
 msgid "The selected file is not compatible with older versions of Amir."
-msgstr ""
+msgstr "הקובץ הנבחר אינו תואם לגרסות ישנות יותר של אמיר."
 
 #: amir/setting.py:118
 msgid "The requested database file doesn't exist."
-msgstr ""
+msgstr "קובץ מסד הנתונים המבוקש לא נמצא."
 
 #: amir/setting.py:122
 msgid "Error opening database for conversion"
-msgstr ""
+msgstr "שגיאה בפתיחת מסד הנתונים להמרה"
 
 #: amir/setting.py:132
 msgid "Please select a directory for the converted database."
-msgstr ""
+msgstr "נא לבחור בתיקייה עבור מסד הנתונים שהומר."
 
 #: amir/setting.py:139
 #, python-format
 msgid ""
 "File %s already exists in destination directory, Do you want to overwrite it?"
-msgstr ""
+msgstr "הקובץ %s כבר קיים בתיקיית היעד, האם לשכתב אותו?"
 
 #: amir/setting.py:141
 msgid "Overwrite destination file?"
-msgstr ""
+msgstr "האם לשכתב את קובץ היעד?"
 
 #: amir/setting.py:149
 msgid "Please wait.."
-msgstr ""
+msgstr "נא להמתין..."
 
 #: amir/setting.py:151
 msgid "Converting database"
-msgstr ""
+msgstr "מתבצעת המרת מסד הנתונים"
 
 #: amir/setting.py:166
 msgid "The requested directory doesn't exist."
-msgstr ""
+msgstr "התיקייה המבוקשת אינה קיימת."
 
 #: amir/setting.py:169
 msgid "Error opening destination"
-msgstr ""
+msgstr "שגיאה בפתיחת היעד"
 
 #: amir/setting.py:177
 #, python-format
@@ -284,78 +309,82 @@ msgid ""
 "Convert Operation Completed!\n"
 "New database: %s"
 msgstr ""
+"פעולת ההמרה הושלמה!\n"
+"מסד הנתונים החדש: %s"
 
-#: amir/setting.py:196
+#: ../amir/setting.py:383
 msgid "Format settings changed successfully."
 msgstr ""
 
-#: amir/subjects.py:38
+#: ../amir/subjects.py:47
 msgid "Debtor or Creditor"
-msgstr ""
+msgstr "בעל חוב או בעל זכות"
 
-#: amir/subjects.py:118
+#: ../amir/subjects.py:188
 msgid "Please select an item from the list, to add subject for it."
-msgstr ""
+msgstr "נא לבחור פריט מהרשימה כדי להוסיף לו נושא."
 
-#: amir/subjects.py:119
+#: ../amir/subjects.py:189
 msgid "Select a subject"
-msgstr ""
+msgstr "יש לבחור בנושא"
 
-#: amir/subjects.py:177
+#: ../amir/subjects.py:259
 msgid "Subject can not be deleted, because it has some child subjects."
-msgstr ""
+msgstr "לא ניתן למחוק את הנושא כיוון שיש לו כמה תת־נושאים."
 
-#: amir/subjects.py:178 amir/subjects.py:189
+#: ../amir/subjects.py:260 ../amir/subjects.py:271
 msgid "Error deleting subject"
-msgstr ""
+msgstr "שגיאה במחיקת הנושא"
 
-#: amir/subjects.py:188
+#: ../amir/subjects.py:270
 msgid ""
 "Subject can not be deleted, because there are some documents registered for "
 "it."
-msgstr ""
+msgstr "לא ניתן למחוק את הנושר כיוון שישנם כמה מסמכים הרשומים תחתיו."
 
-#: amir/subjects.py:202
+#: ../amir/subjects.py:296
 msgid "Subject name should not be empty."
-msgstr ""
+msgstr "שם הנושא לא יכול להיות ריק."
 
-#: amir/subjects.py:203
+#: ../amir/subjects.py:297
 msgid "Empty subject name"
-msgstr ""
+msgstr "שם נושא ריק"
 
-#: amir/subjects.py:230
+#: ../amir/subjects.py:332
 msgid "A subject with this name already exists in the current level."
-msgstr ""
+msgstr "נושא בעל שם זה כבר קיים ברמה הנוכחית."
 
-#: amir/subjects.py:231
+#: ../amir/subjects.py:333
 msgid "Duplicate subject name"
-msgstr ""
+msgstr "שכפול שם הנושא"
 
 #: amir/subjects.py:244
 #, python-format
 msgid ""
-"The type of this subject can not be changed to 'creditor', Because there "
-"are                                 %d documents that use it as debtor."
+"The type of this subject can not be changed to 'creditor', Because there are "
+"                                %d documents that use it as debtor."
 msgstr ""
+"לא ניתן לשנות את סוג הנושר ל־\"בעל זכות\" כיוון שישנם %d מסמכים המשתמשים בו "
+"כבעל חוב."
 
 #: amir/subjects.py:249
 #, python-format
 msgid ""
-"The type of this subject can not be changed to 'debtor', Because there "
-"are                                 %d documents that use it as creditor."
+"The type of this subject can not be changed to 'debtor', Because there are   "
+"                              %d documents that use it as creditor."
 msgstr ""
 
-#: amir/subjects.py:253
+#: ../amir/subjects.py:379
 msgid "Can not change subject type"
-msgstr ""
+msgstr "לא ניתן לשנות את סוג הנושא"
 
 #: data/ui/document.glade:23
 msgid "Add row"
-msgstr ""
+msgstr "הוספת שורה"
 
 #: data/ui/document.glade:49
 msgid "Remove row"
-msgstr ""
+msgstr "הסרת שורה"
 
 #: data/ui/document.glade:71
 msgid "Save Document"
@@ -372,52 +401,52 @@ msgstr ""
 #: data/ui/document.glade:113 data/ui/document.glade:192
 #: data/ui/document.glade:224 data/ui/document.glade:262
 msgid "----"
-msgstr ""
+msgstr "----"
 
 #: data/ui/document.glade:134
 msgid "Date:"
-msgstr ""
+msgstr "תאריך:"
 
 #: data/ui/document.glade:183
 msgid "Debt Sum: "
-msgstr ""
+msgstr "סך כל החובה: "
 
 #: data/ui/document.glade:213
 msgid "Credit Sum: "
-msgstr ""
+msgstr "סך כל הזכות: "
 
 #: data/ui/document.glade:252
 msgid "Difference: "
-msgstr ""
+msgstr "הפרש: "
 
 #: data/ui/document.glade:301 data/ui/report.glade:29
 msgid "Subject Code: "
-msgstr ""
+msgstr "קוד הנושא: "
 
 #: data/ui/document.glade:325 data/ui/report.glade:52
 #: data/ui/setting.glade:620
 msgid "Select"
-msgstr ""
+msgstr "בחירה"
 
 #: data/ui/document.glade:356
 msgid "Amount: "
-msgstr ""
+msgstr "סכום: "
 
 #: data/ui/document.glade:428
 msgid "Transaction type"
-msgstr ""
+msgstr "סוג ההעברה"
 
 #: data/ui/document.glade:446
 msgid "Description:"
-msgstr ""
+msgstr "תיאור:"
 
 #: data/ui/mainwin.glade:16
 msgid "_Actions"
-msgstr ""
+msgstr "_פעולות"
 
 #: data/ui/mainwin.glade:23
 msgid "Manual Registration"
-msgstr ""
+msgstr "הרשמה ידנית"
 
 #: data/ui/mainwin.glade:35
 msgid "Edit Document"
@@ -425,17 +454,17 @@ msgstr ""
 
 #: data/ui/mainwin.glade:54
 msgid "_Reports"
-msgstr ""
+msgstr "_דוחות"
 
 #: data/ui/mainwin.glade:62
 msgid "Notebooks"
-msgstr ""
+msgstr "מחברות"
 
-#: data/ui/mainwin.glade:79
+#: ../amir/notebookreport.py:275
 msgid "Ledgers Notebook"
 msgstr ""
 
-#: data/ui/mainwin.glade:87
+#: ../amir/notebookreport.py:277
 msgid "Sub-ledgers Notebook"
 msgstr ""
 
@@ -542,7 +571,7 @@ msgstr ""
 
 #: data/ui/notebook.glade:277
 msgid "Delete"
-msgstr ""
+msgstr "מחיקה"
 
 #: data/ui/report.glade:70
 msgid "Subject"
@@ -599,7 +628,7 @@ msgstr ""
 
 #: data/ui/setting.glade:55
 msgid "Current database: "
-msgstr ""
+msgstr "מסד הנתונים הנוכחי: "
 
 #: data/ui/setting.glade:85
 msgid "Choose database: "
@@ -636,7 +665,7 @@ msgstr ""
 
 #: data/ui/setting.glade:292 data/ui/setting.glade:539
 msgid "Apply"
-msgstr ""
+msgstr "החלה"
 
 #: data/ui/setting.glade:315
 msgid "Database"
@@ -669,3 +698,6 @@ msgstr ""
 #: data/ui/setting.glade:565
 msgid "Format"
 msgstr ""
+
+#~ msgid "Document Numebr:"
+#~ msgstr "מספר המסמך:"

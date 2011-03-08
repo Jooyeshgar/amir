@@ -1,0 +1,7 @@
+#!/bin/sh -e
+
+locale-gen fa_IR
+locale-gen en_US
+
+exit 0
+

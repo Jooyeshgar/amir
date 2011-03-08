@@ -15,8 +15,11 @@ Architecture: all
 XB-Python-Version: ${python:Versions}
 Depends: ${misc:Depends},
  ${python:Depends},
+ python-migrate,
+ python-tempita,
+ python-cairo,
  python-gobject,
  python-gtk2,
- SQLAlchemy (>=0.6.0)
+ python-sqlalchemy (>=0.6.0)
 Description: Amir accounting software
  Just another accounting software for persian

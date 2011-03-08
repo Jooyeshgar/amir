@@ -1,17 +1,17 @@
 # -*- Mode: Python; coding: utf-8; indent-tabs-mode: nil; tab-width: 4 -*-
 ### BEGIN LICENSE
 # Copyright (C) 2010 <jooyeshgar> <info@jooyeshgar.com>
-#This program is free software: you can redistribute it and/or modify it 
-#under the terms of the GNU General Public License version 3, as published 
-#by the Free Software Foundation.
-#
-#This program is distributed in the hope that it will be useful, but 
-#WITHOUT ANY WARRANTY; without even the implied warranties of 
-#MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR 
-#PURPOSE.  See the GNU General Public License for more details.
-#
-#You should have received a copy of the GNU General Public License along 
-#with this program.  If not, see <http://www.gnu.org/licenses/>.
+# This program is free software: you can redistribute it and/or modify it 
+# under the terms of the GNU General Public License version 3, as published 
+# by the Free Software Foundation.
+# 
+# This program is distributed in the hope that it will be useful, but 
+# WITHOUT ANY WARRANTY; without even the implied warranties of 
+# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR 
+# PURPOSE.  See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License along 
+# with this program.  If not, see <http://www.gnu.org/licenses/>.
 ### END LICENSE
 
 # THIS IS Amir CONFIGURATION FILE
@@ -72,9 +72,10 @@ class AmirConfig:
     """
     data_path = ''
     #options = None
-    localelist = ["C", "fa_IR"]
-    langlist = ["English", "Persian"]
-    directionlist = ["ltr", "rtl"]
+    localelist = ["en_US", "fr", "he", "fa_IR", "tr"]
+    langlist = ["English", "French", "Hebrew", "Persian", "Turkish"]
+    directionlist = ["ltr", "ltr", "rtl", "rtl", "ltr"]
+    
     datetypes = ["jalali", "gregorian"]
     datedelims = [":", "/", "-"]
     datefields = {"year":0, "month":1, "day":2}
@@ -126,7 +127,7 @@ class AmirConfig:
             confdir = os.path.join(os.path.expanduser('~'), '.amir')
 
         if not os.path.exists(confdir):
-            os.makedirs(confdir, mode=755)
+            os.makedirs(confdir, 0755)
 
         confpath = os.path.join(confdir, 'amir.conf')
             
@@ -208,7 +209,7 @@ class AmirConfig:
         if str in self.localelist:
             self.locale = str
         else:
-            self.locale = "C"
+            self.locale = "en_US"
             
         str = self.sconfig.get('General', 'dateformat')
         if str == '':
