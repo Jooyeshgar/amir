@@ -43,6 +43,7 @@ def get_builder(builder_file_name):
 
     builder = gtk.Builder()
     builder.set_translation_domain('amir')
+    logging.info("UI file \"%s\" loaded." % ui_filename)
     builder.add_from_file(ui_filename)
     return builder
 

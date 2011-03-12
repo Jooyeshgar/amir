@@ -58,7 +58,11 @@ if sys.platform == 'win32':
     result = msvcrt._putenv('LANG=%s' % (config.locale))
     del msvcrt 
 
-locale.setlocale(locale.LC_ALL, '')
+try:
+    locale.setlocale(locale.LC_ALL, '')
+except:
+    pass
+
 gtk.glade.bindtextdomain('amir', config.locale_path)
 gtk.glade.textdomain('amir')
 gettext.install('amir', config.locale_path, unicode=1)

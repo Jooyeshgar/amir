@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-08 19:46+0330\n"
+"POT-Creation-Date: 2011-03-09 20:48+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -663,7 +663,7 @@ msgstr ""
 
 #: amir/warehousing.py:271
 #, python-format
-msgid "Edit Product:\t%s - %s"
+msgid "Edit Product:\t%(code)s - %(name)s"
 msgstr ""
 
 #: amir/warehousing.py:368

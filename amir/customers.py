@@ -168,6 +168,9 @@ class Customer(customergroup.Group):
         result = self.saveCustomer()
         if result == 0:
             self.customerForm.hide()
+            
+    def on_markedChk_toggled(self,sender=0,ev=0):
+        self.builder.get_object("markedReasonEntry").set_sensitive(self.builder.get_object("markedChk").get_active())
 #
 #    def submitEditCust(self):
 #        print "SUBMIT  EDIT"
@@ -373,6 +376,7 @@ class Customer(customergroup.Group):
             self.builder.get_object("custDescEntry").set_text(customer.custDesc)
             self.personalcodeEntry.set_text(custPersonalCode)
             self.postalcodeEntry.set_text(custPostalCode)
+            self.builder.get_object("markedReasonEntry").set_sensitive(self.builder.get_object("markedChk").get_active())
             
             self.customerForm.show_all()
             

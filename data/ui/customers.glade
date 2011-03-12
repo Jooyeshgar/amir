@@ -4,7 +4,7 @@
   <!-- interface-naming-policy project-wide -->
   <object class="GtkWindow" id="customersWindow">
     <property name="width_request">700</property>
-    <property name="height_request">500</property>
+    <property name="height_request">550</property>
     <property name="window_position">center-always</property>
     <signal name="delete_event" handler="customerFormCanceled"/>
     <child>
@@ -645,6 +645,7 @@ Information</property>
                                 <property name="receives_default">False</property>
                                 <property name="xalign">0</property>
                                 <property name="draw_indicator">True</property>
+                                <signal name="toggled" handler="on_markedChk_toggled"/>
                               </object>
                               <packing>
                                 <property name="x_options"></property>
@@ -659,14 +660,16 @@ Information</property>
                               <packing>
                                 <property name="top_attach">1</property>
                                 <property name="bottom_attach">2</property>
+                                <property name="x_options">GTK_FILL</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkEntry" id="markedReasonEntry">
                                 <property name="visible">True</property>
+                                <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
-                                <property name="editable">False</property>
                                 <property name="invisible_char">●</property>
+                                <property name="text" translatable="yes">asfdasdfasdffds</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -731,6 +734,9 @@ Information</property>
                                 <property name="xpad">10</property>
                                 <property name="label" translatable="yes">Introducer:</property>
                               </object>
+                              <packing>
+                                <property name="x_options">GTK_FILL</property>
+                              </packing>
                             </child>
                             <child>
                               <object class="GtkLabel" id="custDiscRateLbl">
@@ -750,9 +756,6 @@ Information</property>
                                 <property name="width_request">200</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="invisible_char">●</property>
-                                <property name="text" translatable="yes">0</property>
-                                <property name="xalign">0.94999998807907104</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -767,9 +770,6 @@ Information</property>
                                 <property name="width_request">200</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="invisible_char">●</property>
-                                <property name="text" translatable="yes">0</property>
-                                <property name="xalign">0.94999998807907104</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -960,7 +960,7 @@ Type</property>
                             <property name="row_spacing">5</property>
                             <child>
                               <object class="GtkLabel" id="custCreditLbl">
-                                <property name="width_request">125</property>
+                                <property name="width_request">145</property>
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
                                 <property name="xpad">20</property>
@@ -969,34 +969,31 @@ Type</property>
                               <packing>
                                 <property name="top_attach">1</property>
                                 <property name="bottom_attach">2</property>
-                                <property name="x_options">GTK_EXPAND</property>
+                                <property name="x_options"></property>
                                 <property name="y_options">GTK_FILL</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkEntry" id="custCreditEntry">
-                                <property name="width_request">250</property>
+                                <property name="width_request">100</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="invisible_char">●</property>
                                 <property name="text" translatable="yes">0</property>
-                                <property name="xalign">0.94999998807907104</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
                                 <property name="right_attach">2</property>
+                                <property name="x_options">GTK_FILL</property>
                                 <property name="y_options">GTK_FILL</property>
-                                <property name="x_padding">50</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkEntry" id="custBalanceEntry">
-                                <property name="width_request">250</property>
+                                <property name="width_request">100</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="invisible_char">●</property>
-                                <property name="text" translatable="yes">0</property>
-                                <property name="xalign">0.94999998807907104</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -1005,19 +1002,18 @@ Type</property>
                                 <property name="bottom_attach">2</property>
                                 <property name="x_options">GTK_FILL</property>
                                 <property name="y_options">GTK_FILL</property>
-                                <property name="x_padding">50</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkLabel" id="custBalanceLbl">
-                                <property name="width_request">125</property>
+                                <property name="width_request">145</property>
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
                                 <property name="xpad">20</property>
                                 <property name="label" translatable="yes">Balance:</property>
                               </object>
                               <packing>
-                                <property name="x_options">GTK_EXPAND</property>
+                                <property name="x_options"></property>
                                 <property name="y_options">GTK_FILL</property>
                               </packing>
                             </child>
@@ -1059,35 +1055,42 @@ Type</property>
                             <property name="row_spacing">5</property>
                             <child>
                               <object class="GtkLabel" id="custAccNo1Lbl">
+                                <property name="width_request">145</property>
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
-                                <property name="xpad">50</property>
+                                <property name="xpad">20</property>
                                 <property name="label" translatable="yes">Account Number:</property>
                               </object>
                               <packing>
                                 <property name="top_attach">1</property>
                                 <property name="bottom_attach">2</property>
+                                <property name="x_options"></property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkLabel" id="custAccName1Lbl">
-                                <property name="width_request">125</property>
+                                <property name="width_request">145</property>
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
-                                <property name="xpad">50</property>
+                                <property name="xpad">20</property>
                                 <property name="label" translatable="yes">Name:</property>
                               </object>
+                              <packing>
+                                <property name="x_options"></property>
+                              </packing>
                             </child>
                             <child>
                               <object class="GtkLabel" id="custAccBank1Lbl">
+                                <property name="width_request">145</property>
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
-                                <property name="xpad">50</property>
+                                <property name="xpad">20</property>
                                 <property name="label" translatable="yes">Bank:</property>
                               </object>
                               <packing>
                                 <property name="top_attach">2</property>
                                 <property name="bottom_attach">3</property>
+                                <property name="x_options"></property>
                               </packing>
                             </child>
                             <child>
@@ -1100,7 +1103,6 @@ Type</property>
                               <packing>
                                 <property name="left_attach">1</property>
                                 <property name="right_attach">2</property>
-                                <property name="x_options">GTK_EXPAND</property>
                               </packing>
                             </child>
                             <child>
@@ -1115,7 +1117,6 @@ Type</property>
                                 <property name="right_attach">2</property>
                                 <property name="top_attach">1</property>
                                 <property name="bottom_attach">2</property>
-                                <property name="x_options">GTK_EXPAND</property>
                               </packing>
                             </child>
                             <child>
@@ -1130,7 +1131,6 @@ Type</property>
                                 <property name="right_attach">2</property>
                                 <property name="top_attach">2</property>
                                 <property name="bottom_attach">3</property>
-                                <property name="x_options">GTK_EXPAND</property>
                               </packing>
                             </child>
                           </object>
@@ -1173,34 +1173,42 @@ Type</property>
                             <property name="row_spacing">5</property>
                             <child>
                               <object class="GtkLabel" id="custAccName2Lbl">
+                                <property name="width_request">145</property>
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
-                                <property name="xpad">50</property>
+                                <property name="xpad">20</property>
                                 <property name="label" translatable="yes">Name:</property>
                               </object>
+                              <packing>
+                                <property name="x_options"></property>
+                              </packing>
                             </child>
                             <child>
                               <object class="GtkLabel" id="custAccNo2Lbl">
+                                <property name="width_request">145</property>
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
-                                <property name="xpad">50</property>
+                                <property name="xpad">20</property>
                                 <property name="label" translatable="yes">Account Number:</property>
                               </object>
                               <packing>
                                 <property name="top_attach">1</property>
                                 <property name="bottom_attach">2</property>
+                                <property name="x_options"></property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkLabel" id="custAccBank2Lbl">
+                                <property name="width_request">145</property>
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
-                                <property name="xpad">50</property>
+                                <property name="xpad">20</property>
                                 <property name="label" translatable="yes">Bank:</property>
                               </object>
                               <packing>
                                 <property name="top_attach">2</property>
                                 <property name="bottom_attach">3</property>
+                                <property name="x_options"></property>
                               </packing>
                             </child>
                             <child>
@@ -1215,7 +1223,6 @@ Type</property>
                                 <property name="right_attach">2</property>
                                 <property name="top_attach">2</property>
                                 <property name="bottom_attach">3</property>
-                                <property name="x_options">GTK_EXPAND</property>
                               </packing>
                             </child>
                             <child>
@@ -1230,7 +1237,6 @@ Type</property>
                                 <property name="right_attach">2</property>
                                 <property name="top_attach">1</property>
                                 <property name="bottom_attach">2</property>
-                                <property name="x_options">GTK_EXPAND</property>
                               </packing>
                             </child>
                             <child>
@@ -1243,7 +1249,6 @@ Type</property>
                               <packing>
                                 <property name="left_attach">1</property>
                                 <property name="right_attach">2</property>
-                                <property name="x_options">GTK_EXPAND</property>
                               </packing>
                             </child>
                           </object>
@@ -1330,7 +1335,6 @@ Information</property>
         <child>
           <object class="GtkStatusbar" id="statusBar">
             <property name="visible">True</property>
-            <property name="spacing">2</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -1433,7 +1437,6 @@ Information</property>
                 <property name="rules_hint">True</property>
                 <property name="enable_grid_lines">vertical</property>
                 <property name="enable_tree_lines">True</property>
-                <signal name="row_activated" handler="selectCustomerFromList"/>
               </object>
             </child>
           </object>
@@ -1459,7 +1462,6 @@ Information</property>
     <property name="window_position">center-on-parent</property>
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">dialog</property>
-    <signal name="response" handler="on_addCustomerGroup_response"/>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox1">
         <property name="visible">True</property>
