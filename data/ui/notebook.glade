@@ -365,7 +365,6 @@
                 <property name="can_focus">True</property>
                 <property name="tooltip_text" translatable="yes">Use left/right arrow keys to expand/collapse subjects</property>
                 <property name="rules_hint">True</property>
-                <property name="enable_grid_lines">vertical</property>
                 <property name="enable_tree_lines">True</property>
                 <signal name="test_expand_row" handler="populateChildren"/>
                 <signal name="row_activated" handler="selectSubjectFromList"/>

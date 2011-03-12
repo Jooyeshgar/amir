@@ -27,7 +27,7 @@ class Subjects(gobject.GObject):
         self.window.set_modal(True)
         
         self.treeview = self.builder.get_object("treeview")
-        self.treeview.set_direction(gtk.TEXT_DIR_LTR)
+        #self.treeview.set_direction(gtk.TEXT_DIR_LTR)
         if gtk.widget_get_default_direction() == gtk.TEXT_DIR_RTL :
             halign = 1
         else:
