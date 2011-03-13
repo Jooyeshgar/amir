@@ -218,25 +218,7 @@ class Customer(customergroup.Group):
             msgbox.run()
             msgbox.destroy()
             return -1
-#        #----------------------------------
-#        self.custTypeBuyerChk = self.builder.get_object("custTypeBuyerChk")
-#        self.custTypeSellerChk = self.builder.get_object("custTypeSellerChk")
-#        self.custTypeMateChk = self.builder.get_object("custTypeMateChk")
-#        self.custTypeAgentChk = self.builder.get_object("custTypeAgentChk")
-#        self.custIntroducerEntry = self.builder.get_object("custIntroducerEntry")
-#        self.custCommissionRateEntry = self.builder.get_object("custCommissionRateEntry")
-#        self.custDiscRateEntry = self.builder.get_object("custDiscRateEntry")
-#        self.markedChk = self.builder.get_object("markedChk")
-#        self.markedReasonEntry = self.builder.get_object("markedReasonEntry")
-#        #----------------------------------
-#        self.custBalanceEntry = self.builder.get_object("custBalanceEntry")
-#        self.custCreditEntry = self.builder.get_object("custCreditEntry")
-#        self.custAccName1Entry = self.builder.get_object("custAccName1Entry")
-#        self.custAccNo1Entry = self.builder.get_object("custAccNo1Entry")
-#        self.custAccBank1Entry = self.builder.get_object("custAccBank1Entry")
-#        self.custAccName2Entry = self.builder.get_object("custAccName2Entry")
-#        self.custAccNo2Entry = self.builder.get_object("custAccNo2Entry")
-#        self.custAccBank2Entry = self.builder.get_object("custAccBank2Entry")
+
 
         custEcnmcsCode     = self.builder.get_object("custEcnmcsCodeEntry").get_text()
         custPersonalCode   = self.personalcodeEntry.get_text()
@@ -258,29 +240,32 @@ class Customer(customergroup.Group):
         custPersonalCode = utility.convertToLatin(custPersonalCode)
         custPostalCode = utility.convertToLatin(custPostalCode)
         #----------------------------------
-#        self.custTypeBuyer = self.custTypeBuyerChk.get_active()
-#        self.custTypeSeller = self.custTypeSellerChk.get_active()
-#        self.custTypeMate = self.custTypeMateChk.get_active()
-#        self.custTypeAgent = self.custTypeAgentChk.get_active()
-#        self.custIntroducer = self.custIntroducerEntry.get_text()
-#        self.custCommissionRate = self.custCommissionRateEntry.get_text()
-#        self.custDiscRate = self.custDiscRateEntry.get_text()
-#        self.marked = self.markedChk.get_active()
-#        self.markedReason = self.markedReasonEntry.get_text()
-#        #----------------------------------
-#        self.custBalance = self.custBalanceEntry.get_text()
-#        self.custCredit = self.custCreditEntry.get_text()
-#        self.custAccName1 = self.custAccName1Entry.get_text()
-#        self.custAccNo1 = self.custAccNo1Entry.get_text()
-#        self.custAccBank1 = self.custAccBank1Entry.get_text()
-#        self.custAccName2 = self.custAccName2Entry.get_text()
-#        self.custAccNo2 = self.custAccNo2Entry.get_text()
-#        self.custAccBank2 = self.custAccBank2Entry.get_text()
+        custTypeBuyer = self.builder.get_object("custTypeBuyerChk").get_active()
+        custTypeSeller = self.builder.get_object("custTypeSellerChk").get_active()
+        custTypeMate = self.builder.get_object("custTypeMateChk").get_active()
+        custTypeAgent = self.builder.get_object("custTypeAgentChk").get_active()
+        custIntroducer = self.builder.get_object("custIntroducerEntry").get_text()
+        custCommission = self.builder.get_object("custCommissionRateEntry").get_text()
+        custDiscRate = self.builder.get_object("custDiscRateEntry").get_text()
+        custMarked = self.builder.get_object("markedChk").get_active()
+        custReason = self.builder.get_object("markedReasonEntry").get_text()
+        #----------------------------------
+        custBalance = self.builder.get_object("custBalanceEntry").get_text()
+        custCredit = self.builder.get_object("custCreditEntry").get_text()
+        custAccName1 = self.builder.get_object("custAccName1Entry").get_text()
+        custAccNo1 = self.builder.get_object("custAccNo1Entry").get_text()
+        custAccBank1 = self.builder.get_object("custAccBank1Entry").get_text()
+        custAccName2 = self.builder.get_object("custAccName2Entry").get_text()
+        custAccNo2 = self.builder.get_object("custAccNo2Entry").get_text()
+        custAccBank2 = self.builder.get_object("custAccBank2Entry").get_text()
         
         if not self.editCustomer:
-            customer = Customers(custCode, unicode(custName), custPhone, custCell, custFax, unicode(custAddress), custEmail,
-                             unicode(custEcnmcsCode), custWebPage, unicode(callResponsible), unicode(custConnector), groupid, 
-                             custPostalCode, custPersonalCode, unicode(custDesc))
+            customer = Customers(custCode, unicode(custName), custPhone, custCell, custFax, unicode(custAddress),
+                                custEmail, unicode(custEcnmcsCode), custWebPage, unicode(callResponsible), unicode(custConnector),
+                                groupid, custPostalCode, custPersonalCode, unicode(custDesc), custBalance, custCredit,
+                                custRepViaEmail, custAccName1, custAccNo1, custAccBank1, custAccName2, custAccNo2, 
+                                custAccBank2, custTypeBuyer, custTypeSeller, custTypeMate, custTypeAgent, 
+                                custIntroducer, custCommission, custMarked, custReason, custDiscRate )
         else:
             query = config.db.session.query(Customers).select_from(Customers)
             customer = query.filter(Customers.custId == self.customerId).first()
@@ -299,6 +284,25 @@ class Customer(customergroup.Group):
             customer.custConnector = unicode(custConnector)
             customer.custGroup = groupid
             customer.custDesc = unicode(custDesc)
+            #----------------------------------
+            customer.custTypeBuyer = custTypeBuyer
+            customer.custTypeSeller = custTypeSeller
+            customer.custTypeMate = custTypeMate
+            customer.custTypeAgent = custTypeAgent
+            customer.custIntroducer = unicode(custIntroducer)
+            customer.custCommission = unicode(custCommission)
+            customer.custDiscRate = unicode(custDiscRate)
+            customer.custMarked = custMarked
+            customer.custReason = unicode(custReason)
+            #----------------------------------
+            customer.custBalance = custBalance
+            customer.custCredit = custCredit
+            customer.custAccName1 = unicode(custAccName1)
+            customer.custAccNo1 = unicode(custAccNo1)
+            customer.custAccBank1 = unicode(custAccBank1)
+            customer.custAccName2 = unicode(custAccName2)
+            customer.custAccNo2 = unicode(custAccNo2)
+            customer.custAccBank2 = unicode(custAccBank2)
             
         config.db.session.add(customer)
         config.db.session.commit()
@@ -374,6 +378,26 @@ class Customer(customergroup.Group):
             self.builder.get_object("callResponsibleEntry").set_text(customer.custResposible)
             self.builder.get_object("custConnectorEntry").set_text(customer.custConnector)
             self.builder.get_object("custDescEntry").set_text(customer.custDesc)
+            self.builder.get_object("custTypeBuyerChk").set_active(customer.custTypeBuyer)
+            #----------------------------------
+            self.builder.get_object("custTypeSellerChk").set_active(customer.custTypeSeller)
+            self.builder.get_object("custTypeMateChk").set_active(customer.custTypeMate)
+            self.builder.get_object("custTypeAgentChk").set_active(customer.custTypeAgent)
+            self.builder.get_object("custIntroducerEntry").set_text(customer.custIntroducer)
+            self.builder.get_object("custCommissionRateEntry").set_text(customer.custCommission)
+            self.builder.get_object("custDiscRateEntry").set_text(customer.custDiscRate)
+            self.builder.get_object("markedChk").set_active(customer.custMarked)
+            self.builder.get_object("markedReasonEntry").set_text(customer.custReason)
+            #----------------------------------
+            self.builder.get_object("custBalanceEntry").set_text(unicode(customer.custBalance))
+            self.builder.get_object("custCreditEntry").set_text(unicode(customer.custCredit))
+            self.builder.get_object("custAccName1Entry").set_text(customer.custAccName1)
+            self.builder.get_object("custAccNo1Entry").set_text(customer.custAccNo1)
+            self.builder.get_object("custAccBank1Entry").set_text(customer.custAccBank1)
+            self.builder.get_object("custAccName2Entry").set_text(customer.custAccName2)
+            self.builder.get_object("custAccNo2Entry").set_text(customer.custAccNo2)
+            self.builder.get_object("custAccBank2Entry").set_text(customer.custAccBank2)
+            
             self.personalcodeEntry.set_text(custPersonalCode)
             self.postalcodeEntry.set_text(custPostalCode)
             self.builder.get_object("markedReasonEntry").set_sensitive(self.builder.get_object("markedChk").get_active())

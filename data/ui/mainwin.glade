@@ -304,34 +304,11 @@
                     <property name="visible">True</property>
                     <child>
                       <object class="GtkImageMenuItem" id="imagemenuitem3">
-                        <property name="label">gtk-new</property>
+                        <property name="label">_End initial</property>
                         <property name="visible">True</property>
                         <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkImageMenuItem" id="imagemenuitem4">
-                        <property name="label">gtk-open</property>
-                        <property name="visible">True</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkImageMenuItem" id="imagemenuitem5">
-                        <property name="label">gtk-save</property>
-                        <property name="visible">True</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkImageMenuItem" id="imagemenuitem8">
-                        <property name="label">gtk-save-as</property>
-                        <property name="visible">True</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
+                        <property name="image">image16</property>
+                        <property name="use_stock">False</property>
                       </object>
                     </child>
                     <child>
@@ -345,6 +322,112 @@
                         <property name="visible">True</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuItem" id="manageMenuItem1">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">_Management</property>
+                <property name="use_underline">True</property>
+                <child type="submenu">
+                  <object class="GtkMenu" id="menu10">
+                    <property name="visible">True</property>
+                    <property name="ubuntu_local">True</property>
+                    <child>
+                      <object class="GtkMenuItem" id="subjectsmenuitem1">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Notebook Subjects</property>
+                        <accelerator key="F7" signal="activate"/>
+                        <signal name="activate" handler="manageSubjects"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="menuitem9">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Customers</property>
+                        <property name="use_underline">True</property>
+                        <child type="submenu">
+                          <object class="GtkMenu" id="menu11">
+                            <property name="visible">True</property>
+                            <property name="ubuntu_local">True</property>
+                            <child>
+                              <object class="GtkMenuItem" id="viewCustomersMenuItem1">
+                                <property name="visible">True</property>
+                                <property name="label" translatable="yes">View Customers</property>
+                                <property name="use_underline">True</property>
+                                <signal name="activate" handler="viewCustomers"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkMenuItem" id="addNewCustomerMenuItem1">
+                                <property name="visible">True</property>
+                                <property name="label" translatable="yes">Add New Customer</property>
+                                <property name="use_underline">True</property>
+                                <accelerator key="F6" signal="activate"/>
+                                <signal name="activate" handler="addNewCustomer"/>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="warehousingMenuItem1">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">_Warehousing</property>
+                        <property name="use_underline">True</property>
+                        <child type="submenu">
+                          <object class="GtkMenu" id="warehousingSub1">
+                            <property name="visible">True</property>
+                            <property name="ubuntu_local">True</property>
+                            <child>
+                              <object class="GtkImageMenuItem" id="allProductsMenuItem1">
+                                <property name="label" translatable="yes">View All Products</property>
+                                <property name="visible">True</property>
+                                <property name="image">image12</property>
+                                <property name="use_stock">False</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkImageMenuItem" id="addProductMenuItem1">
+                                <property name="label" translatable="yes">Add Product</property>
+                                <property name="visible">True</property>
+                                <property name="image">image13</property>
+                                <property name="use_stock">False</property>
+                                <signal name="activate" handler="addNewProduct"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkImageMenuItem" id="allGroupsMenuItem1">
+                                <property name="label" translatable="yes">View All Groups</property>
+                                <property name="visible">True</property>
+                                <property name="image">image14</property>
+                                <property name="use_stock">False</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkImageMenuItem" id="addGroupsMenuItem1">
+                                <property name="label" translatable="yes">Add Group</property>
+                                <property name="visible">True</property>
+                                <property name="image">image15</property>
+                                <property name="use_stock">False</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="settingmenuitem1">
+                        <property name="label" translatable="yes">Settings</property>
+                        <property name="visible">True</property>
+                        <property name="use_underline">True</property>
+                        <property name="image">image10</property>
+                        <property name="use_stock">False</property>
                       </object>
                     </child>
                   </object>
@@ -670,6 +753,30 @@ Hadi Aminzadeh &lt;hadi60@gmail.com&gt;</property>
     <property name="stock">gtk-missing-image</property>
   </object>
   <object class="GtkImage" id="image11">
+    <property name="visible">True</property>
+    <property name="stock">gtk-missing-image</property>
+  </object>
+  <object class="GtkImage" id="image10">
+    <property name="visible">True</property>
+    <property name="stock">gtk-preferences</property>
+  </object>
+  <object class="GtkImage" id="image12">
+    <property name="visible">True</property>
+    <property name="stock">gtk-open</property>
+  </object>
+  <object class="GtkImage" id="image13">
+    <property name="visible">True</property>
+    <property name="stock">gtk-missing-image</property>
+  </object>
+  <object class="GtkImage" id="image14">
+    <property name="visible">True</property>
+    <property name="stock">gtk-missing-image</property>
+  </object>
+  <object class="GtkImage" id="image15">
+    <property name="visible">True</property>
+    <property name="stock">gtk-missing-image</property>
+  </object>
+  <object class="GtkImage" id="image16">
     <property name="visible">True</property>
     <property name="stock">gtk-missing-image</property>
   </object>

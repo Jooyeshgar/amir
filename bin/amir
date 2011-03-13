@@ -30,6 +30,7 @@ import gtk,gtk.glade
 import gettext,locale
 import gobject
 
+
 # Check if we are working in the source tree or from the installed 
 # package and mangle the python path accordingly
 if os.path.dirname(sys.argv[0]) != ".":
@@ -42,6 +43,7 @@ else:
 sys.path.insert(0, os.path.dirname(fullPath))
 
 from amir.amirconfig import config
+from amir.database   import  *
 
 os.environ['LANG'] = config.locale
 if sys.platform == 'win32':
@@ -213,8 +215,13 @@ class MainWindow(gobject.GObject):
         helpers.comboInsertItems(self.dblist, config.dbnames)
         self.dblist.set_active(config.currentdb - 1)
         
-        initial = self.builder.get_object("menubar2")
-        initial.hide()
+        if config.db.session.query(Bill.id).count()==0 :
+            initial = self.builder.get_object("menubar1")
+            initial.hide()
+        else:
+            initial = self.builder.get_object("menubar2")
+            initial.hide()
+            
         self.builder.connect_signals(self)
         
         self.window.connect("delete_event", self.delete_event)
