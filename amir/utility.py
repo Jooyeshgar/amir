@@ -6,16 +6,23 @@ from amirconfig import config
 # TODO: Instead of using just persian characters, 
 # Check the active locale and choose number characters from that locale
 #===============================================================================
-def showNumber (number):
+def showNumber (number, comma=True):
     s = str(number)
-    l = [x for x in s if x in '1234567890']
-    for x in reversed(range(len(s))[::3]):
-        l.insert(-x, ',')
-    l = ''.join(l[1:])
+
+    if comma:
+        l = [x for x in s if x in '1234567890']
+        for x in reversed(range(len(s))[::3]):
+            l.insert(-x, ',')
+            l = ''.join(l[1:])
+        s = l
     
     if config.digittype == 1:
-        l = convertToPersian(l)
-    return l
+        s.replace(u'۰۱۲۳۴۵۶۷۸۹','0123456789')
+        
+    return s
+
+def readNumber (number):
+    return number.replace('0123456789', u'۰۱۲۳۴۵۶۷۸۹')
 
 def convertToLatin (input_string):
     """
@@ -45,3 +52,11 @@ def convertToPersian (input_string):
         output_string += c
         
     return output_string
+
+def is_numeric(var):
+    try:
+        float(readNumber(var))
+        return True
+    except ValueError:
+        return False
+

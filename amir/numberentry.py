@@ -1,13 +1,17 @@
+#-*- encoding: utf-8 -*-
+
 import pygtk
 import gtk
 import gobject
 
 import utility
 
+from string import replace
+
 class NumberEntry(gtk.Entry):
     
-    def __init__(self):
-        gtk.Entry.__init__(self)
+    def __init__(self, Max=0):
+        gtk.Entry.__init__(self, Max)
         self.insert_sig = self.connect("insert-text", self.insert_cb)
     
     def insert(self, widget, text, pos):
@@ -15,12 +19,12 @@ class NumberEntry(gtk.Entry):
     # can't use insert_text(): it always inserts at position zero.
         orig_text = unicode(widget.get_text())
         text = unicode(text)
-        try:
-            num = int(text)
-        except ValueError:
-            text = ""
-            
         new_text = orig_text[:pos] + text + orig_text[pos:]
+        try:
+            float(new_text)
+        except ValueError:
+            new_text = orig_text
+            
         
     # avoid recursive calls triggered by set_text
         widget.handler_block(self.insert_sig)
@@ -38,14 +42,34 @@ class NumberEntry(gtk.Entry):
         widget.emit_stop_by_name("insert_text")
         gobject.idle_add(self.insert, widget, text, pos)
 
-    def get_int( self ):
+    def get_int(self):
         #--- This method will return the integer format of the entered  
         #--- value. If there is no text entered, 0 will be returned.
         try:
-            val = int(  self.get_text() )
-        except ValueError:
-            val = 0
+            val = int(readNumber(self.get_text()))
         except:
             val = 0
-            print "Unknown Value entered."
         return val
+
+    def get_float(self):
+        try:
+            return float(self.get_text())
+        except:
+            return 0
+        
+    def is_numeric(self):
+        try:
+            float(readNumber(self.get_text()))
+            return True
+        except ValueError:
+            return False
+
+    def readNumber (self):
+        str = self.get_text()
+        en_numbers = '0123456789'
+        fa_numbers = u'۰۱۲۳۴۵۶۷۸۹'
+        
+        for c in fa_numbers:
+            str = replace(str,c,en_numbers[fa_numbers.index(c)])
+            
+        return str
