@@ -27,7 +27,6 @@ class Subjects(gobject.GObject):
         self.window.set_modal(True)
         
         self.treeview = self.builder.get_object("treeview")
-        #self.treeview.set_direction(gtk.TEXT_DIR_LTR)
         if gtk.widget_get_default_direction() == gtk.TEXT_DIR_RTL :
             halign = 1
         else:
@@ -495,7 +494,7 @@ class Subjects(gobject.GObject):
                     
                     #--------
                     subject_sum = config.db.session.query(sum(Notebook.value)).select_from(outerjoin(Subject, Notebook, Subject.id == Notebook.subject_id))
-                    subject_sum = subject_sum.filter(and_(Subject.lft >= row[4], Subject.lft <= row.rgt)).first()
+                    subject_sum = subject_sum.filter(and_(Subject.lft >= row[4], Subject.lft <= row[5])).first()
                     subject_sum = subject_sum[0]
                     if(subject_sum == None):
                         subject_sum = utility.showNumber("0")

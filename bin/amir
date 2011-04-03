@@ -63,7 +63,7 @@ if sys.platform == 'win32':
 try:
     locale.setlocale(locale.LC_ALL, '')
 except:
-    pass
+    logging.error("Unable to set locale.")
 
 gtk.glade.bindtextdomain('amir', config.locale_path)
 gtk.glade.textdomain('amir')

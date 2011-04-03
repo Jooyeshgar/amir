@@ -46,20 +46,20 @@ class NumberEntry(gtk.Entry):
         #--- This method will return the integer format of the entered  
         #--- value. If there is no text entered, 0 will be returned.
         try:
-            val = int(readNumber(self.get_text()))
+            val = int(readNumber())
         except:
             val = 0
         return val
 
     def get_float(self):
         try:
-            return float(self.get_text())
+            return float()
         except:
             return 0
         
     def is_numeric(self):
         try:
-            float(readNumber(self.get_text()))
+            float(readNumber())
             return True
         except ValueError:
             return False

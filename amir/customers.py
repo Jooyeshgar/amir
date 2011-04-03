@@ -260,12 +260,6 @@ class Customer(customergroup.Group):
             msg += _("Customer name should not be empty.\n")
             
         #--------------------
-        #if self.builder.get_object("custBalanceEntry").get_text() == "":
-        #    msg += _("Customer name should not be empty.\n")            
-        #if self.builder.get_object("custCreditEntry").get_text() == "":
-        #    msg += _("Customer name should not be empty.\n")            
-        
-        #--------------------
         if msg != "":
             msgbox = gtk.MessageDialog(self.customerForm, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE, msg)
             msgbox.set_title(_("Can not save customer"))
@@ -273,9 +267,6 @@ class Customer(customergroup.Group):
             msgbox.destroy()
             return -1
 
-
-
-        
         if not self.editCustomer:
             customer = Customers(custCode, unicode(custName), custPhone, custCell, custFax, unicode(custAddress),
                                 custEmail, unicode(custEcnmcsCode), custWebPage, unicode(callResponsible), unicode(custConnector),

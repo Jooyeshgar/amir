@@ -428,6 +428,7 @@
                         <property name="use_underline">True</property>
                         <property name="image">image10</property>
                         <property name="use_stock">False</property>
+                        <signal name="activate" handler="settingsDialog"/>
                       </object>
                     </child>
                   </object>
