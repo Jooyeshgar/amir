@@ -215,13 +215,18 @@ class MainWindow(gobject.GObject):
         helpers.comboInsertItems(self.dblist, config.dbnames)
         self.dblist.set_active(config.currentdb - 1)
         
-        if config.db.session.query(Bill.id).count()==0 :
-            initial = self.builder.get_object("menubar1")
-            initial.hide()
-        else:
-            initial = self.builder.get_object("menubar2")
-            initial.hide()
-            
+        #NOTE: Bad idea, because until initial menu is shown, user can not register any bill;
+        #so the below query always returns zero.
+        
+        #if config.db.session.query(Bill.id).count()==0 :
+            #initial = self.builder.get_object("menubar1")
+            #initial.hide()
+        #else:
+            #initial = self.builder.get_object("menubar2")
+            #initial.hide()
+        initial = self.builder.get_object("menubar2")
+        initial.hide() 
+        
         self.builder.connect_signals(self)
         
         self.window.connect("delete_event", self.delete_event)
