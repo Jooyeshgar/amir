@@ -19,6 +19,16 @@
                   <object class="GtkMenu" id="menu1">
                     <property name="visible">True</property>
                     <child>
+                      <object class="GtkImageMenuItem" id="addAPurchaseMenuItem">
+                        <property name="label" translatable="yes">Add Purchase</property>
+                        <property name="visible">True</property>
+                        <property name="image">image11</property>
+                        <property name="use_stock">False</property>
+                        <accelerator key="F5" signal="activate"/>
+                        <signal name="activate" handler="sellingForm"/>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkImageMenuItem" id="manualmenuitem">
                         <property name="label" translatable="yes">Manual Registration</property>
                         <property name="visible">True</property>
@@ -221,6 +231,7 @@
                         <property name="visible">True</property>
                         <property name="image">image5</property>
                         <property name="use_stock">False</property>
+                        <signal name="activate" handler="viewProducts"/>
                       </object>
                     </child>
                     <child>
@@ -230,34 +241,6 @@
                         <property name="image">image6</property>
                         <property name="use_stock">False</property>
                         <signal name="activate" handler="addNewProduct"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkImageMenuItem" id="allGroupsMenuItem">
-                        <property name="label" translatable="yes">View All Groups</property>
-                        <property name="visible">True</property>
-                        <property name="image">image7</property>
-                        <property name="use_stock">False</property>
-                        <signal name="activate" handler="viewGroups"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkImageMenuItem" id="addGroupsMenuItem">
-                        <property name="label" translatable="yes">Add Group</property>
-                        <property name="visible">True</property>
-                        <property name="image">image8</property>
-                        <property name="use_stock">False</property>
-                        <signal name="activate" handler="addNewGroup"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkImageMenuItem" id="addAPurchaseMenuItem">
-                        <property name="label" translatable="yes">Add A Purchase</property>
-                        <property name="visible">True</property>
-                        <property name="image">image11</property>
-                        <property name="use_stock">False</property>
-                        <accelerator key="F5" signal="activate"/>
-                        <signal name="activate" handler="sellingForm"/>
                       </object>
                     </child>
                   </object>
@@ -745,18 +728,6 @@ Hadi Aminzadeh &lt;hadi60@gmail.com&gt;</property>
     <property name="visible">True</property>
     <property name="stock">gtk-missing-image</property>
   </object>
-  <object class="GtkImage" id="image7">
-    <property name="visible">True</property>
-    <property name="stock">gtk-missing-image</property>
-  </object>
-  <object class="GtkImage" id="image8">
-    <property name="visible">True</property>
-    <property name="stock">gtk-missing-image</property>
-  </object>
-  <object class="GtkImage" id="image11">
-    <property name="visible">True</property>
-    <property name="stock">gtk-missing-image</property>
-  </object>
   <object class="GtkImage" id="image10">
     <property name="visible">True</property>
     <property name="stock">gtk-preferences</property>
@@ -778,6 +749,10 @@ Hadi Aminzadeh &lt;hadi60@gmail.com&gt;</property>
     <property name="stock">gtk-missing-image</property>
   </object>
   <object class="GtkImage" id="image16">
+    <property name="visible">True</property>
+    <property name="stock">gtk-missing-image</property>
+  </object>
+  <object class="GtkImage" id="image11">
     <property name="visible">True</property>
     <property name="stock">gtk-missing-image</property>
   </object>

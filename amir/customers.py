@@ -4,7 +4,7 @@ import  gobject
 import  pygtk
 import  gtk
 
-import  warehousing
+#import  warehousing
 import  numberentry
 import  dateentry
 import  subjects

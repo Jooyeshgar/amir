@@ -20,7 +20,7 @@ products = Table('products', meta,
     Column('id',              Integer,                            primary_key = True      ),
     Column('code',            String,                             nullable    = False     ),
     Column('name',            Unicode(60),                        nullable    = False     ),
-    Column('accGroup',        Integer,        ForeignKey('groups.id')                     ),
+    Column('accGroup',        Integer,        ForeignKey('productGroups.id')                     ),
     Column('location',        Unicode(50),                        nullable    = True      ),
     Column('quantity',        Integer,        ColumnDefault(0),   nullable    = False     ),
     Column('qntyWarning',     Integer,        ColumnDefault(0),   nullable    = True      ),
@@ -31,7 +31,7 @@ products = Table('products', meta,
     Column('productDesc',     Unicode(200),                       nullable    = True      )
 )
 
-groups = Table('groups', meta,
+productGroups = Table('productGroups', meta,
     Column('id',           Integer,        primary_key = True      ),
     Column('code',         String(20),     nullable    = False     ),
     Column('name',         Unicode(60),    nullable    = False     ),
@@ -162,7 +162,7 @@ def upgrade(migrate_engine):
     meta.bind = migrate_engine
 
     products.create(      checkfirst=True)
-    groups.create(        checkfirst=True)
+    productGroups.create(        checkfirst=True)
     transactions.create(  checkfirst=True)
     exchanges.create(     checkfirst=True)
     payments.create(      checkfirst=True)
@@ -177,7 +177,7 @@ def downgrade(migrate_engine):
     meta.bind = migrate_engine
 
     products.drop()
-    groups.drop()
+    productGroups.drop()
     transactions.drop()
     exchanges.drop()
     payments.drop()

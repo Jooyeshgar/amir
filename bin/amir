@@ -69,7 +69,8 @@ gtk.glade.bindtextdomain('amir', config.locale_path)
 gtk.glade.textdomain('amir')
 gettext.install('amir', config.locale_path, unicode=1)
 
-from amir import subjects, addeditdoc, database, numberentry, notebookreport, docreport, tbalancereport, notebookutils, setting, helpers, warehousing, sellProducts, customers, customergroup
+from amir import subjects, addeditdoc, database, numberentry, notebookreport, docreport, tbalancereport, notebookutils, \
+setting, helpers, sellProducts, customers, customergroup, product, productgroup
      
 class MainWindow(gobject.GObject):
 
@@ -132,16 +133,16 @@ class MainWindow(gobject.GObject):
         else :
             self.window.destroy()
 
-    #============================================================================
+        #============================================================================
 	#---------- These lines are added by Rimo for the warehousing purpose
 	#============================================================================
     def addNewProduct(      self,   sender  ):
         obj = warehousing.Warehousing(              )
         obj.addNewProduct(                          )
         
-    def viewAllProducts(    self,   sender  ):
-        obj = warehousing.Warehousing(              )
-        obj.viewProducts(                           )
+    def viewProducts(    self,   sender  ):
+        obj = product.Product()
+        obj.viewProducts()
         
     def addNewGroup(        self,   sender  ):
         obj = customergroup.Group()

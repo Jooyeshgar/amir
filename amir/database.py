@@ -66,7 +66,7 @@ class Products(Base):
     id              = Column(   Integer,                            primary_key = True      )
     code            = Column(   String,                             nullable    = False     )
     name            = Column(   Unicode(60),                        nullable    = False     )
-    accGroup        = Column(   Integer,                            ForeignKey('groups.id') )
+    accGroup        = Column(   Integer,                            ForeignKey('productGroups.id') )
     location        = Column(   Unicode(50),                        nullable    = True      )
     quantity        = Column(   Integer,        ColumnDefault(0),   nullable    = False     )
     qntyWarning     = Column(   Integer,        ColumnDefault(0),   nullable    = True      )
@@ -91,8 +91,8 @@ class Products(Base):
         self.discountFormula    = disc
         
 
-class Groups(   Base    ):
-    __tablename__ = "groups"
+class ProductGroups(   Base    ):
+    __tablename__ = "productGroups"
     id      = Column(   Integer,        primary_key = True          )
     code    = Column(   String(20),     nullable    = False         )
     name    = Column(   Unicode(60),    nullable    = False         )
