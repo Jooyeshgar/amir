@@ -353,13 +353,13 @@ class Product(productgroup.ProductGroup):
                 
         #return 0
 
-    #def editCustAndGrps(self, sender):
-        #selection = self.treeview.get_selection()
-        #iter = selection.get_selected()[1]
+    def editProductsAndGrps(self, sender):
+        selection = self.treeview.get_selection()
+        iter = selection.get_selected()[1]
         
-        #if self.treestore.iter_parent(iter) == None:
-            ##Iter points to a customer group
-            #self.editCustomerGroup(sender)
+        if self.treestore.iter_parent(iter) == None:
+            #Iter points to a product group
+            self.editProductGroup(sender)
         #else:            
             #code = self.treestore.get_value(iter, 0)
             #code = utility.convertToLatin(code)

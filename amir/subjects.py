@@ -334,6 +334,7 @@ class Subjects(gobject.GObject):
                 msgbox.destroy()
                 return
             
+            #TODO pass code through function parameters
             lastcode = utility.convertToLatin(self.code.get_text())[0:2]
             if lastcode == '':
                 msgbox = gtk.MessageDialog(widget, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,

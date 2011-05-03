@@ -429,7 +429,7 @@
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Edit</property>
                 <property name="stock_id">gtk-edit</property>
-                <signal name="clicked" handler="editProGrp"/>
+                <signal name="clicked" handler="editProductsAndGrps"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -685,7 +685,7 @@
                 <property name="visible">True</property>
                 <property name="xalign">0</property>
                 <property name="xpad">5</property>
-                <property name="label" translatable="yes">Selling ID:</property>
+                <property name="label" translatable="yes">Selling Code:</property>
               </object>
               <packing>
                 <property name="top_attach">3</property>
@@ -699,7 +699,7 @@
                 <property name="visible">True</property>
                 <property name="xalign">0</property>
                 <property name="xpad">5</property>
-                <property name="label" translatable="yes">Buying ID:</property>
+                <property name="label" translatable="yes">Buying Code:</property>
               </object>
               <packing>
                 <property name="top_attach">2</property>
@@ -721,7 +721,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkHBox" id="sellIdBox">
+              <object class="GtkHBox" id="sellCodeBox">
                 <property name="visible">True</property>
                 <child>
                   <placeholder/>
@@ -735,7 +735,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkHBox" id="buyIdBox">
+              <object class="GtkHBox" id="buyCodeBox">
                 <property name="visible">True</property>
                 <child>
                   <placeholder/>

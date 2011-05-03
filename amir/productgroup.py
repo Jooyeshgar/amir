@@ -9,6 +9,7 @@ import  gtk
 
 from    sqlalchemy.orm              import  sessionmaker, join
 from    sqlalchemy.orm.util         import  outerjoin
+from    sqlalchemy.orm.query        import  aliased
 from    sqlalchemy.sql              import  and_, or_
 from    sqlalchemy.sql.functions    import  *
 
@@ -33,15 +34,15 @@ class ProductGroup(gobject.GObject):
         box.add(self.grpCodeEntry)
         self.grpCodeEntry.show()
         
-        self.sellIdEntry = numberentry.NumberEntry()
-        box = self.builder.get_object("sellIdBox")
-        box.add(self.sellIdEntry)
-        self.sellIdEntry.show()
+        self.sellCodeEntry = numberentry.NumberEntry()
+        box = self.builder.get_object("sellCodeBox")
+        box.add(self.sellCodeEntry)
+        self.sellCodeEntry.show()
         
-        self.buyIdEntry = numberentry.NumberEntry()
-        box = self.builder.get_object("buyIdBox")
-        box.add(self.buyIdEntry)
-        self.buyIdEntry.show()
+        self.buyCodeEntry = numberentry.NumberEntry()
+        box = self.builder.get_object("buyCodeBox")
+        box.add(self.buyCodeEntry)
+        self.buyCodeEntry.show()
         
         self.builder.connect_signals(self)
     
@@ -102,48 +103,58 @@ class ProductGroup(gobject.GObject):
         dialog.set_title(_("Add new group"))
         self.grpCodeEntry.set_text("")
         self.builder.get_object("groupNameEntry").set_text("")
-        self.buyIdEntry.set_text("")
-        self.sellIdEntry.set_text("")
+        self.buyCodeEntry.set_text("")
+        self.sellCodeEntry.set_text("")
         
         result = dialog.run()
         if result == 1:
             grpcode = self.grpCodeEntry.get_text()
             grpname = self.builder.get_object("groupNameEntry").get_text()
-            grpbuyid = self.buyIdEntry.get_text()
-            grpsellid = self.sellIdEntry.get_text()
-            self.saveProductGroup(grpcode, unicode(grpname), grpbuyid, grpsellid, None)
+            grpbuycode = self.buyCodeEntry.get_text()
+            grpsellcode = self.sellCodeEntry.get_text()
+            self.saveProductGroup(grpcode, unicode(grpname), grpbuycode, grpsellcode, None)
                 
         dialog.hide()
     
-    #def editCustomerGroup(self, sender):
-        #dialog = self.builder.get_object("addCustGrpDlg")
-        #dialog.set_title(_("Edit group"))
-        #selection = self.treeview.get_selection()
-        #iter = selection.get_selected()[1]
+    def editProductGroup(self, sender):
+        dialog = self.builder.get_object("addProductGroupDlg")
+        dialog.set_title(_("Edit group"))
+        selection = self.treeview.get_selection()
+        iter = selection.get_selected()[1]
         
-        #if iter != None :
-            #if config.digittype == 1:
-                #code = utility.convertToLatin(self.treestore.get(iter, 0)[0])
-            #else:
-                #code = self.treestore.get(iter, 0)[0]
+        if iter != None :
+	    grpcode = self.treestore.get(iter, 0)[0]
+            if config.digittype == 1:
+                code = utility.convertToLatin(grpcode)
+            else:
+                code = grpcode
                 
-            #query = config.db.session.query(CustGroups).select_from(CustGroups)
-            #group = query.filter(CustGroups.custGrpCode == code).first()
-            #name = group.custGrpName
-            #desc = group.custGrpDesc
+            BuySub = aliased(Subject, name="bs")
+            SellSub = aliased(Subject, name="ss")
             
-            #self.grpCodeEntry.set_text(code)
-            #self.builder.get_object("grpNameEntry").set_text(name)
-            #self.builder.get_object("grpDescEntry").set_text(desc)
+            query = config.db.session.query(ProductGroups, BuySub.code, SellSub.code)
+            query = query.select_from( outerjoin( outerjoin(ProductGroups, BuySub, ProductGroups.buyId == BuySub.id),
+                                                  SellSub, ProductGroups.sellId == SellSub.id ) )
+            (group, buy_code, sell_code) = query.filter(ProductGroups.code == code).first()
+            name = group.name
+            if config.digittype == 1:
+		buy_code = utility.convertToPersian(buy_code)
+		sell_code = utility.convertToPersian(sell_code)
             
-            #result = dialog.run()
-            #if result == 1:
-                #grpcode = self.grpCodeEntry.get_text()
-                #grpname = self.builder.get_object("grpNameEntry").get_text()
-                #grpdesc = self.builder.get_object("grpDescEntry").get_text()
-                #self.saveCustGroup(grpcode, unicode(grpname), unicode(grpdesc), iter)
+            self.grpCodeEntry.set_text(grpcode)
+            self.builder.get_object("groupNameEntry").set_text(name)
+            self.buyCodeEntry.set_text(buy_code)
+            self.sellCodeEntry.set_text(sell_code)
+            
+            result = dialog.run()
+            if result == 1:
+                grpcode = self.grpCodeEntry.get_text()
+                grpname = self.builder.get_object("groupNameEntry").get_text()
+                grpbuycode = self.buyCodeEntry.get_text()
+		grpsellcode = self.sellCodeEntry.get_text()
+                self.saveProductGroup(grpcode, unicode(grpname), grpbuycode, grpsellcode, iter)
                 
-            #dialog.hide()
+            dialog.hide()
                 
     #def deleteCustomerGroup(self, sender):
         #selection = self.treeview.get_selection()
@@ -169,7 +180,7 @@ class ProductGroup(gobject.GObject):
     
     #@param edititer: None if a new product group is to be saved.
     #                 Otherwise it stores the TreeIter for the group that's been edited.
-    def saveProductGroup(self, code, name, buyid, sellid, edititer=None):
+    def saveProductGroup(self, code, name, buy_code, sell_code, edititer=None):
         msg = "";
         if name == "":
             msg = _("Group name should not be empty")
@@ -184,57 +195,72 @@ class ProductGroup(gobject.GObject):
             msgbox.destroy()
             return
         
-        #if edititer != None:
-            #pcode = self.treestore.get_value(edititer, 0)
-            #pcode = utility.convertToLatin(pcode)
-            #query = config.db.session.query(CustGroups).select_from(CustGroups)
-            #group = query.filter(CustGroups.custGrpCode == pcode).first()
-            #gid = group.custGrpId
+        if edititer != None:
+            pcode = self.treestore.get_value(edititer, 0)
+            pcode = utility.convertToLatin(pcode)
+            query = config.db.session.query(ProductGroups).select_from(ProductGroups)
+            group = query.filter(ProductGroups.code == pcode).first()
+            gid = group.id
         
         code = utility.convertToLatin(code)
-        buyid = utility.convertToLatin(buyid)
-        sellid = utility.convertToLatin(sellid)
+        buy_code = utility.convertToLatin(buy_code)
+        sell_code = utility.convertToLatin(sell_code)
+        
+        #Checks if the group name or code is repeated.
         query = config.db.session.query(ProductGroups).select_from(ProductGroups)
         query = query.filter(or_(ProductGroups.code == code, ProductGroups.name == name))
-        #if edititer != None:
-            #query = query.filter(CustGroups.custGrpId != gid)
+        if edititer != None:
+            query = query.filter(ProductGroups.id != gid)
         result = query.all()
         msg = ""
         for grp in result:
             if grp.code == code:
-                msg = _("A group with this code already exists.")
+                msg += _("A group with this code already exists.\n")
                 break
             elif grp.name == name:
-                msg = _("A group with this name already exists.")
+                msg += _("A group with this name already exists.\n")
                 break
+        
+        #Check if buy_code & sell_code are valid
+        #TODO Check if buying subject is creditor/debtor, and so for selling one.
+        query = config.db.session.query(Subject).select_from(Subject)
+        buy_sub = query.filter(Subject.code == buy_code).first()
+        if buy_sub == None:
+	    msg += _("Buying code is not valid.\n")
+        
+        query = config.db.session.query(Subject).select_from(Subject)
+        sell_sub = query.filter(Subject.code == sell_code).first()
+        if sell_sub == None:
+	    msg += _("Selling code is not valid.\n")
+	    
         if msg != "":
             msgbox =  gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE, msg)
-            msgbox.set_title(_("Duplicate group"))
+            msgbox.set_title(_("Invalid group properties"))
             msgbox.run()
             msgbox.destroy()
             return
-        
-        
+            
         if edititer == None:
-            group = ProductGroups(code, name, buyid, sellid)
+            group = ProductGroups(code, name, buy_sub.id, sell_sub.id)
             
             edititer = self.treestore.append(None)
             path = self.treestore.get_path(edititer)
             self.treeview.scroll_to_cell(path, None, False, 0, 0)
             self.treeview.set_cursor(path, None, False)
-        #else:
-            #group.custGrpCode = code
-            #group.custGrpName = name
-            #group.custGrpDesc = desc
+        else:
+            group.code = code
+            group.name = name
+            group.buyId = buy_sub.id
+            group.sellId = sell_sub.id
             
         config.db.session.add(group)
         config.db.session.commit()
         
         if config.digittype == 1:
             code = utility.convertToPersian(code)
-            buyid = utility.convertToPersian(buyid)
-            sellid = utility.convertToPersian(sellid)
-        self.saveRow(edititer, (code, name, buyid, sellid))
+            buy_code = utility.convertToPersian(buy_code)
+            sell_code = utility.convertToPersian(sell_code)
+        self.saveRow(edititer, (code, name, buy_code, sell_code))
         
         
     #@param treeiter: the TreeIter which data should be saved in
