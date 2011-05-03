@@ -38,11 +38,15 @@ class ProductGroup(gobject.GObject):
         box = self.builder.get_object("sellCodeBox")
         box.add(self.sellCodeEntry)
         self.sellCodeEntry.show()
+        self.sellCodeEntry.connect("activate", self.selectSellingSubject)
+        self.sellCodeEntry.set_tooltip_text(_("Press Enter to see available subjects."))
         
         self.buyCodeEntry = numberentry.NumberEntry()
         box = self.builder.get_object("buyCodeBox")
         box.add(self.buyCodeEntry)
         self.buyCodeEntry.show()
+        self.buyCodeEntry.connect("activate", self.selectBuyingSubject)
+        self.buyCodeEntry.set_tooltip_text(_("Press Enter to see available subjects."))
         
         self.builder.connect_signals(self)
     
@@ -304,7 +308,30 @@ class ProductGroup(gobject.GObject):
         #group_id = query.first().custGrpId
         #self.emit("group-selected", group_id, code)   
 
-   
+
+    def selectBuyingSubject(self, sender):
+        subject_win = subjects.Subjects()
+        buy_code = self.buyCodeEntry.get_text()
+        subject_win.highlightSubject(buy_code)
+        subject_win.connect("subject-selected", self.buyingSubjectSelected)
+        
+    def buyingSubjectSelected(self, sender, id, code, name):
+	if config.digittype == 1:
+            code = utility.convertToPersian(code)
+        self.buyCodeEntry.set_text(code)
+        sender.window.destroy()
+        
+    def selectSellingSubject(self, sender):
+        subject_win = subjects.Subjects()
+        sell_code = self.sellCodeEntry.get_text()
+        subject_win.highlightSubject(sell_code)
+        subject_win.connect("subject-selected", self.sellingingSubjectSelected)
+        
+    def sellingingSubjectSelected(self, sender, id, code, name):
+	if config.digittype == 1:
+            code = utility.convertToPersian(code)
+        self.sellCodeEntry.set_text(code)
+        sender.window.destroy()
 #gobject.type_register(Group)
 #gobject.signal_new("group-selected", Group, gobject.SIGNAL_RUN_LAST,
                    #gobject.TYPE_NONE, (gobject.TYPE_INT, gobject.TYPE_STRING))   

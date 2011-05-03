@@ -10,16 +10,22 @@ def showNumber (number, comma=True):
     s = str(number)
 
     if comma:
-        l = [x for x in s if x in '1234567890']
+        #l = [x for x in s if x in '1234567890']
+        l = [x for x in s]
         for x in reversed(range(len(s))[::3]):
             l.insert(-x, ',')
-            l = ''.join(l[1:])
-        s = l
-    
-    if config.digittype == 1:
-        s.replace(u'۰۱۲۳۴۵۶۷۸۹','0123456789')
+        l = ''.join(l[1:])
+        #s = l
         
-    return s
+    #NOTE this doesn't replace characters one by one, it replaces the whole string.
+    #     reverted to previous form.
+    #if config.digittype == 1:
+        #s.replace(u'۰۱۲۳۴۵۶۷۸۹','0123456789')
+	if config.digittype == 1:
+	    l = convertToPersian(l)
+	return l
+    else:
+	return s
 
 def readNumber (number):
     return number.replace('0123456789', u'۰۱۲۳۴۵۶۷۸۹')

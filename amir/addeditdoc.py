@@ -463,6 +463,8 @@ class AddEditDoc:
         subject_win.connect("subject-selected", self.subjectSelected)
         
     def subjectSelected(self, sender, id, code, name):
+	if config.digittype == 1:
+            code = utility.convertToPersian(code)
         self.code.set_text(code)
         sender.window.destroy()      
           
