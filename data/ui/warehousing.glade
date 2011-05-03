@@ -442,7 +442,7 @@
                 <property name="label" translatable="yes">Delete</property>
                 <property name="stock_id">gtk-delete</property>
                 <accelerator key="d" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
-                <signal name="clicked" handler="delProGrp"/>
+                <signal name="clicked" handler="deleteProductsAndGrps"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -511,7 +511,7 @@
                 <property name="label" translatable="yes">Add Group</property>
                 <property name="stock_id">gtk-new</property>
                 <accelerator key="Insert" signal="clicked"/>
-                <signal name="clicked" handler="addGroup"/>
+                <signal name="clicked" handler="addProductGroup"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -531,7 +531,7 @@
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Edit</property>
                 <property name="stock_id">gtk-edit</property>
-                <signal name="clicked" handler="chkEdit"/>
+                <signal name="clicked" handler="editProductGroup"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -544,7 +544,7 @@
                 <property name="label" translatable="yes">Delete</property>
                 <property name="stock_id">gtk-delete</property>
                 <accelerator key="d" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
-                <signal name="clicked" handler="delGroup"/>
+                <signal name="clicked" handler="deleteProductGroup"/>
               </object>
               <packing>
                 <property name="expand">False</property>

@@ -426,13 +426,13 @@ class Product(productgroup.ProductGroup):
             #self.customerId = customer.custId
             #self.editIter = iter
         
-    #def deleteCustAndGrps(self, sender):
-        #selection = self.treeview.get_selection()
-        #iter = selection.get_selected()[1]
+    def deleteProductsAndGrps(self, sender):
+        selection = self.treeview.get_selection()
+        iter = selection.get_selected()[1]
         
-        #if self.treestore.iter_parent(iter) == None:
-            ##Iter points to a customer group
-            #self.deleteCustomerGroup(sender)
+        if self.treestore.iter_parent(iter) == None:
+            #Iter points to a product group
+            self.deleteProductGroup(sender)
         #else:
             ##Iter points to a customer
             #code = self.treestore.get_value(iter, 0)

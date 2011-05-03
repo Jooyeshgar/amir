@@ -160,27 +160,27 @@ class ProductGroup(gobject.GObject):
                 
             dialog.hide()
                 
-    #def deleteCustomerGroup(self, sender):
-        #selection = self.treeview.get_selection()
-        #iter = selection.get_selected()[1]
-        #if iter != None :
-            #code = utility.convertToLatin(self.treestore.get(iter, 0)[0])
+    def deleteProductGroup(self, sender):
+        selection = self.treeview.get_selection()
+        iter = selection.get_selected()[1]
+        if iter != None :
+            code = utility.convertToLatin(self.treestore.get(iter, 0)[0])
             
-            #query = config.db.session.query(CustGroups, count(Customers.custId))
-            #query = query.select_from(outerjoin(CustGroups, Customers, CustGroups.custGrpId == Customers.custGroup))
-            #result = query.filter(CustGroups.custGrpCode == code).first()
+            query = config.db.session.query(ProductGroups, count(Products.id))
+            query = query.select_from(outerjoin(ProductGroups, Products, ProductGroups.id == Products.accGroup))
+            result = query.filter(ProductGroups.code == code).first()
             
-            #if result[1] != 0 :
-                #msgbox =  gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
-                                    #_("Group can not be deleted, Because there are some customers registered in it."))
-                #msgbox.set_title(_("Error deleting group"))
-                #msgbox.run()
-                #msgbox.destroy()
-            #else :
-                #group = result[0]
-                #config.db.session.delete(group)
-                #config.db.session.commit()
-                #self.treestore.remove(iter)
+            if result[1] != 0 :
+                msgbox =  gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
+                                    _("Group can not be deleted, Because there are some products registered in it."))
+                msgbox.set_title(_("Error deleting group"))
+                msgbox.run()
+                msgbox.destroy()
+            else :
+                group = result[0]
+                config.db.session.delete(group)
+                config.db.session.commit()
+                self.treestore.remove(iter)
     
     #@param edititer: None if a new product group is to be saved.
     #                 Otherwise it stores the TreeIter for the group that's been edited.
