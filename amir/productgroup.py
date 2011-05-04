@@ -29,10 +29,10 @@ class ProductGroup(gobject.GObject):
         self.window = None
         self.treestore = None
         
-        self.grpCodeEntry = numberentry.NumberEntry()
-        box = self.builder.get_object("grpCodeBox")
-        box.add(self.grpCodeEntry)
-        self.grpCodeEntry.show()
+        #self.grpCodeEntry = numberentry.NumberEntry()
+        #box = self.builder.get_object("grpCodeBox")
+        #box.add(self.grpCodeEntry)
+        #self.grpCodeEntry.show()
         
         self.sellCodeEntry = numberentry.NumberEntry()
         box = self.builder.get_object("sellCodeBox")
@@ -95,7 +95,7 @@ class ProductGroup(gobject.GObject):
 	    buyId = group.buyId
 	    sellId = group.sellId
             if config.digittype == 1:
-                code = utility.convertToPersian(code)
+                #code = utility.convertToPersian(code)
                 buyId = utility.convertToPersian(buyId)
                 sellId = utility.convertToPersian(sellId)
             self.treestore.append(None, (code, group.name, buyId, sellId))
@@ -105,18 +105,18 @@ class ProductGroup(gobject.GObject):
     def addProductGroup(self, sender):
         dialog = self.builder.get_object("addProductGroupDlg")
         dialog.set_title(_("Add new group"))
-        self.grpCodeEntry.set_text("")
+        self.builder.get_object("groupCodeEntry").set_text("")
         self.builder.get_object("groupNameEntry").set_text("")
         self.buyCodeEntry.set_text("")
         self.sellCodeEntry.set_text("")
         
         result = dialog.run()
         if result == 1:
-            grpcode = self.grpCodeEntry.get_text()
+            grpcode = self.builder.get_object("groupCodeEntry").get_text()
             grpname = self.builder.get_object("groupNameEntry").get_text()
             grpbuycode = self.buyCodeEntry.get_text()
             grpsellcode = self.sellCodeEntry.get_text()
-            self.saveProductGroup(grpcode, unicode(grpname), grpbuycode, grpsellcode, None)
+            self.saveProductGroup(unicode(grpcode), unicode(grpname), grpbuycode, grpsellcode, None)
                 
         dialog.hide()
     
@@ -127,11 +127,11 @@ class ProductGroup(gobject.GObject):
         iter = selection.get_selected()[1]
         
         if iter != None :
-	    grpcode = self.treestore.get(iter, 0)[0]
-            if config.digittype == 1:
-                code = utility.convertToLatin(grpcode)
-            else:
-                code = grpcode
+	    grpcode = unicode(self.treestore.get(iter, 0)[0])
+            #if config.digittype == 1:
+                #code = utility.convertToLatin(grpcode)
+            #else:
+                #code = grpcode
                 
             BuySub = aliased(Subject, name="bs")
             SellSub = aliased(Subject, name="ss")
@@ -139,24 +139,24 @@ class ProductGroup(gobject.GObject):
             query = config.db.session.query(ProductGroups, BuySub.code, SellSub.code)
             query = query.select_from( outerjoin( outerjoin(ProductGroups, BuySub, ProductGroups.buyId == BuySub.id),
                                                   SellSub, ProductGroups.sellId == SellSub.id ) )
-            (group, buy_code, sell_code) = query.filter(ProductGroups.code == code).first()
+            (group, buy_code, sell_code) = query.filter(ProductGroups.code == grpcode).first()
             name = group.name
             if config.digittype == 1:
 		buy_code = utility.convertToPersian(buy_code)
 		sell_code = utility.convertToPersian(sell_code)
             
-            self.grpCodeEntry.set_text(grpcode)
+            self.builder.get_object("groupCodeEntry").set_text(grpcode)
             self.builder.get_object("groupNameEntry").set_text(name)
             self.buyCodeEntry.set_text(buy_code)
             self.sellCodeEntry.set_text(sell_code)
             
             result = dialog.run()
             if result == 1:
-                grpcode = self.grpCodeEntry.get_text()
+                grpcode = self.builder.get_object("groupCodeEntry").get_text()
                 grpname = self.builder.get_object("groupNameEntry").get_text()
                 grpbuycode = self.buyCodeEntry.get_text()
 		grpsellcode = self.sellCodeEntry.get_text()
-                self.saveProductGroup(grpcode, unicode(grpname), grpbuycode, grpsellcode, iter)
+                self.saveProductGroup(unicode(grpcode), unicode(grpname), grpbuycode, grpsellcode, iter)
                 
             dialog.hide()
                 
@@ -164,7 +164,8 @@ class ProductGroup(gobject.GObject):
         selection = self.treeview.get_selection()
         iter = selection.get_selected()[1]
         if iter != None :
-            code = utility.convertToLatin(self.treestore.get(iter, 0)[0])
+            #code = utility.convertToLatin(self.treestore.get(iter, 0)[0])
+            code = unicode(self.treestore.get(iter, 0)[0])
             
             query = config.db.session.query(ProductGroups, count(Products.id))
             query = query.select_from(outerjoin(ProductGroups, Products, ProductGroups.id == Products.accGroup))
@@ -200,13 +201,13 @@ class ProductGroup(gobject.GObject):
             return
         
         if edititer != None:
-            pcode = self.treestore.get_value(edititer, 0)
-            pcode = utility.convertToLatin(pcode)
+            pcode = unicode(self.treestore.get_value(edititer, 0))
+            #pcode = utility.convertToLatin(pcode)
             query = config.db.session.query(ProductGroups).select_from(ProductGroups)
             group = query.filter(ProductGroups.code == pcode).first()
             gid = group.id
         
-        code = utility.convertToLatin(code)
+        #code = utility.convertToLatin(code)
         buy_code = utility.convertToLatin(buy_code)
         sell_code = utility.convertToLatin(sell_code)
         
@@ -261,7 +262,7 @@ class ProductGroup(gobject.GObject):
         config.db.session.commit()
         
         if config.digittype == 1:
-            code = utility.convertToPersian(code)
+            #code = utility.convertToPersian(code)
             buy_code = utility.convertToPersian(buy_code)
             sell_code = utility.convertToPersian(sell_code)
         self.saveRow(edititer, (code, name, buy_code, sell_code))

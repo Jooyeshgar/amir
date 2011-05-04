@@ -64,7 +64,7 @@ class Notebook(Base):
 class Products(Base):
     __tablename__ = "products"
     id              = Column(   Integer,                            primary_key = True      )
-    code            = Column(   String,                             nullable    = False     )
+    code            = Column(   Unicode(20),                        nullable    = False     )
     name            = Column(   Unicode(60),                        nullable    = False     )
     accGroup        = Column(   Integer,                            ForeignKey('productGroups.id') )
     location        = Column(   Unicode(50),                        nullable    = True      )
@@ -94,7 +94,7 @@ class Products(Base):
 class ProductGroups(   Base    ):
     __tablename__ = "productGroups"
     id      = Column(   Integer,        primary_key = True          )
-    code    = Column(   String(20),     nullable    = False         )
+    code    = Column(   Unicode(20),    nullable    = False         )
     name    = Column(   Unicode(60),    nullable    = False         )
     buyId   = Column(   Integer,        ForeignKey('subject.id')    )
     sellId  = Column(   Integer,        ForeignKey('subject.id')    )

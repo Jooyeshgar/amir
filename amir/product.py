@@ -151,10 +151,11 @@ class Product(productgroup.ProductGroup):
         grouprow = None
         for g, p in result:
             if g.id != last_gid:
-                code = g.code
-                if config.digittype == 1:
-		  code = utility.convertToPersian(code)
-		grouprow = self.treestore.append(None, (code, g.name, "", "", ""))
+                #code = g.code
+                #if config.digittype == 1:
+		  #code = utility.convertToPersian(code)
+		#grouprow = self.treestore.append(None, (code, g.name, "", "", ""))
+		grouprow = self.treestore.append(None, (g.code, g.name, "", "", ""))
                 last_gid = g.id
                 
             if p != None:

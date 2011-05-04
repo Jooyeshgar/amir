@@ -7,7 +7,7 @@ meta = MetaData()
 #subject table (version 1 and 2):
 subject = Table('subject', meta,
     Column('id', Integer, primary_key=True),
-    Column('code', String(20), nullable=False),
+    Column('code', Unicode(20), nullable=False),
     Column('name', Unicode(60), nullable=False),
     Column('parent_id', Integer, ColumnDefault(0), ForeignKey('subject.id'), nullable=False),
     Column('lft', Integer, nullable=False),
@@ -18,7 +18,7 @@ subject = Table('subject', meta,
 #New tables (version 2):
 products = Table('products', meta,
     Column('id',              Integer,                            primary_key = True      ),
-    Column('code',            String,                             nullable    = False     ),
+    Column('code',            Unicode(20),                        nullable    = False     ),
     Column('name',            Unicode(60),                        nullable    = False     ),
     Column('accGroup',        Integer,        ForeignKey('productGroups.id')                     ),
     Column('location',        Unicode(50),                        nullable    = True      ),
