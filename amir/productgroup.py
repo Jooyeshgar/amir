@@ -110,13 +110,17 @@ class ProductGroup(gobject.GObject):
         self.buyCodeEntry.set_text("")
         self.sellCodeEntry.set_text("")
         
-        result = dialog.run()
-        if result == 1:
-            grpcode = self.builder.get_object("groupCodeEntry").get_text()
-            grpname = self.builder.get_object("groupNameEntry").get_text()
-            grpbuycode = self.buyCodeEntry.get_text()
-            grpsellcode = self.sellCodeEntry.get_text()
-            self.saveProductGroup(unicode(grpcode), unicode(grpname), grpbuycode, grpsellcode, None)
+        success = False
+        while not success :
+	    result = dialog.run()
+	    if result == 1:
+		grpcode = self.builder.get_object("groupCodeEntry").get_text()
+		grpname = self.builder.get_object("groupNameEntry").get_text()
+		grpbuycode = self.buyCodeEntry.get_text()
+		grpsellcode = self.sellCodeEntry.get_text()
+		success = self.saveProductGroup(unicode(grpcode), unicode(grpname), grpbuycode, grpsellcode, None)
+	    else:
+		break
                 
         dialog.hide()
     
@@ -150,13 +154,17 @@ class ProductGroup(gobject.GObject):
             self.buyCodeEntry.set_text(buy_code)
             self.sellCodeEntry.set_text(sell_code)
             
-            result = dialog.run()
-            if result == 1:
-                grpcode = self.builder.get_object("groupCodeEntry").get_text()
-                grpname = self.builder.get_object("groupNameEntry").get_text()
-                grpbuycode = self.buyCodeEntry.get_text()
-		grpsellcode = self.sellCodeEntry.get_text()
-                self.saveProductGroup(unicode(grpcode), unicode(grpname), grpbuycode, grpsellcode, iter)
+            success = False
+	    while not success :
+		result = dialog.run()
+		if result == 1:
+		    grpcode = self.builder.get_object("groupCodeEntry").get_text()
+		    grpname = self.builder.get_object("groupNameEntry").get_text()
+		    grpbuycode = self.buyCodeEntry.get_text()
+		    grpsellcode = self.sellCodeEntry.get_text()
+		    success = self.saveProductGroup(unicode(grpcode), unicode(grpname), grpbuycode, grpsellcode, iter)
+		else:
+		    break
                 
             dialog.hide()
                 
@@ -198,7 +206,7 @@ class ProductGroup(gobject.GObject):
             msgbox.set_title(_("Empty fields"))
             msgbox.run()
             msgbox.destroy()
-            return
+            return False
         
         if edititer != None:
             pcode = unicode(self.treestore.get_value(edititer, 0))
@@ -243,7 +251,7 @@ class ProductGroup(gobject.GObject):
             msgbox.set_title(_("Invalid group properties"))
             msgbox.run()
             msgbox.destroy()
-            return
+            return False
             
         if edititer == None:
             group = ProductGroups(code, name, buy_sub.id, sell_sub.id)
@@ -266,6 +274,7 @@ class ProductGroup(gobject.GObject):
             buy_code = utility.convertToPersian(buy_code)
             sell_code = utility.convertToPersian(sell_code)
         self.saveRow(edititer, (code, name, buy_code, sell_code))
+        return True
         
         
     #@param treeiter: the TreeIter which data should be saved in
