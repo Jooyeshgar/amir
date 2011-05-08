@@ -111,7 +111,8 @@ class Product(productgroup.ProductGroup):
                 last_gid = g.id
                 
             if p != None:
-                self.treestore.append(grouprow, (p.code, p.name, str(p.quantity), str(p.purchacePrice), str(p.sellingPrice)))
+                self.treestore.append(grouprow, (p.code, p.name, utility.showNumber(p.quantity), 
+                                      utility.showNumber(p.purchacePrice), utility.showNumber(p.sellingPrice)))
         
         self.window.show_all()    
 
@@ -171,10 +172,10 @@ class Product(productgroup.ProductGroup):
             product = result[0]
             groupcode = result[1]
             
-            quantity = product.quantity
-            quantity_warn = product.qntyWarning
-            p_price = product.purchacePrice
-            s_price = product.sellingPrice
+            quantity = str(product.quantity)
+            quantity_warn = str(product.qntyWarning)
+            p_price = str(product.purchacePrice)
+            s_price = str(product.sellingPrice)
             if config.digittype == 1:
 		quantity = utility.convertToPersian(quantity)
 		quantity_warn = utility.convertToPersian(quantity_warn)
@@ -295,7 +296,8 @@ class Product(productgroup.ProductGroup):
 		self.treeview.set_cursor(path, None, False)
 		self.treeview.grab_focus()
             
-            self.saveRow(edititer, (code, name, quantity, purchase_price, sell_price) )
+            self.saveRow(edititer, (code, name, utility.showNumber(quantity), 
+                                 utility.showNumber(purchase_price), utility.showNumber(sell_price) ) )
                 
         return True
 

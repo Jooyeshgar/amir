@@ -22,7 +22,7 @@
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Add Product</property>
                 <property name="stock_id">gtk-add</property>
-                <accelerator key="plus" signal="clicked"/>
+                <accelerator key="Insert" signal="clicked"/>
                 <signal name="clicked" handler="addProduct"/>
               </object>
               <packing>
@@ -35,7 +35,7 @@
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Add Group</property>
                 <property name="stock_id">gtk-new</property>
-                <accelerator key="Insert" signal="clicked"/>
+                <accelerator key="g" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
                 <signal name="clicked" handler="addProductGroup"/>
               </object>
               <packing>
@@ -56,6 +56,7 @@
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Edit</property>
                 <property name="stock_id">gtk-edit</property>
+                <accelerator key="e" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
                 <signal name="clicked" handler="editProductsAndGrps"/>
               </object>
               <packing>
@@ -68,7 +69,7 @@
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Delete</property>
                 <property name="stock_id">gtk-delete</property>
-                <accelerator key="d" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
+                <accelerator key="Delete" signal="clicked"/>
                 <signal name="clicked" handler="deleteProductsAndGrps"/>
               </object>
               <packing>
@@ -97,6 +98,7 @@
                 <property name="rules_hint">True</property>
                 <property name="enable_tree_lines">True</property>
                 <signal name="row_activated" handler="selectProductFromList"/>
+                <signal name="key_release_event" handler="on_key_release_event"/>
               </object>
             </child>
           </object>
@@ -108,6 +110,18 @@
           <object class="GtkStatusbar" id="productsStatusbar">
             <property name="visible">True</property>
             <property name="spacing">5</property>
+            <property name="has_resize_grip">False</property>
+            <child>
+              <object class="GtkLabel" id="label6">
+                <property name="visible">True</property>
+                <property name="xalign">0</property>
+                <property name="xpad">5</property>
+                <property name="label" translatable="yes">Insert: Add product    Ctrl+G: Add Group   Ctrl+E: Edit    Del: Delete</property>
+              </object>
+              <packing>
+                <property name="position">1</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
