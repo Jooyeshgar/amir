@@ -307,17 +307,17 @@ class Product(productgroup.ProductGroup):
         if self.treestore.iter_parent(iter) == None:
             #Iter points to a product group
             self.deleteProductGroup(sender)
-        #else:
-            ##Iter points to a customer
-            #code = self.treestore.get_value(iter, 0)
-            #query = config.db.session.query(Customers).select_from(Customers)
-            #customer = query.filter(Customers.custCode == code).first()
+        else:
+            #Iter points to a product
+            code = self.treestore.get_value(iter, 0)
+            query = config.db.session.query(Products).select_from(Products)
+            product = query.filter(Products.code == code).first()
             
-            ##TODO check if this customer is used somewhere else
+            #TODO check if this product is used somewhere else
             
-            #config.db.session.delete(customer)
-            #config.db.session.commit()
-            #self.treestore.remove(iter)
+            config.db.session.delete(product)
+            config.db.session.commit()
+            self.treestore.remove(iter)
                 
     
     #@param treeiter: the TreeIter which data should be saved in
