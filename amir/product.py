@@ -27,67 +27,22 @@ class Product(productgroup.ProductGroup):
     def __init__(self):
         productgroup.ProductGroup.__init__(self)
     
-        #self.personalcodebox = numberentry.NumberEntry(10)
-        #self.builder.get_object("personalcodebox").add(self.personalcodebox)
-        #self.personalcodebox.show()
+        self.qntyEntry = numberentry.NumberEntry()
+        self.builder.get_object("qntyBox").add(self.qntyEntry)
+        self.qntyEntry.show()
         
-        #self.postalcodebox = numberentry.NumberEntry(10)
-        #self.builder.get_object("postalcodebox").add(self.postalcodebox)
-        #self.postalcodebox.show()
+        self.qntyWrnEntry = numberentry.NumberEntry(10)
+        self.builder.get_object("qntyWrnBox").add(self.qntyWrnEntry)
+        self.qntyWrnEntry.show()
 
-        #self.boxCommissionRateEntry = numberentry.NumberEntry(10)
-        #self.builder.get_object("boxCommissionRateEntry").add(self.boxCommissionRateEntry)
-        #self.boxCommissionRateEntry.show()
+        self.purchPriceEntry = numberentry.NumberEntry(10)
+        self.builder.get_object("purchPriceBox").add(self.purchPriceEntry)
+        self.purchPriceEntry.show()
         
-        #self.boxDiscRateEntry = numberentry.NumberEntry(10)
-        #self.builder.get_object("boxDiscRateEntry").add(self.boxDiscRateEntry)
-        #self.boxDiscRateEntry.show()
-                
-        #self.boxBalanceEntry = numberentry.NumberEntry(10)
-        #self.builder.get_object("boxBalanceEntry").add(self.boxBalanceEntry)
-        #self.boxBalanceEntry.show()
+        self.sellPriceEntry = numberentry.NumberEntry(10)
+        self.builder.get_object("sellPriceBox").add(self.sellPriceEntry)
+        self.sellPriceEntry.show()
         
-        #self.boxCreditEntry = numberentry.NumberEntry(10)
-        #self.builder.get_object("boxCreditEntry").add(self.boxCreditEntry)
-        #self.boxCreditEntry.show()
-                
-#===============================================================================
-#    def __init__(self,buyerFlg=True,sellerFlg=True,mateFlg=True,agentFlg=True):
-#        
-#        self.buyerFlg   = buyerFlg
-#        self.sellerFlg  = sellerFlg
-#        self.MateFlg    = mateFlg
-#        self.AgentFlg   = agentFlg
-#        self.builder    = get_builder("customers" )
-#        self.session    = config.db.session
-#        
-#        self.grpCodeEntry = numberentry.NumberEntry()
-#        box = self.builder.get_object("grpCodeBox")
-#        box.add(self.grpCodeEntry)
-#        self.grpCodeEntry.show()
-#        
-#        self.window = self.builder.get_object("viewCustomersWindow")
-#        
-#        self.treeview = self.builder.get_object("customersTreeView")
-#        self.treestore = gtk.TreeStore(str,str,str,str)
-#        self.treestore.clear()
-#        self.treeview.set_model(self.treestore)
-#        
-#        headers = (_("Code"),_("Name"),_("Balance"),_("Credit"))
-#        txt = 0
-#        for header in headers:
-#            column = gtk.TreeViewColumn(header, gtk.CellRendererText(), text = txt)
-#            column.set_spacing(5)
-#            column.set_resizable(True)
-#            self.treeview.append_column(column)
-#            txt += 1
-#        self.treeview.get_selection().set_mode(  gtk.SELECTION_SINGLE    )
-#        
-# #        self.fillCustomersList()
-#        
-#        self.window.show_all()
-#        self.builder.connect_signals(self)
-#===============================================================================
 
     def viewProducts(self):
         self.window = self.builder.get_object("viewProductsWindow")
@@ -111,7 +66,7 @@ class Product(productgroup.ProductGroup):
                                             text = 1)
         column.set_spacing(5)
         column.set_resizable(True)
-        column.set_sort_column_id(0)
+        column.set_sort_column_id(1)
         column.set_sort_indicator(True)
         self.treeview.append_column(column)
         
@@ -120,6 +75,8 @@ class Product(productgroup.ProductGroup):
                                             text = 2)
         column.set_spacing(5)
         column.set_resizable(True)
+        column.set_sort_column_id(2)
+        column.set_sort_indicator(True)
         self.treeview.append_column(column)
         
         column      = gtk.TreeViewColumn(_("Purchase Price"), 
@@ -138,7 +95,6 @@ class Product(productgroup.ProductGroup):
 
         
         self.treeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
-        #self.treestore.set_sort_func(0, self.sortGroupIds)
         self.treestore.set_sort_column_id(0, gtk.SORT_ASCENDING)
         
         #Fill groups treeview
@@ -151,10 +107,6 @@ class Product(productgroup.ProductGroup):
         grouprow = None
         for g, p in result:
             if g.id != last_gid:
-                #code = g.code
-                #if config.digittype == 1:
-		  #code = utility.convertToPersian(code)
-		#grouprow = self.treestore.append(None, (code, g.name, "", "", ""))
 		grouprow = self.treestore.append(None, (g.code, g.name, "", "", ""))
                 last_gid = g.id
                 
@@ -163,36 +115,42 @@ class Product(productgroup.ProductGroup):
         
         self.window.show_all()    
 
-#    ############################################################################
-#    #  Add Customers Window
-#    ############################################################################
-    #def addNewCustomer(self, sender, pcode = ""):
-        #self.editCustomer = False
+
+    def addProduct(self, sender, pcode = ""):
+        dialog = self.builder.get_object("addProductDlg")
+        dialog.set_title(_("Add New Product"))
         
-        #self.customerForm = self.builder.get_object("customersWindow")
-        #self.customerForm.set_title(_("Add New Customer"))
-        #self.builder.get_object("addCustSubmitBtn").set_label(_("Add Customer"))
+        self.builder.get_object("proCodeEntry").set_text("")
+        self.builder.get_object("accGrpEntry" ).set_text("")
+        self.builder.get_object("proNameEntry").set_text("")
+        self.builder.get_object("proLocEntry" ).set_text("")
+        self.builder.get_object("proDescEntry").set_text("")        
+        self.qntyEntry.set_text("")
+        self.qntyWrnEntry.set_text("")
+        self.purchPriceEntry.set_text("")
+        self.sellPriceEntry.set_text("")
+        self.builder.get_object("oversell").set_active(False)
         
-        #self.builder.get_object("custCodeEntry").set_text("")
-        #self.builder.get_object("custNameEntry").set_text("")
-        #self.builder.get_object("custGrpEntry").set_text(pcode)
-        
-        #self.builder.get_object("custEcnmcsCodeEntry").set_text("")        
-        #self.builder.get_object("custPhoneEntry").set_text("")
-        #self.builder.get_object("custCellEntry").set_text("")
-        #self.builder.get_object("custFaxEntry").set_text("")
-        #self.builder.get_object("custWebPageEntry").set_text("")
-        #self.builder.get_object("custEmailEntry").set_text("")
-        #self.builder.get_object("custRepViaEmailChk").set_active(False)
-        #self.builder.get_object("custAddressEntry").set_text("")        
-        #self.builder.get_object("callResponsibleEntry").set_text("")
-        #self.builder.get_object("custConnectorEntry").set_text("")
-        #self.builder.get_object("custDescEntry").set_text("")
-        #self.builder.get_object("custBalanceEntry").set_text("0")
-        #self.builder.get_object("custCreditEntry").set_text("0")
-        #self.postalcodebox.set_text("")
-        #self.personalcodebox.set_text("")
-        #self.customerForm.show_all()
+        success = False
+        while not success :
+	    result = dialog.run()
+	    if result == 1:
+		code     = unicode(self.builder.get_object("proCodeEntry").get_text())
+		accgrp   = unicode(self.builder.get_object("accGrpEntry" ).get_text())
+		name     = unicode(self.builder.get_object("proNameEntry").get_text())
+		location = unicode(self.builder.get_object("proLocEntry" ).get_text())
+		desc     = unicode(self.builder.get_object("proDescEntry").get_text())
+		quantity = self.qntyEntry.get_int()
+		q_warn   = self.qntyWrnEntry.get_int()
+		p_price  = self.purchPriceEntry.get_int()
+		s_price  = self.sellPriceEntry.get_int()
+		oversell = self.builder.get_object("oversell").get_active()
+		
+		success = self.saveProduct(code, accgrp, name, location, desc, quantity, q_warn, p_price, s_price, oversell)
+	    else:
+		break
+		
+	dialog.hide()
         
     #def customerFormCanceled(self,sender=0,ev=0):
         #self.customerForm.hide()
@@ -209,150 +167,73 @@ class Product(productgroup.ProductGroup):
 ##    def submitEditCust(self):
 ##        print "SUBMIT  EDIT"
 ##    
-    ##@return: -1 on error, 0 for success
-    #def saveCustomer(self):
-        #custEcnmcsCode      = self.builder.get_object("custEcnmcsCodeEntry").get_text()
-        #custPhone           = self.builder.get_object("custPhoneEntry").get_text()
-        #custCell            = self.builder.get_object("custCellEntry").get_text()
-        #custFax             = self.builder.get_object("custFaxEntry").get_text()
-        #custWebPage         = self.builder.get_object("custWebPageEntry").get_text()
-        #custEmail           = self.builder.get_object("custEmailEntry").get_text()
-        #custRepViaEmail     = self.builder.get_object("custRepViaEmailChk").get_active()
-        #custAddress         = self.builder.get_object("custAddressEntry").get_text()
-        #custPostalCode      = self.postalcodebox.get_int()
-        #custPersonalCode    = self.personalcodebox.get_int()
+    def saveProduct(self, code, accgrp, name, location, desc, quantity, quantity_warn, 
+		    purchase_price, sell_price, oversell, edititer=None):
         
-        #callResponsible     = self.builder.get_object("callResponsibleEntry").get_text()
-        #custConnector       = self.builder.get_object("custConnectorEntry").get_text()
-        #custDesc            = self.builder.get_object("custDescEntry").get_text()
-        ##----------------------------------
-        #custTypeBuyer       = self.builder.get_object("custTypeBuyerChk").get_active()
-        #custTypeSeller      = self.builder.get_object("custTypeSellerChk").get_active()
-        #custTypeMate        = self.builder.get_object("custTypeMateChk").get_active()
-        #custTypeAgent       = self.builder.get_object("custTypeAgentChk").get_active()
-        #custIntroducer      = self.builder.get_object("custIntroducerEntry").get_text()
-        #custCommission      = self.boxCommissionRateEntry.get_float()
-        #custDiscRate        = self.boxDiscRateEntry.get_float()
-        #custMarked          = self.builder.get_object("markedChk").get_active()
-        #custReason          = self.builder.get_object("markedReasonEntry").get_text()
-        ##----------------------------------
-        #custBalance         = self.boxBalanceEntry.get_float()
-        #custCredit          = self.boxCreditEntry.get_float()
-        #custAccName1        = self.builder.get_object("custAccName1Entry").get_text()
-        #custAccNo1          = self.builder.get_object("custAccNo1Entry").get_text()
-        #custAccBank1        = self.builder.get_object("custAccBank1Entry").get_text()
-        #custAccName2        = self.builder.get_object("custAccName2Entry").get_text()
-        #custAccNo2          = self.builder.get_object("custAccNo2Entry").get_text()
-        #custAccBank2        = self.builder.get_object("custAccBank2Entry").get_text()
-        
-        #msg = ""
-        #custCode = self.builder.get_object("custCodeEntry").get_text()
-        #custCode = utility.convertToLatin(custCode)
-        #if custCode == "":
-            #msg += _("Customer code should not be empty.\n")
-        #else:
-            #codeQuery = config.db.session.query( Customers ).select_from( Customers )
-            #codeQuery = codeQuery.filter( Customers.custCode == custCode )
-            #if self.editCustomer:
-                #codeQuery = codeQuery.filter( Customers.custId != self.customerId )
+        msg = ""
+        if code == "":
+            msg += _("Product code should not be empty.\n")
+        if accgrp == "":
+            msg += _("Product group should not be empty\n")
+        if name == "":
+            msg += _("Product name should not be empty\n")
+	
+	if msg != "":
+            msgbox =  gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, msg)
+            msgbox.set_title(_("Empty fields"))
+            msgbox.run()
+            msgbox.destroy()
+            return False
             
-            #codeQuery = codeQuery.first()
-            #if codeQuery:
-                #msg += _("Customer code has been used before.\n")
+        #Checks if the product code is repeated.
+        query = config.db.session.query(count(Products.id)).select_from(Products)
+        query = query.filter(Products.code == code)
+        #if edititer != None:
+            #query = query.filter(Products.id != gid)
+        result = query.first()[0]
+        msg = ""
+        if result != 0:
+	    msg += _("A product with this code already exists.\n")
+            
+        query = config.db.session.query(ProductGroups).select_from(ProductGroups)
+        group = query.filter(ProductGroups.code == accgrp).first()
+        if group == None:
+	    msg += _("Group code is not valid.\n")
+	    
+	if msg != "":
+            msgbox =  gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, msg)
+            msgbox.set_title(_("Invalid product properties"))
+            msgbox.run()
+            msgbox.destroy()
+            return False
+            
+        if edititer == None:
+            product = Products(code, name, quantity_warn, oversell, location, quantity,
+			       purchase_price, sell_price, group.id, desc, u'')
+            
+        config.db.session.add(product)
+        config.db.session.commit()
+        
+        #Show new product in table
+        if self.treestore != None:
+            parent_iter = self.treestore.get_iter_first()
+            while self.treestore.iter_is_valid(parent_iter):
+                itercode = self.treestore.get_value(parent_iter, 0)
+                if itercode == accgrp:
+                    break
+                parent_iter = self.treestore.iter_next(parent_iter)
                 
-        ##--------------------
-        #custGrp = self.builder.get_object("custGrpEntry").get_text()
-        #custGrp = utility.convertToLatin(custGrp)
-        #groupid = 0
-        #if custGrp == "":
-            #msg += _("Customer group should not be empty.\n")
-        #else:
-            #query = config.db.session.query( CustGroups.custGrpId ).select_from( CustGroups ).filter( CustGroups.custGrpCode == custGrp )
-            #groupid = query.first()
-            #if groupid == None:
-                #msg += _("No customer group registered with code %s.\n") % custGrp
-            #else:
-                #groupid = groupid[0]
-        
-        ##--------------------
-        #custName = self.builder.get_object("custNameEntry").get_text()
-        #if custName == "":
-            #msg += _("Customer name should not be empty.\n")
+            if edititer == None:
+                edititer = self.treestore.append(parent_iter)
+                path = self.treestore.get_path(edititer)
+                self.treeview.expand_to_path(path)
+		self.treeview.scroll_to_cell(path, None, False, 0, 0)
+		self.treeview.set_cursor(path, None, False)
+		self.treeview.grab_focus()
             
-        ##--------------------
-        #if msg != "":
-            #msgbox = gtk.MessageDialog(self.customerForm, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE, msg)
-            #msgbox.set_title(_("Can not save customer"))
-            #msgbox.run()
-            #msgbox.destroy()
-            #return -1
-
-        #if not self.editCustomer:
-            #customer = Customers(custCode, unicode(custName), custPhone, custCell, custFax, unicode(custAddress),
-                                #custEmail, unicode(custEcnmcsCode), custWebPage, unicode(callResponsible), unicode(custConnector),
-                                #groupid, custPostalCode, custPersonalCode, unicode(custDesc), custBalance, custCredit,
-                                #custRepViaEmail, custAccName1, custAccNo1, custAccBank1, custAccName2, custAccNo2, 
-                                #custAccBank2, custTypeBuyer, custTypeSeller, custTypeMate, custTypeAgent, 
-                                #custIntroducer, custCommission, custMarked, custReason, custDiscRate )
-        #else:
-            #query = config.db.session.query(Customers).select_from(Customers)
-            #customer = query.filter(Customers.custId == self.customerId).first()
-            #customer.custCode = custCode
-            #customer.custName = unicode(custName)
-            #customer.custPhone = custPhone
-            #customer.custCell = custCell
-            #customer.custFax = custFax
-            #customer.custAddress = unicode(custAddress)
-            #customer.custPostalCode = custPostalCode
-            #customer.custEmail = custEmail
-            #customer.custEcnmcsCode = unicode(custEcnmcsCode)
-            #customer.custPersonalCode = custPersonalCode
-            #customer.custWebPage = custWebPage
-            #customer.custResponsible = unicode(callResponsible)
-            #customer.custConnector = unicode(custConnector)
-            #customer.custGroup = groupid
-            #customer.custDesc = unicode(custDesc)
-            ##----------------------------------
-            #customer.custTypeBuyer = custTypeBuyer
-            #customer.custTypeSeller = custTypeSeller
-            #customer.custTypeMate = custTypeMate
-            #customer.custTypeAgent = custTypeAgent
-            #customer.custIntroducer = unicode(custIntroducer)
-            #customer.custCommission = custCommission
-            #customer.custDiscRate = custDiscRate
-            #customer.custMarked = custMarked
-            #customer.custReason = unicode(custReason)
-            ##----------------------------------
-            #customer.custBalance = custBalance
-            #customer.custCredit = custCredit
-            #customer.custAccName1 = unicode(custAccName1)
-            #customer.custAccNo1 = unicode(custAccNo1)
-            #customer.custAccBank1 = unicode(custAccBank1)
-            #customer.custAccName2 = unicode(custAccName2)
-            #customer.custAccNo2 = unicode(custAccNo2)
-            #customer.custAccBank2 = unicode(custAccBank2)
-            
-        #config.db.session.add(customer)
-        #config.db.session.commit()
-        
-        ##Show new customer in table
-        #if self.treestore != None:
-            #parent_iter = self.treestore.get_iter_first()
-            #while self.treestore.iter_is_valid(parent_iter):
-                #itercode = self.treestore.get_value(parent_iter, 0)
-                #if itercode == custGrp:
-                    #break
-                #parent_iter = self.treestore.iter_next(parent_iter)
+            self.saveRow(edititer, (code, name, quantity, purchase_price, sell_price) )
                 
-            #if config.digittype == 1:
-                #custCode = utility.convertToPersian(custCode)
-            
-            #if not self.editCustomer:
-                #self.treestore.append(parent_iter, (custCode, custName, "0.0", "0.0"))
-            #else:
-                #self.treestore.set(self.editIter, 0, custCode, 1, custName)
-                
-        #return 0
+        return True
 
     def editProductsAndGrps(self, sender):
         selection = self.treeview.get_selection()
@@ -453,9 +334,9 @@ class Product(productgroup.ProductGroup):
         if len(data) == 4:
             #A product group should be saved, just set code and name.
             self.treestore.set(treeiter, 0, data[0], 1, data[1])
-        #elif len(data) == 4:
-            ##A customer should be saved, set all given data.
-            #self.treestore.set(treeiter, 0, data[0], 1, data[1], 2, data[2], 3, data[3])
+        elif len(data) == 5:
+            #A product should be saved, set all given data.
+            self.treestore.set(treeiter, 0, data[0], 1, data[1], 2, data[2], 3, data[3], 4, data[4])
 
     #def on_addCustomerBtn_clicked(self, sender):
         #selection = self.treeview.get_selection()

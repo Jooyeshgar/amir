@@ -46,7 +46,8 @@ class NumberEntry(gtk.Entry):
         #--- This method will return the integer format of the entered  
         #--- value. If there is no text entered, 0 will be returned.
         try:
-            val = int(readNumber())
+            #val = int(readNumber())
+            val = int(unicode(self.get_text()))
         except:
             val = 0
         return val
@@ -64,12 +65,12 @@ class NumberEntry(gtk.Entry):
         except ValueError:
             return False
 
-    def readNumber (self):
-        str = self.get_text()
-        en_numbers = '0123456789'
-        fa_numbers = u'۰۱۲۳۴۵۶۷۸۹'
+    #def readNumber (self):
+        #str = self.get_text()
+        #en_numbers = '0123456789'
+        #fa_numbers = u'۰۱۲۳۴۵۶۷۸۹'
         
-        for c in fa_numbers:
-            str = replace(str,c,en_numbers[fa_numbers.index(c)])
+        #for c in fa_numbers:
+            #str = replace(str,c,en_numbers[fa_numbers.index(c)])
             
-        return str
+        #return str

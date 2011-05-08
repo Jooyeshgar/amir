@@ -194,11 +194,11 @@ class ProductGroup(gobject.GObject):
     #@param edititer: None if a new product group is to be saved.
     #                 Otherwise it stores the TreeIter for the group that's been edited.
     def saveProductGroup(self, code, name, buy_code, sell_code, edititer=None):
-        msg = "";
+        msg = ""
+        if code == "":
+            msg += _("Group code should not be empty.\n")
         if name == "":
-            msg = _("Group name should not be empty")
-        elif code == "":
-            msg = _("Group code should not be empty")
+            msg = _("Group name should not be empty.\n")
         #TODO set default values for buyid & sellid if empty
             
         if msg != "":

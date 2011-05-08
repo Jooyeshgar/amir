@@ -133,40 +133,25 @@ class MainWindow(gobject.GObject):
         else :
             self.window.destroy()
 
-        #============================================================================
-	#---------- These lines are added by Rimo for the warehousing purpose
-	#============================================================================
-    def addNewProduct(      self,   sender  ):
-        obj = warehousing.Warehousing(              )
-        obj.addNewProduct(                          )
+    def addNewProduct(   self,   sender  ):
+        obj = product.Product()
+        obj.addProduct(sender)
         
     def viewProducts(    self,   sender  ):
         obj = product.Product()
         obj.viewProducts()
-        
-    def addNewGroup(        self,   sender  ):
-        obj = customergroup.Group()
-        obj.addGroup()
 
-    def viewGroups(         self,   sender  ):
-        pass
-#        obj = customergroup.Group()
-#        obj.viewCustomerGroups()
-
-    def viewCustomers(         self,   sender  ):
+    def viewCustomers(   self,   sender  ):
         obj = customers.Customer()
         obj.viewCustomers()
     
-    def addNewCustomer(         self,   sender  ):
+    def addNewCustomer(  self,   sender  ):
         obj = customers.Customer()
         obj.addNewCustomer(sender)
         
-    def sellingForm(         self,   sender  ):
-        obj = sellProducts.SellProducts(            )
+    def sellingForm(     self,   sender  ):
+        obj = sellProducts.SellProducts()
         
-    #============================================================================
-    #---------- End of Rimo edits ---------------------------------------
-	#============================================================================
     
     def delete_event(self, widget, event, data=None):
          msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, _("Are you sure to close the app?"))
