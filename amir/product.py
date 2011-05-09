@@ -332,25 +332,19 @@ class Product(productgroup.ProductGroup):
             #A product should be saved, set all given data.
             self.treestore.set(treeiter, 0, data[0], 1, data[1], 2, data[2], 3, data[3], 4, data[4])
 
-    #def on_addCustomerBtn_clicked(self, sender):
-        #selection = self.treeview.get_selection()
-        #iter = selection.get_selected()[1]
-        #pcode = ""
-        #if (iter != None and self.treestore.iter_parent(iter) == None):
-                #pcode = self.treestore.get_value(iter, 0)
-        #self.addNewCustomer(sender, pcode)
         
-    #def selectGroup(self, sender):
-        #obj = customergroup.Group()
-        #obj.connect("group-selected", self.groupSelected)
-        #obj.viewCustomerGroups()
+    def selectProductGroup(self, sender):
+        obj = productgroup.ProductGroup()
+        obj.connect("group-selected", self.groupSelected)
+        obj.viewProductGroups()
         
-        #code = self.builder.get_object("custGrpEntry").get_text()
-        #obj.highlightGroup(code)
+        code = self.builder.get_object("accGrpEntry").get_text()
+        obj.highlightGroup(unicode(code))
     
-    #def groupSelected(self, sender, id, code):
-        #self.builder.get_object("custGrpEntry").set_text(code)
-        #sender.window.destroy()  
+    def groupSelected(self, sender, id, code):
+        self.builder.get_object("accGrpEntry").set_text(code)
+        sender.window.destroy()
+        
              
 ##----------------------------------------------------------------------
 ## Creating New Signal to return the selected group when double clicked!

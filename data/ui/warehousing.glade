@@ -134,10 +134,11 @@
   <object class="GtkWindow" id="viewProGroupsWindow">
     <property name="width_request">450</property>
     <property name="height_request">350</property>
-    <property name="title" translatable="yes">Groups</property>
+    <property name="title" translatable="yes">Product Groups</property>
+    <property name="modal">True</property>
     <property name="window_position">center-always</property>
     <property name="default_width">500</property>
-    <property name="destroy_with_parent">True</property>
+    <property name="type_hint">dialog</property>
     <child>
       <object class="GtkVBox" id="viewGroupsVBox">
         <property name="visible">True</property>
@@ -213,6 +214,7 @@
                 <property name="enable_grid_lines">vertical</property>
                 <property name="enable_tree_lines">True</property>
                 <signal name="row_activated" handler="selectGroupFromList"/>
+                <signal name="key_release_event" handler="on_key_release_event"/>
               </object>
             </child>
           </object>
@@ -763,6 +765,7 @@
                 <property name="tooltip_text" translatable="yes">Press Enter to see available groups.</property>
                 <property name="max_length">20</property>
                 <property name="invisible_char">•</property>
+                <signal name="activate" handler="selectProductGroup"/>
               </object>
               <packing>
                 <property name="left_attach">3</property>
@@ -775,6 +778,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="selectProductGroup"/>
               </object>
               <packing>
                 <property name="left_attach">4</property>

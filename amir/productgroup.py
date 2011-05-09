@@ -55,7 +55,7 @@ class ProductGroup(gobject.GObject):
         self.window = self.builder.get_object("viewProGroupsWindow")
         
         self.treeview = self.builder.get_object("GroupsTreeView")
-        self.treestore = gtk.TreeStore(str, str, str)
+        self.treestore = gtk.TreeStore(str, str, str, str)
         self.treestore.clear()
         self.treeview.set_model(self.treestore)
 
@@ -101,6 +101,7 @@ class ProductGroup(gobject.GObject):
             self.treestore.append(None, (code, group.name, buyId, sellId))
             
         self.window.show_all()
+        self.window.grab_focus()
         
     def addProductGroup(self, sender):
         dialog = self.builder.get_object("addProductGroupDlg")
@@ -282,41 +283,44 @@ class ProductGroup(gobject.GObject):
     def saveRow(self, treeiter, data):
         self.treestore.set(treeiter, 0, data[0], 1, data[1], 2, data[2], 3, data[3])
     
-    #def highlightGroup(self, code):
-##        code = code.decode('utf-8')
-        #iter = self.treestore.get_iter_first()
-        #pre = iter
+    def highlightGroup(self, code):
+        code = code.decode('utf-8')
+        l = len(code)
+        iter = self.treestore.get_iter_first()
+        pre = iter
         
-        #while iter:
-##            res = self.match_func(iter, (0, part))
-            #itercode = self.treestore.get_value(iter, 0)
-            #if  itercode < code:
-                #pre = iter
-                #iter = self.treestore.iter_next(iter)
-            #elif itercode == code:
-                #break
-            #else:
-                #iter = pre
-                #break
+        while iter:
+            itercode = self.treestore.get_value(iter, 0).decode('utf-8')[0:l]
+            if  itercode < code:
+                pre = iter
+                iter = self.treestore.iter_next(iter)
+            elif itercode == code:
+                break
+            else:
+                iter = pre
+                break
 
-        #if not iter:
-            #iter = pre
+        if not iter:
+            iter = pre
             
-        #if iter:
-            #path = self.treestore.get_path(iter)
-            #self.treeview.scroll_to_cell(path, None, False, 0, 0)
-            #self.treeview.set_cursor(path, None, False)
-            #self.treeview.grab_focus()
+        if iter:
+            path = self.treestore.get_path(iter)
+            print iter
+            print path
+            self.treeview.scroll_to_cell(path, None, False, 0, 0)
+            self.treeview.set_cursor(path, None, False)
+            self.treeview.grab_focus()
             
     
-    #def selectCustGroupFromList(self, treeview, path, view_column):
-        #iter = self.treestore.get_iter(path)
-        #code = utility.convertToLatin(self.treestore.get_value(iter, 0))
+    def selectGroupFromList(self, treeview, path, view_column):
+        iter = self.treestore.get_iter(path)
+        code = unicode(self.treestore.get_value(iter, 0))
         
-        #query = config.db.session.query(CustGroups).select_from(CustGroups)
-        #query = query.filter(CustGroups.custGrpCode == code)
-        #group_id = query.first().custGrpId
-        #self.emit("group-selected", group_id, code)   
+        query = config.db.session.query(ProductGroups).select_from(ProductGroups)
+        query = query.filter(ProductGroups.code == code)
+        group_id = query.first().id
+        self.emit("group-selected", group_id, code)
+        
 
     def on_key_release_event(self, sender, event):
         expand = 0
@@ -377,6 +381,8 @@ class ProductGroup(gobject.GObject):
             code = utility.convertToPersian(code)
         self.sellCodeEntry.set_text(code)
         sender.window.destroy()
-#gobject.type_register(Group)
-#gobject.signal_new("group-selected", Group, gobject.SIGNAL_RUN_LAST,
-                   #gobject.TYPE_NONE, (gobject.TYPE_INT, gobject.TYPE_STRING))   
+        
+        
+gobject.type_register(ProductGroup)
+gobject.signal_new("group-selected", ProductGroup, gobject.SIGNAL_RUN_LAST,
+                   gobject.TYPE_NONE, (gobject.TYPE_INT, gobject.TYPE_STRING))   
