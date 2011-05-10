@@ -118,11 +118,18 @@ class Product(productgroup.ProductGroup):
 
 
     def addProduct(self, sender, pcode = ""):
+	selection = self.treeview.get_selection()
+        iter = selection.get_selected()[1]
+        if iter != None and self.treestore.iter_parent(iter) == None:
+	    accgrp = self.treestore.get_value(iter, 0)
+	else :
+	    accgrp = ""
+	    
         dialog = self.builder.get_object("addProductDlg")
         dialog.set_title(_("Add New Product"))
         
         self.builder.get_object("proCodeEntry").set_text("")
-        self.builder.get_object("accGrpEntry" ).set_text("")
+        self.builder.get_object("accGrpEntry" ).set_text(accgrp)
         self.builder.get_object("proNameEntry").set_text("")
         self.builder.get_object("proLocEntry" ).set_text("")
         self.builder.get_object("proDescEntry").set_text("")        
@@ -157,62 +164,63 @@ class Product(productgroup.ProductGroup):
         selection = self.treeview.get_selection()
         iter = selection.get_selected()[1]
         
-        if self.treestore.iter_parent(iter) == None:
-            #iter points to a product group
-            self.editProductGroup(sender)
-        else:
-	    #iter points to a product
-	    dialog = self.builder.get_object("addProductDlg")
-	    dialog.set_title(_("Edit Product"))
-	    
-            code = self.treestore.get_value(iter, 0)
-            query = config.db.session.query(Products, ProductGroups.code)
-            query = query.select_from(outerjoin(ProductGroups, Products, ProductGroups.id == Products.accGroup))
-            result = query.filter(Products.code == code).first()
-            product = result[0]
-            groupcode = result[1]
-            
-            quantity = str(product.quantity)
-            quantity_warn = str(product.qntyWarning)
-            p_price = str(product.purchacePrice)
-            s_price = str(product.sellingPrice)
-            if config.digittype == 1:
-		quantity = utility.convertToPersian(quantity)
-		quantity_warn = utility.convertToPersian(quantity_warn)
-		p_price = utility.convertToPersian(p_price)
-		s_price = utility.convertToPersian(s_price)
-            
-            self.builder.get_object("proCodeEntry").set_text(product.code)
-	    self.builder.get_object("accGrpEntry" ).set_text(groupcode)
-	    self.builder.get_object("proNameEntry").set_text(product.name)
-	    self.builder.get_object("proLocEntry" ).set_text(product.location)
-	    self.builder.get_object("proDescEntry").set_text(product.productDesc)        
-	    self.qntyEntry.set_text(quantity)
-	    self.qntyWrnEntry.set_text(quantity_warn)
-	    self.purchPriceEntry.set_text(p_price)
-	    self.sellPriceEntry.set_text(s_price)
-	    self.builder.get_object("oversell").set_active(product.oversell)
-            
-            success = False
-	    while not success :
-		result = dialog.run()
-		if result == 1:
-		    code     = unicode(self.builder.get_object("proCodeEntry").get_text())
-		    accgrp   = unicode(self.builder.get_object("accGrpEntry" ).get_text())
-		    name     = unicode(self.builder.get_object("proNameEntry").get_text())
-		    location = unicode(self.builder.get_object("proLocEntry" ).get_text())
-		    desc     = unicode(self.builder.get_object("proDescEntry").get_text())
-		    quantity = self.qntyEntry.get_int()
-		    q_warn   = self.qntyWrnEntry.get_int()
-		    p_price  = self.purchPriceEntry.get_int()
-		    s_price  = self.sellPriceEntry.get_int()
-		    oversell = self.builder.get_object("oversell").get_active()
-		    
-		    success = self.saveProduct(code, accgrp, name, location, desc, quantity, q_warn, p_price, s_price, oversell, iter)
-		else:
-		    break
-		    
-	    dialog.hide()
+        if iter != None:
+	    if self.treestore.iter_parent(iter) == None:
+		#iter points to a product group
+		self.editProductGroup(sender)
+	    else:
+		#iter points to a product
+		dialog = self.builder.get_object("addProductDlg")
+		dialog.set_title(_("Edit Product"))
+		
+		code = self.treestore.get_value(iter, 0)
+		query = config.db.session.query(Products, ProductGroups.code)
+		query = query.select_from(outerjoin(ProductGroups, Products, ProductGroups.id == Products.accGroup))
+		result = query.filter(Products.code == code).first()
+		product = result[0]
+		groupcode = result[1]
+		
+		quantity = str(product.quantity)
+		quantity_warn = str(product.qntyWarning)
+		p_price = str(product.purchacePrice)
+		s_price = str(product.sellingPrice)
+		if config.digittype == 1:
+		    quantity = utility.convertToPersian(quantity)
+		    quantity_warn = utility.convertToPersian(quantity_warn)
+		    p_price = utility.convertToPersian(p_price)
+		    s_price = utility.convertToPersian(s_price)
+		
+		self.builder.get_object("proCodeEntry").set_text(product.code)
+		self.builder.get_object("accGrpEntry" ).set_text(groupcode)
+		self.builder.get_object("proNameEntry").set_text(product.name)
+		self.builder.get_object("proLocEntry" ).set_text(product.location)
+		self.builder.get_object("proDescEntry").set_text(product.productDesc)        
+		self.qntyEntry.set_text(quantity)
+		self.qntyWrnEntry.set_text(quantity_warn)
+		self.purchPriceEntry.set_text(p_price)
+		self.sellPriceEntry.set_text(s_price)
+		self.builder.get_object("oversell").set_active(product.oversell)
+		
+		success = False
+		while not success :
+		    result = dialog.run()
+		    if result == 1:
+			code     = unicode(self.builder.get_object("proCodeEntry").get_text())
+			accgrp   = unicode(self.builder.get_object("accGrpEntry" ).get_text())
+			name     = unicode(self.builder.get_object("proNameEntry").get_text())
+			location = unicode(self.builder.get_object("proLocEntry" ).get_text())
+			desc     = unicode(self.builder.get_object("proDescEntry").get_text())
+			quantity = self.qntyEntry.get_int()
+			q_warn   = self.qntyWrnEntry.get_int()
+			p_price  = self.purchPriceEntry.get_int()
+			s_price  = self.sellPriceEntry.get_int()
+			oversell = self.builder.get_object("oversell").get_active()
+			
+			success = self.saveProduct(code, accgrp, name, location, desc, quantity, q_warn, p_price, s_price, oversell, iter)
+		    else:
+			break
+			
+		dialog.hide()
             
     def saveProduct(self, code, accgrp, name, location, desc, quantity, quantity_warn, 
 		    purchase_price, sell_price, oversell, edititer=None):
@@ -306,20 +314,21 @@ class Product(productgroup.ProductGroup):
         selection = self.treeview.get_selection()
         iter = selection.get_selected()[1]
         
-        if self.treestore.iter_parent(iter) == None:
-            #Iter points to a product group
-            self.deleteProductGroup(sender)
-        else:
-            #Iter points to a product
-            code = self.treestore.get_value(iter, 0)
-            query = config.db.session.query(Products).select_from(Products)
-            product = query.filter(Products.code == code).first()
-            
-            #TODO check if this product is used somewhere else
-            
-            config.db.session.delete(product)
-            config.db.session.commit()
-            self.treestore.remove(iter)
+        if iter != None:
+	    if self.treestore.iter_parent(iter) == None:
+		#Iter points to a product group
+		self.deleteProductGroup(sender)
+	    else:
+		#Iter points to a product
+		code = self.treestore.get_value(iter, 0)
+		query = config.db.session.query(Products).select_from(Products)
+		product = query.filter(Products.code == code).first()
+		
+		#TODO check if this product is used somewhere else
+		
+		config.db.session.delete(product)
+		config.db.session.commit()
+		self.treestore.remove(iter)
                 
     
     #@param treeiter: the TreeIter which data should be saved in
