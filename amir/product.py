@@ -221,9 +221,9 @@ class Product(productgroup.ProductGroup):
         if code == "":
             msg += _("Product code should not be empty.\n")
         if accgrp == "":
-            msg += _("Product group should not be empty\n")
+            msg += _("Product group should not be empty.\n")
         if name == "":
-            msg += _("Product name should not be empty\n")
+            msg += _("Product name should not be empty.\n")
 	
 	if msg != "":
             msgbox =  gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, msg)

@@ -140,6 +140,8 @@ class MainWindow(gobject.GObject):
     def viewProducts(    self,   sender  ):
         obj = product.Product()
         obj.viewProducts()
+        obj.connect("item-activated", obj.editProductsAndGrps)
+        obj.connect("blank-activated", obj.addProduct)
 
     def viewCustomers(   self,   sender  ):
         obj = customers.Customer()

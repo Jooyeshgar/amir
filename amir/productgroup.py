@@ -321,6 +321,14 @@ class ProductGroup(gobject.GObject):
         group_id = query.first().id
         self.emit("group-selected", group_id, code)
         
+    def on_button_press_event(self, sender, event):
+	if event.type == gtk.gdk._2BUTTON_PRESS:
+	    selection = self.treeview.get_selection()
+	    iter = selection.get_selected()[1]
+	    if iter != None :
+		self.emit("item-activated")
+	    else:
+		self.emit("blank-activated")
 
     def on_key_release_event(self, sender, event):
         expand = 0
@@ -385,4 +393,8 @@ class ProductGroup(gobject.GObject):
         
 gobject.type_register(ProductGroup)
 gobject.signal_new("group-selected", ProductGroup, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (gobject.TYPE_INT, gobject.TYPE_STRING))   
+                   gobject.TYPE_NONE, (gobject.TYPE_INT, gobject.TYPE_STRING))
+gobject.signal_new("item-activated", ProductGroup, gobject.SIGNAL_RUN_LAST,
+                   gobject.TYPE_NONE, ())
+gobject.signal_new("blank-activated", ProductGroup, gobject.SIGNAL_RUN_LAST,
+                   gobject.TYPE_NONE, ())
