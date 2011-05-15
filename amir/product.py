@@ -119,49 +119,54 @@ class Product(productgroup.ProductGroup):
 
 
 	def addProduct(self, sender, pcode = ""):
-		selection = self.treeview.get_selection()
-		iter = selection.get_selected()[1]
-		if iter != None and self.treestore.iter_parent(iter) == None:
-			accgrp = self.treestore.get_value(iter, 0)
-		else :
-			accgrp = ""
-			
-			dialog = self.builder.get_object("addProductDlg")
-			dialog.set_title(_("Add New Product"))
-			
-			self.builder.get_object("proCodeEntry").set_text("")
-			self.builder.get_object("accGrpEntry" ).set_text(accgrp)
-			self.builder.get_object("proNameEntry").set_text("")
-			self.builder.get_object("proLocEntry" ).set_text("")
-			self.builder.get_object("proDescEntry").set_text("")
-			self.builder.get_object("discFormulaEntry").set_text("")
-			self.qntyEntry.set_text("")
-			self.qntyWrnEntry.set_text("")
-			self.purchPriceEntry.set_text("")
-			self.sellPriceEntry.set_text("")
-			self.builder.get_object("oversell").set_active(False)
-			
-			success = False
-			while not success :
-				result = dialog.run()
-				if result == 1:
-					code     = unicode(self.builder.get_object("proCodeEntry").get_text())
-					accgrp   = unicode(self.builder.get_object("accGrpEntry" ).get_text())
-					name     = unicode(self.builder.get_object("proNameEntry").get_text())
-					location = unicode(self.builder.get_object("proLocEntry" ).get_text())
-					desc     = unicode(self.builder.get_object("proDescEntry").get_text())
-					formula  = unicode(self.builder.get_object("discFormulaEntry").get_text())
-					quantity = self.qntyEntry.get_int()
-					q_warn   = self.qntyWrnEntry.get_int()
-					p_price  = self.purchPriceEntry.get_int()
-					s_price  = self.sellPriceEntry.get_int()
-					oversell = self.builder.get_object("oversell").get_active()
-					
-					success = self.saveProduct(code, accgrp, name, location, desc, quantity, q_warn, p_price, s_price, oversell, formula)
-				else:
-					break
 		
-			dialog.hide()
+		accgrp = ""
+		try:
+			selection = self.treeview.get_selection()
+		except AttributeError:
+			#Skip if there is no table to have selected row.
+			pass
+		else:
+			iter = selection.get_selected()[1]
+			if iter != None and self.treestore.iter_parent(iter) == None:
+				accgrp = self.treestore.get_value(iter, 0)
+			
+		dialog = self.builder.get_object("addProductDlg")
+		dialog.set_title(_("Add New Product"))
+		
+		self.builder.get_object("proCodeEntry").set_text("")
+		self.builder.get_object("accGrpEntry" ).set_text(accgrp)
+		self.builder.get_object("proNameEntry").set_text("")
+		self.builder.get_object("proLocEntry" ).set_text("")
+		self.builder.get_object("proDescEntry").set_text("")
+		self.builder.get_object("discFormulaEntry").set_text("")
+		self.qntyEntry.set_text("")
+		self.qntyWrnEntry.set_text("")
+		self.purchPriceEntry.set_text("")
+		self.sellPriceEntry.set_text("")
+		self.builder.get_object("oversell").set_active(False)
+		
+		success = False
+		while not success :
+			result = dialog.run()
+			if result == 1:
+				code     = unicode(self.builder.get_object("proCodeEntry").get_text())
+				accgrp   = unicode(self.builder.get_object("accGrpEntry" ).get_text())
+				name     = unicode(self.builder.get_object("proNameEntry").get_text())
+				location = unicode(self.builder.get_object("proLocEntry" ).get_text())
+				desc     = unicode(self.builder.get_object("proDescEntry").get_text())
+				formula  = unicode(self.builder.get_object("discFormulaEntry").get_text())
+				quantity = self.qntyEntry.get_int()
+				q_warn   = self.qntyWrnEntry.get_int()
+				p_price  = self.purchPriceEntry.get_int()
+				s_price  = self.sellPriceEntry.get_int()
+				oversell = self.builder.get_object("oversell").get_active()
+				
+				success = self.saveProduct(code, accgrp, name, location, desc, quantity, q_warn, p_price, s_price, oversell, formula)
+			else:
+				break
+	
+		dialog.hide()
 
 	def editProductsAndGrps(self, sender):
 		selection = self.treeview.get_selection()
@@ -311,8 +316,12 @@ class Product(productgroup.ProductGroup):
 		config.db.session.commit()
 		
 		#Show new product in table
-		if self.treestore != None:
+		try:
 			parent_iter = self.treestore.get_iter_first()
+		except AttributeError:
+			#skip if there is no table to show
+			pass
+		else:
 			while self.treestore.iter_is_valid(parent_iter):
 				itercode = self.treestore.get_value(parent_iter, 0)
 				if itercode == accgrp:
