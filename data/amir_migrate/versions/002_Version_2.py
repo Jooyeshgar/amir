@@ -25,8 +25,8 @@ products = Table('products', meta,
     Column('quantity',        Integer,        ColumnDefault(0),   nullable    = False     ),
     Column('qntyWarning',     Integer,        ColumnDefault(0),   nullable    = True      ),
     Column('oversell',        Boolean,        ColumnDefault(0)                            ),
-    Column('purchacePrice',   Integer,        ColumnDefault(0),   nullable    = False     ),
-    Column('sellingPrice',    Integer,        ColumnDefault(0),   nullable    = False     ),
+    Column('purchacePrice',   Float,          ColumnDefault(0),   nullable    = False     ),
+    Column('sellingPrice',    Float,          ColumnDefault(0),   nullable    = False     ),
     Column('discountFormula', Unicode(100),                       nullable    = True      ),
     Column('productDesc',     Unicode(200),                       nullable    = True      )
 )

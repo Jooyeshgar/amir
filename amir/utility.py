@@ -7,15 +7,23 @@ from amirconfig import config
 # Check the active locale and choose number characters from that locale
 #===============================================================================
 def showNumber (number, comma=True):
-    s = str(number)
+	s = str(number)
 
-    if comma:
-        #l = [x for x in s if x in '1234567890']
-        l = [x for x in s]
-        for x in reversed(range(len(s))[::3]):
-            l.insert(-x, ',')
-        l = ''.join(l[1:])
-        #s = l
+	if comma:
+		#l = [x for x in s if x in '1234567890']
+		dot_pos = s.find('.')
+		if dot_pos != -1:
+			s = s[:dot_pos]
+			
+		l = [x for x in s]
+		for x in reversed(range(len(s))[::3]):
+			l.insert(-x, ',')
+		l = ''.join(l[1:])
+		
+		if dot_pos != -1:
+			l += str(number)[dot_pos:]
+        
+        
         
     #NOTE this doesn't replace characters one by one, it replaces the whole string.
     #     reverted to previous form.
@@ -24,8 +32,6 @@ def showNumber (number, comma=True):
 	if config.digittype == 1:
 	    l = convertToPersian(l)
 	return l
-    else:
-	return s
 
 def readNumber (number):
     return number.replace('0123456789', u'۰۱۲۳۴۵۶۷۸۹')
@@ -34,8 +40,8 @@ def convertToLatin (input_string):
     """
         Searchs for farsi digits in input_string and converts them to latin ones.
     """
-    en_numbers = '0123456789'
-    fa_numbers = u'۰۱۲۳۴۵۶۷۸۹'
+    en_numbers = '0123456789.'
+    fa_numbers = u'۰۱۲۳۴۵۶۷۸۹/'
     output_string = u''
     for c in unicode(input_string):
         if c in unicode(fa_numbers):
@@ -48,8 +54,8 @@ def convertToPersian (input_string):
     """
         Searchs for latin digits in input_string and converts them to persian ones.
     """
-    en_numbers = '0123456789'
-    fa_numbers = u'۰۱۲۳۴۵۶۷۸۹'
+    en_numbers = '0123456789.'
+    fa_numbers = u'۰۱۲۳۴۵۶۷۸۹/'
     
     output_string = u''
     for c in unicode(input_string):

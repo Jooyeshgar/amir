@@ -6,6 +6,7 @@ import  gtk
 import  re
 
 import  numberentry
+import  decimalentry
 import  dateentry
 import  subjects
 import  productgroup
@@ -36,11 +37,11 @@ class Product(productgroup.ProductGroup):
 		self.builder.get_object("qntyWrnBox").add(self.qntyWrnEntry)
 		self.qntyWrnEntry.show()
 
-		self.purchPriceEntry = numberentry.NumberEntry(10)
+		self.purchPriceEntry = decimalentry.DecimalEntry()
 		self.builder.get_object("purchPriceBox").add(self.purchPriceEntry)
 		self.purchPriceEntry.show()
 		
-		self.sellPriceEntry = numberentry.NumberEntry(10)
+		self.sellPriceEntry = decimalentry.DecimalEntry()
 		self.builder.get_object("sellPriceBox").add(self.sellPriceEntry)
 		self.sellPriceEntry.show()
 		
@@ -158,8 +159,8 @@ class Product(productgroup.ProductGroup):
 				formula  = unicode(self.builder.get_object("discFormulaEntry").get_text())
 				quantity = self.qntyEntry.get_int()
 				q_warn   = self.qntyWrnEntry.get_int()
-				p_price  = self.purchPriceEntry.get_int()
-				s_price  = self.sellPriceEntry.get_int()
+				p_price  = self.purchPriceEntry.get_float()
+				s_price  = self.sellPriceEntry.get_float()
 				oversell = self.builder.get_object("oversell").get_active()
 				
 				success = self.saveProduct(code, accgrp, name, location, desc, quantity, q_warn, p_price, s_price, oversell, formula)
@@ -222,8 +223,8 @@ class Product(productgroup.ProductGroup):
 						formula  = unicode(self.builder.get_object("discFormulaEntry").get_text())
 						quantity = self.qntyEntry.get_int()
 						q_warn   = self.qntyWrnEntry.get_int()
-						p_price  = self.purchPriceEntry.get_int()
-						s_price  = self.sellPriceEntry.get_int()
+						p_price  = self.purchPriceEntry.get_float()
+						s_price  = self.sellPriceEntry.get_float()
 						oversell = self.builder.get_object("oversell").get_active()
 					
 						success = self.saveProduct(code, accgrp, name, location, desc, quantity, q_warn, p_price, s_price, oversell, formula, iter)

@@ -71,8 +71,8 @@ class Products(Base):
     quantity        = Column(   Integer,        ColumnDefault(0),   nullable    = False     )
     qntyWarning     = Column(   Integer,        ColumnDefault(0),   nullable    = True      )
     oversell        = Column(   Boolean,        ColumnDefault(0)                            )
-    purchacePrice   = Column(   Integer,        ColumnDefault(0),   nullable    = False     )
-    sellingPrice    = Column(   Integer,        ColumnDefault(0),   nullable    = False     )
+    purchacePrice   = Column(   Float,          ColumnDefault(0),   nullable    = False     )
+    sellingPrice    = Column(   Float,          ColumnDefault(0),   nullable    = False     )
     discountFormula = Column(   Unicode(100),                       nullable    = True      )
     productDesc     = Column(   Unicode(200),                       nullable    = True      )
 
