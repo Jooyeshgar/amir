@@ -110,7 +110,8 @@ class Transactions(Base):
     __tablename__ = "transactions"
     transId         = Column( Integer,      primary_key = True                      )
     transCode       = Column( String,       nullable = False                        )
-    transDate       = Column( Date,         nullable = False                        )
+    transDate       = Column( Date,         nullable = False                        ) 
+    transBill       = Column( Integer,      ColumnDefault(0)                        ) #Bill id is zero for temporary transactions
     transCust       = Column( Integer,      ForeignKey('customers.custId')          )
     transAddition   = Column( Float,        ColumnDefault(0),   nullable = False    )
     transSubtraction= Column( Float,        ColumnDefault(0),   nullable = False    )
@@ -120,7 +121,7 @@ class Transactions(Base):
     transShipVia    = Column( Unicode(100), nullable = True                         )
     transPermanent  = Column( Boolean,      ColumnDefault(0)                        )
     transDesc       = Column( Unicode(200), nullable = True                         )
-#    transSell       = Column( Boolean,      ColumnDefault(0)                        )
+    transSell       = Column( Boolean,      ColumnDefault(0),   nullable = False    )
 #    transLastEdit   = Column( Date,         nullable = True                         )
 
     def __init__( self, transCode, transDate, transCust, transAdd, transSub, transTax, 
