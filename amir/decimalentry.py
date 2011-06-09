@@ -57,6 +57,8 @@ class DecimalEntry(gtk.Entry):
 
     def get_float(self):
         try:
+            print self.get_text()
+            print "test"
             return float(unicode(self.get_text()).replace('/', '.'))
         except:
             return 0

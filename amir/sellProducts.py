@@ -6,6 +6,8 @@ import  numberentry
 import  decimalentry
 from    dateentry       import  *
 import  subjects
+import  utility
+
 import  gobject
 import  pygtk
 import  gtk
@@ -456,56 +458,50 @@ class SellProducts:
 			self.proNameLbl.set_text(str(product.name))
 		
 		#------------- Validate Quantity:
-		qnty    = None
-		try:
-			if self.qntyEntry.get_text() == "":
-				self.qntyEntry.set_text("0.0")
-			qnty    = float(self.qntyEntry.get_text())
+		if self.qntyEntry.get_text() == "":
+			self.qntyEntry.set_text("0.0")
+			qnty = 0
+		else:
+			#qnty    = float(self.qntyEntry.get_text())
+			qnty    = self.qntyEntry.get_float()
+		#self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
+		#self.qntyEntry.set_tooltip_text("")
+
+
+		qntyAvlble  = float(product.quantity)
+		over    = product.oversell
+		if qnty < 0:
+			self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
+			if not stMsg:
+				stMsg  = "Quantity must be greater than 0."
+			self.qntyEntry.set_tooltip_text("Quantity must be greater than 0.")
+
+		elif qnty > qntyAvlble and not over:
+			self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
+			msg = "Quantity is more than the available storage. (Over-Sell is Off)"
+			if not stMsg:
+				stMsg  = msg
+			self.qntyEntry.set_tooltip_text(msg)
+
+		else:
 			self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
 			self.qntyEntry.set_tooltip_text("")
-
-		except:
-			self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
-			self.qntyEntry.set_tooltip_text("Quantity is not valid")
-			if not stMsg:
-				stMsg   = "Quantity is not valid"
-
-		if qnty != None:
-			qntyAvlble  = float(product.quantity)
-			over    = product.oversell
-			if qnty < 0:
-				self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
-				if not stMsg:
-					stMsg  = "Quantity must be greater than 0."
-				self.qntyEntry.set_tooltip_text("Quantity must be greater than 0.")
-
-			elif qnty > qntyAvlble and not over:
-				self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
-				msg = "Quantity is more than the available storage. (Over-Sell is Off)"
-				if not stMsg:
-					stMsg  = msg
-				self.qntyEntry.set_tooltip_text(msg)
-
-			else:
-				self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
-				self.qntyEntry.set_tooltip_text("")
-				self.addSellStBar.push(1,"")
+			self.addSellStBar.push(1,"")
 		
 		#------------- Validate Unit Price:
-		untPrc  = None
-		try:
-			untPrc  = float(self.unitPriceEntry.get_text())
-			self.unitPriceEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
-			self.unitPriceEntry.set_tooltip_text("")
-			self.addSellStBar.push(1,"")            
-		except:
-			self.unitPriceEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
-			self.unitPriceEntry.set_tooltip_text("Unit Price not valid")
-			if not stMsg:
-				stMsg  = "Unit Price not valid"
-
+		if self.unitPriceEntry.get_text() == "":
+			untPrc = product.sellingPrice
+			self.unitPriceEntry.set_text(utility.showNumber(untPrc))
+		else:
+			untPrc  = self.unitPriceEntry.get_float()
+		#self.unitPriceEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
+		#self.unitPriceEntry.set_tooltip_text("")
+		#self.addSellStBar.push(1,"")            
+		
 		if untPrc != None:
+			print untPrc
 			purcPrc = product.purchacePrice
+			print purcPrc
 			if untPrc < 0:
 				self.unitPriceEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
 				erMsg  = "Unit Price cannot be negative."
@@ -525,14 +521,10 @@ class SellProducts:
 				self.unitPriceEntry.set_tooltip_text("")
 		
 		#------------- Validate discount:
-		disc    = None
-		try:
-			disc  = float(self.discountEntry.get_text())
-			self.discountEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
-			self.discountEntry.set_tooltip_text("")
-		except:
-			self.discountEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
-			self.discountEntry.set_tooltip_text("Invalid Value")
+		#TODO use discount formula
+		disc  = self.discountEntry.get_float()
+		#self.discountEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
+		#self.discountEntry.set_tooltip_text("")
 
 		if disc != None:
 			if disc > 100 or disc < 0:
