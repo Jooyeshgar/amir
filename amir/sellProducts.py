@@ -59,10 +59,12 @@ class SellProducts:
 		self.qntyEntry = decimalentry.DecimalEntry()
 		self.builder.get_object("qntyBox").add(self.qntyEntry)
 		self.qntyEntry.show()
+		self.qntyEntry.connect("focus-out-event", self.validateBuy)
 		
 		self.unitPriceEntry = decimalentry.DecimalEntry()
 		self.builder.get_object("unitPriceBox").add(self.unitPriceEntry)
 		self.unitPriceEntry.show()
+		self.unitPriceEntry.connect("focus-out-event", self.validateBuy)
 		
 		self.discountEntry = decimalentry.DecimalEntry()
 		self.builder.get_object("discountBox").add(self.discountEntry)
@@ -443,6 +445,8 @@ class SellProducts:
 	def validateBuy(self,sender=0,ev=0):
 		#------------- Validate Product:
 		stMsg   = ""
+		severe  = False
+		
 		productCd   = self.proVal.get_text()
 		product = self.session.query(Products).select_from(Products).filter(Products.code==productCd).first()
 		if not product:
@@ -474,6 +478,7 @@ class SellProducts:
 			self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
 			if not stMsg:
 				stMsg  = "Quantity must be greater than 0."
+				severe = True
 			self.qntyEntry.set_tooltip_text("Quantity must be greater than 0.")
 
 		elif qnty > qntyAvlble and not over:
@@ -481,6 +486,7 @@ class SellProducts:
 			msg = "Quantity is more than the available storage. (Over-Sell is Off)"
 			if not stMsg:
 				stMsg  = msg
+				severe = True
 			self.qntyEntry.set_tooltip_text(msg)
 
 		else:
@@ -499,15 +505,14 @@ class SellProducts:
 		#self.addSellStBar.push(1,"")            
 		
 		if untPrc != None:
-			print untPrc
 			purcPrc = product.purchacePrice
-			print purcPrc
 			if untPrc < 0:
 				self.unitPriceEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
 				erMsg  = "Unit Price cannot be negative."
 				self.unitPriceEntry.set_tooltip_text(erMsg)
 				if not stMsg:
 					stMsg   = erMsg
+					severe = True
 
 			elif untPrc < purcPrc:
 				self.unitPriceEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
@@ -545,7 +550,7 @@ class SellProducts:
 				self.discountEntry.set_tooltip_text("")
 		
 		self.addSellStBar.push(1,stMsg)
-		if not stMsg:
+		if not severe:
 			self.calcTotal()
 			self.calcTotalDiscount()
 		
@@ -586,8 +591,8 @@ class SellProducts:
 			sender.viewProsWin.destroy()
 
 	def calcTotal(self):
-		unitPrice   = float(self.unitPriceEntry.get_text())
-		qnty        = float(self.qntyEntry.get_text())
+		unitPrice   = self.unitPriceEntry.get_float()
+		qnty        = self.qntyEntry.get_float()
 		total       = unitPrice * qnty
 		self.ttlAmntVal.set_text(str(total))
 		self.calcTotalPayable()
@@ -602,8 +607,8 @@ class SellProducts:
 
 	def calcTotalPayable(self):
 		ttlAmnt     = float(self.ttlAmntVal.get_text())
-		discountEntry     = float(self.discTtlVal.get_text())
-		self.ttlPyblVal.set_text(str(ttlAmnt - discountEntry))
+		ttldiscount     = float(self.discTtlVal.get_text())
+		self.ttlPyblVal.set_text(str(ttlAmnt - ttldiscount))
 
 	def selectProduct(self,sender=0):
 		obj = warehousing.Warehousing()
