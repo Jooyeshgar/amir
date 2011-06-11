@@ -22,6 +22,8 @@ def showNumber (number, comma=True):
 		
 		if dot_pos != -1:
 			l += str(number)[dot_pos:]
+	else:
+		l = s
         
         
         

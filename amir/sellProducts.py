@@ -205,9 +205,9 @@ class SellProducts:
 			self.editCde    = edit[0]
 			ttl = "Edit sell:\t%s - %s" %(self.editCde,edit[1])
 			self.addSellDlg.set_title(ttl)
-			self.edtSellFlg = True
-			self.oldTtl     = edit[4] 
-			self.oldTtlDisc = edit[6]
+			self.edtSellFlg = True		#TODO find usage
+			self.oldTtl     = edit[4]	#TODO find usage
+			self.oldTtlDisc = edit[6]	#TODO find usage
 			btnVal  = "Save Changes..."
 		else:
 			self.editingSell    = None
@@ -219,28 +219,27 @@ class SellProducts:
 		#self.untPrcVal  = self.builder.get_object("unitPriceVal")
 		#self.discVal    = self.builder.get_object("discVal")
 		self.descVal    = self.builder.get_object("descVal")
+		self.proNameLbl = self.builder.get_object("proNameLbl")
 		self.avQntyVal  = self.builder.get_object("availableQntyVal")
 		self.stnrdDisc  = self.builder.get_object("stnrdDiscVal")
 		self.stndrdPVal = self.builder.get_object("stnrdSelPrceVal")
 		self.discTtlVal = self.builder.get_object("discTtlVal")
 		self.ttlAmntVal = self.builder.get_object("totalAmontVal")
 		self.ttlPyblVal = self.builder.get_object("totalPyableVal")
+		
 		self.btn        = self.builder.get_object("okBtn")
 		self.btn.set_label(btnVal)
-		self.addSellDlg.show_all()
-		
-		self.proNameLbl = self.builder.get_object("proNameLbl")
-		self.proNameLbl.hide()
 		self.addSellStBar   = self.builder.get_object("addSellStatusBar")
 		self.addSellStBar.push(1,"")
-		self.availableQntyBox   = self.builder.get_object("availableQntyBox")
-		self.availableQntyBox.hide()
-		self.stnrdSelPrceBox    = self.builder.get_object("stnrdSelPrceBox")
-		self.stnrdSelPrceBox.hide()
-		self.discTtlBox = self.builder.get_object("discTtlBox")
 		
-		self.stnrdDiscBox = self.builder.get_object("stnrdDiscBox")
-		self.stnrdDiscBox.hide()
+		#self.addSellStBar   = self.builder.get_object("addSellStatusBar")
+		#self.addSellStBar.push(1,"")
+		#self.availableQntyBox   = self.builder.get_object("availableQntyBox")
+		#self.availableQntyBox.hide()
+		#self.stnrdSelPrceBox    = self.builder.get_object("stnrdSelPrceBox")
+		#self.stnrdSelPrceBox.hide()
+		#self.stnrdDiscBox = self.builder.get_object("stnrdDiscBox")
+		#self.stnrdDiscBox.hide()
 		
 		self.proVal.modify_base(gtk.STATE_NORMAL,self.whiteClr)
 		self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
@@ -251,27 +250,47 @@ class SellProducts:
 			(No,pName,qnty,untPrc,ttlPrc,untDisc,ttlDisc,desc) = edit
 			pName   = unicode(pName)
 			pro = self.session.query(Products).select_from(Products).filter(Products.name==pName).first()
-			self.proSelected(code=pro.code)
+			#self.proSelected(code=pro.code)
 			self.proVal.set_text(pro.code)
 			self.qntyEntry.set_text(qnty)
 			self.unitPriceEntry.set_text(untPrc)
 			self.discountEntry.set_text(untDisc)
 			self.descVal.set_text(desc)
-			self.unitPriceEntry.set_text(untPrc)
-			self.validateBuy()
+			
+			self.proNameLbl.set_text(pName)
+			self.avQntyVal.set_text(utility.showNumber(pro.quantity))
+			self.stnrdDisc.set_text("")
+			self.stndrdPVal.set_text(utility.showNumber(pro.sellingPrice))
+			self.ttlAmntVal.set_text(ttlPrc)
+			self.discTtlVal.set_text(ttlDisc)
+			total_payable = str(float(utility.convertToLatin(ttlPrc)) - float(utility.convertToLatin(ttlDisc)))
+			self.ttlPyblVal.set_text(total_payable)
+			#self.validateBuy()
+			
+		else:
+			self.clearSellFields()
+			
+		self.addSellDlg.show_all()
 				
-	def cancelSell(self,sender=0,ev=0):
+	#def cancelSell(self,sender=0,ev=0):
+		#self.clearSellFields()
+		#self.addSellDlg.hide_all()
+		#return True
+
+	def clearSellFields(self):
 		self.proVal.set_text("")
 		self.qntyEntry.set_text("0.0")
 		self.unitPriceEntry.set_text("0.0")
-		self.discountEntry.set_text("0.0")
+		self.discountEntry.set_text("")
+		self.proNameLbl.set_text("")
+		self.avQntyVal.set_text("")
+		self.stnrdDisc.set_text("")
+		self.stndrdPVal.set_text("")
 		self.ttlAmntVal.set_text("0.0")
 		self.discTtlVal.set_text("0.0")
 		self.ttlPyblVal.set_text("0.0")
 		self.descVal.set_text("")
-		self.addSellDlg.hide_all()
-		return True
-
+		
 	def addSellToList(self,sender=0):
 		proCd   = self.proVal.get_text()
 		product   = self.session.query(Products).select_from(Products).filter(Products.code==proCd).first()
@@ -347,7 +366,7 @@ class SellProducts:
 			self.valsChanged()
 	#            self.sellsDict[No]  = (self.editingSell,product,sellList)
 			self.sellsItersDict[No]   = self.editingSell
-			self.cancelSell()
+			self.addSellDlg.hide()
 			
 		else:
 			No  = len(self.sellsItersDict) + 1
@@ -358,7 +377,7 @@ class SellProducts:
 			self.valsChanged()
 	#            self.sellsDict[No]  = (iter,product,sellList)
 			self.sellsItersDict[No]   = iter
-			self.cancelSell()
+			self.addSellDlg.hide()
 
 	def upSellInList(self,sender):
 		if len(self.sellsItersDict) == 1:
@@ -434,9 +453,9 @@ class SellProducts:
 		blnc        = payableAmnt - ttlPayment
 		blncDue     = self.remainedAmountEntry.set_text(str(blnc))
 				
-	def keyPressedEvent(self,sender=0,ev=0):
-		if ev.keyval == 65293 or ev.keyval == 65421:
-			self.validateBuy()
+	#def keyPressedEvent(self,sender=0,ev=0):
+		#if ev.keyval == 65293 or ev.keyval == 65421:
+			#self.validateBuy()
 			
 	def valsChanged(self,sender=0,ev=0):
 		self.calculatePayable()
@@ -554,11 +573,11 @@ class SellProducts:
 			self.calcTotal()
 			self.calcTotalDiscount()
 		
-	def proDeselected(self):
-		self.proNameLbl.hide()
-		self.stnrdSelPrceBox.hide()
-		self.availableQntyBox.hide()
-		self.stnrdDiscBox.hide()
+	#def proDeselected(self):
+		#self.proNameLbl.hide()
+		#self.stnrdSelPrceBox.hide()
+		#self.availableQntyBox.hide()
+		#self.stnrdDiscBox.hide()
 
 	def proSelected(self,sender=0, id=0, code=0):
 		selectedPro = self.session.query(Products).select_from(Products).filter(Products.code==code).first()
@@ -582,9 +601,13 @@ class SellProducts:
 		self.stndrdPVal.set_text(str(sellPrc))
 
 		self.proNameLbl.show()
-		self.stnrdSelPrceBox.show()
-		self.availableQntyBox.show()
-		self.stnrdDiscBox.show()
+		#self.stnrdSelPrceBox.show()
+		#self.availableQntyBox.show()
+		#self.stnrdDiscBox.show()
+		
+		self.avQntyVal.show()
+		self.stnrdDisc.show()
+		self.stndrdPVal.show()
 		
 		if sender:
 			self.proVal.set_text(code)
