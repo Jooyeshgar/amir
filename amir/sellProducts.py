@@ -59,16 +59,16 @@ class SellProducts:
 		self.qntyEntry = decimalentry.DecimalEntry()
 		self.builder.get_object("qntyBox").add(self.qntyEntry)
 		self.qntyEntry.show()
-		self.qntyEntry.connect("focus-out-event", self.validateBuy)
+		self.qntyEntry.connect("focus-out-event", self.validateQnty)
 		
 		self.unitPriceEntry = decimalentry.DecimalEntry()
 		self.builder.get_object("unitPriceBox").add(self.unitPriceEntry)
 		self.unitPriceEntry.show()
-		self.unitPriceEntry.connect("focus-out-event", self.validateBuy)
+		self.unitPriceEntry.connect("focus-out-event", self.validatePrice)
 		
-		self.discountEntry = decimalentry.DecimalEntry()
-		self.builder.get_object("discountBox").add(self.discountEntry)
-		self.discountEntry.show()
+		#self.discountEntry = decimalentry.DecimalEntry()
+		#self.builder.get_object("discountBox").add(self.discountEntry)
+		#self.discountEntry.show()
 		
 		if not transId:
 			pass
@@ -214,18 +214,17 @@ class SellProducts:
 			self.addSellDlg.set_title("Choose sell information")
 			self.edtSellFlg = False
 			btnVal  = "Add to list"
-		self.proVal     = self.builder.get_object("proEntry")
-		#self.qntyVal    = self.builder.get_object("qntyVal")
-		#self.untPrcVal  = self.builder.get_object("unitPriceVal")
-		#self.discVal    = self.builder.get_object("discVal")
-		self.descVal    = self.builder.get_object("descVal")
-		self.proNameLbl = self.builder.get_object("proNameLbl")
-		self.avQntyVal  = self.builder.get_object("availableQntyVal")
-		self.stnrdDisc  = self.builder.get_object("stnrdDiscVal")
-		self.stndrdPVal = self.builder.get_object("stnrdSelPrceVal")
-		self.discTtlVal = self.builder.get_object("discTtlVal")
-		self.ttlAmntVal = self.builder.get_object("totalAmontVal")
-		self.ttlPyblVal = self.builder.get_object("totalPyableVal")
+			
+		self.proVal        = self.builder.get_object("proEntry")
+		self.discountEntry = self.builder.get_object("discountEntry")
+		self.descVal       = self.builder.get_object("descVal")
+		self.proNameLbl    = self.builder.get_object("proNameLbl")
+		self.avQntyVal     = self.builder.get_object("availableQntyVal")
+		self.stnrdDisc     = self.builder.get_object("stnrdDiscVal")
+		self.stndrdPVal    = self.builder.get_object("stnrdSelPrceVal")
+		self.discTtlVal    = self.builder.get_object("discTtlVal")
+		self.ttlAmntVal    = self.builder.get_object("totalAmontVal")
+		self.ttlPyblVal    = self.builder.get_object("totalPyableVal")
 		
 		self.btn        = self.builder.get_object("okBtn")
 		self.btn.set_label(btnVal)
@@ -259,12 +258,14 @@ class SellProducts:
 			
 			self.proNameLbl.set_text(pName)
 			self.avQntyVal.set_text(utility.showNumber(pro.quantity))
-			self.stnrdDisc.set_text("")
 			self.stndrdPVal.set_text(utility.showNumber(pro.sellingPrice))
+			discval = self.calcDiscount(pro.discountFormula, float(qnty), pro.sellingPrice)
+			self.stnrdDisc.set_text(str(discval))
 			self.ttlAmntVal.set_text(ttlPrc)
 			self.discTtlVal.set_text(ttlDisc)
 			total_payable = str(float(utility.convertToLatin(ttlPrc)) - float(utility.convertToLatin(ttlDisc)))
 			self.ttlPyblVal.set_text(total_payable)
+			self.product = pro
 			#self.validateBuy()
 			
 		else:
@@ -272,10 +273,10 @@ class SellProducts:
 			
 		self.addSellDlg.show_all()
 				
-	#def cancelSell(self,sender=0,ev=0):
-		#self.clearSellFields()
-		#self.addSellDlg.hide_all()
-		#return True
+	def cancelSell(self,sender=0,ev=0):
+		self.clearSellFields()
+		self.addSellDlg.hide_all()
+		return True
 
 	def clearSellFields(self):
 		self.proVal.set_text("")
@@ -461,117 +462,176 @@ class SellProducts:
 		self.calculatePayable()
 		self.calculateBalance()
 
-	def validateBuy(self,sender=0,ev=0):
-		#------------- Validate Product:
-		stMsg   = ""
-		severe  = False
-		
+	def validatePCode(self, sender, event):
 		productCd   = self.proVal.get_text()
 		product = self.session.query(Products).select_from(Products).filter(Products.code==productCd).first()
 		if not product:
 			self.proVal.modify_base(gtk.STATE_NORMAL,self.redClr)
-			self.proVal.set_tooltip_text("Product code is invalid")
-			self.addSellStBar.push(1,"Product code is invalid")
+			msg = "Product code is invalid"
+			self.proVal.set_tooltip_text(msg)
+			self.addSellStBar.push(1,msg)
 			self.proNameLbl.set_text("")
-			return
+			self.product = None
 		else:
 			self.proVal.modify_base(gtk.STATE_NORMAL,self.whiteClr)
 			self.proVal.set_tooltip_text("")
 			self.proSelected(code=product.code)
 			self.proNameLbl.set_text(str(product.name))
-		
-		#------------- Validate Quantity:
-		if self.qntyEntry.get_text() == "":
-			self.qntyEntry.set_text("0.0")
-			qnty = 0
-		else:
-			#qnty    = float(self.qntyEntry.get_text())
-			qnty    = self.qntyEntry.get_float()
-		#self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
-		#self.qntyEntry.set_tooltip_text("")
+			self.product = product
+	
+	def validateQnty(self, sender, event):
+		if self.product:
+			stMsg = ""
+			severe = False
+			
+			if self.qntyEntry.get_text() == "":
+				self.qntyEntry.set_text("0.0")
+				qnty = 0
+			else:
+				qnty = self.qntyEntry.get_float()
 
-
-		qntyAvlble  = float(product.quantity)
-		over    = product.oversell
-		if qnty < 0:
-			self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
-			if not stMsg:
-				stMsg  = "Quantity must be greater than 0."
-				severe = True
-			self.qntyEntry.set_tooltip_text("Quantity must be greater than 0.")
-
-		elif qnty > qntyAvlble and not over:
-			self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
-			msg = "Quantity is more than the available storage. (Over-Sell is Off)"
-			if not stMsg:
-				stMsg  = msg
-				severe = True
-			self.qntyEntry.set_tooltip_text(msg)
-
-		else:
-			self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
-			self.qntyEntry.set_tooltip_text("")
-			self.addSellStBar.push(1,"")
-		
-		#------------- Validate Unit Price:
-		if self.unitPriceEntry.get_text() == "":
-			untPrc = product.sellingPrice
-			self.unitPriceEntry.set_text(utility.showNumber(untPrc))
-		else:
-			untPrc  = self.unitPriceEntry.get_float()
-		#self.unitPriceEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
-		#self.unitPriceEntry.set_tooltip_text("")
-		#self.addSellStBar.push(1,"")            
-		
-		if untPrc != None:
-			purcPrc = product.purchacePrice
-			if untPrc < 0:
-				self.unitPriceEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
-				erMsg  = "Unit Price cannot be negative."
-				self.unitPriceEntry.set_tooltip_text(erMsg)
+			qntyAvlble  = float(self.product.quantity)
+			over    = self.product.oversell
+			if qnty < 0:
+				self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
 				if not stMsg:
-					stMsg   = erMsg
+					stMsg  = "Quantity must be greater than 0."
 					severe = True
+				self.qntyEntry.set_tooltip_text("Quantity must be greater than 0.")
 
-			elif untPrc < purcPrc:
-				self.unitPriceEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
-				err  = "Unit Price is less than the product purchase price."
-				self.unitPriceEntry.set_tooltip_text(err)
+			elif qnty > qntyAvlble and not over:
+				self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
+				msg = "Quantity is more than the available storage. (Over-Sell is Off)"
 				if not stMsg:
-					stMsg  = err
+					stMsg  = msg
+					severe = True
+				self.qntyEntry.set_tooltip_text(msg)
 
 			else:
-				self.unitPriceEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
-				self.unitPriceEntry.set_tooltip_text("")
+				self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
+				self.qntyEntry.set_tooltip_text("")
+				
+			self.addSellStBar.push(1,stMsg)
+			
+			if not severe:
+				code   = self.proVal.get_text()
+				sellPrc = self.product.sellingPrice
+				if self.product.discountFormula:
+					print "formula exists!"
+					discval = self.calcDiscount(self.product.discountFormula, qnty, sellPrc)
+					self.discountEntry.set_text(str(discval))
+					self.stnrdDisc.set_text(str(discval))
+				else:
+					discval = 0
+					
+				self.calcTotal()
+				self.calcTotalDiscount(discval)
+				
+	
+	def validatePrice(self, sender, event):
+		if self.product:
+			stMsg = ""
+			severe = False
+			
+			if self.unitPriceEntry.get_text() == "":
+				untPrc = product.sellingPrice
+				self.unitPriceEntry.set_text(utility.showNumber(untPrc))
+			else:
+				untPrc  = self.unitPriceEntry.get_float()            
+			
+			if untPrc != None:
+				purcPrc = self.product.purchacePrice
+				if untPrc < 0:
+					self.unitPriceEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
+					erMsg  = "Unit Price cannot be negative."
+					self.unitPriceEntry.set_tooltip_text(erMsg)
+					if not stMsg:
+						stMsg   = erMsg
+						severe = True
+
+				elif untPrc < purcPrc:
+					self.unitPriceEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
+					err  = "Unit Price is less than the product purchase price."
+					self.unitPriceEntry.set_tooltip_text(err)
+					if not stMsg:
+						stMsg  = err
+
+				else:
+					self.unitPriceEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
+					self.unitPriceEntry.set_tooltip_text("")
+					
+			self.addSellStBar.push(1,stMsg)
+			if not severe:
+				self.calcTotal()
+	
+	def validateDiscnt(self, sender, event):
+		if self.product:
+			stMsg = ""
+			severe = False
+			
+			purcPrc = self.product.purchacePrice
+			untPrc = self.unitPriceEntry.get_float() 
+			
+			if self.discountEntry.get_text() == "":
+				self.discountEntry.set_text(self.stnrdDisc.get_text())
+				discval = float(self.stnrdDisc.get_text())
+			else:
+				disc  = self.discountEntry.get_text()
+				discval = 0
+
+				if disc != "":
+					pindex = disc.find('%')
+					if pindex == 0 or pindex == len(disc) - 1:
+						discp = float(disc.strip('%'))
+						
+						if discp > 100 or discp < 0:
+							self.discountEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
+							errMess  = "Invalid discount range. (Discount must be between 0 and 100 percent)"
+							self.discountEntry.set_tooltip_text(errMess)
+							if not stMsg:
+								stMsg  = errMess
+								severe = True
+						else:
+							discval = untPrc * (discp / 100)
+							
+					elif pindex == -1:
+						discval = float(disc)
+					else:
+						self.discountEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
+						errMess  = "Invalid discount. (Put percentage sign before or after discount amount)"
+						self.discountEntry.set_tooltip_text(errMess)
+						if not stMsg:
+							stMsg  = errMess
+							severe = True
+				
+			
+			self.addSellStBar.push(1,stMsg)
+			if not severe:
+				if untPrc - discval < purcPrc:
+					self.discountEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
+					errMess  = "Applying discount decreases product price below its purchase price!"
+					self.discountEntry.set_tooltip_text(errMess)
+					if not stMsg:
+						self.addSellStBar.push(1,errMess)
+				else:
+					self.discountEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
+					self.discountEntry.set_tooltip_text("")
+						
+				#self.calcTotal()
+				self.calcTotalDiscount(discval)
+	
+	#def validateBuy(self,sender=0,ev=0):
+		#------------- Validate Product:
+		
+		
+		#------------- Validate Quantity:
+		
+		#------------- Validate Unit Price:
+
 		
 		#------------- Validate discount:
 		#TODO use discount formula
-		disc  = self.discountEntry.get_float()
-		#self.discountEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
-		#self.discountEntry.set_tooltip_text("")
-
-		if disc != None:
-			if disc > 100 or disc < 0:
-				self.discountEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
-				errMess  = "Invalid discount range. (Discount must be between 0 and 100 percent)"
-				self.discountEntry.set_tooltip_text(errMess)
-				if not stMsg:
-					stMsg  = errMess
-
-			elif (untPrc * ((100 - disc) /100)) < purcPrc:
-				self.discountEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
-				errMess  = "The ( unit price * Discount ) would be result less than the product purchase price!"
-				self.discountEntry.set_tooltip_text(errMess)
-				if not stMsg:
-					stMsg  = errMess
-			else:
-				self.discountEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
-				self.discountEntry.set_tooltip_text("")
 		
-		self.addSellStBar.push(1,stMsg)
-		if not severe:
-			self.calcTotal()
-			self.calcTotalDiscount()
 		
 	#def proDeselected(self):
 		#self.proNameLbl.hide()
@@ -584,15 +644,16 @@ class SellProducts:
 		id      = selectedPro.id
 		code    = selectedPro.code
 		name    = selectedPro.name
-		qnty    = float(selectedPro.quantity)
+		av_qnty    = float(selectedPro.quantity)
 		sellPrc = float(selectedPro.sellingPrice)
-		discnt  = selectedPro.discountFormula
-		if not discnt:
-			discnt  = "0"
-		disc    = float(discnt)
+		formula  = selectedPro.discountFormula
 		
-		self.avQntyVal.set_text(str(qnty))
-		self.stnrdDisc.set_text(str(disc))
+		qnty = self.qntyEntry.get_float()
+		discnt = self.calcDiscount(formula, qnty, sellPrc)
+							
+		
+		self.avQntyVal.set_text(str(av_qnty))
+		self.stnrdDisc.set_text(str(discnt))
 		if self.unitPriceEntry.get_text() == "0.0":
 			self.unitPriceEntry.set_text(str(sellPrc))
 		if self.discountEntry.get_text() == "0.0":
@@ -613,6 +674,33 @@ class SellProducts:
 			self.proVal.set_text(code)
 			sender.viewProsWin.destroy()
 
+	def calcDiscount(self, formula, qnty, sell_price):
+		discnt = 0
+		flist = formula.split(u',')
+		for elm in flist:
+			if elm != '':
+				partlist = elm.split(u':')
+				numlist = partlist[0].split(u'-')
+				if len(numlist) == 1:
+					firstnum = float(numlist[0])
+					if qnty > firstnum:
+						continue
+					elif qnty == firstnum:
+						discnt = sell_price - float(partlist[1])
+						break
+					else:
+						break
+				elif len(numlist) == 2:
+					firstnum = float(numlist[0])
+					secnum = float(numlist[1])
+					if qnty > secnum:
+						continue
+					elif qnty < firstnum:
+						break
+					else:
+						discnt = sell_price - float(partlist[1])
+		return discnt
+						
 	def calcTotal(self):
 		unitPrice   = self.unitPriceEntry.get_float()
 		qnty        = self.qntyEntry.get_float()
@@ -620,11 +708,11 @@ class SellProducts:
 		self.ttlAmntVal.set_text(str(total))
 		self.calcTotalPayable()
 
-	def calcTotalDiscount(self):
-		discPerCnt  = float(self.discountEntry.get_text())
-		unitPrice   = float(self.unitPriceEntry.get_text())
-		qnty        = float(self.qntyEntry.get_text())
-		totalDisc   = float((discPerCnt * unitPrice * qnty)/100)
+	def calcTotalDiscount(self, discount):
+		#discPerCnt  = float(self.discountEntry.get_text())
+		#unitPrice   = self.unitPriceEntry.get_float()
+		qnty        = self.qntyEntry.get_float()
+		totalDisc   = discount * qnty
 		self.discTtlVal.set_text(str(totalDisc))
 		self.calcTotalPayable()
 

@@ -271,6 +271,8 @@ class Product(productgroup.ProductGroup):
 		if group == None:
 			msg += _("Group code is not valid.\n")
 		
+		firstnum = 0
+		secnum = 0
 		try:
 			flist = formula.split(u',')
 			for elm in flist:
@@ -279,14 +281,24 @@ class Product(productgroup.ProductGroup):
 					price = float(partlist[1])
 					print "price: %s" % str(price)
 					numlist = partlist[0].split(u'-')
-					if len(numlist) == 2:
+					if len(numlist) > 0:
 						firstnum = int(numlist[0])
-						print "fnum: %d" % firstnum
-						secnum = int(numlist[1])
-						print "secnum: %d" % secnum
-						if firstnum > secnum:
-							msg += _("Discount formula should be typed in ascending order.")
+						if firstnum < secnum:
+							msg += _("Discount formula is not valid")
 							break
+						print "fnum: %d" % firstnum
+						if len(numlist) > 1:
+							secnum = int(numlist[1])
+							print "secnum: %d" % secnum
+							if firstnum > secnum:
+								msg += _("Discount formula should be typed in ascending order.")
+								break
+							if len(numlist) > 2:
+								msg += _("Discount formula is not valid")
+								break
+					else:
+						msg += _("Discount formula is not valid")
+						break
 		except ValueError:
 			msg += _("Discount formula is not valid")
 			
