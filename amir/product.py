@@ -282,13 +282,13 @@ class Product(productgroup.ProductGroup):
 					print "price: %s" % str(price)
 					numlist = partlist[0].split(u'-')
 					if len(numlist) > 0:
-						firstnum = int(numlist[0])
+						firstnum = float(numlist[0])
 						if firstnum < secnum:
 							msg += _("Discount formula is not valid")
 							break
 						print "fnum: %d" % firstnum
 						if len(numlist) > 1:
-							secnum = int(numlist[1])
+							secnum = float(numlist[1])
 							print "secnum: %d" % secnum
 							if firstnum > secnum:
 								msg += _("Discount formula should be typed in ascending order.")
@@ -386,6 +386,51 @@ class Product(productgroup.ProductGroup):
 			#A product should be saved, set all given data.
 			self.treestore.set(treeiter, 0, data[0], 1, data[1], 2, data[2], 3, data[3], 4, data[4])
 
+	def highlightProduct(self, code):
+		iter = self.treestore.get_iter_first()
+		if code != "":
+			code = code.decode('utf-8')
+			
+			query = config.db.session.query(ProductGroups)
+			query = query.select_from(outerjoin(ProductGroups, Products, ProductGroups.id == Products.accGroup))
+			group = query.filter(Products.code == code).first()
+			
+			if group:
+				tcode = group.code
+				#First check parents to find related group
+				pre = iter
+				while iter:
+					itercode = self.treestore.get_value(iter, 0).decode('utf-8')
+					if  itercode < tcode:
+						pre = iter
+						iter = self.treestore.iter_next(iter)
+					elif itercode == tcode:
+						pre = iter
+						tcode = code
+						#Now check children(products) to find product row
+						iter = self.treestore.iter_children(iter)
+					else:
+						#iter = pre
+						break
+						
+				iter = pre
+						
+		path = self.treestore.get_path(iter)
+		self.treeview.expand_to_path(path)
+		self.treeview.scroll_to_cell(path, None, False, 0, 0)
+		self.treeview.set_cursor(path, None, False)
+		self.treeview.grab_focus()
+		
+	#Called when a row of product table get activated by mouse double-click or Enter key
+	def selectProductFromList(self, treeview, path, view_column):
+		iter = self.treestore.get_iter(path)
+		if self.treestore.iter_parent(iter) != None:
+			code = unicode(self.treestore.get_value(iter, 0))
+			
+			query = config.db.session.query(Products).select_from(Products)
+			query = query.filter(Products.code == code)
+			product_id = query.first().id
+			self.emit("product-selected", product_id, code)
 		
 	def selectProductGroup(self, sender):
 		obj = productgroup.ProductGroup()
@@ -399,12 +444,7 @@ class Product(productgroup.ProductGroup):
 		self.builder.get_object("accGrpEntry").set_text(code)
 		sender.window.destroy()
         
-             
-##----------------------------------------------------------------------
-## Creating New Signal to return the selected group when double clicked!
-##----------------------------------------------------------------------
-##gobject.type_register(                          Customer                )
-##
-##gobject.signal_new( "customer-selected",        Customer, 
-##                    gobject.SIGNAL_RUN_LAST,    gobject.TYPE_NONE, 
-##                    (gobject.TYPE_INT,          gobject.TYPE_STRING)    )
+
+gobject.type_register(Product)
+gobject.signal_new("product-selected", Product, gobject.SIGNAL_RUN_LAST,
+                   gobject.TYPE_NONE, (gobject.TYPE_INT, gobject.TYPE_STRING))

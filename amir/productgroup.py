@@ -305,8 +305,6 @@ class ProductGroup(gobject.GObject):
             
         if iter:
             path = self.treestore.get_path(iter)
-            print iter
-            print path
             self.treeview.scroll_to_cell(path, None, False, 0, 0)
             self.treeview.set_cursor(path, None, False)
             self.treeview.grab_focus()

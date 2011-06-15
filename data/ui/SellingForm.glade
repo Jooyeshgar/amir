@@ -275,6 +275,7 @@
                     <property name="secondary_icon_activatable">False</property>
                     <property name="primary_icon_sensitive">True</property>
                     <property name="secondary_icon_sensitive">True</property>
+                    <signal name="activate" handler="selectProduct" swapped="no"/>
                     <signal name="key-press-event" handler="keyPressedEvent" swapped="no"/>
                     <signal name="focus-out-event" handler="validatePCode" swapped="no"/>
                   </object>
@@ -1043,7 +1044,7 @@
           <object class="GtkTable" id="table1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="n_rows">15</property>
+            <property name="n_rows">14</property>
             <property name="n_columns">5</property>
             <property name="column_spacing">4</property>
             <property name="row_spacing">4</property>
@@ -1151,19 +1152,6 @@
               </packing>
             </child>
             <child>
-              <object class="GtkHSeparator" id="hseparator1">
-                <property name="height_request">30</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-              </object>
-              <packing>
-                <property name="right_attach">5</property>
-                <property name="top_attach">12</property>
-                <property name="bottom_attach">13</property>
-                <property name="y_options">GTK_FILL</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkScrolledWindow" id="scrolledwindow1">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -1185,19 +1173,7 @@
                 <property name="bottom_attach">8</property>
                 <property name="y_options">GTK_FILL</property>
                 <property name="x_padding">6</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkHSeparator" id="hseparator4">
-                <property name="height_request">15</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-              </object>
-              <packing>
-                <property name="right_attach">5</property>
-                <property name="top_attach">8</property>
-                <property name="bottom_attach">9</property>
-                <property name="y_options">GTK_FILL</property>
+                <property name="y_padding">5</property>
               </packing>
             </child>
             <child>
@@ -1406,9 +1382,10 @@
               </object>
               <packing>
                 <property name="right_attach">5</property>
-                <property name="top_attach">13</property>
-                <property name="bottom_attach">14</property>
+                <property name="top_attach">11</property>
+                <property name="bottom_attach">13</property>
                 <property name="x_padding">6</property>
+                <property name="y_padding">5</property>
               </packing>
             </child>
             <child>
@@ -1617,16 +1594,17 @@
               </object>
               <packing>
                 <property name="right_attach">5</property>
-                <property name="top_attach">14</property>
-                <property name="bottom_attach">15</property>
+                <property name="top_attach">13</property>
+                <property name="bottom_attach">14</property>
                 <property name="x_padding">6</property>
+                <property name="y_padding">5</property>
               </packing>
             </child>
             <child>
               <object class="GtkHBox" id="hbox2">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="spacing">6</property>
+                <property name="spacing">8</property>
                 <property name="homogeneous">True</property>
                 <child>
                   <object class="GtkFrame" id="frame4">
@@ -1942,9 +1920,10 @@
               </object>
               <packing>
                 <property name="right_attach">5</property>
-                <property name="top_attach">9</property>
-                <property name="bottom_attach">12</property>
+                <property name="top_attach">8</property>
+                <property name="bottom_attach">11</property>
                 <property name="x_padding">6</property>
+                <property name="y_padding">5</property>
               </packing>
             </child>
             <child>
@@ -2042,6 +2021,7 @@
                                     <property name="primary_icon_sensitive">True</property>
                                     <property name="secondary_icon_sensitive">True</property>
                                     <signal name="key-release-event" handler="setSellerName" swapped="no"/>
+                                    <signal name="activate" handler="selectSeller" swapped="no"/>
                                     <signal name="focus-out-event" handler="setSellerName" swapped="no"/>
                                   </object>
                                   <packing>

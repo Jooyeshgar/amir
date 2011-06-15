@@ -1,7 +1,7 @@
 import sys
 import os
 
-import  warehousing
+import  product
 import  numberentry
 import  decimalentry
 from    dateentry       import  *
@@ -654,10 +654,10 @@ class SellProducts:
 		
 		self.avQntyVal.set_text(str(av_qnty))
 		self.stnrdDisc.set_text(str(discnt))
-		if self.unitPriceEntry.get_text() == "0.0":
-			self.unitPriceEntry.set_text(str(sellPrc))
-		if self.discountEntry.get_text() == "0.0":
-			self.discountEntry.set_text(str(disc))
+		#if self.unitPriceEntry.get_text() == "0.0":
+		self.unitPriceEntry.set_text(str(sellPrc))
+		#if self.discountEntry.get_text() == "0.0":
+		self.discountEntry.set_text(str(discnt))
 
 		self.stndrdPVal.set_text(str(sellPrc))
 
@@ -672,7 +672,7 @@ class SellProducts:
 		
 		if sender:
 			self.proVal.set_text(code)
-			sender.viewProsWin.destroy()
+			sender.window.destroy()
 
 	def calcDiscount(self, formula, qnty, sell_price):
 		discnt = 0
@@ -722,9 +722,11 @@ class SellProducts:
 		self.ttlPyblVal.set_text(str(ttlAmnt - ttldiscount))
 
 	def selectProduct(self,sender=0):
-		obj = warehousing.Warehousing()
+		obj = product.Product()
 		obj.viewProducts()
 		obj.connect("product-selected",self.proSelected)
+		code = self.proVal.get_text()
+		obj.highlightProduct(unicode(code))
 
 	def close(self, sender=0):
 		self.mainDlg.destroy()
