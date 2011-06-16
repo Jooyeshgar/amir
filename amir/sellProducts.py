@@ -754,33 +754,40 @@ class SellProducts:
 
 	def submitFactorPressed(self,sender):
 		permit  = self.checkFullFactor()
+		sell_factor = True
 		if permit:
 			print "--------- Starting... ------------"
 			print "\nSaving the Transaction ----------"
 			sell = Transactions( self.subCode, self.subDate, self.subCustId, self.subAdd,
-									self.subSub, self.subTax, self.subShpDate, self.subFOB,
-									self.subShipVia, self.subPreInv, self.subDesc )
+								self.subSub, self.subTax, self.cashPayment, 
+								self.subShpDate, self.subFOB, self.subShipVia,
+								self.subPreInv, self.subDesc, sell_factor)
 			self.session.add( sell )
 			self.session.commit()
 			print "------ Saving the Transaction:\tDONE! "
-	#                Exchanges( self, exchngNo, exchngProduct, exchngQnty,
-	#                  exchngUntPrc, exchngUntDisc, exchngTransId, exchngDesc):
+			
+			# Exchanges( self, exchngNo, exchngProduct, exchngQnty,
+			#            exchngUntPrc, exchngUntDisc, exchngTransId, exchngDesc):
 			print "\nSaving the Exchanges -----------"
 			for exch in self.sellListStore:
 				id = self.session.query(Products).select_from(Products).filter(Products.name==unicode(exch[1])).first().id
 				exchange = Exchanges( int(exch[0]), id, float(exch[2]), float(exch[3]),
-										float(exch[5]), self.transId, unicode(exch[7]))
+										exch[5], self.transId, unicode(exch[7]))
 				self.session.add( exchange )
 				self.session.commit()
 				#---- Updating the products quantity
+				#TODO product quantity shouldbe updated while adding products to factor
 				if not self.subPreInv:
 					query   = self.session.query(Products).select_from(Products).filter(Products.id==id)
-					oldQnty = query.first().quantity
-					newQnty = oldQnty - float(exch[2])
-					updateVals  = { Products.quantity : newQnty }
-					edit    = query.update( updateVals )
+					pro = query.first()
+					#oldQnty = query.first().quantity
+					#newQnty = oldQnty - float(exch[2])
+					#updateVals  = { Products.quantity : newQnty }
+					#edit    = query.update( updateVals )
+					pro.quantity -= float(exch[2])
 					self.session.commit()
 			print "------ Saving the Exchanges:\tDONE! "
+			
 	#                pay = Payments( paymntNo, paymntDueDate, paymntBank, paymntSerial, paymntAmount,
 	#                  paymntPayer, paymntWrtDate, paymntDesc, paymntTransId, paymntTrckCode ):
 			print "\nSaving the Payments -----------"
@@ -1111,11 +1118,13 @@ class SellProducts:
 			self.cashPymntsEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
 			self.statusBar.push(1,"")
 			self.cashPymntsEntry.set_tooltip_text("")
+			self.cashPayment = ttlCash
 		except:
 			self.cashPymntsEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
 			msg = "Invalid Value for the cash payments..."
 			self.statusBar.push(1,msg)
 			self.cashPymntsEntry.set_tooltip_text(msg)
+			self.cashPayment = 0
 			return        
 		ttlNonCash  = float(self.nonCashPymntsEntry.get_text())
 		ttlPayments = ttlCash + ttlNonCash

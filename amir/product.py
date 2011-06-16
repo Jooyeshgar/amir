@@ -29,11 +29,11 @@ class Product(productgroup.ProductGroup):
 	def __init__(self):
 		productgroup.ProductGroup.__init__(self)
 
-		self.qntyEntry = numberentry.NumberEntry()
+		self.qntyEntry = decimalentry.DecimalEntry()
 		self.builder.get_object("qntyBox").add(self.qntyEntry)
 		self.qntyEntry.show()
 		
-		self.qntyWrnEntry = numberentry.NumberEntry(10)
+		self.qntyWrnEntry = decimalentry.DecimalEntry()
 		self.builder.get_object("qntyWrnBox").add(self.qntyWrnEntry)
 		self.qntyWrnEntry.show()
 
@@ -157,8 +157,8 @@ class Product(productgroup.ProductGroup):
 				location = unicode(self.builder.get_object("proLocEntry" ).get_text())
 				desc     = unicode(self.builder.get_object("proDescEntry").get_text())
 				formula  = unicode(self.builder.get_object("discFormulaEntry").get_text())
-				quantity = self.qntyEntry.get_int()
-				q_warn   = self.qntyWrnEntry.get_int()
+				quantity = self.qntyEntry.get_float()
+				q_warn   = self.qntyWrnEntry.get_float()
 				p_price  = self.purchPriceEntry.get_float()
 				s_price  = self.sellPriceEntry.get_float()
 				oversell = self.builder.get_object("oversell").get_active()
@@ -221,8 +221,8 @@ class Product(productgroup.ProductGroup):
 						location = unicode(self.builder.get_object("proLocEntry" ).get_text())
 						desc     = unicode(self.builder.get_object("proDescEntry").get_text())
 						formula  = unicode(self.builder.get_object("discFormulaEntry").get_text())
-						quantity = self.qntyEntry.get_int()
-						q_warn   = self.qntyWrnEntry.get_int()
+						quantity = self.qntyEntry.get_float()
+						q_warn   = self.qntyWrnEntry.get_float()
 						p_price  = self.purchPriceEntry.get_float()
 						s_price  = self.sellPriceEntry.get_float()
 						oversell = self.builder.get_object("oversell").get_active()

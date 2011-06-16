@@ -68,8 +68,8 @@ class Products(Base):
     name            = Column(   Unicode(60),                        nullable    = False     )
     accGroup        = Column(   Integer,                            ForeignKey('productGroups.id') )
     location        = Column(   Unicode(50),                        nullable    = True      )
-    quantity        = Column(   Integer,        ColumnDefault(0),   nullable    = False     ) #TODO change to float
-    qntyWarning     = Column(   Integer,        ColumnDefault(0),   nullable    = True      )
+    quantity        = Column(   Float,          ColumnDefault(0),   nullable    = False     ) #TODO change to float
+    qntyWarning     = Column(   Float,          ColumnDefault(0),   nullable    = True      )
     oversell        = Column(   Boolean,        ColumnDefault(0)                            )
     purchacePrice   = Column(   Float,          ColumnDefault(0),   nullable    = False     )
     sellingPrice    = Column(   Float,          ColumnDefault(0),   nullable    = False     )
@@ -116,6 +116,7 @@ class Transactions(Base):
     transAddition   = Column( Float,        ColumnDefault(0),   nullable = False    )
     transSubtraction= Column( Float,        ColumnDefault(0),   nullable = False    )
     transTax        = Column( Float,        ColumnDefault(0),   nullable = False    )
+    transCashPayment= Column( Float,        ColumnDefault(0),   nullable = False    )
     transShipDate   = Column( Date,         nullable = True                         )
     transFOB        = Column( Unicode(50),  nullable = True                         )
     transShipVia    = Column( Unicode(100), nullable = True                         )
@@ -125,7 +126,8 @@ class Transactions(Base):
 #    transLastEdit   = Column( Date,         nullable = True                         )
 
     def __init__( self, transCode, transDate, transCust, transAdd, transSub, transTax, 
-                  transShpDate, transFOB, transShipVia, transPrmnt, transDesc ):#, transSell, transLastEdit ):
+                  transCash, transShpDate, transFOB, transShipVia, transPrmnt, transDesc,
+                  transSell ):#, transSell, transLastEdit ):
 
         self.transCode          = transCode
         self.transDate          = transDate
@@ -133,12 +135,13 @@ class Transactions(Base):
         self.transAddition      = transAdd
         self.transSubtraction   = transSub
         self.transTax           = transTax
+        self.transCashPayment   = transCash
         self.transShipDate      = transShpDate
         self.transFOB           = transFOB
         self.transShipVia       = transShipVia
         self.transPermanent     = transPrmnt
         self.transDesc          = transDesc
-#        self.transSell          = transSell
+        self.transSell          = transSell
 #        self.transLastEdit      = transLastEdit
 
 
@@ -149,7 +152,7 @@ class Exchanges(Base):
     exchngProduct   = Column(   Integer,        ForeignKey('products.id')               )
     exchngQnty      = Column(   Float,          ColumnDefault(0),   nullable = False    )
     exchngUntPrc    = Column(   Float,          ColumnDefault(0),   nullable = False    )
-    exchngUntDisc   = Column(   Float,          ColumnDefault(0),   nullable = False    )
+    exchngUntDisc   = Column(   Unicode(30),    ColumnDefault("0"), nullable = False    )
     exchngTransId   = Column(   Integer,        ForeignKey('transactions.transId')      )
     exchngDesc      = Column(   Unicode(200),   nullable = True                         )
 

@@ -22,8 +22,8 @@ products = Table('products', meta,
     Column('name',            Unicode(60),                        nullable    = False     ),
     Column('accGroup',        Integer,        ForeignKey('productGroups.id')                     ),
     Column('location',        Unicode(50),                        nullable    = True      ),
-    Column('quantity',        Integer,        ColumnDefault(0),   nullable    = False     ),
-    Column('qntyWarning',     Integer,        ColumnDefault(0),   nullable    = True      ),
+    Column('quantity',        Float,          ColumnDefault(0),   nullable    = False     ),
+    Column('qntyWarning',     Float,          ColumnDefault(0),   nullable    = True      ),
     Column('oversell',        Boolean,        ColumnDefault(0)                            ),
     Column('purchacePrice',   Float,          ColumnDefault(0),   nullable    = False     ),
     Column('sellingPrice',    Float,          ColumnDefault(0),   nullable    = False     ),
@@ -47,12 +47,13 @@ transactions = Table('transactions', meta,
     Column('transAddition',      Float,        ColumnDefault(0),   nullable = False    ),
     Column('transSubtraction',   Float,        ColumnDefault(0),   nullable = False    ),
     Column('transTax',           Float,        ColumnDefault(0),   nullable = False    ),
+    Column('transCashPayment',   Float,        ColumnDefault(0),   nullable = False    ),
     Column('transShipDate',      Date,         nullable = True                         ),
     Column('transFOB',           Unicode(50),  nullable = True                         ),
     Column('transShipVia',       Unicode(100), nullable = True                         ),
     Column('transPermanent',     Boolean,      ColumnDefault(0)                        ),
-    Column('transDesc',          Unicode(200), nullable = True                         )
-#    Column('transSell',          Boolean,      ColumnDefault(0)                        ),
+    Column('transDesc',          Unicode(200), nullable = True                         ),
+    Column('transSell',          Boolean,      ColumnDefault(0)                        )
 #    Column('transLastEdit',      Date,         nullable = True                         )
 )
 
@@ -62,7 +63,7 @@ exchanges = Table('exchanges', meta,
     Column('exchngProduct',     Integer,        ForeignKey('products.id')               ),
     Column('exchngQnty',        Float,          ColumnDefault(0),   nullable = False    ),
     Column('exchngUntPrc',      Float,          ColumnDefault(0),   nullable = False    ),
-    Column('exchngUntDisc',     Float,          ColumnDefault(0),   nullable = False    ),
+    Column('exchngUntDisc',     Unicode(30),    ColumnDefault("0"), nullable = False    ),
     Column('exchngTransId',     Integer,        ForeignKey('transactions.transId')      ),
     Column('exchngDesc',        Unicode(200),   nullable = True                         )
 )
