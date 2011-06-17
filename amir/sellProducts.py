@@ -47,14 +47,30 @@ class SellProducts:
 		self.transCode.set_text(str(self.transId))
 		
 		self.factorDate = DateEntry()
-		box = self.builder.get_object("datebox")
-		box.add(self.factorDate)
+		self.builder.get_object("datebox").add(self.factorDate)
 		self.factorDate.show()
 		
 		self.shippedDate = DateEntry()
-		shipBox = self.builder.get_object("shippedDateBox")
-		shipBox.add(self.shippedDate)
+		self.builder.get_object("shippedDateBox").add(self.shippedDate)
 		self.shippedDate.show()
+		
+		self.additionsEntry = decimalentry.DecimalEntry()
+		self.builder.get_object("additionsbox").add(self.additionsEntry)
+		self.additionsEntry.set_alignment(0.95)
+		self.additionsEntry.show()
+		self.additionsEntry.connect("changed", self.valsChanged)
+		
+		self.subsEntry = decimalentry.DecimalEntry()
+		self.builder.get_object("subsbox").add(self.subsEntry)
+		self.subsEntry.set_alignment(0.95)
+		self.subsEntry.show()
+		self.subsEntry.connect("changed", self.valsChanged)
+		
+		self.cashPymntsEntry = decimalentry.DecimalEntry()
+		self.builder.get_object("cashbox").add(self.cashPymntsEntry)
+		self.cashPymntsEntry.set_alignment(0.95)
+		self.cashPymntsEntry.show()
+		self.cashPymntsEntry.connect("changed", self.paymentsChanged)
 		
 		self.qntyEntry = decimalentry.DecimalEntry()
 		self.builder.get_object("qntyBox").add(self.qntyEntry)
@@ -76,15 +92,15 @@ class SellProducts:
 		self.sellerEntry    = self.builder.get_object("sellerCodeEntry")
 		self.totalEntry = self.builder.get_object("subtotalEntry")
 		self.totalDiscsEntry    = self.builder.get_object("totalDiscsEntry")
-		self.cashPymntsEntry    = self.builder.get_object("cashPymntsEntry")
+		#self.cashPymntsEntry    = self.builder.get_object("cashPymntsEntry")
 		self.payableAmntEntry   = self.builder.get_object("payableAmntEntry")
 		self.totalPaymentsEntry = self.builder.get_object("totalPaymentsEntry")
 		self.remainedAmountEntry= self.builder.get_object("remainedAmountEntry")
 		self.nonCashPymntsEntry = self.builder.get_object("nonCashPymntsEntry")
 		self.buyerNameEntry     = self.builder.get_object("buyerNameEntry")
 
-		self.addEntry    = self.builder.get_object("additionsEntry")
-		self.subsEntry   = self.builder.get_object("subsEntry")
+		#self.addEntry    = self.builder.get_object("additionsEntry")
+		#self.subsEntry   = self.builder.get_object("subsEntry")
 		self.taxEntry    = self.builder.get_object("taxEntry")
 
 		self.statusBar  = self.builder.get_object("sellFormStatusBar")
@@ -413,27 +429,29 @@ class SellProducts:
 	def calculatePayable(self):
 		subtotal    = float(self.builder.get_object("subtotalEntry").get_text())
 		ttlDiscs    = float(self.builder.get_object("totalDiscsEntry").get_text())
-		addEntry    = self.addEntry
-		subsEntry   = self.subsEntry
+		#addEntry    = self.additionsEntry
+		#subsEntry   = self.subsEntry
 		taxEntry    = self.taxEntry
 		err         = False
-		try:
-			additions   = float(addEntry.get_text())
-			addEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
-			addEntry.set_tooltip_text("")
-		except:
-			addEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
-			addEntry.set_tooltip_text("Invalid Number")
-			err     = True
+		#try:
+			#additions   = float(addEntry.get_text())
+			#addEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
+			#addEntry.set_tooltip_text("")
+		#except:
+			#addEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
+			#addEntry.set_tooltip_text("Invalid Number")
+			#err     = True
+		additions = self.additionsEntry.get_float()
 
-		try:
-			substracts   = float(subsEntry.get_text())
-			subsEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
-			subsEntry.set_tooltip_text("")
-		except:
-			subsEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
-			subsEntry.set_tooltip_text("Invalid Number")
-			err     = True
+		#try:
+			#substracts   = float(subsEntry.get_text())
+			#subsEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
+			#subsEntry.set_tooltip_text("")
+		#except:
+			#subsEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
+			#subsEntry.set_tooltip_text("Invalid Number")
+			#err     = True
+		subtracts = self.subsEntry.get_float()
 		
 		try:
 			tax   = float(taxEntry.get_text())
@@ -445,7 +463,7 @@ class SellProducts:
 			err     = True
 
 		if not err:
-			amnt    = subtotal + additions + tax - substracts - ttlDiscs
+			amnt    = subtotal + additions + tax - subtracts - ttlDiscs
 			self.payableAmntEntry.set_text(str(amnt))
 
 	def calculateBalance(self):
@@ -758,7 +776,7 @@ class SellProducts:
 		if permit:
 			print "--------- Starting... ------------"
 			print "\nSaving the Transaction ----------"
-			sell = Transactions( self.subCode, self.subDate, self.subCustId, self.subAdd,
+			sell = Transactions( self.subCode, self.subDate, 0, self.subCustId, self.subAdd,
 								self.subSub, self.subTax, self.cashPayment, 
 								self.subShpDate, self.subFOB, self.subShipVia,
 								self.subPreInv, self.subDesc, sell_factor)
@@ -821,8 +839,8 @@ class SellProducts:
 		else:
 			self.subCustId  = query.id #query.custId
 		
-		self.subAdd     = self.addEntry.get_text()
-		self.subSub     = self.subsEntry.get_text()
+		self.subAdd     = self.additionsEntry.get_float()
+		self.subSub     = self.subsEntry.get_float()
 		self.subTax     = self.taxEntry.get_text()
 		self.subShpDate = self.shippedDate.getDateObject()
 		self.subFOB     = unicode(self.builder.get_object("FOBEntry").get_text())
@@ -1113,21 +1131,24 @@ class SellProducts:
 		self.paymentsChanged()
 		
 	def paymentsChanged(self,sender=0,ev=0):
-		try:
-			ttlCash = float(self.cashPymntsEntry.get_text())
-			self.cashPymntsEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
-			self.statusBar.push(1,"")
-			self.cashPymntsEntry.set_tooltip_text("")
-			self.cashPayment = ttlCash
-		except:
-			self.cashPymntsEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
-			msg = "Invalid Value for the cash payments..."
-			self.statusBar.push(1,msg)
-			self.cashPymntsEntry.set_tooltip_text(msg)
-			self.cashPayment = 0
-			return        
+		#try:
+			#ttlCash = float(self.cashPymntsEntry.get_text())
+			#self.cashPymntsEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
+			#self.statusBar.push(1,"")
+			#self.cashPymntsEntry.set_tooltip_text("")
+			#self.cashPayment = ttlCash
+		#except:
+			#self.cashPymntsEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
+			#msg = "Invalid Value for the cash payments..."
+			#self.statusBar.push(1,msg)
+			#self.cashPymntsEntry.set_tooltip_text(msg)
+			#self.cashPayment = 0
+			#return
+		ttlCash = self.cashPymntsEntry.get_float()
+		self.cashPayment = ttlCash
 		ttlNonCash  = float(self.nonCashPymntsEntry.get_text())
 		ttlPayments = ttlCash + ttlNonCash
+		
 		self.totalPaymentsEntry.set_text(str(ttlPayments))
 		self.calculateBalance()
 

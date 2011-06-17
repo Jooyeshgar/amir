@@ -125,12 +125,13 @@ class Transactions(Base):
     transSell       = Column( Boolean,      ColumnDefault(0),   nullable = False    )
 #    transLastEdit   = Column( Date,         nullable = True                         )
 
-    def __init__( self, transCode, transDate, transCust, transAdd, transSub, transTax, 
-                  transCash, transShpDate, transFOB, transShipVia, transPrmnt, transDesc,
-                  transSell ):#, transSell, transLastEdit ):
+    def __init__( self, transCode, transDate, transBill, transCust, transAdd, transSub, 
+                  transTax, transCash, transShpDate, transFOB, transShipVia, transPrmnt, 
+                  transDesc, transSell ):#, transSell, transLastEdit ):
 
         self.transCode          = transCode
         self.transDate          = transDate
+        self.transBill          = transBill
         self.transCust          = transCust
         self.transAddition      = transAdd
         self.transSubtraction   = transSub
