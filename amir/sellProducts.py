@@ -82,26 +82,18 @@ class SellProducts:
 		self.unitPriceEntry.show()
 		self.unitPriceEntry.connect("focus-out-event", self.validatePrice)
 		
-		#self.discountEntry = decimalentry.DecimalEntry()
-		#self.builder.get_object("discountBox").add(self.discountEntry)
-		#self.discountEntry.show()
-		
 		if not transId:
 			pass
 
-		self.sellerEntry    = self.builder.get_object("sellerCodeEntry")
-		self.totalEntry = self.builder.get_object("subtotalEntry")
+		self.sellerEntry        = self.builder.get_object("sellerCodeEntry")
+		self.totalEntry         = self.builder.get_object("subtotalEntry")
 		self.totalDiscsEntry    = self.builder.get_object("totalDiscsEntry")
-		#self.cashPymntsEntry    = self.builder.get_object("cashPymntsEntry")
 		self.payableAmntEntry   = self.builder.get_object("payableAmntEntry")
 		self.totalPaymentsEntry = self.builder.get_object("totalPaymentsEntry")
 		self.remainedAmountEntry= self.builder.get_object("remainedAmountEntry")
 		self.nonCashPymntsEntry = self.builder.get_object("nonCashPymntsEntry")
 		self.buyerNameEntry     = self.builder.get_object("buyerNameEntry")
-
-		#self.addEntry    = self.builder.get_object("additionsEntry")
-		#self.subsEntry   = self.builder.get_object("subsEntry")
-		self.taxEntry    = self.builder.get_object("taxEntry")
+		self.taxEntry           = self.builder.get_object("taxEntry")
 
 		self.statusBar  = self.builder.get_object("sellFormStatusBar")
 		
@@ -429,30 +421,11 @@ class SellProducts:
 	def calculatePayable(self):
 		subtotal    = float(self.builder.get_object("subtotalEntry").get_text())
 		ttlDiscs    = float(self.builder.get_object("totalDiscsEntry").get_text())
-		#addEntry    = self.additionsEntry
-		#subsEntry   = self.subsEntry
-		taxEntry    = self.taxEntry
-		err         = False
-		#try:
-			#additions   = float(addEntry.get_text())
-			#addEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
-			#addEntry.set_tooltip_text("")
-		#except:
-			#addEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
-			#addEntry.set_tooltip_text("Invalid Number")
-			#err     = True
-		additions = self.additionsEntry.get_float()
-
-		#try:
-			#substracts   = float(subsEntry.get_text())
-			#subsEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
-			#subsEntry.set_tooltip_text("")
-		#except:
-			#subsEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
-			#subsEntry.set_tooltip_text("Invalid Number")
-			#err     = True
-		subtracts = self.subsEntry.get_float()
+		additions   = self.additionsEntry.get_float()
+		subtracts   = self.subsEntry.get_float()
 		
+		taxEntry    = self.taxEntry
+		err = False
 		try:
 			tax   = float(taxEntry.get_text())
 			taxEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
@@ -539,11 +512,16 @@ class SellProducts:
 					discval = self.calcDiscount(self.product.discountFormula, qnty, sellPrc)
 					self.discountEntry.set_text(str(discval))
 					self.stnrdDisc.set_text(str(discval))
+					self.calcTotalDiscount(discval)
 				else:
-					discval = 0
-					
+					# if discount be expressed in percent, total discount is changed
+					# by changing quantity.
+					# calling validateDiscnt converts discount percentage into discount value,
+					# then calculates total discount.
+					self.validateDiscnt()
+				
 				self.calcTotal()
-				self.calcTotalDiscount(discval)
+				
 				
 	
 	def validatePrice(self, sender, event):
@@ -582,7 +560,7 @@ class SellProducts:
 			if not severe:
 				self.calcTotal()
 	
-	def validateDiscnt(self, sender, event):
+	def validateDiscnt(self, sender=0, event=0):
 		if self.product:
 			stMsg = ""
 			severe = False
