@@ -24,8 +24,7 @@ def showNumber (number, comma=True):
 			l += str(number)[dot_pos:]
 	else:
 		l = s
-        
-        
+
         
     #NOTE this doesn't replace characters one by one, it replaces the whole string.
     #     reverted to previous form.
@@ -35,6 +34,30 @@ def showNumber (number, comma=True):
 	    l = convertToPersian(l)
 	return l
 
+def getFloatNumber (number_string):
+	"""
+		Reverses showNumber() procedure. Gets a string representing a number,
+		(Maybe containing commas) And returns the value as float
+	"""
+	if not number_string:
+		return 0
+		
+	number_string = number_string.replace(',', '')
+	number_string = convertToLatin(number_string)
+	return float(number_string)
+        
+def getIntegerNumber (number_string):
+	"""
+		Reverses showNumber() procedure. Gets a string representing a number,
+		(Maybe containing commas) And returns the value as integer
+	"""
+	if not number_string:
+		return 0
+		
+	number_string = number_string.replace(',', '')
+	number_string = convertToLatin(number_string)
+	return int(number_string)
+	
 def readNumber (number):
     return number.replace('0123456789', u'۰۱۲۳۴۵۶۷۸۹')
 
@@ -42,8 +65,8 @@ def convertToLatin (input_string):
     """
         Searchs for farsi digits in input_string and converts them to latin ones.
     """
-    en_numbers = '0123456789.'
-    fa_numbers = u'۰۱۲۳۴۵۶۷۸۹/'
+    en_numbers = '0123456789.%'
+    fa_numbers = u'۰۱۲۳۴۵۶۷۸۹/٪'
     output_string = u''
     for c in unicode(input_string):
         if c in unicode(fa_numbers):
@@ -56,8 +79,8 @@ def convertToPersian (input_string):
     """
         Searchs for latin digits in input_string and converts them to persian ones.
     """
-    en_numbers = '0123456789.'
-    fa_numbers = u'۰۱۲۳۴۵۶۷۸۹/'
+    en_numbers = '0123456789.%'
+    fa_numbers = u'۰۱۲۳۴۵۶۷۸۹/٪'
     
     output_string = u''
     for c in unicode(input_string):

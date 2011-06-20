@@ -44,7 +44,10 @@ class SellProducts:
 		
 		self.mainDlg = self.builder.get_object("sellFormWindow")
 		self.transCode = self.builder.get_object("transCode")
-		self.transCode.set_text(str(self.transId))
+		if config.digittype == 1:
+			self.transCode.set_text(utility.convertToPersian(str(self.transId)))
+		else:
+			self.transCode.set_text(str(self.transId))
 		
 		self.factorDate = DateEntry()
 		self.builder.get_object("datebox").add(self.factorDate)
@@ -82,8 +85,8 @@ class SellProducts:
 		self.unitPriceEntry.show()
 		self.unitPriceEntry.connect("focus-out-event", self.validatePrice)
 		
-		if not transId:
-			pass
+		#if not transId:
+			#pass
 
 		self.sellerEntry        = self.builder.get_object("sellerCodeEntry")
 		self.totalEntry         = self.builder.get_object("subtotalEntry")
@@ -140,14 +143,14 @@ class SellProducts:
 		self.mainDlg.show_all()
 
 	def appendPrice(self,  price):
-		oldPrice    = float(self.totalEntry.get_text())
+		oldPrice    = utility.getFloatNumber(self.totalEntry.get_text())
 		totalPrce   = oldPrice + price
-		self.totalEntry.set_text(str(totalPrce))
+		self.totalEntry.set_text(utility.showNumber(totalPrce))
 
 	def appendDiscount(self, discount):
-		oldDiscount = float(self.totalDiscsEntry.get_text())
+		oldDiscount = utility.getFloatNumber(self.totalDiscsEntry.get_text())
 		oldDiscount = oldDiscount + float(discount) 
-		self.totalDiscsEntry.set_text(str(oldDiscount))
+		self.totalDiscsEntry.set_text(utility.showNumber(oldDiscount))
 		
 	def editSell(self,sender):
 		iter    = self.sellsTreeView.get_selection().get_selected()[1]
@@ -198,14 +201,14 @@ class SellProducts:
 				self.sellsItersDict = {}
 				
 	def reducePrice(self,  price):
-		oldPrice    = float(self.totalEntry.get_text())
+		oldPrice    = utility.getFloatNumber(self.totalEntry.get_text())
 		totalPrce   = oldPrice - price
-		self.totalEntry.set_text(str(totalPrce))
+		self.totalEntry.set_text(utility.showNumber(totalPrce))
 
 	def reduceDiscount(self, discount):
-		oldDiscount = float(self.totalDiscsEntry.get_text())
+		oldDiscount = utility.getFloatNumber(self.totalDiscsEntry.get_text())
 		oldDiscount = oldDiscount - discount
-		self.totalDiscsEntry.set_text(str(oldDiscount))
+		self.totalDiscsEntry.set_text(utility.showNumber(oldDiscount))
 
 	def addSell(self,sender=0,edit=None):
 		self.addSellDlg = self.builder.get_object("addASellDlg")
@@ -214,8 +217,8 @@ class SellProducts:
 			ttl = "Edit sell:\t%s - %s" %(self.editCde,edit[1])
 			self.addSellDlg.set_title(ttl)
 			self.edtSellFlg = True		#TODO find usage
-			self.oldTtl     = edit[4]	#TODO find usage
-			self.oldTtlDisc = edit[6]	#TODO find usage
+			self.oldTtl     = utility.getFloatNumber(edit[4])
+			self.oldTtlDisc = utility.getFloatNumber(edit[6])
 			btnVal  = "Save Changes..."
 		else:
 			self.editingSell    = None
@@ -259,20 +262,23 @@ class SellProducts:
 			pro = self.session.query(Products).select_from(Products).filter(Products.name==pName).first()
 			#self.proSelected(code=pro.code)
 			self.proVal.set_text(pro.code)
+			
 			self.qntyEntry.set_text(qnty)
-			self.unitPriceEntry.set_text(untPrc)
-			self.discountEntry.set_text(untDisc)
+			self.unitPriceEntry.set_text(untPrc.replace(',', ''))
+			self.discountEntry.set_text(untDisc.replace(',', ''))
 			self.descVal.set_text(desc)
 			
 			self.proNameLbl.set_text(pName)
 			self.avQntyVal.set_text(utility.showNumber(pro.quantity))
 			self.stndrdPVal.set_text(utility.showNumber(pro.sellingPrice))
-			discval = self.calcDiscount(pro.discountFormula, float(qnty), pro.sellingPrice)
-			self.stnrdDisc.set_text(str(discval))
+			
 			self.ttlAmntVal.set_text(ttlPrc)
 			self.discTtlVal.set_text(ttlDisc)
-			total_payable = str(float(utility.convertToLatin(ttlPrc)) - float(utility.convertToLatin(ttlDisc)))
-			self.ttlPyblVal.set_text(total_payable)
+			total_payable = utility.getFloatNumber(ttlPrc) - utility.getFloatNumber(ttlDisc)
+			discval = self.calcDiscount(pro.discountFormula, utility.getFloatNumber(qnty), 
+										pro.sellingPrice)
+			self.ttlPyblVal.set_text(utility.showNumber(total_payable))
+			self.stnrdDisc.set_text(utility.showNumber(discval))
 			self.product = pro
 			#self.validateBuy()
 			
@@ -287,17 +293,21 @@ class SellProducts:
 		return True
 
 	def clearSellFields(self):
+		zerostr = "0.0"
+		if config.digittype == 1:
+			zerostr = utility.convertToPersian(zerostr)
+			
 		self.proVal.set_text("")
-		self.qntyEntry.set_text("0.0")
-		self.unitPriceEntry.set_text("0.0")
+		self.qntyEntry.set_text(zerostr)
+		self.unitPriceEntry.set_text(zerostr)
 		self.discountEntry.set_text("")
 		self.proNameLbl.set_text("")
 		self.avQntyVal.set_text("")
 		self.stnrdDisc.set_text("")
 		self.stndrdPVal.set_text("")
-		self.ttlAmntVal.set_text("0.0")
-		self.discTtlVal.set_text("0.0")
-		self.ttlPyblVal.set_text("0.0")
+		self.ttlAmntVal.set_text(zerostr)
+		self.discTtlVal.set_text(zerostr)
+		self.ttlPyblVal.set_text(zerostr)
 		self.descVal.set_text("")
 		
 	def addSellToList(self,sender=0):
@@ -314,7 +324,7 @@ class SellProducts:
 		else:
 			productName = product.name
 			purchasePrc = product.purchacePrice
-		qnty    = float(self.qntyEntry.get_text())
+		qnty    = self.qntyEntry.get_float()
 		over    = product.oversell
 		avQnty  = product.quantity
 		if qnty <= 0:
@@ -335,7 +345,7 @@ class SellProducts:
 				msgbox.run()
 				msgbox.destroy()
 				return
-		slPrc   = float(self.unitPriceEntry.get_text())
+		slPrc   = self.unitPriceEntry.get_float()
 		if slPrc <= 0:
 			errorstr = _("The \"Unit Price\" Must be greater than 0.")
 			msgbox = gtk.MessageDialog( self.addSellDlg, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, 
@@ -359,6 +369,7 @@ class SellProducts:
 		headers = ("Code","Product Name","Quantity","Unit Price","Unit Discount","Discount","Total Price","Description")
 		#----values:
 		discnt  = self.discTtlVal.get_text()
+		discnt_val = utility.getFloatNumber(discnt)
 		total   = qnty*slPrc
 		descp   = self.descVal.get_text()
 		untDisc = self.discountEntry.get_text()
@@ -368,21 +379,33 @@ class SellProducts:
 			for i in range(len(sellList)):
 				self.sellListStore.set(self.editingSell,i,sellList[i])
 	#            editedIter  = self.sellListStore.set(None,sellList)
-			self.reducePrice(float(self.oldTtl))
-			self.reduceDiscount(float(self.oldTtlDisc))
-			self.appendPrice(total)
-			self.appendDiscount(discnt)
+			#self.reducePrice(float(self.oldTtl))
+			#self.reduceDiscount(float(self.oldTtlDisc))
+			self.appendPrice(total - self.oldTtl)
+			self.appendDiscount(discnt_val - self.oldTtlDisc)
 			self.valsChanged()
 	#            self.sellsDict[No]  = (self.editingSell,product,sellList)
 			self.sellsItersDict[No]   = self.editingSell
 			self.addSellDlg.hide()
 			
 		else:
-			No  = len(self.sellsItersDict) + 1
-			sellList    = (str(No),productName,str(qnty),str(slPrc),str(total),untDisc,discnt,descp)
-			iter    = self.sellListStore.append(None,sellList)
+			No = len(self.sellsItersDict) + 1
+			
+			No_str = str(No)
+			qnty_str = str(qnty)
+			slPrc_str = str(slPrc)
+			total_str = str(total)
+			if config.digittype == 1:
+				No_str = utility.convertToPersian(No_str)
+				qnty_str = utility.showNumber(qnty_str)
+				slPrc_str = utility.showNumber(slPrc_str)
+				total_str = utility.showNumber(total_str)
+				untDisc = utility.convertToPersian(untDisc)
+				
+			sellList = (No_str, productName, qnty_str, slPrc_str, total_str, untDisc, discnt, descp)
+			iter = self.sellListStore.append(None, sellList)
 			self.appendPrice(total)
-			self.appendDiscount(discnt)
+			self.appendDiscount(discnt_val)
 			self.valsChanged()
 	#            self.sellsDict[No]  = (iter,product,sellList)
 			self.sellsItersDict[No]   = iter
@@ -419,8 +442,10 @@ class SellProducts:
 				self.sellListStore.set_value(belowIter,0,str(No))
 		
 	def calculatePayable(self):
-		subtotal    = float(self.builder.get_object("subtotalEntry").get_text())
-		ttlDiscs    = float(self.builder.get_object("totalDiscsEntry").get_text())
+		subtotal    = utility.getFloatNumber(
+							self.builder.get_object("subtotalEntry").get_text())
+		ttlDiscs    = utility.getFloatNumber(
+							self.builder.get_object("totalDiscsEntry").get_text())
 		additions   = self.additionsEntry.get_float()
 		subtracts   = self.subsEntry.get_float()
 		
@@ -436,14 +461,14 @@ class SellProducts:
 			err     = True
 
 		if not err:
-			amnt    = subtotal + additions + tax - subtracts - ttlDiscs
-			self.payableAmntEntry.set_text(str(amnt))
+			amnt = subtotal + additions + tax - subtracts - ttlDiscs
+			self.payableAmntEntry.set_text(utility.showNumber(amnt))
 
 	def calculateBalance(self):
-		payableAmnt = float(self.payableAmntEntry.get_text())
-		ttlPayment  = float(self.totalPaymentsEntry.get_text())
-		blnc        = payableAmnt - ttlPayment
-		blncDue     = self.remainedAmountEntry.set_text(str(blnc))
+		payableAmnt = utility.getFloatNumber(self.payableAmntEntry.get_text())
+		ttlPayment = utility.getFloatNumber(self.totalPaymentsEntry.get_text())
+		blnc = payableAmnt - ttlPayment
+		self.remainedAmountEntry.set_text(utility.showNumber(blnc))
 				
 	#def keyPressedEvent(self,sender=0,ev=0):
 		#if ev.keyval == 65293 or ev.keyval == 65421:
@@ -476,7 +501,7 @@ class SellProducts:
 			severe = False
 			
 			if self.qntyEntry.get_text() == "":
-				self.qntyEntry.set_text("0.0")
+				self.qntyEntry.set_text(utility.showNumber(0.0))
 				qnty = 0
 			else:
 				qnty = self.qntyEntry.get_float()
@@ -510,8 +535,9 @@ class SellProducts:
 				if self.product.discountFormula:
 					print "formula exists!"
 					discval = self.calcDiscount(self.product.discountFormula, qnty, sellPrc)
-					self.discountEntry.set_text(str(discval))
-					self.stnrdDisc.set_text(str(discval))
+					discstr = utility.showNumber(discval)
+					self.discountEntry.set_text(discstr)
+					self.stnrdDisc.set_text(discstr)
 					self.calcTotalDiscount(discval)
 				else:
 					# if discount be expressed in percent, total discount is changed
@@ -530,8 +556,8 @@ class SellProducts:
 			severe = False
 			
 			if self.unitPriceEntry.get_text() == "":
-				untPrc = product.sellingPrice
-				self.unitPriceEntry.set_text(utility.showNumber(untPrc))
+				untPrc = self.product.sellingPrice
+				self.unitPriceEntry.set_text(utility.showNumber(untPrc, comma=False))
 			else:
 				untPrc  = self.unitPriceEntry.get_float()            
 			
@@ -570,15 +596,16 @@ class SellProducts:
 			
 			if self.discountEntry.get_text() == "":
 				self.discountEntry.set_text(self.stnrdDisc.get_text())
-				discval = float(self.stnrdDisc.get_text())
+				discval = utility.getFloatNumber(self.stnrdDisc.get_text())
 			else:
-				disc  = self.discountEntry.get_text()
+				disc  = utility.convertToLatin(self.discountEntry.get_text())
 				discval = 0
 
 				if disc != "":
-					pindex = disc.find('%')
+					print disc
+					pindex = disc.find(u'%')
 					if pindex == 0 or pindex == len(disc) - 1:
-						discp = float(disc.strip('%'))
+						discp = float(disc.strip(u'%'))
 						
 						if discp > 100 or discp < 0:
 							self.discountEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
@@ -640,22 +667,22 @@ class SellProducts:
 		id      = selectedPro.id
 		code    = selectedPro.code
 		name    = selectedPro.name
-		av_qnty    = float(selectedPro.quantity)
-		sellPrc = float(selectedPro.sellingPrice)
+		av_qnty    = selectedPro.quantity
+		sellPrc = selectedPro.sellingPrice
 		formula  = selectedPro.discountFormula
 		
 		qnty = self.qntyEntry.get_float()
 		discnt = self.calcDiscount(formula, qnty, sellPrc)
 							
 		
-		self.avQntyVal.set_text(str(av_qnty))
-		self.stnrdDisc.set_text(str(discnt))
+		self.avQntyVal.set_text(utility.showNumber(av_qnty))
+		self.stnrdDisc.set_text(utility.showNumber(discnt))
 		#if self.unitPriceEntry.get_text() == "0.0":
-		self.unitPriceEntry.set_text(str(sellPrc))
+		self.unitPriceEntry.set_text(utility.showNumber(sellPrc, comma=False))
 		#if self.discountEntry.get_text() == "0.0":
-		self.discountEntry.set_text(str(discnt))
+		self.discountEntry.set_text(utility.showNumber(discnt, comma=False))
 
-		self.stndrdPVal.set_text(str(sellPrc))
+		self.stndrdPVal.set_text(utility.showNumber(sellPrc))
 
 		self.proNameLbl.show()
 		#self.stnrdSelPrceBox.show()
@@ -701,7 +728,7 @@ class SellProducts:
 		unitPrice   = self.unitPriceEntry.get_float()
 		qnty        = self.qntyEntry.get_float()
 		total       = unitPrice * qnty
-		self.ttlAmntVal.set_text(str(total))
+		self.ttlAmntVal.set_text(utility.showNumber(total))
 		self.calcTotalPayable()
 
 	def calcTotalDiscount(self, discount):
@@ -709,13 +736,13 @@ class SellProducts:
 		#unitPrice   = self.unitPriceEntry.get_float()
 		qnty        = self.qntyEntry.get_float()
 		totalDisc   = discount * qnty
-		self.discTtlVal.set_text(str(totalDisc))
+		self.discTtlVal.set_text(utility.showNumber(totalDisc))
 		self.calcTotalPayable()
 
 	def calcTotalPayable(self):
-		ttlAmnt     = float(self.ttlAmntVal.get_text())
-		ttldiscount     = float(self.discTtlVal.get_text())
-		self.ttlPyblVal.set_text(str(ttlAmnt - ttldiscount))
+		ttlAmnt = utility.getFloatNumber(self.ttlAmntVal.get_text())
+		ttldiscount = utility.getFloatNumber(self.discTtlVal.get_text())
+		self.ttlPyblVal.set_text(utility.showNumber(ttlAmnt - ttldiscount))
 
 	def selectProduct(self,sender=0):
 		obj = product.Product()
@@ -766,21 +793,23 @@ class SellProducts:
 			#            exchngUntPrc, exchngUntDisc, exchngTransId, exchngDesc):
 			print "\nSaving the Exchanges -----------"
 			for exch in self.sellListStore:
-				id = self.session.query(Products).select_from(Products).filter(Products.name==unicode(exch[1])).first().id
-				exchange = Exchanges( int(exch[0]), id, float(exch[2]), float(exch[3]),
-										exch[5], self.transId, unicode(exch[7]))
+				query = self.session.query(Products).select_from(Products)
+				pid = query.filter(Products.name == unicode(exch[1])).first().id
+				exchange = Exchanges(utility.getIntegerNumber(exch[0]), pid, utility.getFloatNumber(exch[2]),
+									 utility.getFloatNumber(exch[3]), utility.convertToLatin(exch[5]),
+									 self.transId, unicode(exch[7]))
 				self.session.add( exchange )
 				self.session.commit()
 				#---- Updating the products quantity
 				#TODO product quantity shouldbe updated while adding products to factor
 				if not self.subPreInv:
-					query   = self.session.query(Products).select_from(Products).filter(Products.id==id)
+					query   = self.session.query(Products).select_from(Products).filter(Products.id == pid)
 					pro = query.first()
 					#oldQnty = query.first().quantity
 					#newQnty = oldQnty - float(exch[2])
 					#updateVals  = { Products.quantity : newQnty }
 					#edit    = query.update( updateVals )
-					pro.quantity -= float(exch[2])
+					pro.quantity -= utility.getFloatNumber(exch[2])
 					self.session.commit()
 			print "------ Saving the Exchanges:\tDONE! "
 			
@@ -805,7 +834,7 @@ class SellProducts:
 			self.statusBar.push(1, "There is no product selected for the invoice.")
 			return False
 						
-		self.subCode    = self.transCode.get_text()
+		self.subCode    = self.transId
 		
 		self.subDate    = self.factorDate.getDateObject()
 		self.subPreInv  = self.builder.get_object("preChkBx").get_active()
@@ -819,7 +848,7 @@ class SellProducts:
 		
 		self.subAdd     = self.additionsEntry.get_float()
 		self.subSub     = self.subsEntry.get_float()
-		self.subTax     = self.taxEntry.get_text()
+		self.subTax     = utility.convertToLatin(self.taxEntry.get_text())
 		self.subShpDate = self.shippedDate.getDateObject()
 		self.subFOB     = unicode(self.builder.get_object("FOBEntry").get_text())
 		self.subShipVia = unicode(self.builder.get_object("shipViaEntry").get_text())
@@ -1127,7 +1156,7 @@ class SellProducts:
 		ttlNonCash  = float(self.nonCashPymntsEntry.get_text())
 		ttlPayments = ttlCash + ttlNonCash
 		
-		self.totalPaymentsEntry.set_text(str(ttlPayments))
+		self.totalPaymentsEntry.set_text(utility.showNumber(ttlPayments))
 		self.calculateBalance()
 
 	def showPayments(self,sender):
