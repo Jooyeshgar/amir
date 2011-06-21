@@ -262,8 +262,11 @@ class SellProducts:
 			pro = self.session.query(Products).select_from(Products).filter(Products.name==pName).first()
 			#self.proSelected(code=pro.code)
 			self.proVal.set_text(pro.code)
+			self.product_code = pro.code
 			
 			self.qntyEntry.set_text(qnty)
+			self.quantity = utility.getFloatNumber(qnty)
+			
 			self.unitPriceEntry.set_text(untPrc.replace(',', ''))
 			self.discountEntry.set_text(untDisc.replace(',', ''))
 			self.descVal.set_text(desc)
@@ -284,6 +287,8 @@ class SellProducts:
 			
 		else:
 			self.clearSellFields()
+			self.product_code = ""
+			self.quantity = 0
 			
 		self.addSellDlg.show_all()
 				
@@ -480,20 +485,23 @@ class SellProducts:
 
 	def validatePCode(self, sender, event):
 		productCd   = self.proVal.get_text()
-		product = self.session.query(Products).select_from(Products).filter(Products.code==productCd).first()
-		if not product:
-			self.proVal.modify_base(gtk.STATE_NORMAL,self.redClr)
-			msg = "Product code is invalid"
-			self.proVal.set_tooltip_text(msg)
-			self.addSellStBar.push(1,msg)
-			self.proNameLbl.set_text("")
-			self.product = None
-		else:
-			self.proVal.modify_base(gtk.STATE_NORMAL,self.whiteClr)
-			self.proVal.set_tooltip_text("")
-			self.proSelected(code=product.code)
-			self.proNameLbl.set_text(str(product.name))
-			self.product = product
+		if self.product_code != productCd:
+			print "validateCode"
+			product = self.session.query(Products).select_from(Products).filter(Products.code==productCd).first()
+			if not product:
+				self.proVal.modify_base(gtk.STATE_NORMAL,self.redClr)
+				msg = "Product code is invalid"
+				self.proVal.set_tooltip_text(msg)
+				self.addSellStBar.push(1,msg)
+				self.proNameLbl.set_text("")
+				self.product = None
+			else:
+				self.proVal.modify_base(gtk.STATE_NORMAL,self.whiteClr)
+				self.proVal.set_tooltip_text("")
+				self.proSelected(code=product.code)
+				self.proNameLbl.set_text(str(product.name))
+				self.product = product
+			self.product_code = productCd
 	
 	def validateQnty(self, sender, event):
 		if self.product:
@@ -506,47 +514,51 @@ class SellProducts:
 			else:
 				qnty = self.qntyEntry.get_float()
 
-			qntyAvlble  = float(self.product.quantity)
-			over    = self.product.oversell
-			if qnty < 0:
-				self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
-				if not stMsg:
-					stMsg  = "Quantity must be greater than 0."
-					severe = True
-				self.qntyEntry.set_tooltip_text("Quantity must be greater than 0.")
+			if self.quantity != qnty:
+				print "validateQnty"
+				qntyAvlble  = float(self.product.quantity)
+				over    = self.product.oversell
+				if qnty < 0:
+					self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
+					if not stMsg:
+						stMsg  = "Quantity must be greater than 0."
+						severe = True
+					self.qntyEntry.set_tooltip_text("Quantity must be greater than 0.")
 
-			elif qnty > qntyAvlble and not over:
-				self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
-				msg = "Quantity is more than the available storage. (Over-Sell is Off)"
-				if not stMsg:
-					stMsg  = msg
-					severe = True
-				self.qntyEntry.set_tooltip_text(msg)
+				elif qnty > qntyAvlble and not over:
+					self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
+					msg = "Quantity is more than the available storage. (Over-Sell is Off)"
+					if not stMsg:
+						stMsg  = msg
+						severe = True
+					self.qntyEntry.set_tooltip_text(msg)
 
-			else:
-				self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
-				self.qntyEntry.set_tooltip_text("")
-				
-			self.addSellStBar.push(1,stMsg)
-			
-			if not severe:
-				code   = self.proVal.get_text()
-				sellPrc = self.product.sellingPrice
-				if self.product.discountFormula:
-					print "formula exists!"
-					discval = self.calcDiscount(self.product.discountFormula, qnty, sellPrc)
-					discstr = utility.showNumber(discval)
-					self.discountEntry.set_text(discstr)
-					self.stnrdDisc.set_text(discstr)
-					self.calcTotalDiscount(discval)
 				else:
-					# if discount be expressed in percent, total discount is changed
-					# by changing quantity.
-					# calling validateDiscnt converts discount percentage into discount value,
-					# then calculates total discount.
-					self.validateDiscnt()
+					self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
+					self.qntyEntry.set_tooltip_text("")
+					
+				self.addSellStBar.push(1,stMsg)
 				
-				self.calcTotal()
+				if not severe:
+					code   = self.proVal.get_text()
+					sellPrc = self.product.sellingPrice
+					if self.product.discountFormula:
+						print "formula exists!"
+						discval = self.calcDiscount(self.product.discountFormula, qnty, sellPrc)
+						discstr = utility.showNumber(discval)
+						self.discountEntry.set_text(discstr)
+						self.stnrdDisc.set_text(discstr)
+						self.calcTotalDiscount(discval)
+					else:
+						# if discount be expressed in percent, total discount is changed
+						# by changing quantity.
+						# calling validateDiscnt converts discount percentage into discount value,
+						# then calculates total discount.
+						self.validateDiscnt()
+					
+					self.calcTotal()
+					
+				self.quantity = qnty
 				
 				
 	
@@ -587,6 +599,7 @@ class SellProducts:
 				self.calcTotal()
 	
 	def validateDiscnt(self, sender=0, event=0):
+		print "validateDiscnt"
 		if self.product:
 			stMsg = ""
 			severe = False
@@ -663,6 +676,7 @@ class SellProducts:
 		#self.stnrdDiscBox.hide()
 
 	def proSelected(self,sender=0, id=0, code=0):
+		print "pro selected"
 		selectedPro = self.session.query(Products).select_from(Products).filter(Products.code==code).first()
 		id      = selectedPro.id
 		code    = selectedPro.code
