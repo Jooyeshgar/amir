@@ -349,7 +349,7 @@ class SellProducts:
 				msgbox.set_title(_("Invalid Quantity"))
 				msgbox.run()
 				msgbox.destroy()
-				return
+				#return
 		slPrc   = self.unitPriceEntry.get_float()
 		if slPrc <= 0:
 			errorstr = _("The \"Unit Price\" Must be greater than 0.")
@@ -530,7 +530,7 @@ class SellProducts:
 					msg = "Quantity is more than the available storage. (Over-Sell is Off)"
 					if not stMsg:
 						stMsg  = msg
-						severe = True
+						severe = False
 					self.qntyEntry.set_tooltip_text(msg)
 
 				else:
@@ -631,7 +631,12 @@ class SellProducts:
 							discval = untPrc * (discp / 100)
 							
 					elif pindex == -1:
-						discval = float(disc)
+						try:
+							discval = float(disc)
+						except ValueError:
+							self.discountEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
+							errMess  = "Invalid discount. (Use numbers and percentage sign only)"
+							self.discountEntry.set_tooltip_text(errMess)
 					else:
 						self.discountEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
 						errMess  = "Invalid discount. (Put percentage sign before or after discount amount)"
@@ -852,6 +857,36 @@ class SellProducts:
 		
 		self.subDate    = self.factorDate.getDateObject()
 		self.subPreInv  = self.builder.get_object("preChkBx").get_active()
+		if not self.subPreInv:
+			print "full invoice!"
+			pro_dic = {}
+			for exch in self.sellListStore:
+				pro_name = unicode(exch[1])
+				pro_qnty = utility.getFloatNumber(exch[2])
+				
+				if pro_name in pro_dic:
+					pro_dic[pro_name] -= pro_qnty
+				else:
+					query   = self.session.query(Products).select_from(Products).filter(Products.name == pro_name)
+					pro = query.first()
+					if not pro.oversell:
+						pro_dic[pro_name] = pro.quantity - pro_qnty
+			
+			pro_str = ""
+			for (k, v) in pro_dic.items():
+				print "%s : %d" % (k, v)
+				if v < 0:
+					pro_str += k + _(", ")
+					
+			pro_str.strip()
+			print pro_str
+			if pro_str:
+				msg = _("The available quantity of %s is not enough for the invoice. You can save it as pre-invoice.") \
+						% pro_str
+				self.statusBar.push(1, msg)
+				return False
+				
+					
 		self.subCust    = self.sellerEntry.get_text()
 		query   = self.session.query(Subject).select_from(Subject).filter(Subject.code==self.subCust).first()
 		if not query:
@@ -867,6 +902,7 @@ class SellProducts:
 		self.subFOB     = unicode(self.builder.get_object("FOBEntry").get_text())
 		self.subShipVia = unicode(self.builder.get_object("shipViaEntry").get_text())
 		self.subDesc    = unicode(self.builder.get_object("transDescEntry").get_text())
+		self.statusBar.push(1,"")
 		return True
 
 	def printTransaction(self,sender=0):
