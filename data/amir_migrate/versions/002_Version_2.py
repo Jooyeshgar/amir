@@ -43,6 +43,7 @@ transactions = Table('transactions', meta,
     Column('transId',            Integer,      primary_key = True                      ),
     Column('transCode',          String,       nullable = False                        ),
     Column('transDate',          Date,         nullable = False                        ),
+    Column('transBill',          Integer,      ColumnDefault(0)                        ),
     Column('transCust',          Integer,      ForeignKey('customers.custId')          ),
     Column('transAddition',      Float,        ColumnDefault(0),   nullable = False    ),
     Column('transSubtraction',   Float,        ColumnDefault(0),   nullable = False    ),
@@ -68,9 +69,9 @@ exchanges = Table('exchanges', meta,
     Column('exchngDesc',        Unicode(200),   nullable = True                         )
 )
 
-payments = Table('payments', meta,
+payment = Table('payment', meta,
     Column('paymntId',          Integer,      primary_key = True                      ),
-    Column('paymntNo',          Integer,      nullable = False                        ),
+    #Column('paymntNo',          Integer,      nullable = False                        ),
     Column('paymntDueDate',     Date,         nullable = False                        ),
     Column('paymntBank',        Unicode(100), nullable = True                         ),
     Column('paymntSerial',      Unicode(50),  nullable = True                         ),
@@ -78,25 +79,29 @@ payments = Table('payments', meta,
     Column('paymntPayer',       Integer,      ForeignKey('customers.custId')          ),
     Column('paymntWrtDate',     Date,         nullable = True                         ),
     Column('paymntDesc',        Unicode(200), nullable = True                         ),
-    Column('paymntTransId',     Integer,      ForeignKey('transactions.transId')      ),
-    Column('paymntTrckCode',    Unicode,      nullable = True                         )
+    Column('paymntTransId',     Integer,      ColumnDefault(0)                        ),
+    Column('paymntBillId',      Integer,      ColumnDefault(0)                        ),
+    Column('paymntTrckCode',    Unicode,      nullable = True                         ),
+    Column('paymntOrder',       Integer       ColumnDefault(0),   nullable = False    )
 #    Column('paymntChq',         Unicode,      nullable = True                         )
 )
 
-cheques = Table('cheques', meta,
+cheque = Table('cheque', meta,
     Column('chqId',          Integer,      primary_key = True                      ),
     Column('chqAmount',      Float,        ColumnDefault(0),                  nullable = False ),
     Column('chqWrtDate',     Date,         nullable = False                        ),
     Column('chqDueDate',     Date,         nullable = False                        ),
-    Column('chqBank',        Unicode(50),  nullable = True                         ),
+    #Column('chqBank',        Unicode(50),  nullable = True                         ),
     Column('chqAccount',     Integer,      ForeignKey('bankAccounts.accId'),  nullable = True  ),
-    Column('chqSerialNo',    String,       nullable = False                        ),
-    Column('chqStatus',      String,       nullable = False                        ),
-    Column('chqPaid',        Boolean,      ColumnDefault(0),   nullable = False    ),
+    Column('chqSerial',      Unicode(50),  nullable = False                        ),
+    Column('chqStatus',      Integer       ColumnDefault(0),   nullable = False    ),
+    #Column('chqPaid',        Boolean,      ColumnDefault(0),   nullable = False    ),
     Column('chqCust',        Integer,      ForeignKey('customers.custId')          ),
-    Column('chqSpent',       Boolean,      ColumnDefault(0),   nullable = False    ),
-    Column('chqTransId',     Integer,      ForeignKey('transactions.transId')      ),
-    Column('chqDesc',        Unicode(200), nullable = True                         )
+    #Column('chqSpent',       Boolean,      ColumnDefault(0),   nullable = False    ),
+    Column('chqTransId',     Integer,      ColumnDefault(0)                        ),
+    Column('chqBillId',      Integer,      ColumnDefault(0)                        ),
+    Column('chqDesc',        Unicode(200), nullable = True                         ),
+    Column('chqOrder',       Integer       ColumnDefault(0),   nullable = False    )
 )
 
 custGroups = Table('custGroups', meta,

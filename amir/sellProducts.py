@@ -899,12 +899,6 @@ class SellProducts:
 	def printTransaction(self,sender=0):
 		print "main page \"PRINT button\" is pressed!", sender
 
-	#def addNonCashTtl(self,amnt):
-		#lstAmnt = float(self.ttlNonCashEntry.get_text())
-		#amount  = lstAmnt + amnt
-		#self.ttlNonCashEntry.set_text(str(amount))
-		#self.nonCashPymntsEntry.set_text(str(amount))
-		#self.paymentsChanged()
 		
 	#def remNonCashTtl(self,amnt):
 		#lstAmnt = float(self.ttlNonCashEntry.get_text())

@@ -169,25 +169,27 @@ class Exchanges(Base):
         self.exchngDesc     = exchngDesc
 
 
-class Payments(Base):
-    __tablename__ = "payments"
-    paymntId        = Column( Integer,      primary_key = True                      )
-    paymntNo        = Column( Integer,      nullable = False                        )
-    paymntDueDate   = Column( Date,         nullable = False                        )
-    paymntBank      = Column( Unicode(100), nullable = True                         )
-    paymntSerial    = Column( Unicode(50),  nullable = True                         )
-    paymntAmount    = Column( Float,        ColumnDefault(0),   nullable = False    )
-    paymntPayer     = Column( Integer,      ForeignKey('customers.custId')          )
-    paymntWrtDate   = Column( Date,         nullable = True                         )
-    paymntDesc      = Column( Unicode(200), nullable = True                         )
-    paymntTransId   = Column( Integer,      ForeignKey('transactions.transId')      )
-    paymntTrckCode  = Column( Unicode,      nullable = True                         )
+class Payment(Base):
+    __tablename__ = "payment"
+    paymntId        = Column( Integer,      primary_key = True                )
+    paymntDueDate   = Column( Date,         nullable = False                  )
+    paymntBank      = Column( Unicode(100), nullable = True                   )
+    paymntSerial    = Column( Unicode(50),  nullable = True                   )
+    paymntAmount    = Column( Float,        ColumnDefault(0), nullable = False)
+    paymntPayer     = Column( Integer,      ForeignKey('customers.custId')    )
+    paymntWrtDate   = Column( Date,         nullable = True                   )
+    paymntDesc      = Column( Unicode(200), nullable = True                   )
+    paymntTransId   = Column( Integer,      ColumnDefault(0)                  ) #Transaction id is zero for non-invoice payments.
+    paymntBillId    = Column( Integer,      ColumnDefault(0)                  ) #Bill id is zero for temporary transactions.
+    paymntTrckCode  = Column( Unicode,      nullable = True                   )
+    paymntOrder     = Column( Integer,      ColumnDefault(0), nullable = False)
 #    paymntChq       = Column( Integer,      ForeignKey('cheques.chqId')             )
 
-    def __init__( self, paymntNo, paymntDueDate, paymntBank, paymntSerial, paymntAmount,
-                  paymntPayer, paymntWrtDate, paymntDesc, paymntTransId, paymntTrckCode ):
+    def __init__( self, paymntDueDate, paymntBank, paymntSerial, paymntAmount,
+                  paymntPayer, paymntWrtDate, paymntDesc, paymntTransId, paymntBillId, 
+                  paymntTrckCode, paymntOrder):
 
-        self.paymntNo        = paymntNo
+        #self.paymntNo        = paymntNo
         self.paymntDueDate   = paymntDueDate
         self.paymntBank      = paymntBank
         self.paymntSerial    = paymntSerial
@@ -196,40 +198,46 @@ class Payments(Base):
         self.paymntWrtDate   = paymntWrtDate
         self.paymntDesc      = paymntDesc
         self.paymntTransId   = paymntTransId
+        self.paymntBillId    = paymntBillId
         self.paymntTrckCode  = paymntTrckCode
+        self.paymntOrder     = paymntOrder
         
 
-class Cheques(Base):
-    __tablename__ = "cheques"
-    chqId       = Column( Integer,      primary_key = True                      )
-    chqAmount   = Column( Float,        ColumnDefault(0),   nullable = False    )
-    chqWrtDate  = Column( Date,         nullable = False                        )
-    chqDueDate  = Column( Date,         nullable = False                        )
-    chqBank     = Column( Unicode(50),  nullable = True                         )
+class Cheque(Base):
+    __tablename__ = "cheque"
+    chqId       = Column( Integer,      primary_key = True                )
+    chqAmount   = Column( Float,        ColumnDefault(0), nullable = False)
+    chqWrtDate  = Column( Date,         nullable = False                  )
+    chqDueDate  = Column( Date,         nullable = False                  )
+    #chqBank     = Column( Unicode(50),  nullable = True                   )
     chqAccount  = Column( Integer,      ForeignKey('bankAccounts.accId'),
-                                        nullable = True                         )
-    chqSerialNo = Column( String,       nullable = False                        )
-    chqStatus   = Column( String,       nullable = False                        )
-    chqPaid     = Column( Boolean,      ColumnDefault(0),   nullable = False    )
-    chqCust     = Column( Integer,      ForeignKey('customers.custId')          )
-    chqSpent    = Column( Boolean,      ColumnDefault(0),   nullable = False    )
-    chqTransId  = Column( Integer,      ForeignKey('transactions.transId')      )
-    chqDesc     = Column( Unicode(200), nullable = True                         )
+                                        nullable = True                   )
+    chqSerial   = Column( Unicode(50),  nullable = False                  )
+    chqStatus   = Column( Integer,      ColumnDefault(0), nullable = False)
+    #chqPaid     = Column( Boolean,      ColumnDefault(0),   nullable = False    )
+    chqCust     = Column( Integer,      ForeignKey('customers.custId')    )
+    #chqSpent    = Column( Boolean,      ColumnDefault(0),   nullable = False    )
+    chqTransId  = Column( Integer,      ColumnDefault(0)                  ) #Transaction id is zero for non-invoice cheques.
+    chqBillId   = Column( Integer,      ColumnDefault(0)                  ) #Bill id is zero for temporary transactions.
+    chqDesc     = Column( Unicode(200), nullable = True                   )
+    chqOrder    = Column( Integer,      ColumnDefault(0), nullable = False)
 
-    def __init__( self, chqAmount, chqWrtDate, chqDueDate, chqBank, chqSerialNo,
-                  chqStatus, chqPaid, chqCust, chqSpent, chqTransId, chqDesc ):
+    def __init__( self, chqAmount, chqWrtDate, chqDueDate, chqSerial,
+                  chqStatus, chqCust, chqTransId, chqBillId, chqDesc, chqOrder):
 
         self.chqAmount   = chqAmount
         self.chqWrtDate  = chqWrtDate
         self.chqDueDate  = chqDueDate
-        self.chqBank     = chqBank
-        self.chqSerialNo = chqSerialNo
+        #self.chqBank     = chqBank
+        self.chqSerial   = chqSerial
         self.chqStatus   = chqStatus
-        self.chqPaid     = chqPaid
+        #self.chqPaid     = chqPaid
         self.chqCust     = chqCust
-        self.chqSpent    = chqSpent
+        #self.chqSpent    = chqSpent
         self.chqTransId  = chqTransId
+        self.chqBillId   = chqBillId
         self.chqDesc     = chqDesc
+        self.chqOrder    = chqOrder
 
 
 class CustGroups(Base):
