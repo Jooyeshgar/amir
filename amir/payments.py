@@ -27,7 +27,8 @@ class Payments(gobject.GObject):
 		self.window = self.builder.get_object("showPymnts")
 		
 		self.totalAmount = 0
-		self.numrows = 0
+		self.numrecpts = 0
+		self.numcheqs = 0
 		self.transId = transId
 		self.billId = billId
 		self.payer = None
@@ -56,10 +57,15 @@ class Payments(gobject.GObject):
 		self.trackingCodeEntry = self.builder.get_object("trackingCodeEntry")
 		self.bankAccountEntry = self.builder.get_object("bankAccountEntry")
 		
-		self.paysTreeView = self.builder.get_object("paymentsTreeView")
+		self.paysTreeView = self.builder.get_object("receiptTreeView")
 		self.paysListStore = gtk.ListStore(str, str, str, str, str, str, str, str, str)
 		self.paysListStore.clear()
 		self.paysTreeView.set_model(self.paysListStore)
+		
+		self.cheqTreeView = self.builder.get_object("chequeTreeView")
+		self.cheqListStore = gtk.ListStore(str, str, str, str, str, str, str, str, str)
+		self.cheqListStore.clear()
+		self.cheqTreeView.set_model(self.cheqListStore)
 		
 		payHeaders = (_("No."), _("Paid by"), _("Amount"), _("Writing date"), _("Due Date"), 
 					  _("Bank"), _("Serial No."), _("Track Code"), _("Description"))
@@ -69,6 +75,16 @@ class Payments(gobject.GObject):
 			column.set_spacing(5)
 			column.set_resizable(True)
 			self.paysTreeView.append_column(column)
+			txt += 1
+		
+		cheqHeaders = (_("No."), _("Paid by"), _("Amount"), _("Writing date"), _("Due Date"), 
+					  _("Bank"), _("Serial No."), _("Status"), _("Description"))
+		txt = 0
+		for header in cheqHeaders:
+			column = gtk.TreeViewColumn(header,gtk.CellRendererText(),text = txt)
+			column.set_spacing(5)
+			column.set_resizable(True)
+			self.cheqTreeView.append_column(column)
 			txt += 1
 			
 		self.builder.connect_signals(self)
@@ -98,11 +114,12 @@ class Payments(gobject.GObject):
 			self.bankEntry.set_text("")
 			self.serialNoEntry.set_text("")
 			self.payerEntry.set_text("")
+			self.builder.get_object("chqPayerLbl").set_text("")
 			self.pymntDescEntry.set_text("")
 			self.trackingCodeEntry.set_text("")
 			self.cheqStatusList.set_active(0)
 			self.bankAccountEntry.set_text("")
-		
+			
 			today   = date.today()
 			self.dueDateEntry.showDateObject(today)
 			self.writeDateEntry.showDateObject(today)
@@ -133,7 +150,6 @@ class Payments(gobject.GObject):
 		if self.validatePayment() == False:
 			return
 
-		self.numrows += 1
 		pymntAmnt = self.pymntAmntEntry.get_float()
 		wrtDate = self.writeDateEntry.getDateObject()
 		dueDte = self.dueDateEntry.getDateObject()
@@ -141,26 +157,29 @@ class Payments(gobject.GObject):
 		serial = unicode(self.serialNoEntry.get_text())
 		pymntDesc = unicode(self.pymntDescEntry.get_text())
 		
-		if self.isCheque.get_active():
-			trackCode = ""
-			status = self.cheqStatusList.get_active() 
-			cheque = Cheque(pymntAmnt, wrtDate, dueDte, serial, status, self.payer.custId,
-			                self.transId, self.billId, pymntDesc, self.numrows)
-			self.session.add(cheque)
-			self.session.commit()
-		else:
-			trackCode = unicode(self.trackingCodeEntry.get_text())
-			payment = Payment(dueDte, bank, serial, pymntAmnt, self.payer.custId, wrtDate,
-			                  pymntDesc, self.transId, self.billId, trackCode, self.numrows)
-			self.session.add(payment)
-			self.session.commit()
-			
-		#if not self.edtPymntFlg:
 		pymnt_str = utility.showNumber(pymntAmnt)
 		wrtDate_str = dateentry.dateToString(wrtDate)
 		dueDte_str = dateentry.dateToString(dueDte)
-		#("No.","Paid by","Amount","Writing date","Due Date","Bank","Serial No.","Track Code","Description")
-		self.paysListStore.append((self.numrows, self.payer.custName, pymnt_str, wrtDate_str, 
+		
+		if self.isCheque.get_active():
+			self.numcheqs += 1
+			status = self.cheqStatusList.get_active() 
+			cheque = Cheque(pymntAmnt, wrtDate, dueDte, serial, status, self.payer.custId,
+			                self.transId, self.billId, pymntDesc, self.numcheqs)
+			self.session.add(cheque)
+			self.session.commit()
+			
+			self.cheqListStore.append((self.numcheqs, self.payer.custName, pymnt_str, wrtDate_str, 
+		                      dueDte_str, bank, serial, self.chequeStatus[status], pymntDesc))
+		else:
+			self.numrecpts += 1
+			trackCode = unicode(self.trackingCodeEntry.get_text())
+			payment = Payment(dueDte, bank, serial, pymntAmnt, self.payer.custId, wrtDate,
+			                  pymntDesc, self.transId, self.billId, trackCode, self.numrecpts)
+			self.session.add(payment)
+			self.session.commit()
+			
+			self.paysListStore.append((self.numrecpts, self.payer.custName, pymnt_str, wrtDate_str, 
 		                      dueDte_str, bank, serial, trackCode, pymntDesc))
 		
 		self.addToTotalAmount(pymntAmnt)
@@ -245,6 +264,7 @@ class Payments(gobject.GObject):
 			serial  = self.paysListStore.get(iter, 6)[0]
 			trckCd  = self.paysListStore.get(iter, 7)[0]
 			desc    = self.paysListStore.get(iter, 8)[0]
+			#payment = self.session.query(
 			edtTpl  = (No,payer,amnt,wrtDate,dueDate,bank,serial,trckCd,desc)
 			self.addPayment(edit=edtTpl)
 
