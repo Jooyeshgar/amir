@@ -935,8 +935,8 @@ class SellProducts:
 		self.ttlNonCashEntry = self.builder.get_object("ttlNonCashEntry")
 		#self.showPymnts.show_all()
 
-	def setNonCashPayments(self, sender, value):
-		self.nonCashPymntsEntry.set_text(utility.showNumber(value))
+	def setNonCashPayments(self, sender, str_value):
+		self.nonCashPymntsEntry.set_text(str_value)
 
 	#def hidePayments(self,sender=0,ev=0):
 		#self.showPymnts.hide_all()

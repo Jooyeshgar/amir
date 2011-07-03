@@ -92,9 +92,9 @@ class Payments(gobject.GObject):
 	def showPayments(self):
 		self.window.show_all()
 		
-	def setTotalAmount(self, value):
-		self.totalAmount = value
-		self.emit("payments-changed", value)
+	#def setTotalAmount(self, value):
+		#self.totalAmount = value
+		#self.emit("payments-changed", value)
         
 	def addPayment(self,sender=0,edit=None):
 		self.addPymntDlg = self.builder.get_object("addPaymentDlg")
@@ -338,9 +338,9 @@ class Payments(gobject.GObject):
 	def addToTotalAmount(self, amount):
 		ttlNonCashLabel = self.builder.get_object("ttlNonCashLabel")
 		lastAmnt = utility.getFloatNumber(ttlNonCashLabel.get_text())
-		total  = lastAmnt + amount
-		ttlNonCashLabel.set_text(utility.showNumber(total))
-		self.emit("payments-changed", total)
+		total_str  = utility.showNumber(lastAmnt + amount)
+		ttlNonCashLabel.set_text(total_str)
+		self.emit("payments-changed", total_str)
 		
 	def activate_Cheque(self, sender):
 		self.builder.get_object("chequeInfoBox").set_sensitive(True)
@@ -355,5 +355,5 @@ class Payments(gobject.GObject):
 		
 gobject.type_register(Payments)
 gobject.signal_new("payments-changed", Payments, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (gobject.TYPE_FLOAT,))
+                   gobject.TYPE_NONE, (gobject.TYPE_STRING,))
                    
