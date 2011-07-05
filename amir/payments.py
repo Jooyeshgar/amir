@@ -147,6 +147,7 @@ class Payments(gobject.GObject):
 		bank = unicode(self.bankEntry.get_text())
 		serial = unicode(self.serialNoEntry.get_text())
 		pymntDesc = unicode(self.pymntDescEntry.get_text())
+		iter = None
 		
 		pymnt_str = utility.showNumber(pymntAmnt)
 		wrtDate_str = dateentry.dateToString(wrtDate)
@@ -165,6 +166,7 @@ class Payments(gobject.GObject):
 				cheque.chqStatus = status
 				cheque.chqCust = self.payer.custId
 				cheque.chqDesc = pymntDesc
+				iter = self.edititer
 				self.cheqListStore.set(self.edititer, 1, self.payer.custName, 2, pymnt_str,
 				                      3, wrtDate_str, 4, dueDte_str, 6, serial, 7, 
 				                      self.chequeStatus[status], 8, pymntDesc)
@@ -172,11 +174,14 @@ class Payments(gobject.GObject):
 				self.numcheqs += 1
 				cheque = Cheque(pymntAmnt, wrtDate, dueDte, serial, status, self.payer.custId,
 				                self.transId, self.billId, pymntDesc, self.numcheqs)
-				self.cheqListStore.append((self.numcheqs, self.payer.custName, pymnt_str, wrtDate_str, 
+				iter = self.cheqListStore.append((self.numcheqs, self.payer.custName, pymnt_str, wrtDate_str, 
 		                      dueDte_str, bank, serial, self.chequeStatus[status], pymntDesc))
 			
 			self.session.add(cheque)
 			self.session.commit()
+			path = self.cheqListStore.get_path(iter)
+			self.cheqTreeView.scroll_to_cell(path, None, False, 0, 0)
+			self.cheqTreeView.set_cursor(path, None, False)
 			
 		else:
 			trackCode = unicode(self.trackingCodeEntry.get_text())
@@ -192,6 +197,7 @@ class Payments(gobject.GObject):
 				payment.paymntWrtDate = wrtDate
 				payment.paymntDesc = pymntDesc
 				payment.paymntTrckCode = trackCode
+				iter = self.edititer
 				self.paysListStore.set(self.edititer, 1, self.payer.custName, 2, pymnt_str,
 				                      3, wrtDate_str, 4, dueDte_str, 5, bank, 6, serial,
 				                      7, trackCode, 8, pymntDesc)
@@ -199,11 +205,14 @@ class Payments(gobject.GObject):
 				self.numrecpts += 1
 				payment = Payment(dueDte, bank, serial, pymntAmnt, self.payer.custId, wrtDate,
 				                 pymntDesc, self.transId, self.billId, trackCode, self.numrecpts)
-				self.paysListStore.append((self.numrecpts, self.payer.custName, pymnt_str, wrtDate_str, 
+				iter = self.paysListStore.append((self.numrecpts, self.payer.custName, pymnt_str, wrtDate_str, 
 		                      dueDte_str, bank, serial, trackCode, pymntDesc))
 		                      
 			self.session.add(payment)
 			self.session.commit()
+			path = self.paysListStore.get_path(iter)
+			self.paysTreeView.scroll_to_cell(path, None, False, 0, 0)
+			self.paysTreeView.set_cursor(path, None, False)
 		
 		self.addToTotalAmount(pymntAmnt - pre_amnt)
 		self.addPymntDlg.hide()
