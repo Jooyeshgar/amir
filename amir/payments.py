@@ -387,9 +387,9 @@ class Payments(gobject.GObject):
 		self.builder.get_object("paymentsStatusBar").push(1,"")
 		
 		query = self.session.query(Customers).select_from(Customers)
-		customer = query.filter(Customers.custId == payer_id).first()
-		self.payerEntry.set_text(customer.custCode)
-		self.builder.get_object("chqPayerLbl").set_text(customer.custName)
+		self.payer = query.filter(Customers.custId == payer_id).first()
+		self.payerEntry.set_text(self.payer.custCode)
+		self.builder.get_object("chqPayerLbl").set_text(self.payer.custName)
 		
 		self.pymntAmntEntry.set_text(amount)
 		self.serialNoEntry.set_text(serial)
