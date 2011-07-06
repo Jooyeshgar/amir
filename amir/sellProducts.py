@@ -117,8 +117,9 @@ class SellProducts:
 			txt += 1
 		self.sellsTreeView.get_selection().set_mode(  gtk.SELECTION_SINGLE    )
 		
-		self.paymentManager = payments.Payments()
+		self.paymentManager = payments.Payments(transId=self.transId)
 		self.paymentManager.connect("payments-changed", self.setNonCashPayments)
+		self.paymentManager.fillPaymentTables()
 		
 		if transId:
 			sellsQuery  = self.session.query(Exchanges).select_from(Exchanges)

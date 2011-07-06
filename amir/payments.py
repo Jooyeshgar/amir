@@ -7,6 +7,7 @@ import pygtk
 import gtk
 
 from sqlalchemy.sql import and_
+from sqlalchemy.orm.util import outerjoin
 
 import numberentry
 import decimalentry
@@ -92,7 +93,53 @@ class Payments(gobject.GObject):
 			txt += 1
 			
 		self.builder.connect_signals(self)
+	
+	#NOTE: Don't call this in __init__(), Because at initialize time, "payments-changed"
+	# signal hasn't connected to factor forms yet, So payment-sum can not be shown there
+	# even after the tables being filled.
+	def fillPaymentTables(self):
+		self.fillRecptTable()
+		self.fillChequeTable()
+	
+	def fillRecptTable(self):
+		total = 0
+		query = self.session.query(Payment, Customers.custName)
+		query = query.select_from(outerjoin(Payment, Customers, Payment.paymntPayer == Customers.custId))
+		query = query.filter(and_(Payment.paymntTransId == self.transId, 
+		                          Payment.paymntBillId == self.billId))
+		paylist = query.order_by(Payment.paymntOrder.asc()).all()
+		for pay, cname in paylist:
+			self.numrecpts += 1
+			total += pay.paymntAmount
+			order = utility.showNumber(self.numrecpts, False)
+			amount = utility.showNumber(pay.paymntAmount)
+			wrtDate = dateentry.dateToString(pay.paymntWrtDate)
+			dueDate = dateentry.dateToString(pay.paymntDueDate)
+			
+			self.paysListStore.append((order, cname, amount, wrtDate, dueDate, pay.paymntBank,
+			                         pay.paymntSerial, pay.paymntTrckCode, pay.paymntDesc))
+		self.addToTotalAmount(total)
 		
+	def fillChequeTable(self):
+		total = 0
+		query = self.session.query(Cheque, Customers.custName)
+		query = query.select_from(outerjoin(Cheque, Customers, Cheque.chqCust == Customers.custId))
+		query = query.filter(and_(Cheque.chqTransId == self.transId, 
+		                          Cheque.chqBillId == self.billId))
+		cheqlist = query.order_by(Cheque.chqOrder.asc()).all()
+		for cheq, cname in cheqlist:
+			self.numcheqs += 1
+			total += cheq.chqAmount
+			order = utility.showNumber(self.numcheqs, False)
+			amount = utility.showNumber(cheq.chqAmount)
+			wrtDate = dateentry.dateToString(cheq.chqWrtDate)
+			dueDate = dateentry.dateToString(cheq.chqDueDate)
+			status = self.chequeStatus[cheq.chqStatus]
+			
+			self.cheqListStore.append((order, cname, amount, wrtDate, dueDate, "", 
+			                         cheq.chqSerial, status, cheq.chqDesc))
+		self.addToTotalAmount(total)
+	
 	def showPayments(self):
 		self.window.show_all()
 	
@@ -172,9 +219,10 @@ class Payments(gobject.GObject):
 				                      self.chequeStatus[status], 8, pymntDesc)
 			else:
 				self.numcheqs += 1
+				order = utility.showNumber(self.numcheqs)
 				cheque = Cheque(pymntAmnt, wrtDate, dueDte, serial, status, self.payer.custId,
 				                self.transId, self.billId, pymntDesc, self.numcheqs)
-				iter = self.cheqListStore.append((self.numcheqs, self.payer.custName, pymnt_str, wrtDate_str, 
+				iter = self.cheqListStore.append((order, self.payer.custName, pymnt_str, wrtDate_str, 
 		                      dueDte_str, bank, serial, self.chequeStatus[status], pymntDesc))
 			
 			self.session.add(cheque)
@@ -203,9 +251,10 @@ class Payments(gobject.GObject):
 				                      7, trackCode, 8, pymntDesc)
 			else:
 				self.numrecpts += 1
+				order = utility.showNumber(self.numrecpts)
 				payment = Payment(dueDte, bank, serial, pymntAmnt, self.payer.custId, wrtDate,
 				                 pymntDesc, self.transId, self.billId, trackCode, self.numrecpts)
-				iter = self.paysListStore.append((self.numrecpts, self.payer.custName, pymnt_str, wrtDate_str, 
+				iter = self.paysListStore.append((order, self.payer.custName, pymnt_str, wrtDate_str, 
 		                      dueDte_str, bank, serial, trackCode, pymntDesc))
 		                      
 			self.session.add(payment)
@@ -289,7 +338,7 @@ class Payments(gobject.GObject):
 			if iter == None:
 				return
 			else:
-				number = self.cheqListStore.get(iter, 0)[0]
+				number = utility.convertToLatin(self.cheqListStore.get(iter, 0)[0])
 				query = self.session.query(Cheque).select_from(Cheque)
 				query = query.filter(and_(Cheque.chqTransId == self.transId, 
 				                    Cheque.chqBillId == self.billId, Cheque.chqOrder == number))
@@ -304,12 +353,13 @@ class Payments(gobject.GObject):
 				desc = cheque.chqDesc
 				
 				self.isCheque.set_active(True)
+				self.isCheque.set_sensitive(True)
 				self.isRecpt.set_sensitive(False)
 				self.cheqStatusList.set_active(cheque.chqStatus)
 				self.trackingCodeEntry.set_text("")
 				self.bankEntry.set_text("")
 		else:
-			number = self.paysListStore.get(iter, 0)[0]
+			number = utility.convertToLatin(self.paysListStore.get(iter, 0)[0])
 			query = self.session.query(Payment).select_from(Payment)
 			query = query.filter(and_(Payment.paymntTransId == self.transId, 
 				                Payment.paymntBillId == self.billId, Payment.paymntOrder == number))
@@ -324,6 +374,7 @@ class Payments(gobject.GObject):
 			desc = payment.paymntDesc
 			
 			self.isRecpt.set_active(True)
+			self.isRecpt.set_sensitive(True)
 			self.isCheque.set_sensitive(False)
 			self.trackingCodeEntry.set_text(payment.paymntTrckCode)
 			self.bankEntry.set_text(payment.paymntBank)
@@ -420,10 +471,12 @@ class Payments(gobject.GObject):
 				
 
 	def addToTotalAmount(self, amount):
+		self.totalAmount += amount
 		ttlNonCashLabel = self.builder.get_object("ttlNonCashLabel")
-		lastAmnt = utility.getFloatNumber(ttlNonCashLabel.get_text())
-		total_str  = utility.showNumber(lastAmnt + amount)
+		#lastAmnt = utility.getFloatNumber(ttlNonCashLabel.get_text())
+		total_str  = utility.showNumber(self.totalAmount)
 		ttlNonCashLabel.set_text(total_str)
+		print "sig called"
 		self.emit("payments-changed", total_str)
 		
 	def activate_Cheque(self, sender=0):
