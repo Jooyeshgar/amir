@@ -77,22 +77,17 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkHBox" id="hbox1">
+                              <object class="GtkHBox" id="custGrpBox">
+                                <property name="width_request">192</property>
                                 <property name="visible">True</property>
                                 <property name="spacing">3</property>
                                 <child>
-                                  <object class="GtkEntry" id="custGrpEntry">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="invisible_char">●</property>
-                                  </object>
-                                  <packing>
-                                    <property name="position">0</property>
-                                  </packing>
+                                  <placeholder/>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="custGrpSlctBtn">
                                     <property name="label" translatable="yes">...</property>
+                                    <property name="width_request">35</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
@@ -101,6 +96,7 @@
                                     <signal name="clicked" handler="selectGroup"/>
                                   </object>
                                   <packing>
+                                    <property name="expand">False</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -178,7 +174,14 @@
                               <object class="GtkHBox" id="personalcodebox">
                                 <property name="visible">True</property>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkEntry" id="custPrsnalCodeEntry">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="invisible_char">●</property>
+                                  </object>
+                                  <packing>
+                                    <property name="position">0</property>
+                                  </packing>
                                 </child>
                               </object>
                               <packing>
@@ -414,11 +417,10 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkHBox" id="postalcodebox">
+                              <object class="GtkEntry" id="cusPostalCodeEntry">
                                 <property name="visible">True</property>
-                                <child>
-                                  <placeholder/>
-                                </child>
+                                <property name="can_focus">True</property>
+                                <property name="invisible_char">●</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -669,7 +671,6 @@ Information</property>
                                 <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
                                 <property name="invisible_char">●</property>
-                                <property name="text" translatable="yes">asfdasdfasdffds</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -752,19 +753,6 @@ Information</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry" id="custIntroducerEntry">
-                                <property name="width_request">200</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="invisible_char">●</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="right_attach">2</property>
-                                <property name="x_options"></property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkLabel" id="custCommissionLbl">
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
@@ -804,6 +792,34 @@ Information</property>
                                 <property name="right_attach">2</property>
                                 <property name="top_attach">2</property>
                                 <property name="bottom_attach">3</property>
+                                <property name="x_options">GTK_FILL</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkHBox" id="custIntroducerBox">
+                                <property name="width_request">200</property>
+                                <property name="visible">True</property>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="custCustSlctBtn">
+                                    <property name="label" translatable="yes">...</property>
+                                    <property name="width_request">38</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <signal name="clicked" handler="selectcustomer"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="right_attach">2</property>
                                 <property name="x_options">GTK_FILL</property>
                               </packing>
                             </child>
@@ -1438,6 +1454,7 @@ Information</property>
                 <property name="can_focus">True</property>
                 <property name="rules_hint">True</property>
                 <property name="enable_tree_lines">True</property>
+                <signal name="row_activated" handler="selectCustomerFromList"/>
               </object>
             </child>
           </object>
