@@ -117,8 +117,9 @@ class SellProducts:
 			txt += 1
 		self.sellsTreeView.get_selection().set_mode(  gtk.SELECTION_SINGLE    )
 		
-		self.paymentManager = payments.Payments()
+		self.paymentManager = payments.Payments(transId=self.transId)
 		self.paymentManager.connect("payments-changed", self.setNonCashPayments)
+		self.paymentManager.fillPaymentTables()
 		
 		if transId:
 			sellsQuery  = self.session.query(Exchanges).select_from(Exchanges)
@@ -938,8 +939,9 @@ class SellProducts:
 	def setNonCashPayments(self, sender, str_value):
 		self.nonCashPymntsEntry.set_text(str_value)
 
-	#def hidePayments(self,sender=0,ev=0):
-		#self.showPymnts.hide_all()
+	#def hidePayments(self, sender=0, ev=0):
+		#self.paymentManager.hidePayments()
+		##Returns true to avoid destroying payments window
 		#return True
 
 	#def cancelPayment(self,sender=0,ev=0):
