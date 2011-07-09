@@ -152,7 +152,7 @@ class Payments(gobject.GObject):
 		#self.totalAmount = value
 		#self.emit("payments-changed", value)
         
-	def addPayment(self,sender=0,edit=None):
+	def addPayment(self, sender=0, is_cheque=False):
 		self.addPymntDlg = self.builder.get_object("addPaymentDlg")
 		
 		self.editingPay = None
@@ -179,6 +179,11 @@ class Payments(gobject.GObject):
 		
 		self.isCheque.set_sensitive(True)
 		self.isRecpt.set_sensitive(True)
+		if is_cheque:
+			self.isCheque.set_active(True)
+		else:
+			self.isRecpt.set_active(True)
+			
 		self.builder.get_object("paymentsStatusBar").push(1,"")
 		self.addPymntDlg.show_all()
 
@@ -529,7 +534,25 @@ class Payments(gobject.GObject):
 		
 	def paysListActivated(self, treeview):
 		self.cheqTreeView.get_selection().unselect_all()
-		
+
+	def receiptTreeView_button_press(self, sender, event):
+		if event.type == gtk.gdk._2BUTTON_PRESS:
+			selection = self.paysTreeView.get_selection()
+			iter = selection.get_selected()[1]
+			if iter != None :
+				self.editPay(sender)
+			else:
+				self.addPayment(sender, False)
+	
+	def chequeTreeView_button_press(self, sender, event):
+		if event.type == gtk.gdk._2BUTTON_PRESS:
+			selection = self.cheqTreeView.get_selection()
+			iter = selection.get_selected()[1]
+			if iter != None :
+				self.editPay(sender)
+			else:
+				self.addPayment(sender, True)
+
 gobject.type_register(Payments)
 gobject.signal_new("payments-changed", Payments, gobject.SIGNAL_RUN_LAST,
                    gobject.TYPE_NONE, (gobject.TYPE_STRING,))

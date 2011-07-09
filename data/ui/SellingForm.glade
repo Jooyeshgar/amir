@@ -2402,35 +2402,7 @@
       <object class="GtkVBox" id="dialog-vbox3">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area3">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
-            <child>
-              <object class="GtkButton" id="closePymnts">
-                <property name="label" translatable="yes">Close</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
-                <signal name="clicked" handler="hidePayments" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="pack_type">end</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
+        <property name="spacing">5</property>
         <child>
           <object class="GtkTable" id="table7">
             <property name="visible">True</property>
@@ -2452,7 +2424,7 @@
                     <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Add Payment</property>
                     <property name="stock_id">gtk-add</property>
-                    <accelerator key="plus" signal="clicked"/>
+                    <accelerator key="Insert" signal="clicked"/>
                     <signal name="clicked" handler="addPayment" swapped="no"/>
                   </object>
                   <packing>
@@ -2467,7 +2439,7 @@
                     <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Edit</property>
                     <property name="stock_id">gtk-edit</property>
-                    <accelerator key="plus" signal="clicked"/>
+                    <accelerator key="e" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
                     <signal name="clicked" handler="editPay" swapped="no"/>
                   </object>
                   <packing>
@@ -2483,7 +2455,7 @@
                     <property name="label" translatable="yes">Remove</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-delete</property>
-                    <accelerator key="plus" signal="clicked"/>
+                    <accelerator key="Delete" signal="clicked"/>
                     <signal name="clicked" handler="removePay" swapped="no"/>
                   </object>
                   <packing>
@@ -2577,6 +2549,7 @@
                             <property name="enable_grid_lines">vertical</property>
                             <property name="enable_tree_lines">True</property>
                             <signal name="cursor-changed" handler="paysListActivated" swapped="no"/>
+                            <signal name="button-press-event" handler="receiptTreeView_button_press" swapped="no"/>
                           </object>
                         </child>
                       </object>
@@ -2626,6 +2599,7 @@
                             <property name="enable_grid_lines">vertical</property>
                             <property name="enable_tree_lines">True</property>
                             <signal name="cursor-changed" handler="chequeListActivated" swapped="no"/>
+                            <signal name="button-press-event" handler="chequeTreeView_button_press" swapped="no"/>
                           </object>
                         </child>
                       </object>
@@ -2657,7 +2631,61 @@
           <packing>
             <property name="expand">True</property>
             <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkStatusbar" id="statusbar1">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="spacing">2</property>
+            <child>
+              <object class="GtkLabel" id="label11">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="xalign">0</property>
+                <property name="xpad">5</property>
+                <property name="label" translatable="yes">Insert: Add Payment    Ctrl+E: Edit    Del: Delete</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
             <property name="position">1</property>
+          </packing>
+        </child>
+        <child internal-child="action_area">
+          <object class="GtkHButtonBox" id="dialog-action_area3">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <object class="GtkButton" id="closePymnts">
+                <property name="label" translatable="yes">Close</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
+                <signal name="clicked" handler="hidePayments" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="pack_type">end</property>
+            <property name="position">2</property>
           </packing>
         </child>
       </object>
