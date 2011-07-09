@@ -240,7 +240,7 @@ class Group(gobject.GObject):
             self.treeview.scroll_to_cell(path, None, False, 0, 0)
             self.treeview.set_cursor(path, None, False)
             self.treeview.grab_focus()
-            
+
     
     def selectCustGroupFromList(self, treeview, path, view_column):
         iter = self.treestore.get_iter(path)
@@ -251,7 +251,6 @@ class Group(gobject.GObject):
         group_id = query.first().custGrpId
         self.emit("group-selected", group_id, code)   
 
-   
 gobject.type_register(Group)
 gobject.signal_new("group-selected", Group, gobject.SIGNAL_RUN_LAST,
                    gobject.TYPE_NONE, (gobject.TYPE_INT, gobject.TYPE_STRING))   

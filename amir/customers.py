@@ -5,6 +5,7 @@ import  pygtk
 import  gtk
 
 #import  warehousing
+import  decimalentry
 import  numberentry
 import  dateentry
 import  subjects
@@ -28,71 +29,36 @@ class Customer(customergroup.Group):
     def __init__(self):
         customergroup.Group.__init__(self)
     
-        self.personalcodebox = numberentry.NumberEntry(10)
-        self.builder.get_object("personalcodebox").add(self.personalcodebox)
-        self.personalcodebox.show()
-        
-        self.postalcodebox = numberentry.NumberEntry(10)
-        self.builder.get_object("postalcodebox").add(self.postalcodebox)
-        self.postalcodebox.show()
+        self.custgrpentry = numberentry.NumberEntry(10)
+        self.builder.get_object("custGrpBox").add(self.custgrpentry)
+        self.custgrpentry.show()
 
-        self.boxCommissionRateEntry = numberentry.NumberEntry(10)
+        self.custIntroducerEntry = numberentry.NumberEntry(10)
+        self.builder.get_object("custIntroducerBox").add(self.custIntroducerEntry)
+        self.custIntroducerEntry.show()
+
+        self.boxCommissionRateEntry = decimalentry.DecimalEntry(10)
         self.builder.get_object("boxCommissionRateEntry").add(self.boxCommissionRateEntry)
         self.boxCommissionRateEntry.show()
         
-        self.boxDiscRateEntry = numberentry.NumberEntry(10)
+        self.boxDiscRateEntry = decimalentry.DecimalEntry(10)
         self.builder.get_object("boxDiscRateEntry").add(self.boxDiscRateEntry)
         self.boxDiscRateEntry.show()
                 
-        self.boxBalanceEntry = numberentry.NumberEntry(10)
+        self.boxBalanceEntry = decimalentry.DecimalEntry(10)
         self.builder.get_object("boxBalanceEntry").add(self.boxBalanceEntry)
         self.boxBalanceEntry.show()
         
-        self.boxCreditEntry = numberentry.NumberEntry(10)
+        self.boxCreditEntry = decimalentry.DecimalEntry(10)
         self.builder.get_object("boxCreditEntry").add(self.boxCreditEntry)
         self.boxCreditEntry.show()
                 
-#===============================================================================
-#    def __init__(self,buyerFlg=True,sellerFlg=True,mateFlg=True,agentFlg=True):
-#        
-#        self.buyerFlg   = buyerFlg
-#        self.sellerFlg  = sellerFlg
-#        self.MateFlg    = mateFlg
-#        self.AgentFlg   = agentFlg
-#        self.builder    = get_builder("customers" )
-#        self.session    = config.db.session
-#        
-#        self.grpCodeEntry = numberentry.NumberEntry()
-#        box = self.builder.get_object("grpCodeBox")
-#        box.add(self.grpCodeEntry)
-#        self.grpCodeEntry.show()
-#        
-#        self.window = self.builder.get_object("viewCustomersWindow")
-#        
-#        self.treeview = self.builder.get_object("customersTreeView")
-#        self.treestore = gtk.TreeStore(str,str,str,str)
-#        self.treestore.clear()
-#        self.treeview.set_model(self.treestore)
-#        
-#        headers = (_("Code"),_("Name"),_("Balance"),_("Credit"))
-#        txt = 0
-#        for header in headers:
-#            column = gtk.TreeViewColumn(header, gtk.CellRendererText(), text = txt)
-#            column.set_spacing(5)
-#            column.set_resizable(True)
-#            self.treeview.append_column(column)
-#            txt += 1
-#        self.treeview.get_selection().set_mode(  gtk.SELECTION_SINGLE    )
-#        
-# #        self.fillCustomersList()
-#        
-#        self.window.show_all()
-#        self.builder.connect_signals(self)
-#===============================================================================
-
-    def viewCustomers(self):
+    def viewCustomers(self, readonly=False):
         self.window = self.builder.get_object("viewCustomersWindow")
-        
+        if readonly :
+            self.costmenu = self.builder.get_object("customersToolbar")
+            self.costmenu.hide()
+            
         self.treeview = self.builder.get_object("customersTreeView")
         self.treestore = gtk.TreeStore(str, str, str, str)
         self.treestore.clear()
@@ -141,7 +107,7 @@ class Customer(customergroup.Group):
             if c != None:
                 self.treestore.append(grouprow, (c.custCode, c.custName, str(c.custBalance), str(c.custCredit)))
         
-        self.window.show_all()    
+        self.window.show()    
 
 #    ############################################################################
 #    #  Add Customers Window
@@ -154,24 +120,39 @@ class Customer(customergroup.Group):
         self.builder.get_object("addCustSubmitBtn").set_label(_("Add Customer"))
         
         self.builder.get_object("custCodeEntry").set_text("")
+        self.custgrpentry.set_text("")
         self.builder.get_object("custNameEntry").set_text("")
-        self.builder.get_object("custGrpEntry").set_text(pcode)
-        
-        self.builder.get_object("custEcnmcsCodeEntry").set_text("")        
+        self.builder.get_object("custEcnmcsCodeEntry").set_text("")
+        self.builder.get_object("custPrsnalCodeEntry").set_text("")
+
         self.builder.get_object("custPhoneEntry").set_text("")
         self.builder.get_object("custCellEntry").set_text("")
         self.builder.get_object("custFaxEntry").set_text("")
         self.builder.get_object("custWebPageEntry").set_text("")
         self.builder.get_object("custEmailEntry").set_text("")
-        self.builder.get_object("custRepViaEmailChk").set_active(False)
-        self.builder.get_object("custAddressEntry").set_text("")        
+        self.builder.get_object("custRepViaEmailChk").get_active()
+        self.builder.get_object("custAddressEntry").set_text("")
+        self.builder.get_object("cusPostalCodeEntry").set_text("")
+        
         self.builder.get_object("callResponsibleEntry").set_text("")
         self.builder.get_object("custConnectorEntry").set_text("")
+
         self.builder.get_object("custDescEntry").set_text("")
-        self.builder.get_object("custBalanceEntry").set_text("0")
-        self.builder.get_object("custCreditEntry").set_text("0")
-        self.postalcodebox.set_text("")
-        self.personalcodebox.set_text("")
+        #----------------------------------
+        self.custIntroducerEntry.set_text("")
+        self.boxCommissionRateEntry.set_text("")
+        self.boxDiscRateEntry.set_text("")
+        self.builder.get_object("markedReasonEntry").set_text("")
+        #----------------------------------
+        self.boxBalanceEntry.set_text("")
+        self.boxCreditEntry.set_text("")
+        self.builder.get_object("custAccName1Entry").set_text("")
+        self.builder.get_object("custAccNo1Entry").set_text("")
+        self.builder.get_object("custAccBank1Entry").set_text("")
+        self.builder.get_object("custAccName2Entry").set_text("")
+        self.builder.get_object("custAccNo2Entry").set_text("")
+        self.builder.get_object("custAccBank2Entry").set_text("")
+        
         self.customerForm.show_all()
         
     def customerFormCanceled(self,sender=0,ev=0):
@@ -191,43 +172,46 @@ class Customer(customergroup.Group):
 #    
     #@return: -1 on error, 0 for success
     def saveCustomer(self):
-        custEcnmcsCode      = self.builder.get_object("custEcnmcsCodeEntry").get_text()
-        custPhone           = self.builder.get_object("custPhoneEntry").get_text()
-        custCell            = self.builder.get_object("custCellEntry").get_text()
-        custFax             = self.builder.get_object("custFaxEntry").get_text()
-        custWebPage         = self.builder.get_object("custWebPageEntry").get_text()
-        custEmail           = self.builder.get_object("custEmailEntry").get_text()
+        custCode			= unicode(self.builder.get_object("custCodeEntry").get_text())
+        custGrp 			= self.custgrpentry.get_int()
+        custName 			= unicode(self.builder.get_object("custNameEntry").get_text())
+        custEcnmcsCode      = unicode(self.builder.get_object("custEcnmcsCodeEntry").get_text())
+        custPersonalCode    = unicode(self.builder.get_object("custPrsnalCodeEntry").get_text())
+
+        custPhone           = unicode(self.builder.get_object("custPhoneEntry").get_text())
+        custCell            = unicode(self.builder.get_object("custCellEntry").get_text())
+        custFax             = unicode(self.builder.get_object("custFaxEntry").get_text())
+        custWebPage         = unicode(self.builder.get_object("custWebPageEntry").get_text())
+        custEmail           = unicode(self.builder.get_object("custEmailEntry").get_text())
         custRepViaEmail     = self.builder.get_object("custRepViaEmailChk").get_active()
-        custAddress         = self.builder.get_object("custAddressEntry").get_text()
-        custPostalCode      = self.postalcodebox.get_int()
-        custPersonalCode    = self.personalcodebox.get_int()
+        custAddress         = unicode(self.builder.get_object("custAddressEntry").get_text())
+        custPostalCode      = unicode(self.builder.get_object("cusPostalCodeEntry").get_text())
         
-        callResponsible     = self.builder.get_object("callResponsibleEntry").get_text()
-        custConnector       = self.builder.get_object("custConnectorEntry").get_text()
-        custDesc            = self.builder.get_object("custDescEntry").get_text()
+        callResponsible     = unicode(self.builder.get_object("callResponsibleEntry").get_text())
+        custConnector       = unicode(self.builder.get_object("custConnectorEntry").get_text())
+
+        custDesc            = unicode(self.builder.get_object("custDescEntry").get_text())
         #----------------------------------
         custTypeBuyer       = self.builder.get_object("custTypeBuyerChk").get_active()
         custTypeSeller      = self.builder.get_object("custTypeSellerChk").get_active()
         custTypeMate        = self.builder.get_object("custTypeMateChk").get_active()
         custTypeAgent       = self.builder.get_object("custTypeAgentChk").get_active()
-        custIntroducer      = self.builder.get_object("custIntroducerEntry").get_text()
+        custIntroducer      = self.custIntroducerEntry.get_int()
         custCommission      = self.boxCommissionRateEntry.get_float()
         custDiscRate        = self.boxDiscRateEntry.get_float()
         custMarked          = self.builder.get_object("markedChk").get_active()
-        custReason          = self.builder.get_object("markedReasonEntry").get_text()
+        custReason          = unicode(self.builder.get_object("markedReasonEntry").get_text())
         #----------------------------------
         custBalance         = self.boxBalanceEntry.get_float()
         custCredit          = self.boxCreditEntry.get_float()
-        custAccName1        = self.builder.get_object("custAccName1Entry").get_text()
-        custAccNo1          = self.builder.get_object("custAccNo1Entry").get_text()
-        custAccBank1        = self.builder.get_object("custAccBank1Entry").get_text()
-        custAccName2        = self.builder.get_object("custAccName2Entry").get_text()
-        custAccNo2          = self.builder.get_object("custAccNo2Entry").get_text()
-        custAccBank2        = self.builder.get_object("custAccBank2Entry").get_text()
+        custAccName1        = unicode(self.builder.get_object("custAccName1Entry").get_text())
+        custAccNo1          = unicode(self.builder.get_object("custAccNo1Entry").get_text())
+        custAccBank1        = unicode(self.builder.get_object("custAccBank1Entry").get_text())
+        custAccName2        = unicode(self.builder.get_object("custAccName2Entry").get_text())
+        custAccNo2          = unicode(self.builder.get_object("custAccNo2Entry").get_text())
+        custAccBank2        = unicode(self.builder.get_object("custAccBank2Entry").get_text())
         
         msg = ""
-        custCode = self.builder.get_object("custCodeEntry").get_text()
-        custCode = utility.convertToLatin(custCode)
         if custCode == "":
             msg += _("Customer code should not be empty.\n")
         else:
@@ -241,8 +225,6 @@ class Customer(customergroup.Group):
                 msg += _("Customer code has been used before.\n")
                 
         #--------------------
-        custGrp = self.builder.get_object("custGrpEntry").get_text()
-        custGrp = utility.convertToLatin(custGrp)
         groupid = 0
         if custGrp == "":
             msg += _("Customer group should not be empty.\n")
@@ -255,7 +237,6 @@ class Customer(customergroup.Group):
                 groupid = groupid[0]
         
         #--------------------
-        custName = self.builder.get_object("custNameEntry").get_text()
         if custName == "":
             msg += _("Customer name should not be empty.\n")
             
@@ -268,9 +249,9 @@ class Customer(customergroup.Group):
             return -1
 
         if not self.editCustomer:
-            customer = Customers(custCode, unicode(custName), custPhone, custCell, custFax, unicode(custAddress),
-                                custEmail, unicode(custEcnmcsCode), custWebPage, unicode(callResponsible), unicode(custConnector),
-                                groupid, custPostalCode, custPersonalCode, unicode(custDesc), custBalance, custCredit,
+            customer = Customers(custCode, custName, custPhone, custCell, custFax, custAddress,
+                                custEmail, custEcnmcsCode, custWebPage, callResponsible, custConnector,
+                                groupid, custPostalCode, custPersonalCode, custDesc, custBalance, custCredit,
                                 custRepViaEmail, custAccName1, custAccNo1, custAccBank1, custAccName2, custAccNo2, 
                                 custAccBank2, custTypeBuyer, custTypeSeller, custTypeMate, custTypeAgent, 
                                 custIntroducer, custCommission, custMarked, custReason, custDiscRate )
@@ -278,39 +259,39 @@ class Customer(customergroup.Group):
             query = config.db.session.query(Customers).select_from(Customers)
             customer = query.filter(Customers.custId == self.customerId).first()
             customer.custCode = custCode
-            customer.custName = unicode(custName)
+            customer.custName = custName
             customer.custPhone = custPhone
             customer.custCell = custCell
             customer.custFax = custFax
-            customer.custAddress = unicode(custAddress)
+            customer.custAddress = custAddress
             customer.custPostalCode = custPostalCode
             customer.custEmail = custEmail
-            customer.custEcnmcsCode = unicode(custEcnmcsCode)
+            customer.custEcnmcsCode = custEcnmcsCode
             customer.custPersonalCode = custPersonalCode
             customer.custWebPage = custWebPage
-            customer.custResponsible = unicode(callResponsible)
-            customer.custConnector = unicode(custConnector)
+            customer.custResponsible = callResponsible
+            customer.custConnector = custConnector
             customer.custGroup = groupid
-            customer.custDesc = unicode(custDesc)
+            customer.custDesc = custDesc
             #----------------------------------
             customer.custTypeBuyer = custTypeBuyer
             customer.custTypeSeller = custTypeSeller
             customer.custTypeMate = custTypeMate
             customer.custTypeAgent = custTypeAgent
-            customer.custIntroducer = unicode(custIntroducer)
+            customer.custIntroducer = custIntroducer
             customer.custCommission = custCommission
             customer.custDiscRate = custDiscRate
             customer.custMarked = custMarked
-            customer.custReason = unicode(custReason)
+            customer.custReason = custReason
             #----------------------------------
             customer.custBalance = custBalance
             customer.custCredit = custCredit
-            customer.custAccName1 = unicode(custAccName1)
-            customer.custAccNo1 = unicode(custAccNo1)
-            customer.custAccBank1 = unicode(custAccBank1)
-            customer.custAccName2 = unicode(custAccName2)
-            customer.custAccNo2 = unicode(custAccNo2)
-            customer.custAccBank2 = unicode(custAccBank2)
+            customer.custAccName1 = custAccName1
+            customer.custAccNo1 = custAccNo1
+            customer.custAccBank1 = custAccBank1
+            customer.custAccName2 = custAccName2
+            customer.custAccNo2 = custAccNo2
+            customer.custAccBank2 = custAccBank2
             
         config.db.session.add(customer)
         config.db.session.commit()
@@ -355,7 +336,6 @@ class Customer(customergroup.Group):
             custPhone = utility.showNumber(customer.custPhone, False)
             custCell = utility.showNumber(customer.custCell, False)
             custFax = utility.showNumber(customer.custFax, False)
-            custPersonalCode = utility.showNumber(customer.custPersonalCode, False)
             custPostalCode = utility.showNumber(customer.custPostalCode, False)
             
             self.customerForm = self.builder.get_object("customersWindow")
@@ -364,9 +344,9 @@ class Customer(customergroup.Group):
             
             self.builder.get_object("custCodeEntry").set_text(custCode)
             self.builder.get_object("custNameEntry").set_text(customer.custName)
-            self.builder.get_object("custGrpEntry").set_text(groupcode)
-            
+            self.custgrpentry.set_text(groupcode)
             self.builder.get_object("custEcnmcsCodeEntry").set_text(customer.custEcnmcsCode)
+            self.builder.get_object("custPrsnalCodeEntry").set_text(customer.custPersonalCode)
             self.builder.get_object("custPhoneEntry").set_text(custPhone)
             self.builder.get_object("custCellEntry").set_text(custCell)
             self.builder.get_object("custFaxEntry").set_text(custFax)
@@ -382,7 +362,7 @@ class Customer(customergroup.Group):
             self.builder.get_object("custTypeSellerChk").set_active(customer.custTypeSeller)
             self.builder.get_object("custTypeMateChk").set_active(customer.custTypeMate)
             self.builder.get_object("custTypeAgentChk").set_active(customer.custTypeAgent)
-            self.builder.get_object("custIntroducerEntry").set_text(customer.custIntroducer)
+            self.custIntroducerEntry.set_text(customer.custIntroducer)
             self.boxCommissionRateEntry.set_text(customer.custCommission)
             self.boxDiscRateEntry.set_text(customer.custDiscRate)
             self.builder.get_object("markedChk").set_active(customer.custMarked)
@@ -397,8 +377,7 @@ class Customer(customergroup.Group):
             self.builder.get_object("custAccNo2Entry").set_text(customer.custAccNo2)
             self.builder.get_object("custAccBank2Entry").set_text(customer.custAccBank2)
             
-            self.personalcodebox.set_text(utility.showNumber(customer.custPersonalCode, False))
-            self.postalcodebox.set_text(utility.showNumber(customer.custPostalCode, False))
+            self.builder.get_object("cusPostalCodeEntry").set_text(utility.showNumber(customer.custPostalCode, False))
             self.builder.get_object("markedReasonEntry").set_sensitive(self.builder.get_object("markedChk").get_active())
             
             self.customerForm.show_all()
@@ -450,18 +429,60 @@ class Customer(customergroup.Group):
         obj.connect("group-selected", self.groupSelected)
         obj.viewCustomerGroups()
         
-        code = self.builder.get_object("custGrpEntry").get_text()
+        code = self.custgrpentry.get_text()
         obj.highlightGroup(code)
     
     def groupSelected(self, sender, id, code):
-        self.builder.get_object("custGrpEntry").set_text(code)
+        self.custgrpentry.set_text(code)
         sender.window.destroy()  
+
+    def selectcustomer(self, sender):
+        obj = Customer()
+        obj.connect("customer-selected", self.customerSelected)
+        obj.viewCustomers(True)
+        
+        code = self.custIntroducerEntry.get_int()
+        obj.highlightCust(code)
+    
+    def customerSelected(self, sender, id, code):
+        self.custIntroducerEntry.set_text(code)
+        sender.window.destroy()
+        
+    def highlightCust(self, code):
+        '''        iter = self.treestore.get_iter_first()
+        pre = iter
+        
+        while iter:
+            itercode = self.treestore.get_value(iter, 0)
+            if  itercode < code:
+                pre = iter
+                iter = self.treestore.iter_next(iter)
+            elif itercode == code:
+                break
+            else:
+                iter = pre
+                break
+
+        if not iter:
+            iter = pre
+            
+        if iter:
+            path = self.treestore.get_path(iter)
+            self.treeview.scroll_to_cell(path, None, False, 0, 0)
+            self.treeview.set_cursor(path, None, False)
+            self.treeview.grab_focus()'''
+            
+	#Called when a row of customer table get activated by mouse double-click or Enter key
+    def selectCustomerFromList(self, treeview, path, view_column):
+        iter = self.treestore.get_iter(path)
+        if self.treestore.iter_parent(iter) != None:
+            code = unicode(self.treestore.get_value(iter, 0))
+			
+            query = config.db.session.query(Customers).select_from(Customers)
+            query = query.filter(Customers.custCode == code)
+            customer_id = query.first().custId
+            self.emit("customer-selected", customer_id, code)
              
-#----------------------------------------------------------------------
-# Creating New Signal to return the selected group when double clicked!
-#----------------------------------------------------------------------
-#gobject.type_register(                          Customer                )
-#
-#gobject.signal_new( "customer-selected",        Customer, 
-#                    gobject.SIGNAL_RUN_LAST,    gobject.TYPE_NONE, 
-#                    (gobject.TYPE_INT,          gobject.TYPE_STRING)    )
+gobject.type_register(Customer)
+gobject.signal_new("customer-selected", Customer, gobject.SIGNAL_RUN_LAST,
+                   gobject.TYPE_NONE, (gobject.TYPE_INT, gobject.TYPE_STRING))
