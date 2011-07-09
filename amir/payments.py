@@ -439,35 +439,35 @@ class Payments(gobject.GObject):
 		self.addPymntDlg.hide_all()
 		return True
 		
-	def upPayInList(self,sender):
-		if len(self.paysItersDict) == 1:
-			return
-		iter    = self.paysTreeView.get_selection().get_selected()[1]
-		if iter:
-			No   = int(self.paysListStore.get(iter, 0)[0])
-			abvNo   = No - 1
-			if abvNo > 0:
-				aboveIter   = self.paysItersDict[abvNo]
-				self.paysListStore.move_before(iter,aboveIter)
-				self.paysItersDict[abvNo]  = iter
-				self.paysItersDict[No]     = aboveIter
-				self.paysListStore.set_value(iter,0,str(abvNo))
-				self.paysListStore.set_value(aboveIter,0,str(No))
+	#def upPayInList(self,sender):
+		#if len(self.paysItersDict) == 1:
+			#return
+		#iter    = self.paysTreeView.get_selection().get_selected()[1]
+		#if iter:
+			#No   = int(self.paysListStore.get(iter, 0)[0])
+			#abvNo   = No - 1
+			#if abvNo > 0:
+				#aboveIter   = self.paysItersDict[abvNo]
+				#self.paysListStore.move_before(iter,aboveIter)
+				#self.paysItersDict[abvNo]  = iter
+				#self.paysItersDict[No]     = aboveIter
+				#self.paysListStore.set_value(iter,0,str(abvNo))
+				#self.paysListStore.set_value(aboveIter,0,str(No))
 
-	def downPayInList(self,sender):
-		if len(self.paysItersDict) == 1:
-			return
-		iter    = self.paysTreeView.get_selection().get_selected()[1]
-		if iter:
-			No   = int(self.paysListStore.get(iter, 0)[0])
-			blwNo   = No + 1
-			if No < len(self.paysItersDict):
-				belowIter   = self.paysItersDict[blwNo]
-				self.paysListStore.move_after(iter,belowIter)
-				self.paysItersDict[blwNo]  = iter
-				self.paysItersDict[No]     = belowIter
-				self.paysListStore.set_value(iter,0,str(blwNo))
-				self.paysListStore.set_value(belowIter,0,str(No))
+	#def downPayInList(self,sender):
+		#if len(self.paysItersDict) == 1:
+			#return
+		#iter    = self.paysTreeView.get_selection().get_selected()[1]
+		#if iter:
+			#No   = int(self.paysListStore.get(iter, 0)[0])
+			#blwNo   = No + 1
+			#if No < len(self.paysItersDict):
+				#belowIter   = self.paysItersDict[blwNo]
+				#self.paysListStore.move_after(iter,belowIter)
+				#self.paysItersDict[blwNo]  = iter
+				#self.paysItersDict[No]     = belowIter
+				#self.paysListStore.set_value(iter,0,str(blwNo))
+				#self.paysListStore.set_value(belowIter,0,str(No))
 				
 
 	def addToTotalAmount(self, amount):

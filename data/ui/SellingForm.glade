@@ -2491,47 +2491,6 @@
                     <property name="homogeneous">True</property>
                   </packing>
                 </child>
-                <child>
-                  <object class="GtkSeparatorToolItem" id="paymentsToolbarSeparator">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkToolButton" id="upPaymentBtn">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="use_action_appearance">False</property>
-                    <property name="label" translatable="yes">Up</property>
-                    <property name="use_underline">True</property>
-                    <property name="stock_id">gtk-go-up</property>
-                    <accelerator key="plus" signal="clicked"/>
-                    <signal name="clicked" handler="upPayInList" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkToolButton" id="downPaymentBtn">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="use_action_appearance">False</property>
-                    <property name="label" translatable="yes">Down</property>
-                    <property name="use_underline">True</property>
-                    <property name="stock_id">gtk-go-down</property>
-                    <accelerator key="plus" signal="clicked"/>
-                    <signal name="clicked" handler="downPayInList" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
               </object>
               <packing>
                 <property name="right_attach">4</property>
