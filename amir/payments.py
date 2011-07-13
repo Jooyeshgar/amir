@@ -152,7 +152,7 @@ class Payments(gobject.GObject):
 		#self.totalAmount = value
 		#self.emit("payments-changed", value)
         
-	def addPayment(self,sender=0,edit=None):
+	def addPayment(self, sender=0, is_cheque=False):
 		self.addPymntDlg = self.builder.get_object("addPaymentDlg")
 		
 		self.editingPay = None
@@ -179,6 +179,11 @@ class Payments(gobject.GObject):
 		
 		self.isCheque.set_sensitive(True)
 		self.isRecpt.set_sensitive(True)
+		if is_cheque:
+			self.isCheque.set_active(True)
+		else:
+			self.isRecpt.set_active(True)
+			
 		self.builder.get_object("paymentsStatusBar").push(1,"")
 		self.addPymntDlg.show_all()
 
@@ -399,75 +404,111 @@ class Payments(gobject.GObject):
 		
 		self.addPymntDlg.show_all()
 
-	def removePay(self,sender):
-		delIter = self.paysTreeView.get_selection().get_selected()[1]
-		if delIter:
-			No  = int(self.paysListStore.get(delIter, 0)[0])
-			msg = _("Are You sure you want to delete the non-cash payment row number %s ?") %No
-			msgBox  = gtk.MessageDialog( self.showPymnts, gtk.DIALOG_MODAL,
-											gtk.MESSAGE_QUESTION,
-											gtk.BUTTONS_OK_CANCEL, msg         )
-			msgBox.set_title(            _("Confirm Deletion")              )
-			answer  = msgBox.run(                                           )
-			msgBox.destroy(                                                 )
+	def removePay(self, sender):
+		iter = self.paysTreeView.get_selection().get_selected()[1]
+		if iter == None:
+			iter = self.cheqTreeView.get_selection().get_selected()[1]
+			if iter == None:
+				return
+			else:
+				number = utility.getIntegerNumber(self.cheqListStore.get(iter, 0)[0])
+				msg = _("Are you sure to delete the cheque number %d?") % number
+				msgBox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, 
+				                           gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK_CANCEL, msg)
+				msgBox.set_title(_("Confirm Deletion"))
+				answer = msgBox.run()
+				msgBox.destroy()
+				if answer != gtk.RESPONSE_OK:
+					return
+				query = self.session.query(Cheque).select_from(Cheque)
+				query = query.filter(and_(Cheque.chqTransId == self.transId, 
+				                    Cheque.chqBillId == self.billId, Cheque.chqOrder == number))
+				cheque = query.first()
+				amount = cheque.chqAmount
+				
+				self.session.delete(cheque)
+				# Decrease the order-number in next rows
+				query = self.session.query(Cheque).select_from(Cheque)
+				query = query.filter(and_(Cheque.chqTransId == self.transId, 
+				                    Cheque.chqBillId == self.billId, Cheque.chqOrder > number))
+				query.update( {Cheque.chqOrder: Cheque.chqOrder - 1 } )
+				
+				self.numcheqs -= 1
+				liststore = self.cheqListStore
+				
+		else:
+			number = utility.getIntegerNumber(self.paysListStore.get(iter, 0)[0])
+			msg = _("Are you sure to delete the receipt number %d?") % number
+			msgBox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, 
+										gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK_CANCEL, msg)
+			msgBox.set_title(_("Confirm Deletion"))
+			answer = msgBox.run()
+			msgBox.destroy()
 			if answer != gtk.RESPONSE_OK:
 				return
-			nonCashAmnt = float(self.paysListStore.get(delIter,2)[0])
-			self.remNonCashTtl(nonCashAmnt)
-			self.paysListStore.remove(delIter)
-			print "1-\tdef removePay()"
-			if len(self.paysItersDict) > 1:
-				print "2"
-				while No < len(self.paysItersDict):
-					print "3"
-					nextIter    = self.paysItersDict[No+1]
-					print "4"
-					self.paysListStore.set_value(nextIter,0,str(No))
-					print "5"
-					self.paysItersDict[No] = nextIter
-					print "6"
-					del self.paysItersDict[No+1]
-					print "7"
-					No  += 1
-					print "8"
-			else:
-				print "9"
-				self.paysItersDict = {}
-				print "10"
+			query = self.session.query(Payment).select_from(Payment)
+			query = query.filter(and_(Payment.paymntTransId == self.transId, 
+				                Payment.paymntBillId == self.billId, Payment.paymntOrder == number))
+			payment = query.first()
+			amount = payment.paymntAmount
+			
+			self.session.delete(payment)
+			# Decrease the order-number in next rows
+			query = self.session.query(Payment).select_from(Payment)
+			query = query.filter(and_(Payment.paymntTransId == self.transId, 
+				                Payment.paymntBillId == self.billId, Payment.paymntOrder > number))
+			query.update( {Payment.paymntOrder: Payment.paymntOrder - 1 } )
+			
+			self.numrecpts -= 1
+			liststore = self.paysListStore
+		
+		self.session.commit()
+		self.addToTotalAmount(-(amount))
+		
+		hasrow = liststore.remove(iter)
+		# if there is a row after the deleted one
+		if hasrow:
+			# Decrease the order-number in next rows
+			while iter != None:
+				number_str = utility.showNumber(number, False)
+				liststore.set_value (iter, 0, number_str)
+				number += 1
+				iter = liststore.iter_next(iter)
+				
 
 	def cancelPayment(self, sender=0, ev=0):
 		self.addPymntDlg.hide_all()
 		return True
 		
-	def upPayInList(self,sender):
-		if len(self.paysItersDict) == 1:
-			return
-		iter    = self.paysTreeView.get_selection().get_selected()[1]
-		if iter:
-			No   = int(self.paysListStore.get(iter, 0)[0])
-			abvNo   = No - 1
-			if abvNo > 0:
-				aboveIter   = self.paysItersDict[abvNo]
-				self.paysListStore.move_before(iter,aboveIter)
-				self.paysItersDict[abvNo]  = iter
-				self.paysItersDict[No]     = aboveIter
-				self.paysListStore.set_value(iter,0,str(abvNo))
-				self.paysListStore.set_value(aboveIter,0,str(No))
+	#def upPayInList(self,sender):
+		#if len(self.paysItersDict) == 1:
+			#return
+		#iter    = self.paysTreeView.get_selection().get_selected()[1]
+		#if iter:
+			#No   = int(self.paysListStore.get(iter, 0)[0])
+			#abvNo   = No - 1
+			#if abvNo > 0:
+				#aboveIter   = self.paysItersDict[abvNo]
+				#self.paysListStore.move_before(iter,aboveIter)
+				#self.paysItersDict[abvNo]  = iter
+				#self.paysItersDict[No]     = aboveIter
+				#self.paysListStore.set_value(iter,0,str(abvNo))
+				#self.paysListStore.set_value(aboveIter,0,str(No))
 
-	def downPayInList(self,sender):
-		if len(self.paysItersDict) == 1:
-			return
-		iter    = self.paysTreeView.get_selection().get_selected()[1]
-		if iter:
-			No   = int(self.paysListStore.get(iter, 0)[0])
-			blwNo   = No + 1
-			if No < len(self.paysItersDict):
-				belowIter   = self.paysItersDict[blwNo]
-				self.paysListStore.move_after(iter,belowIter)
-				self.paysItersDict[blwNo]  = iter
-				self.paysItersDict[No]     = belowIter
-				self.paysListStore.set_value(iter,0,str(blwNo))
-				self.paysListStore.set_value(belowIter,0,str(No))
+	#def downPayInList(self,sender):
+		#if len(self.paysItersDict) == 1:
+			#return
+		#iter    = self.paysTreeView.get_selection().get_selected()[1]
+		#if iter:
+			#No   = int(self.paysListStore.get(iter, 0)[0])
+			#blwNo   = No + 1
+			#if No < len(self.paysItersDict):
+				#belowIter   = self.paysItersDict[blwNo]
+				#self.paysListStore.move_after(iter,belowIter)
+				#self.paysItersDict[blwNo]  = iter
+				#self.paysItersDict[No]     = belowIter
+				#self.paysListStore.set_value(iter,0,str(blwNo))
+				#self.paysListStore.set_value(belowIter,0,str(No))
 				
 
 	def addToTotalAmount(self, amount):
@@ -476,7 +517,6 @@ class Payments(gobject.GObject):
 		#lastAmnt = utility.getFloatNumber(ttlNonCashLabel.get_text())
 		total_str  = utility.showNumber(self.totalAmount)
 		ttlNonCashLabel.set_text(total_str)
-		print "sig called"
 		self.emit("payments-changed", total_str)
 		
 	def activate_Cheque(self, sender=0):
@@ -494,7 +534,25 @@ class Payments(gobject.GObject):
 		
 	def paysListActivated(self, treeview):
 		self.cheqTreeView.get_selection().unselect_all()
-		
+
+	def receiptTreeView_button_press(self, sender, event):
+		if event.type == gtk.gdk._2BUTTON_PRESS:
+			selection = self.paysTreeView.get_selection()
+			iter = selection.get_selected()[1]
+			if iter != None :
+				self.editPay(sender)
+			else:
+				self.addPayment(sender, False)
+	
+	def chequeTreeView_button_press(self, sender, event):
+		if event.type == gtk.gdk._2BUTTON_PRESS:
+			selection = self.cheqTreeView.get_selection()
+			iter = selection.get_selected()[1]
+			if iter != None :
+				self.editPay(sender)
+			else:
+				self.addPayment(sender, True)
+
 gobject.type_register(Payments)
 gobject.signal_new("payments-changed", Payments, gobject.SIGNAL_RUN_LAST,
                    gobject.TYPE_NONE, (gobject.TYPE_STRING,))
