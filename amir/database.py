@@ -258,6 +258,7 @@ class Customers(Base):
     custId          = Column( Integer,      primary_key = True  )
     custCode        = Column( Unicode(15),  nullable = False    )
     custName        = Column( Unicode(100), nullable = False    )
+    custSubj        = Column( Integer,      ForeignKey('subject.id'))
     custPhone       = Column( Unicode(15),  nullable = True     )
     custCell        = Column( Unicode(15),  nullable = True     )
     custFax         = Column( Unicode(15),  nullable = True     )
@@ -290,7 +291,7 @@ class Customers(Base):
     custReason      = Column( Unicode(200), nullable = True )
     custDiscRate    = Column( Unicode(15),  nullable = True )
 
-    def __init__( self, custCode, custName, custPhone, custCell, custFax, custAddress,
+    def __init__( self, custCode, custName, custSubj, custPhone, custCell, custFax, custAddress,
                   custEmail, custEcnmcsCode, custWebPage, custResposible, custConnector, 
                   custGroup, custPostalCode="", custPersonalCode="", custDesc="", custBalance=float(0), custCredit=float(0), 
                   custRepViaEmail=False, custAccName1="", custAccNo1="", custAccBank1="", custAccName2="", custAccNo2="", 
@@ -298,7 +299,8 @@ class Customers(Base):
                   custIntroducer="", custCommission="", custMarked=False, custReason="", custDiscRate="" ):
 
         self.custCode        = custCode
-        self.custName        = custName
+        self.custName        = custName    
+        self.custSubj        = custSubj
         self.custPhone       = custPhone
         self.custCell        = custCell
         self.custFax         = custFax
@@ -359,6 +361,19 @@ class BankAccounts(Base):
         self.accBankPhone   = accBankPhone
         self.accBankWebPage = accBankWebPage   #TODO change to unicode
         self.accDesc        = accDesc
+
+class Config(Base):
+    __tablename__   = "config"
+    cfgId           = Column(Integer, primary_key = True)
+    cfgkey          = Column(Unicode(100), nullable = False)
+    cfgvalue        = Column(Unicode(100), nullable = False)
+    cfgDesc         = Column(Unicode(100), nullable = False)
+    
+    def __init__( self, cfgId, cfgkey, cfgvalue ):
+        self.cfgId      = cfgId
+        self.cfgkey     = cfgkey
+        self.cfgvalue   = cfgvalue
+        
 
 class Database:
     def __init__(self, file, repository, echoresults):
