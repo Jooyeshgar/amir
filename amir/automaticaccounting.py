@@ -5,6 +5,8 @@ import decimalentry
 import helpers
 import numberentry
 import subjects
+from amirconfig import config
+from database import Subject
 
 import gtk
 
@@ -249,6 +251,12 @@ class AutomaticAccounting:
         self.check_save_button()
 
     def on_subject_selected(self, subject, id, code, name, entry):
+        query = config.db.session.query(Subject).select_from(Subject)
+        query = query.filter(Subject.code == code)
+        if query.first().parent_id == 0:
+            print 'Can not select it'
+            return
+
         entry.set_text(str(code))
         subject.window.destroy()
 
