@@ -13,12 +13,13 @@ from    amirconfig                  import  config
 from    datetime                    import  date
 from    database                    import  *
 
-pygtk.require('2.0')
-
 class dbConfig:
 
     def __init__(self):
-        data = {'custSubject': 1}
+        data = {
+            'custSubject': 1,
+            'bank'       : 2
+            }
         
-    def GetVlue(self ,key):
+    def GetValue(self ,key):
         return self.data[key]
