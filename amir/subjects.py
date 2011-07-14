@@ -76,7 +76,7 @@ class Subjects(gobject.GObject):
             int(parent_id)
             result = query.filter(Subject1.parent_id == parent_id).group_by(Subject1.id).all()
         except TypeError:
-            result = query.filter(Subject1.id in parent_id).group_by(Subject1.id).all()
+            result = query.filter(Subject1.id.in_(parent_id)).group_by(Subject1.id).all()
 
         for a in result :
             type = _(self.subjecttypes[a[2]])

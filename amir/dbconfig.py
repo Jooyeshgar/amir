@@ -16,8 +16,9 @@ from    database                    import  *
 class dbConfig:
     data = {
         'custSubject': 1,
-        'bank'       : 2
-        }
+        'bank'       : 2,
+        'cash'       : 3,
+    }
         
     def getValue(self ,key):
         return self.data[key]
