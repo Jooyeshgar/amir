@@ -14,12 +14,10 @@ from    datetime                    import  date
 from    database                    import  *
 
 class dbConfig:
-
-    def __init__(self):
-        data = {
-            'custSubject': 1,
-            'bank'       : 2
-            }
+    data = {
+        'custSubject': 1,
+        'bank'       : 2
+        }
         
-    def GetValue(self ,key):
+    def getValue(self ,key):
         return self.data[key]

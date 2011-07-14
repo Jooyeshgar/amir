@@ -17,7 +17,7 @@ from helpers import get_builder
 class Subjects(gobject.GObject):
     subjecttypes = ["Debtor", "Creditor", "Both"]
     
-    def __init__ (self, ledgers_only=False):
+    def __init__ (self, ledgers_only=False, parent_id=0):
         gobject.GObject.__init__(self)
 
         self.builder = get_builder("notebook")
@@ -65,9 +65,14 @@ class Subjects(gobject.GObject):
         Subject2 = aliased(Subject, name="s2")
         
         #Find top level ledgers (with parent_id equal to 0)
-        query = config.db.session.query(Subject1.code, Subject1.name, Subject1.type, Subject1.lft, Subject1.rgt, count(Subject2.id))
+        query = config.db.session.query(Subject1.code,
+                                        Subject1.name, 
+                                        Subject1.type,
+                                        Subject1.lft,
+                                        Subject1.rgt,
+                                        count(Subject2.id))
         query = query.select_from(outerjoin(Subject1, Subject2, Subject1.id == Subject2.parent_id))
-        result = query.filter(Subject1.parent_id == 0).group_by(Subject1.id).all()
+        result = query.filter(Subject1.parent_id == parent_id).group_by(Subject1.id).all()
         for a in result :
             type = _(self.subjecttypes[a[2]])
             code = a[0]

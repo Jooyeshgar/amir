@@ -1,5 +1,6 @@
 import customers
 import dateentry
+import dbconfig
 import decimalentry
 import helpers
 import numberentry
@@ -164,13 +165,17 @@ class AutomaticAccounting:
     def on_from_clicked(self, button):
         index = self.type_index
         entry = self.from_entry
+        dbconf = dbconfig.dbConfig()
 
         if index in (0, 6, 8):
             cust = customers.Customer()
             cust.connect('customer-selected', self.on_customer_selected, entry)
             cust.viewCustomers(True)
-        elif index in (1, 2, 3, 4, 5, 7, 9, 10, 11):
+        elif index in (1, 3, 5, 9, 10, 11):
             sub = subjects.Subjects()
+            sub.connect('subject-selected', self.on_subject_selected, entry)
+        elif index in (2, 4, 7):
+            sub = subjects.Subjects(parent_id=dbconf.getValue('bank'))
             sub.connect('subject-selected', self.on_subject_selected, entry)
         else:
             print 'From?'
@@ -178,14 +183,18 @@ class AutomaticAccounting:
     def on_to_clicked(self, button):
         index = self.type_index
         entry = self.to_entry
+        dbconf = dbconfig.dbConfig()
 
-        if index in (0, 2, 3, 4, 5, 6, 8, 9, 10):
+        if index in (0, 4, 8, 9, 10):
             sub = subjects.Subjects()
             sub.connect('subject-selected', self.on_subject_selected, entry)
         elif index in (1, 7, 11):
             cust = customers.Customer()
             cust.connect('customer-selected', self.on_customer_selected, entry)
             cust.viewCustomers(True)
+        elif index in (2, 3, 5, 6):
+            sub = subjects.Subjects(parent_id=dbconf.getValue('bank'))
+            sub.connect('subject-selected', self.on_subject_selected, entry)
         else:
             print 'To?'     
 
