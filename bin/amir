@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010 <jooyeshgar> <info@jooyeshgar.com>
 #This program is free software: you can redistribute it and/or modify it 
@@ -13,7 +13,6 @@
 #You should have received a copy of the GNU General Public License along 
 #with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#!/usr/bin/env python
 
 import sys
 
@@ -71,6 +70,7 @@ gettext.install('amir', config.locale_path, unicode=1)
 
 from amir import subjects, addeditdoc, database, numberentry, notebookreport, docreport, tbalancereport, notebookutils, \
 setting, helpers, sellProducts, customers, customergroup, product, productgroup
+from amir import automaticaccounting
      
 class MainWindow(gobject.GObject):
 
@@ -283,6 +283,10 @@ class MainWindow(gobject.GObject):
         gtk.glade.textdomain('amir')
         gettext.install('amir', config.locale_path, unicode=1)
         logging.info('New locale: ' + new_locale)
+
+    def automaticAccounting(self, sender):
+        obj = automaticaccounting.AutomaticAccounting()
+        obj.run()
         
     def main(self):
         gtk.main()

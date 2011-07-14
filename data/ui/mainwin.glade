@@ -19,6 +19,14 @@
                   <object class="GtkMenu" id="menu1">
                     <property name="visible">True</property>
                     <child>
+                      <object class="GtkMenuItem" id="Automatic Accounting">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Automatic Accounting</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="automaticAccounting"/>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkImageMenuItem" id="addAPurchaseMenuItem">
                         <property name="label" translatable="yes">Add Purchase</property>
                         <property name="visible">True</property>
@@ -412,26 +420,6 @@
                         <property name="image">image10</property>
                         <property name="use_stock">False</property>
                         <signal name="activate" handler="settingsDialog"/>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-              </object>
-            </child>
-            <child>
-              <object class="GtkMenuItem" id="menuitem6">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">_Help</property>
-                <property name="use_underline">True</property>
-                <child type="submenu">
-                  <object class="GtkMenu" id="menu6">
-                    <property name="visible">True</property>
-                    <child>
-                      <object class="GtkImageMenuItem" id="imagemenuitem15">
-                        <property name="label">gtk-about</property>
-                        <property name="visible">True</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
                       </object>
                     </child>
                   </object>
