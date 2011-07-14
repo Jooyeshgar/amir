@@ -388,11 +388,15 @@ class Database:
         except exceptions.DatabaseNotControlledError:
             dbversion = 0
             api.version_control('sqlite:///%s' % file, self.repository, dbversion)
-            
-        if dbversion < self.version:
-            api.upgrade('sqlite:///%s' % file, self.repository, self.version)
-        elif  dbversion > self.version:
-            api.downgrade('sqlite:///%s' % file, self.repository, self.version)
+        
+        # TODO: has Syntax error    
+        try:
+            if dbversion < self.version:
+                api.upgrade('sqlite:///%s' % file, self.repository, self.version)
+            elif  dbversion > self.version:
+                api.downgrade('sqlite:///%s' % file, self.repository, self.version)
+        except Exception as err:
+            print (err)
         
         engine = create_engine('sqlite:///%s' % file , echo=echoresults)
         
