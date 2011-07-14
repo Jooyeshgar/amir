@@ -72,10 +72,12 @@ class Subjects(gobject.GObject):
                                         Subject1.rgt,
                                         count(Subject2.id))
         query = query.select_from(outerjoin(Subject1, Subject2, Subject1.id == Subject2.parent_id))
-        if parent_id == 0:
+        try:
+            int(parent_id)
             result = query.filter(Subject1.parent_id == parent_id).group_by(Subject1.id).all()
-        else:
-            result = query.filter(Subject1.id == parent_id).group_by(Subject1.id).all()
+        except TypeError:
+            result = query.filter(Subject1.id in parent_id).group_by(Subject1.id).all()
+
         for a in result :
             type = _(self.subjecttypes[a[2]])
             code = a[0]
