@@ -15,7 +15,6 @@ from amirconfig import config
 from helpers import get_builder
 
 class Subjects(gobject.GObject):
-    
     subjecttypes = ["Debtor", "Creditor", "Both"]
     
     def __init__ (self, ledgers_only=False):
@@ -70,7 +69,7 @@ class Subjects(gobject.GObject):
         query = query.select_from(outerjoin(Subject1, Subject2, Subject1.id == Subject2.parent_id))
         result = query.filter(Subject1.parent_id == 0).group_by(Subject1.id).all()
         for a in result :
-            type = _(self.__class__.subjecttypes[a[2]])
+            type = _(self.subjecttypes[a[2]])
             code = a[0]
             if config.digittype == 1:
                 code = utility.convertToPersian(code)
@@ -213,10 +212,10 @@ class Subjects(gobject.GObject):
             creditor = False
             both = False
             
-            if type == self.__class__.subjecttypes[0]:
+            if type == self.subjecttypes[0]:
                 self.builder.get_object("debtor").set_active(True)
             else:
-                if type == self.__class__.subjecttypes[1]:
+                if type == self.subjecttypes[1]:
                     self.builder.get_object("creditor").set_active(True)
                 else :
                     self.builder.get_object("both").set_active(True) 
@@ -415,7 +414,7 @@ class Subjects(gobject.GObject):
 #                        self.treestore.set(chiter, 0, basecode + chcode )
 #                        chiter = self.treestore.iter_next(chiter)
                         
-                self.treestore.set(iter, 0, basecode, 1, name, 2, _(self.__class__.subjecttypes[type]))
+                self.treestore.set(iter, 0, basecode, 1, name, 2, _(self.subjecttypes[type]))
                 
             else:
 #                    query = self.session.query(Subject.code).select_from(Subject).order_by(Subject.id.desc())
@@ -464,7 +463,7 @@ class Subjects(gobject.GObject):
                 
                 if config.digittype == 1:
                     lastcode = utility.convertToPersian(lastcode)
-                child = self.treestore.append(iter, (lastcode, name, _(self.__class__.subjecttypes[type]), utility.showNumber("0")))
+                child = self.treestore.append(iter, (lastcode, name, _(self.subjecttypes[type]), utility.showNumber("0")))
                 
                 self.temppath = self.treestore.get_path(child)
                 self.treeview.scroll_to_cell(self.temppath, None, False, 0, 0)
@@ -491,7 +490,7 @@ class Subjects(gobject.GObject):
                     code = row[0]
                     if config.digittype == 1:
                         code = utility.convertToPersian(code)
-                    type = _(self.__class__.subjecttypes[row[2]])
+                    type = _(self.subjecttypes[row[2]])
                     
                     #--------
                     subject_sum = config.db.session.query(sum(Notebook.value)).select_from(outerjoin(Subject, Notebook, Subject.id == Notebook.subject_id))
