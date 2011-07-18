@@ -13,12 +13,17 @@ from    amirconfig                  import  config
 from    datetime                    import  date
 from    database                    import  *
 
+
 class dbConfig:
+
     data = {
-        'custSubject': 1,
-        'bank'       : 2,
-        'cash'       : 3,
+        'custSubject': '1',
+        'bank'       : '2',
+        'cash'       : '3',
     }
-        
-    def getValue(self ,key):
+
+    def get_Value(self ,key):
         return self.data[key]
+        
+    def get_int(self ,key):
+        return int(self.data[key])

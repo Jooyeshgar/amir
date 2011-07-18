@@ -11,12 +11,48 @@ from migrate.versioning import exceptions,api
 # metadata.create_all
 Base = declarative_base()
 
+class User(Base):
+    __tablename__ = 'users'
+    id = Column(Integer, primary_key=True)
+    code = Column(String(20), unique=True)
+    name = Column(Unicode(60), nullable=False)
+    parent_id = Column(Integer, ColumnDefault(0), ForeignKey('users.id'), nullable=False)
+    lft = Column(Integer, nullable=False)
+    rgt = Column(Integer, nullable=False)
+    type = Column(Integer)      # 0 for Debtor, 1 for Creditor, 2 for both
+
+    def __init__(self, code, name, parent_id, left, right, type):
+        self.code = code
+        self.name = name
+        self.parent_id = parent_id
+        self.lft = left
+        self.rgt = right
+        self.type = type
+
+class Subject2(Base):
+    __tablename__ = "subject2"
+    id = Column(Integer, primary_key=True)
+    code = Column(String(20), unique=True)
+    name = Column(String(60), nullable=False)
+    parent_id = Column(Integer, ColumnDefault(0), ForeignKey('subject2.id'), nullable=False)
+    lft = Column(Integer, nullable=False)
+    rgt = Column(Integer, nullable=False)
+    type = Column(Integer)      # 0 for Debtor, 1 for Creditor, 2 for both
+    
+    def __init__(self, code, name, parent_id, left, right, type):
+        self.code = code
+        self.name = name
+        self.parent_id = parent_id
+        self.lft = left
+        self.rgt = right
+        self.type = type    
+        
 #Version 0.1 tables
 class Subject(Base):
     __tablename__ = "subject"
     id = Column(Integer, primary_key=True)
-    code = Column(String(20), nullable=False)
-    name = Column(Unicode(60), nullable=False)
+    code = Column(String(20), unique=True)
+    name = Column(String(60), nullable=False)
     parent_id = Column(Integer, ColumnDefault(0), ForeignKey('subject.id'), nullable=False)
     lft = Column(Integer, nullable=False)
     rgt = Column(Integer, nullable=False)
