@@ -255,11 +255,8 @@ class Customer(customergroup.Group):
 
         if not self.editCustomer:
             #New Customer
-            #Check to see if a subject with the customer name exists already.
-            iter_code = utility.convertToLatin(self.treestore.get(iter, 0)[0])
-            query = config.db.session.query(Subject).select_from(Subject)
-            query = query.filter(Subject.code == iter_code)
-            
+            # TODO: Check to see if a subject with the customer name exists already.
+            # check revision #118 by ha_60
             customer = Customers(custCode, custName, custSubj, custPhone, custCell, custFax, custAddress,
                                 custEmail, custEcnmcsCode, custWebPage, callResponsible, custConnector,
                                 groupid, custPostalCode, custPersonalCode, custDesc, custBalance, custCredit,
