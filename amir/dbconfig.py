@@ -22,7 +22,7 @@ class dbConfig:
         'cash'       : '3',
     }
 
-    def get_Value(self ,key):
+    def get_value(self, key):
         return self.data[key]
         
     def get_int(self ,key):

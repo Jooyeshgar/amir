@@ -5,6 +5,8 @@ import  pygtk
 import  gtk
 
 #import  warehousing
+import class_subject
+import dbconfig
 import  decimalentry
 import  numberentry
 import  dateentry
@@ -257,6 +259,9 @@ class Customer(customergroup.Group):
             #New Customer
             # TODO: Check to see if a subject with the customer name exists already.
             # check revision #118 by ha_60
+            dbconf = dbconfig.dbConfig()
+            sub = class_subject.Subjects()
+            custSubj = sub.add(dbconf.get_int('custSubject'), custName, custCode)
             customer = Customers(custCode, custName, custSubj, custPhone, custCell, custFax, custAddress,
                                 custEmail, custEcnmcsCode, custWebPage, callResponsible, custConnector,
                                 groupid, custPostalCode, custPersonalCode, custDesc, custBalance, custCredit,
