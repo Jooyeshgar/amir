@@ -425,14 +425,10 @@ class Database:
             dbversion = 0
             api.version_control('sqlite:///%s' % file, self.repository, dbversion)
         
-        # TODO: has Syntax error    
-        try:
-            if dbversion < self.version:
-                api.upgrade('sqlite:///%s' % file, self.repository, self.version)
-            elif  dbversion > self.version:
-                api.downgrade('sqlite:///%s' % file, self.repository, self.version)
-        except Exception as err:
-            print (err)
+        if dbversion < self.version:
+            api.upgrade('sqlite:///%s' % file, self.repository, self.version)
+        elif  dbversion > self.version:
+            api.downgrade('sqlite:///%s' % file, self.repository, self.version)
         
         engine = create_engine('sqlite:///%s' % file , echo=echoresults)
         
