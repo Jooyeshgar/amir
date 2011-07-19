@@ -287,7 +287,7 @@ class Payments(gobject.GObject):
 		#query = self.session.query(Customers).select_from(Customers)
 		#query = query.filter(Customers.custCode == payer_code).first()
 		if not self.payer:
-			msg = _("The payer code you entered is not a valid subject code.\n")
+			msg = _("The payer code you entered is not a valid customer code.\n")
 			errFlg  = True
 			
 		if self.isCheque.get_active():
@@ -325,7 +325,7 @@ class Payments(gobject.GObject):
 		self.payer = query.filter(Customers.custCode == payer_code).first()
 		
 		if not self.payer:
-			msg = _("The payer code you entered is not a valid subject code.")
+			msg = _("The payer code you entered is not a valid customer code.")
 			self.payerEntry.set_tooltip_text(msg)
 			self.builder.get_object("chqPayerLbl").set_text("")
 			self.builder.get_object("paymentsStatusBar").push(1,msg)

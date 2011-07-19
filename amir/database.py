@@ -11,12 +11,48 @@ from migrate.versioning import exceptions,api
 # metadata.create_all
 Base = declarative_base()
 
+class User(Base):
+    __tablename__ = 'users'
+    id = Column(Integer, primary_key=True)
+    code = Column(String(20), unique=True)
+    name = Column(Unicode(60), nullable=False)
+    parent_id = Column(Integer, ColumnDefault(0), ForeignKey('users.id'), nullable=False)
+    lft = Column(Integer, nullable=False)
+    rgt = Column(Integer, nullable=False)
+    type = Column(Integer)      # 0 for Debtor, 1 for Creditor, 2 for both
+
+    def __init__(self, code, name, parent_id, left, right, type):
+        self.code = code
+        self.name = name
+        self.parent_id = parent_id
+        self.lft = left
+        self.rgt = right
+        self.type = type
+
+class Subject2(Base):
+    __tablename__ = "subject2"
+    id = Column(Integer, primary_key=True)
+    code = Column(String(20), unique=True)
+    name = Column(String(60), nullable=False)
+    parent_id = Column(Integer, ColumnDefault(0), ForeignKey('subject2.id'), nullable=False)
+    lft = Column(Integer, nullable=False)
+    rgt = Column(Integer, nullable=False)
+    type = Column(Integer)      # 0 for Debtor, 1 for Creditor, 2 for both
+    
+    def __init__(self, code, name, parent_id, left, right, type):
+        self.code = code
+        self.name = name
+        self.parent_id = parent_id
+        self.lft = left
+        self.rgt = right
+        self.type = type    
+        
 #Version 0.1 tables
 class Subject(Base):
     __tablename__ = "subject"
     id = Column(Integer, primary_key=True)
-    code = Column(String(20), nullable=False)
-    name = Column(Unicode(60), nullable=False)
+    code = Column(String(20), unique=True)
+    name = Column(String(60), nullable=False)
     parent_id = Column(Integer, ColumnDefault(0), ForeignKey('subject.id'), nullable=False)
     lft = Column(Integer, nullable=False)
     rgt = Column(Integer, nullable=False)
@@ -258,6 +294,7 @@ class Customers(Base):
     custId          = Column( Integer,      primary_key = True  )
     custCode        = Column( Unicode(15),  nullable = False    )
     custName        = Column( Unicode(100), nullable = False    )
+    custSubj        = Column( Integer,      ForeignKey('subject.id'))
     custPhone       = Column( Unicode(15),  nullable = True     )
     custCell        = Column( Unicode(15),  nullable = True     )
     custFax         = Column( Unicode(15),  nullable = True     )
@@ -290,7 +327,7 @@ class Customers(Base):
     custReason      = Column( Unicode(200), nullable = True )
     custDiscRate    = Column( Unicode(15),  nullable = True )
 
-    def __init__( self, custCode, custName, custPhone, custCell, custFax, custAddress,
+    def __init__( self, custCode, custName, custSubj, custPhone, custCell, custFax, custAddress,
                   custEmail, custEcnmcsCode, custWebPage, custResposible, custConnector, 
                   custGroup, custPostalCode="", custPersonalCode="", custDesc="", custBalance=float(0), custCredit=float(0), 
                   custRepViaEmail=False, custAccName1="", custAccNo1="", custAccBank1="", custAccName2="", custAccNo2="", 
@@ -298,7 +335,8 @@ class Customers(Base):
                   custIntroducer="", custCommission="", custMarked=False, custReason="", custDiscRate="" ):
 
         self.custCode        = custCode
-        self.custName        = custName
+        self.custName        = custName    
+        self.custSubj        = custSubj
         self.custPhone       = custPhone
         self.custCell        = custCell
         self.custFax         = custFax
@@ -360,6 +398,19 @@ class BankAccounts(Base):
         self.accBankWebPage = accBankWebPage   #TODO change to unicode
         self.accDesc        = accDesc
 
+class Config(Base):
+    __tablename__   = "config"
+    cfgId           = Column(Integer, primary_key = True)
+    cfgkey          = Column(Unicode(100), nullable = False)
+    cfgvalue        = Column(Unicode(100), nullable = False)
+    cfgDesc         = Column(Unicode(100), nullable = False)
+    
+    def __init__( self, cfgId, cfgkey, cfgvalue ):
+        self.cfgId      = cfgId
+        self.cfgkey     = cfgkey
+        self.cfgvalue   = cfgvalue
+        
+
 class Database:
     def __init__(self, file, repository, echoresults):
         self.version = 2
@@ -373,11 +424,15 @@ class Database:
         except exceptions.DatabaseNotControlledError:
             dbversion = 0
             api.version_control('sqlite:///%s' % file, self.repository, dbversion)
-            
-        if dbversion < self.version:
-            api.upgrade('sqlite:///%s' % file, self.repository, self.version)
-        elif  dbversion > self.version:
-            api.downgrade('sqlite:///%s' % file, self.repository, self.version)
+        
+        # TODO: has Syntax error    
+        try:
+            if dbversion < self.version:
+                api.upgrade('sqlite:///%s' % file, self.repository, self.version)
+            elif  dbversion > self.version:
+                api.downgrade('sqlite:///%s' % file, self.repository, self.version)
+        except Exception as err:
+            print (err)
         
         engine = create_engine('sqlite:///%s' % file , echo=echoresults)
         

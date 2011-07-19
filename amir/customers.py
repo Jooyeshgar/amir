@@ -139,9 +139,14 @@ class Customer(customergroup.Group):
 
         self.builder.get_object("custDescEntry").set_text("")
         #----------------------------------
+        self.builder.get_object("custTypeBuyerChk").set_active(True)
+        self.builder.get_object("custTypeSellerChk").set_active(True)
+        self.builder.get_object("custTypeMateChk").set_active(False)
+        self.builder.get_object("custTypeAgentChk").set_active(False)
         self.custIntroducerEntry.set_text("")
         self.boxCommissionRateEntry.set_text("")
         self.boxDiscRateEntry.set_text("")
+        self.builder.get_object("markedChk").set_active(False)
         self.builder.get_object("markedReasonEntry").set_text("")
         #----------------------------------
         self.boxBalanceEntry.set_text("")
@@ -249,7 +254,13 @@ class Customer(customergroup.Group):
             return -1
 
         if not self.editCustomer:
-            customer = Customers(custCode, custName, custPhone, custCell, custFax, custAddress,
+            #New Customer
+            #Check to see if a subject with the customer name exists already.
+            iter_code = utility.convertToLatin(self.treestore.get(iter, 0)[0])
+            query = config.db.session.query(Subject).select_from(Subject)
+            query = query.filter(Subject.code == iter_code)
+            
+            customer = Customers(custCode, custName, custSubj, custPhone, custCell, custFax, custAddress,
                                 custEmail, custEcnmcsCode, custWebPage, callResponsible, custConnector,
                                 groupid, custPostalCode, custPersonalCode, custDesc, custBalance, custCredit,
                                 custRepViaEmail, custAccName1, custAccNo1, custAccBank1, custAccName2, custAccNo2, 
