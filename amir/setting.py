@@ -221,7 +221,7 @@ class Setting(gobject.GObject):
         dbchanged_flag = False
         if active_path != config.dblist[config.currentdb - 1]:
             msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, 
-                                       _("You have changed the current database, any unsaved data will be lost.\nAre you sure to continue?"))
+                       _("You have changed the current database, any unsaved data will be lost.\nAre you sure to continue?"))
             msgbox.set_title(_("Are you sure?"))
             result = msgbox.run()
             msgbox.destroy()
@@ -351,12 +351,7 @@ class Setting(gobject.GObject):
 #            msgbox.run()
 #            msgbox.destroy()
 #            return
-        msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 
-                                   _("Database settings changed successfully.") )
-        msgbox.set_title(_("Successfully changed"))
-        msgbox.run()
-        msgbox.destroy()
-    
+
     def applyFormatSetting(self, sender):
         langindex = self.langlist.get_active()
         if langindex != config.localelist.index(config.locale):
@@ -379,12 +374,6 @@ class Setting(gobject.GObject):
         else:
             config.digittype = 1
             
-        msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 
-                                   _("Format settings changed successfully.") )
-        msgbox.set_title(_("Successfully changed"))
-        msgbox.run()
-        msgbox.destroy()
-        
     def reportPaperSetup(self, sender):
         settings = gtk.PrintSettings()
         self.page_setup = gtk.print_run_page_setup_dialog(None, self.page_setup, settings)
@@ -408,12 +397,6 @@ class Setting(gobject.GObject):
         config.paper_height = paper_size.get_height(gtk.UNIT_POINTS)
         config.paper_orientation = int(self.page_setup.get_orientation())
 #        self.page_setup.to_file(config.reportconfig)
-        
-        msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 
-                                   _("Report settings changed successfully.") )
-        msgbox.set_title(_("Successfully changed"))
-        msgbox.run()
-        msgbox.destroy()
 
     def restoreDefaultsReports(self, sender):
         paper_size = self.page_setup.get_paper_size()
@@ -434,8 +417,21 @@ class Setting(gobject.GObject):
         self.builder.get_object("contentfont").set_value(config.contentfont)
         self.builder.get_object("footerfont").set_value(config.footerfont)
    
-    def closeSettingWindow(self, sender):
+    def on_cancel_clicked(self, sender):
         self.window.destroy()
+
+    def on_apply_clicked(self, sender):
+        self.applyFormatSetting(None)
+        self.applyDatabaseSetting(None)
+        self.applyReportSetting(None)
+
+    def on_ok_clicked(self, sender):
+        self.on_apply_clicked(None)
+        self.window.destroy()
+
+    def on_defaults_clicked(self, sender):
+        #self.restoreDefaultsReports()
+        print 'defaults'
 
 gobject.type_register(Setting)
 gobject.signal_new("database-changed", Setting, gobject.SIGNAL_RUN_LAST,
