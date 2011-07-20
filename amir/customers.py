@@ -312,9 +312,9 @@ class Customer(customergroup.Group):
         #Show new customer in table
         if self.treestore != None:
             parent_iter = self.treestore.get_iter_first()
-            while self.treestore.iter_is_valid(parent_iter):
+            while parent_iter:
                 itercode = self.treestore.get_value(parent_iter, 0)
-                if itercode == custGrp:
+                if itercode == str(custGrp):
                     break
                 parent_iter = self.treestore.iter_next(parent_iter)
                 
