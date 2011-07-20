@@ -430,8 +430,15 @@ class Setting(gobject.GObject):
         self.window.destroy()
 
     def on_defaults_clicked(self, sender):
-        #self.restoreDefaultsReports()
-        print 'defaults'
+        pagenum = self.builder.get_object('notebook1').get_current_page()
+        self.restoreDefaultsReports(None)
+
+    def on_notebook1_switch_page(self, notebook, page, pagenum):
+        defaults = self.builder.get_object('defaults')
+        if pagenum == 2:
+            defaults.set_sensitive(True)
+        else:
+            defaults.set_sensitive(False)
 
 gobject.type_register(Setting)
 gobject.signal_new("database-changed", Setting, gobject.SIGNAL_RUN_LAST,
