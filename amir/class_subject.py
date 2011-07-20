@@ -2,7 +2,7 @@ from amirconfig                 import config
 from amir.database              import *
 from sqlalchemy.sql.functions   import *
 
-class subjects():
+class Subjects():
 
     def __init__(self):
         pass
@@ -44,8 +44,10 @@ class subjects():
 
         customercode = parent[0] + customercode
 
-        print customercode
         mysubject = Subject(customercode, name, parentid, sub_left, sub_right, 2)
         config.db.session.add(mysubject)
         config.db.session.commit()
         
+        query = config.db.session.query(Subject).select_from(Subject)
+        query = query.filter(Subject.code == customercode)
+        return query.first().id

@@ -5,6 +5,8 @@ import  pygtk
 import  gtk
 
 #import  warehousing
+import class_subject
+import dbconfig
 import  decimalentry
 import  numberentry
 import  dateentry
@@ -255,11 +257,11 @@ class Customer(customergroup.Group):
 
         if not self.editCustomer:
             #New Customer
-            #Check to see if a subject with the customer name exists already.
-            iter_code = utility.convertToLatin(self.treestore.get(iter, 0)[0])
-            query = config.db.session.query(Subject).select_from(Subject)
-            query = query.filter(Subject.code == iter_code)
-            
+            # TODO: Check to see if a subject with the customer name exists already.
+            # check revision #118 by ha_60
+            dbconf = dbconfig.dbConfig()
+            sub = class_subject.Subjects()
+            custSubj = sub.add(dbconf.get_int('custSubject'), custName, custCode)
             customer = Customers(custCode, custName, custSubj, custPhone, custCell, custFax, custAddress,
                                 custEmail, custEcnmcsCode, custWebPage, callResponsible, custConnector,
                                 groupid, custPostalCode, custPersonalCode, custDesc, custBalance, custCredit,
@@ -310,9 +312,9 @@ class Customer(customergroup.Group):
         #Show new customer in table
         if self.treestore != None:
             parent_iter = self.treestore.get_iter_first()
-            while self.treestore.iter_is_valid(parent_iter):
+            while parent_iter:
                 itercode = self.treestore.get_value(parent_iter, 0)
-                if itercode == custGrp:
+                if itercode == str(custGrp):
                     break
                 parent_iter = self.treestore.iter_next(parent_iter)
                 

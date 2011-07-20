@@ -177,7 +177,7 @@ class AutomaticAccounting:
             sub = subjects.Subjects()
             sub.connect('subject-selected', self.on_subject_selected, entry)
         elif index in (2, 4, 7):
-            sub = subjects.Subjects(parent_id=dbconf.getValue('bank'))
+            sub = subjects.Subjects(parent_id=dbconf.get_value('bank'))
             sub.connect('subject-selected', self.on_subject_selected, entry)
         else:
             print 'From?'
@@ -195,7 +195,7 @@ class AutomaticAccounting:
             cust.connect('customer-selected', self.on_customer_selected, entry)
             cust.viewCustomers(True)
         elif index in (2, 3, 5, 6):
-            sub = subjects.Subjects(parent_id=dbconf.getValue('bank'))
+            sub = subjects.Subjects(parent_id=dbconf.get_value('bank'))
             sub.connect('subject-selected', self.on_subject_selected, entry)
         else:
             print 'To?'     

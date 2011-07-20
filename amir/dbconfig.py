@@ -31,7 +31,7 @@ class dbConfig:
         "commission": 11
     }
 
-    def get_Value(self ,key):
+    def get_value(self, key):
         return self.data[key]
         
     def get_int(self ,key):
