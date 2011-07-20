@@ -216,7 +216,7 @@ class Setting(gobject.GObject):
         self.msgbox.destroy()
         return False
         
-    def applyDatabaseSetting(self, sender):
+    def applyDatabaseSetting(self):
         active_path = self.liststore.get(self.active_iter, 2)[0]
         dbchanged_flag = False
         if active_path != config.dblist[config.currentdb - 1]:
@@ -352,7 +352,7 @@ class Setting(gobject.GObject):
 #            msgbox.destroy()
 #            return
 
-    def applyFormatSetting(self, sender):
+    def applyFormatSetting(self):
         langindex = self.langlist.get_active()
         if langindex != config.localelist.index(config.locale):
             config.locale = config.localelist[langindex]
@@ -379,7 +379,7 @@ class Setting(gobject.GObject):
         self.page_setup = gtk.print_run_page_setup_dialog(None, self.page_setup, settings)
         self.builder.get_object("papersize").set_text(self.page_setup.get_paper_size().get_display_name())
         
-    def applyReportSetting(self, sender):
+    def applyReportSetting(self):
         config.topmargin = self.builder.get_object("topmargin").get_value_as_int()
         config.botmargin = self.builder.get_object("botmargin").get_value_as_int()
         config.rightmargin = self.builder.get_object("rightmargin").get_value_as_int()
@@ -398,7 +398,7 @@ class Setting(gobject.GObject):
         config.paper_orientation = int(self.page_setup.get_orientation())
 #        self.page_setup.to_file(config.reportconfig)
 
-    def restoreDefaultsReports(self, sender):
+    def restoreDefaultsReports(self):
         paper_size = self.page_setup.get_paper_size()
         config.topmargin = int(paper_size.get_default_top_margin(gtk.UNIT_POINTS))
         config.botmargin = int(paper_size.get_default_bottom_margin(gtk.UNIT_POINTS))
@@ -421,9 +421,9 @@ class Setting(gobject.GObject):
         self.window.destroy()
 
     def on_apply_clicked(self, sender):
-        self.applyFormatSetting(None)
-        self.applyDatabaseSetting(None)
-        self.applyReportSetting(None)
+        self.applyFormatSetting()
+        self.applyDatabaseSetting()
+        self.applyReportSetting()
 
     def on_ok_clicked(self, sender):
         self.on_apply_clicked(None)
@@ -431,7 +431,7 @@ class Setting(gobject.GObject):
 
     def on_defaults_clicked(self, sender):
         pagenum = self.builder.get_object('notebook1').get_current_page()
-        self.restoreDefaultsReports(None)
+        self.restoreDefaultsReports()
 
     def on_notebook1_switch_page(self, notebook, page, pagenum):
         defaults = self.builder.get_object('defaults')
