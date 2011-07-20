@@ -399,16 +399,21 @@ class BankAccounts(Base):
         self.accDesc        = accDesc
 
 class Config(Base):
-    __tablename__   = "config"
-    cfgId           = Column(Integer, primary_key = True)
-    cfgkey          = Column(Unicode(100), nullable = False)
-    cfgvalue        = Column(Unicode(100), nullable = False)
-    cfgDesc         = Column(Unicode(100), nullable = False)
+    __tablename__  = "config"
+    cfgId          = Column(Integer, primary_key = True)
+    cfgKey         = Column(Unicode(100), nullable = False, unique = True)
+    cfgValue       = Column(Unicode(100), nullable = False)
+    cfgDesc        = Column(Unicode(100), nullable = True)
+    cfgType        = Column(Integer     , nullable = True)
+    cfgCat         = Column(Integer     , nullable = True)
     
-    def __init__( self, cfgId, cfgkey, cfgvalue ):
-        self.cfgId      = cfgId
-        self.cfgkey     = cfgkey
-        self.cfgvalue   = cfgvalue
+    def __init__( self, cfgId, cfgKey, cfgValue, cfgDesc, cfgType, cfgCat):
+        self.cfgId    = cfgId
+        self.cfgKey   = cfgKey
+        self.cfgValue = cfgValue
+        self.cfgDesc  = cfgDesc
+        self.cfgType  = cfgType
+        self.cfgCat   = cfgCat
         
 
 class Database:

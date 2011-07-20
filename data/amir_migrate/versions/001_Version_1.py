@@ -47,6 +47,15 @@ notebook = Table('notebook', meta,
     Column('value', Integer, ColumnDefault(0), nullable = False)
 )
 
+config = Table("config", meta,
+               Column('cfgId'   , Integer     , primary_key = True),
+               Column('cfgKey'  , Unicode(100), nullable = False, unique = True),
+               Column('cfgValue', Unicode(100), nullable = False),
+               Column('cfgDesc' , Unicode(100), nullable = True),
+               Column('cfgType' , Integer     , nullable = True),
+               Column('cfgCat'  , Integer     , nullable = True)
+)
+
 def upgrade(migrate_engine):
     # Upgrade operations go here. Don't create your own engine; bind migrate_engine
     # to your metadata
@@ -55,6 +64,7 @@ def upgrade(migrate_engine):
     subject.create(checkfirst=True)
     bill.create(checkfirst=True)
     notebook.create(checkfirst=True)
+    config.create(checkfirst=True)
 
     #Insert test data
     op = subject.insert()
@@ -104,6 +114,12 @@ def upgrade(migrate_engine):
                {"id": 44, "code": "1301", "name": u"-", "parent_id": 6, "lft": 40, "rgt": 41, "type": 2},
                {"id": 45, "code": "0801", "name": u"-", "parent_id": 21, "lft": 62, "rgt": 63, "type": 2},
                {"id": 46, "code": "1401", "name": u"-", "parent_id": 22, "lft": 66, "rgt": 67, "type": 2})
+
+
+    op = config.insert()
+    op.execute(
+        {'cfgId': 1, 'cfgKey':u'co-name', 'cfgValue': u'', 'cfgDesc':u'Enter Company name here', 'cfgType': 1, 'cfgCat':1}
+    )
                
     logging.debug("upgrade to 1")
    
