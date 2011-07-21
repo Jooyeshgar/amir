@@ -36,6 +36,7 @@ class dbConfig:
         return self.data[key]
 
     def get_value(self, key):
+        key = unicode(key)
         query = config.db.session.query(Config)
         query = query.filter(Config.cfgKey == key)
         return query.first().cfgValue

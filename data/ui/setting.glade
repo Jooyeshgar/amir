@@ -913,8 +913,37 @@
                                 <property name="visible">True</property>
                                 <property name="left_padding">12</property>
                                 <child>
-                                  <object class="GtkVBox" id="company_box">
+                                  <object class="GtkTable" id="company_table">
                                     <property name="visible">True</property>
+                                    <property name="n_rows">3</property>
+                                    <property name="n_columns">4</property>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
                                     <child>
                                       <placeholder/>
                                     </child>
@@ -952,8 +981,37 @@
                                 <property name="visible">True</property>
                                 <property name="left_padding">12</property>
                                 <child>
-                                  <object class="GtkVBox" id="subjects_box">
+                                  <object class="GtkTable" id="subjects_table">
                                     <property name="visible">True</property>
+                                    <property name="n_rows">3</property>
+                                    <property name="n_columns">4</property>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
                                     <child>
                                       <placeholder/>
                                     </child>
@@ -991,8 +1049,37 @@
                                 <property name="visible">True</property>
                                 <property name="left_padding">12</property>
                                 <child>
-                                  <object class="GtkVBox" id="other_box">
+                                  <object class="GtkTable" id="others_table">
                                     <property name="visible">True</property>
+                                    <property name="n_rows">3</property>
+                                    <property name="n_columns">4</property>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
                                     <child>
                                       <placeholder/>
                                     </child>

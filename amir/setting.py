@@ -461,25 +461,28 @@ class Setting(gobject.GObject):
     def setup_config_tab(self):
         query = config.db.session.query(database.Config).all()
 
-        company  = self.builder.get_object('company_box')
-        subjects = self.builder.get_object('subjects_box')
-        others   = self.builder.get_object('others_box')
+        company  = self.builder.get_object('company_table')
+        subjects = self.builder.get_object('subjects_table')
+        others   = self.builder.get_object('others_table')
+        company_top = subjects_top = others_top = 0
 
         self.config_items = []
 
         for row in query:
             if row.cfgCat == 1:
-                box = company
+                table = company
+                top = company_top = company_top+1
             elif row.cfgCat == 2:
-                box = subjects
+                table = subjects
+                top = subjects_top= subjects_top+1
             else:
-                box = others
+                table = others
+                top = others_top = others_top+1
 
             widget2=None
             if   row.cfgType in (1, 3):
                 widget = gtk.Entry()
                 widget.set_text(row.cfgValue)
-
                 self.config_items.append((row.cfgId, widget.get_text, row.cfgKey))
             elif row.cfgType == 2:
                 widget = gtk.FileChooserButton(row.cfgKey)
@@ -493,17 +496,15 @@ class Setting(gobject.GObject):
                 widget2.connect('clicked', self.on_select_button_clicked, widget)
 
 
-            hbox = gtk.HBox()
-            hbox.pack_start(gtk.Label(row.cfgKey), False, False)
-            hbox.pack_start(widget)
+            table.attach(gtk.Label(row.cfgKey), 0, 1, top-1, top)
+            table.attach(widget, 1, 2, top-1, top)
             if widget2:
-                hbox.pack_start(widget2, False, False)
-            hbox.pack_start(gtk.Label(row.cfgDesc), False, False)
-            box.pack_start(hbox, False, False)
+                table.attach(widget, 2, 3, top-1, top)
+            table.attach(gtk.Label(row.cfgDesc), 3, 4, top-1, top)
 
     def on_select_button_clicked(self, button, entry):
-            sub = subjects.Subjects()
-            sub.connect('subject-selected', self.on_subject_selected, entry)
+        sub = subjects.Subjects()
+        sub.connect('subject-selected', self.on_subject_selected, entry)
 
     def on_subject_selected(self, subject, id, code, name, entry):
         old = []
