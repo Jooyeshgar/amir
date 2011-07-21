@@ -7,6 +7,8 @@ from sqlalchemy.orm import sessionmaker
 
 import upgrade
 import database
+import dbconfig
+import subjects
 from amirconfig import config
 from helpers import get_builder, comboInsertItems
 
@@ -107,6 +109,8 @@ class Setting(gobject.GObject):
         self.page_setup.set_paper_size(paper_size)
         self.page_setup.set_orientation(config.paper_orientation)
         self.builder.get_object("papersize").set_text(config.paper_name)
+
+        self.setup_config_tab()
         
         self.window.show_all()
         self.builder.connect_signals(self)
@@ -216,7 +220,7 @@ class Setting(gobject.GObject):
         self.msgbox.destroy()
         return False
         
-    def applyDatabaseSetting(self, sender):
+    def applyDatabaseSetting(self):
         active_path = self.liststore.get(self.active_iter, 2)[0]
         dbchanged_flag = False
         if active_path != config.dblist[config.currentdb - 1]:
@@ -352,7 +356,7 @@ class Setting(gobject.GObject):
 #            msgbox.destroy()
 #            return
 
-    def applyFormatSetting(self, sender):
+    def applyFormatSetting(self):
         langindex = self.langlist.get_active()
         if langindex != config.localelist.index(config.locale):
             config.locale = config.localelist[langindex]
@@ -379,7 +383,7 @@ class Setting(gobject.GObject):
         self.page_setup = gtk.print_run_page_setup_dialog(None, self.page_setup, settings)
         self.builder.get_object("papersize").set_text(self.page_setup.get_paper_size().get_display_name())
         
-    def applyReportSetting(self, sender):
+    def applyReportSetting(self):
         config.topmargin = self.builder.get_object("topmargin").get_value_as_int()
         config.botmargin = self.builder.get_object("botmargin").get_value_as_int()
         config.rightmargin = self.builder.get_object("rightmargin").get_value_as_int()
@@ -398,7 +402,7 @@ class Setting(gobject.GObject):
         config.paper_orientation = int(self.page_setup.get_orientation())
 #        self.page_setup.to_file(config.reportconfig)
 
-    def restoreDefaultsReports(self, sender):
+    def restoreDefaultsReports(self):
         paper_size = self.page_setup.get_paper_size()
         config.topmargin = int(paper_size.get_default_top_margin(gtk.UNIT_POINTS))
         config.botmargin = int(paper_size.get_default_bottom_margin(gtk.UNIT_POINTS))
@@ -417,13 +421,27 @@ class Setting(gobject.GObject):
         self.builder.get_object("contentfont").set_value(config.contentfont)
         self.builder.get_object("footerfont").set_value(config.footerfont)
    
+    def applyConfigSetting(self):
+        for item in self.config_items:
+            val = unicode(item[1]())
+
+            if val == None or val == '':
+                conf = dbconfig.dbConfig()
+                val = unicode(conf.get_default(item[2]))
+
+            query = config.db.session.query(database.Config)
+            query = query.filter(database.Config.cfgId == item[0])
+            query = query.update({u'cfgValue':val})
+        config.db.session.commit()
+
     def on_cancel_clicked(self, sender):
         self.window.destroy()
 
     def on_apply_clicked(self, sender):
-        self.applyFormatSetting(None)
-        self.applyDatabaseSetting(None)
-        self.applyReportSetting(None)
+        self.applyFormatSetting()
+        self.applyDatabaseSetting()
+        self.applyReportSetting()
+        self.applyConfigSetting()
 
     def on_ok_clicked(self, sender):
         self.on_apply_clicked(None)
@@ -431,7 +449,7 @@ class Setting(gobject.GObject):
 
     def on_defaults_clicked(self, sender):
         pagenum = self.builder.get_object('notebook1').get_current_page()
-        self.restoreDefaultsReports(None)
+        self.restoreDefaultsReports()
 
     def on_notebook1_switch_page(self, notebook, page, pagenum):
         defaults = self.builder.get_object('defaults')
@@ -439,6 +457,75 @@ class Setting(gobject.GObject):
             defaults.set_sensitive(True)
         else:
             defaults.set_sensitive(False)
+
+    def setup_config_tab(self):
+        query = config.db.session.query(database.Config).all()
+
+        company  = self.builder.get_object('company_box')
+        subjects = self.builder.get_object('subjects_box')
+        others   = self.builder.get_object('others_box')
+
+        self.config_items = []
+
+        for row in query:
+            if row.cfgCat == 1:
+                box = company
+            elif row.cfgCat == 2:
+                box = subjects
+            else:
+                box = others
+
+            widget2=None
+            if   row.cfgType in (1, 3):
+                widget = gtk.Entry()
+                widget.set_text(row.cfgValue)
+
+                self.config_items.append((row.cfgId, widget.get_text, row.cfgKey))
+            elif row.cfgType == 2:
+                widget = gtk.FileChooserButton(row.cfgKey)
+                if row.cfgValue != '':
+                    widget.set_filename(row.cfgValue)
+
+                self.config_items.append((row.cfgId, widget.get_filename, row.cfgKey))
+                
+            if row.cfgType == 3:
+                widget2 = gtk.Button('Select')
+                widget2.connect('clicked', self.on_select_button_clicked, widget)
+
+
+            hbox = gtk.HBox()
+            hbox.pack_start(gtk.Label(row.cfgKey), False, False)
+            hbox.pack_start(widget)
+            if widget2:
+                hbox.pack_start(widget2, False, False)
+            hbox.pack_start(gtk.Label(row.cfgDesc), False, False)
+            box.pack_start(hbox, False, False)
+
+    def on_select_button_clicked(self, button, entry):
+            sub = subjects.Subjects()
+            sub.connect('subject-selected', self.on_subject_selected, entry)
+
+    def on_subject_selected(self, subject, id, code, name, entry):
+        old = []
+        try:
+            for item in entry.get_text().split(','):
+                old.append(int(item))
+
+            if not id in old:
+                old.append(id)
+
+            if len(old) == 1:
+                new_txt = str(id)
+            else:
+                new_txt = ''
+                for i in old:
+                    new_txt += str(i)+','
+                new_txt = new_txt[:-1]
+        except ValueError:
+            new_txt = str(id)
+                
+        entry.set_text(new_txt)
+        subject.window.destroy()
 
 gobject.type_register(Setting)
 gobject.signal_new("database-changed", Setting, gobject.SIGNAL_RUN_LAST,
