@@ -36,7 +36,19 @@ class dbConfig:
         return self.data[key]
 
     def get_value(self, key):
-        return self.data[key]
+        query = config.db.session.query(Config)
+        query = query.filter(Config.cfgKey == key)
+        return query.first()
         
     def get_int(self ,key):
-        return int(self.data[key])
+        return int(self.get_value(key))
+
+    def get_int_list(self, key):
+        val = []
+        try:
+            for item in self.get_value(key).split(','):
+                val.appned(int(item))
+        except ValueError:
+            return False
+        return val
+
