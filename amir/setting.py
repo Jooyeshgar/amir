@@ -7,6 +7,8 @@ from sqlalchemy.orm import sessionmaker
 
 import upgrade
 import database
+import dbconfig
+import subjects
 from amirconfig import config
 from helpers import get_builder, comboInsertItems
 
@@ -107,6 +109,8 @@ class Setting(gobject.GObject):
         self.page_setup.set_paper_size(paper_size)
         self.page_setup.set_orientation(config.paper_orientation)
         self.builder.get_object("papersize").set_text(config.paper_name)
+
+        self.setup_config_tab()
         
         self.window.show_all()
         self.builder.connect_signals(self)
@@ -417,6 +421,19 @@ class Setting(gobject.GObject):
         self.builder.get_object("contentfont").set_value(config.contentfont)
         self.builder.get_object("footerfont").set_value(config.footerfont)
    
+    def applyConfigSetting(self):
+        for item in self.config_items:
+            val = unicode(item[1]())
+
+            if val == None or val == '':
+                conf = dbconfig.dbConfig()
+                val = unicode(conf.get_default(item[2]))
+
+            query = config.db.session.query(database.Config)
+            query = query.filter(database.Config.cfgId == item[0])
+            query = query.update({u'cfgValue':val})
+        config.db.session.commit()
+
     def on_cancel_clicked(self, sender):
         self.window.destroy()
 
@@ -424,6 +441,7 @@ class Setting(gobject.GObject):
         self.applyFormatSetting()
         self.applyDatabaseSetting()
         self.applyReportSetting()
+        self.applyConfigSetting()
 
     def on_ok_clicked(self, sender):
         self.on_apply_clicked(None)
@@ -439,6 +457,75 @@ class Setting(gobject.GObject):
             defaults.set_sensitive(True)
         else:
             defaults.set_sensitive(False)
+
+    def setup_config_tab(self):
+        query = config.db.session.query(database.Config).all()
+
+        company  = self.builder.get_object('company_box')
+        subjects = self.builder.get_object('subjects_box')
+        others   = self.builder.get_object('others_box')
+
+        self.config_items = []
+
+        for row in query:
+            if row.cfgCat == 1:
+                box = company
+            elif row.cfgCat == 2:
+                box = subjects
+            else:
+                box = others
+
+            widget2=None
+            if   row.cfgType in (1, 3):
+                widget = gtk.Entry()
+                widget.set_text(row.cfgValue)
+
+                self.config_items.append((row.cfgId, widget.get_text, row.cfgKey))
+            elif row.cfgType == 2:
+                widget = gtk.FileChooserButton(row.cfgKey)
+                if row.cfgValue != '':
+                    widget.set_filename(row.cfgValue)
+
+                self.config_items.append((row.cfgId, widget.get_filename, row.cfgKey))
+                
+            if row.cfgType == 3:
+                widget2 = gtk.Button('Select')
+                widget2.connect('clicked', self.on_select_button_clicked, widget)
+
+
+            hbox = gtk.HBox()
+            hbox.pack_start(gtk.Label(row.cfgKey), False, False)
+            hbox.pack_start(widget)
+            if widget2:
+                hbox.pack_start(widget2, False, False)
+            hbox.pack_start(gtk.Label(row.cfgDesc), False, False)
+            box.pack_start(hbox, False, False)
+
+    def on_select_button_clicked(self, button, entry):
+            sub = subjects.Subjects()
+            sub.connect('subject-selected', self.on_subject_selected, entry)
+
+    def on_subject_selected(self, subject, id, code, name, entry):
+        old = []
+        try:
+            for item in entry.get_text().split(','):
+                old.append(int(item))
+
+            if not id in old:
+                old.append(id)
+
+            if len(old) == 1:
+                new_txt = str(id)
+            else:
+                new_txt = ''
+                for i in old:
+                    new_txt += str(i)+','
+                new_txt = new_txt[:-1]
+        except ValueError:
+            new_txt = str(id)
+                
+        entry.set_text(new_txt)
+        subject.window.destroy()
 
 gobject.type_register(Setting)
 gobject.signal_new("database-changed", Setting, gobject.SIGNAL_RUN_LAST,
