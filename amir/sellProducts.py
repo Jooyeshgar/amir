@@ -9,6 +9,7 @@ import  subjects
 import  utility
 import  payments
 import  dbconfig
+import  customers
 
 import  gobject
 import  pygtk
@@ -717,16 +718,20 @@ class SellProducts:
 		self.mainDlg.destroy()
 
 	def selectSeller(self,sender=0):
-		subject_win = subjects.Subjects()
+		customer_win = customers.Customer()
+		customer_win.viewCustomers()
 		code = self.customerEntry.get_text()
 		if code != '':
-			subject_win.highlightSubject(code)
-		subject_win.connect("subject-selected",self.sellerSelected)
+			customer_win.highlightCust(code)
+		customer_win.connect("customer-selected",self.sellerSelected)
 		
-	def sellerSelected(self, sender, id, code, name):
+	def sellerSelected(self, sender, id, code):
 		self.customerEntry.set_text(code)
 		sender.window.destroy()
-		self.buyerNameEntry.set_text(name)
+		
+		query = self.session.query(Customers).select_from(Customers)
+		customer = query.filter(Customers.custId == id).first()
+		self.buyerNameEntry.set_text(customer.custName)
 
 	def setSellerName(self,sender=0,ev=0):
 		payer   = self.customerEntry.get_text()
@@ -772,20 +777,6 @@ class SellProducts:
 					self.session.commit()
 			print "------ Saving the Exchanges:\tDONE! "
 			
-	#                pay = Payments( paymntNo, paymntDueDate, paymntBank, paymntSerial, paymntAmount,
-	#                  paymntPayer, paymntWrtDate, paymntDesc, paymntTransId, paymntTrckCode ):
-			#print "\nSaving the Payments -----------"
-			#for payment in self.paysListStore:
-				#dueDt = stringToDate(payment[4])
-				##------ Must Change to check this from the customers
-				#subId = self.session.query(Subject).select_from(Subject).filter(Subject.name==unicode(payment[1])).first().id
-				##-----------------
-				#wrtDt = stringToDate(payment[3])
-				#pay = Payments( int(payment[0]), dueDt, unicode(payment[5]), unicode(payment[6]), float(payment[2]),
-								#subId, wrtDt, unicode(payment[8]), self.transId, unicode(payment[7]) )
-				#self.session.add( pay )
-				#self.session.commit()
-			#print "------ Saving the Payments:\tDONE! "
 			if not self.subPreInv:
 				print "\nSaving the Document -----------"
 				self.registerDocument()
@@ -938,14 +929,6 @@ class SellProducts:
 	def printTransaction(self,sender=0):
 		print "main page \"PRINT button\" is pressed!", sender
 
-		
-	#def remNonCashTtl(self,amnt):
-		#lstAmnt = float(self.ttlNonCashEntry.get_text())
-		#amount  = lstAmnt - amnt
-		#self.ttlNonCashEntry.set_text(str(amount))
-		#self.nonCashPymntsEntry.set_text(str(amount))
-		#self.paymentsChanged()
-		
 	def paymentsChanged(self, sender=0, ev=0):
 		ttlCash = self.cashPymntsEntry.get_float()
 		self.cashPayment = ttlCash
@@ -963,15 +946,3 @@ class SellProducts:
 	def setNonCashPayments(self, sender, str_value):
 		self.nonCashPymntsEntry.set_text(str_value)
 
-
-	def selectPayer(self,sender=0):
-		subject_win = subjects.Subjects()
-		code = self.payerEntry.get_text()
-		if code != '':
-			subject_win.highlightSubject(code)
-		subject_win.connect("subject-selected",self.payerSelected)
-		
-	def payerSelected(self, sender, id, code, name):
-		self.payerEntry.set_text(code)
-		self.chqPayerLbl.set_text(name)
-		sender.window.destroy()        
