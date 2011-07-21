@@ -422,6 +422,7 @@ class Setting(gobject.GObject):
         self.builder.get_object("footerfont").set_value(config.footerfont)
    
     def applyConfigSetting(self):
+        conf = dbconfig.dbConfig()
         for item in self.config_items:
             val = unicode(item[1]())
 
@@ -429,9 +430,8 @@ class Setting(gobject.GObject):
                 conf = dbconfig.dbConfig()
                 val = unicode(conf.get_default(item[2]))
 
-            query = config.db.session.query(database.Config)
-            query = query.filter(database.Config.cfgId == item[0])
-            query = query.update({u'cfgValue':val})
+            conf.set_value(item[0], val, False)
+
         config.db.session.commit()
 
     def on_cancel_clicked(self, sender):

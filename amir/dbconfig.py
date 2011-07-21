@@ -38,7 +38,14 @@ class dbConfig:
     def get_value(self, key):
         query = config.db.session.query(Config)
         query = query.filter(Config.cfgKey == key)
-        return query.first()
+        return query.first().cfgValue
+
+    def set_value(self, key, val, commit=True):
+        query = config.db.session.query(Config)
+        query = query.filter(Config.cfgId == key)
+        query = query.update({u'cfgValue':val})
+        if commit: # commit all of the at once for more speed
+            config.db.session.commit()
         
     def get_int(self ,key):
         return int(self.get_value(key))
