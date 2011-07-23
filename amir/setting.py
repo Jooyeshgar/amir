@@ -495,9 +495,10 @@ class Setting(gobject.GObject):
                 widget.set_sensitive(False)
                 widget2 = gtk.HBox()
                 select = gtk.Button('Select')
-                clear  = gtk.Button('Clear')
-                widget2.pack_start(clear)
-                widget2.pack_start(select)
+                clear  = gtk.Button()
+                clear.set_image(gtk.image_new_from_stock(gtk.STOCK_CLEAR, gtk.ICON_SIZE_MENU))
+                widget2.pack_start(clear , False, False)
+                widget2.pack_start(select, False, False)
                 if   row.cfgType == 2:
                     multivalue = False
                 elif row.cfgType == 3:
@@ -505,10 +506,10 @@ class Setting(gobject.GObject):
                 select.connect('clicked', self.on_select_button_clicked, widget, multivalue)
                 clear.connect('clicked', lambda button, entry: entry.set_text(''), widget)
 
-            table.attach(gtk.Label(row.cfgKey), 0, 1, top-1, top)
+            table.attach(gtk.Label(row.cfgKey), 0, 1, top-1, top, gtk.SHRINK)
             table.attach(widget, 1, 2, top-1, top)
             if widget2:
-                table.attach(widget2, 2, 3, top-1, top)
+                table.attach(widget2, 2, 3, top-1, top, gtk.SHRINK)
             table.attach(gtk.Label(row.cfgDesc), 3, 4, top-1, top)
 
     def on_select_button_clicked(self, button, entry, multivalue):
