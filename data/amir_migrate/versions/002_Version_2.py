@@ -163,6 +163,16 @@ bankAccounts = Table('bankAccounts', meta,
     Column('accDesc',         Unicode(200), nullable = True     )
 )
 
+config = Table("config", meta,
+    Column('cfgId'   , Integer     , primary_key = True),
+    Column('cfgKey'  , Unicode(100), nullable = False, unique = True),
+    Column('cfgValue', Unicode(100), nullable = False),
+    Column('cfgDesc' , Unicode(100), nullable = True),
+    Column('cfgType' , Integer     , nullable = True),
+    Column('cfgCat'  , Integer     , nullable = True)
+)
+
+
 def upgrade(migrate_engine):
     # Upgrade operations go here. Don't create your own engine; bind migrate_engine
     # to your metadata
@@ -177,7 +187,40 @@ def upgrade(migrate_engine):
     custGroups.create(    checkfirst=True)
     customers.create(     checkfirst=True)
     bankAccounts.create(  checkfirst=True)
+    config.create(checkfirst=True)
     logging.debug("upgrade to 2")
+
+    op = config.insert()
+    op.execute(
+        {'cfgId': 1, 'cfgKey':u'co-name'        , 'cfgValue': u'Enter Company Name' , 'cfgDesc':u'Enter Company name here',
+            'cfgType': 1, 'cfgCat':1},
+        {'cfgId': 2, 'cfgKey':u'co-logo'        , 'cfgValue': u'' , 'cfgDesc':u'Select Colpany logo',
+            'cfgType': 2, 'cfgCat':1},
+
+        {'cfgId': 3, 'cfgKey':u'custSubject'    , 'cfgValue': u'1' , 'cfgDesc':u'Enter here',
+            'cfgType': 3, 'cfgCat':2},
+        {'cfgId': 4, 'cfgKey':u'bank'           , 'cfgValue': u'2' , 'cfgDesc':u'Enter here',
+            'cfgType': 3, 'cfgCat':2},
+        {'cfgId': 5, 'cfgKey':u'cash'           , 'cfgValue': u'3' , 'cfgDesc':u'Enter here',
+            'cfgType': 3, 'cfgCat':2},
+        {'cfgId': 6, 'cfgKey':u'buy'            , 'cfgValue': u'4' , 'cfgDesc':u'Enter here',
+            'cfgType': 3, 'cfgCat':2},
+        {'cfgId': 7, 'cfgKey':u'sell'           , 'cfgValue': u'5' , 'cfgDesc':u'Enter here',
+            'cfgType': 3, 'cfgCat':2},
+        {'cfgId': 8, 'cfgKey':u'sell-discount'  , 'cfgValue': u'6' , 'cfgDesc':u'Enter here',
+            'cfgType': 3, 'cfgCat':2},
+        {'cfgId': 9, 'cfgKey':u'sell-adds'      , 'cfgValue': u'7' , 'cfgDesc':u'Enter here',
+            'cfgType': 3, 'cfgCat':2},
+        {'cfgId':10, 'cfgKey':u'tax'            , 'cfgValue': u'8' , 'cfgDesc':u'Enter here',
+            'cfgType': 3, 'cfgCat':2},
+        {'cfgId':11, 'cfgKey':u'fund'           , 'cfgValue': u'9' , 'cfgDesc':u'Enter here',
+            'cfgType': 3, 'cfgCat':2},
+        {'cfgId':12, 'cfgKey':u'acc-receivable' , 'cfgValue': u'10', 'cfgDesc':u'Enter here',
+            'cfgType': 3, 'cfgCat':2},
+        {'cfgId':13, 'cfgKey':u'commission'     , 'cfgValue': u'11', 'cfgDesc':u'Enter here',
+            'cfgType': 3, 'cfgCat':2}
+     )
+               
 
 def downgrade(migrate_engine):
     # Operations to reverse the above upgrade go here.
@@ -192,6 +235,7 @@ def downgrade(migrate_engine):
     custGroups.drop()
     customers.drop()
     bankAccounts.drop()
+    config.drop()
     print("downgrade to 1")
     
 

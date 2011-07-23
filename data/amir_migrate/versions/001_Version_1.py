@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010 <jooyeshgar> <info@jooyeshgar.com>
 #This program is free software: you can redistribute it and/or modify it 
@@ -47,15 +47,6 @@ notebook = Table('notebook', meta,
     Column('value', Integer, ColumnDefault(0), nullable = False)
 )
 
-config = Table("config", meta,
-               Column('cfgId'   , Integer     , primary_key = True),
-               Column('cfgKey'  , Unicode(100), nullable = False, unique = True),
-               Column('cfgValue', Unicode(100), nullable = False),
-               Column('cfgDesc' , Unicode(100), nullable = True),
-               Column('cfgType' , Integer     , nullable = True),
-               Column('cfgCat'  , Integer     , nullable = True)
-)
-
 def upgrade(migrate_engine):
     # Upgrade operations go here. Don't create your own engine; bind migrate_engine
     # to your metadata
@@ -64,7 +55,6 @@ def upgrade(migrate_engine):
     subject.create(checkfirst=True)
     bill.create(checkfirst=True)
     notebook.create(checkfirst=True)
-    config.create(checkfirst=True)
 
     #Insert test data
     op = subject.insert()
@@ -115,38 +105,6 @@ def upgrade(migrate_engine):
                {"id": 45, "code": "0801", "name": u"-", "parent_id": 21, "lft": 62, "rgt": 63, "type": 2},
                {"id": 46, "code": "1401", "name": u"-", "parent_id": 22, "lft": 66, "rgt": 67, "type": 2})
 
-
-    op = config.insert()
-    op.execute(
-        {'cfgId': 1, 'cfgKey':u'co-name'        , 'cfgValue': u'Enter Company Name' , 'cfgDesc':u'Enter Company name here',
-            'cfgType': 1, 'cfgCat':1},
-        {'cfgId': 2, 'cfgKey':u'co-logo'        , 'cfgValue': u'' , 'cfgDesc':u'Select Colpany logo',
-            'cfgType': 2, 'cfgCat':1},
-
-        {'cfgId': 3, 'cfgKey':u'custSubject'    , 'cfgValue': u'1' , 'cfgDesc':u'Enter here',
-            'cfgType': 3, 'cfgCat':2},
-        {'cfgId': 4, 'cfgKey':u'bank'           , 'cfgValue': u'2' , 'cfgDesc':u'Enter here',
-            'cfgType': 3, 'cfgCat':2},
-        {'cfgId': 5, 'cfgKey':u'cash'           , 'cfgValue': u'3' , 'cfgDesc':u'Enter here',
-            'cfgType': 3, 'cfgCat':2},
-        {'cfgId': 6, 'cfgKey':u'buy'            , 'cfgValue': u'4' , 'cfgDesc':u'Enter here',
-            'cfgType': 3, 'cfgCat':2},
-        {'cfgId': 7, 'cfgKey':u'sell'           , 'cfgValue': u'5' , 'cfgDesc':u'Enter here',
-            'cfgType': 3, 'cfgCat':2},
-        {'cfgId': 8, 'cfgKey':u'sell-discount'  , 'cfgValue': u'6' , 'cfgDesc':u'Enter here',
-            'cfgType': 3, 'cfgCat':2},
-        {'cfgId': 9, 'cfgKey':u'sell-adds'      , 'cfgValue': u'7' , 'cfgDesc':u'Enter here',
-            'cfgType': 3, 'cfgCat':2},
-        {'cfgId':10, 'cfgKey':u'tax'            , 'cfgValue': u'8' , 'cfgDesc':u'Enter here',
-            'cfgType': 3, 'cfgCat':2},
-        {'cfgId':11, 'cfgKey':u'fund'           , 'cfgValue': u'9' , 'cfgDesc':u'Enter here',
-            'cfgType': 3, 'cfgCat':2},
-        {'cfgId':12, 'cfgKey':u'acc-receivable' , 'cfgValue': u'10', 'cfgDesc':u'Enter here',
-            'cfgType': 3, 'cfgCat':2},
-        {'cfgId':13, 'cfgKey':u'commission'     , 'cfgValue': u'11', 'cfgDesc':u'Enter here',
-            'cfgType': 3, 'cfgCat':2}
-     )
-               
     logging.debug("upgrade to 1")
    
 
