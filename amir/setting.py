@@ -499,7 +499,7 @@ class Setting(gobject.GObject):
             table.attach(gtk.Label(row.cfgKey), 0, 1, top-1, top)
             table.attach(widget, 1, 2, top-1, top)
             if widget2:
-                table.attach(widget, 2, 3, top-1, top)
+                table.attach(widget2, 2, 3, top-1, top)
             table.attach(gtk.Label(row.cfgDesc), 3, 4, top-1, top)
 
     def on_select_button_clicked(self, button, entry):
