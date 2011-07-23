@@ -19,17 +19,17 @@ class dbConfig:
     data = {
         'co-name':'Enter Company name',
         'co-logo':'',
-        'custSubject': '1',
-        'bank'       : '2',
-        'cash'       : '3',
-        "buy": '4', 
-        "sell": '5', 
-        "sell-discount": '6',
-        "sell-adds": '7',
-        "tax": '8', 
-        "fund": '9', 
-        "acc-receivable": '10', 
-        "commission": '11',
+        'custSubject'   : '4',
+        'bank'          : '1',
+        'cash'          :'14',
+        'buy'           :'17', 
+        'sell'          :'18', 
+        'sell-discount' :'25',
+        'tax'           :'33', 
+        #"sell-adds": '7',
+        #"fund": '9', 
+        #"acc-receivable": '10', 
+        #"commission": '11',
     }
 
     def get_default(self, key):

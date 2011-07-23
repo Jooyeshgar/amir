@@ -192,33 +192,42 @@ def upgrade(migrate_engine):
 
     op = config.insert()
     op.execute(
-        {'cfgId': 1, 'cfgKey':u'co-name'        , 'cfgValue': u'Enter Company Name' , 'cfgDesc':u'Enter Company name here',
-            'cfgType': 1, 'cfgCat':1},
-        {'cfgId': 2, 'cfgKey':u'co-logo'        , 'cfgValue': u'' , 'cfgDesc':u'Select Colpany logo',
-            'cfgType': 2, 'cfgCat':1},
-
-        {'cfgId': 3, 'cfgKey':u'custSubject'    , 'cfgValue': u'1' , 'cfgDesc':u'Enter here',
-            'cfgType': 3, 'cfgCat':2},
-        {'cfgId': 4, 'cfgKey':u'bank'           , 'cfgValue': u'2' , 'cfgDesc':u'Enter here',
-            'cfgType': 3, 'cfgCat':2},
-        {'cfgId': 5, 'cfgKey':u'cash'           , 'cfgValue': u'3' , 'cfgDesc':u'Enter here',
-            'cfgType': 3, 'cfgCat':2},
-        {'cfgId': 6, 'cfgKey':u'buy'            , 'cfgValue': u'4' , 'cfgDesc':u'Enter here',
-            'cfgType': 3, 'cfgCat':2},
-        {'cfgId': 7, 'cfgKey':u'sell'           , 'cfgValue': u'5' , 'cfgDesc':u'Enter here',
-            'cfgType': 3, 'cfgCat':2},
-        {'cfgId': 8, 'cfgKey':u'sell-discount'  , 'cfgValue': u'6' , 'cfgDesc':u'Enter here',
-            'cfgType': 3, 'cfgCat':2},
-        {'cfgId': 9, 'cfgKey':u'sell-adds'      , 'cfgValue': u'7' , 'cfgDesc':u'Enter here',
-            'cfgType': 3, 'cfgCat':2},
-        {'cfgId':10, 'cfgKey':u'tax'            , 'cfgValue': u'8' , 'cfgDesc':u'Enter here',
-            'cfgType': 3, 'cfgCat':2},
-        {'cfgId':11, 'cfgKey':u'fund'           , 'cfgValue': u'9' , 'cfgDesc':u'Enter here',
-            'cfgType': 3, 'cfgCat':2},
-        {'cfgId':12, 'cfgKey':u'acc-receivable' , 'cfgValue': u'10', 'cfgDesc':u'Enter here',
-            'cfgType': 3, 'cfgCat':2},
-        {'cfgId':13, 'cfgKey':u'commission'     , 'cfgValue': u'11', 'cfgDesc':u'Enter here',
-            'cfgType': 3, 'cfgCat':2}
+        # cfg Cat
+        # 0 : Company
+        # 1 : Subjects
+        # 2 : others
+        #
+        # cfg Type
+        # 0 : File Chooser
+        # 1 : Entry
+        # 2 : Entry (Single Int from Subjects)
+        # 3 : Entry (Multi  Int from Subjects)
+        {'cfgId' : 1, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-name'       , 'cfgValue' : u'Enter Company Name',
+            'cfgDesc' : u'Enter Company name here'},
+        {'cfgId' : 2, 'cfgType' : 0, 'cfgCat' : 0, 'cfgKey' : u'co-logo'       , 'cfgValue' : u'',
+            'cfgDesc' : u'Select Colpany logo'},
+        {'cfgId' : 3, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'custSubject'   , 'cfgValue' : u'4',
+            'cfgDesc' : u'Enter here'},
+        {'cfgId' : 4, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'bank'          , 'cfgValue' : u'1',
+            'cfgDesc' : u'Enter here'},
+        {'cfgId' : 5, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'cash'          , 'cfgValue' : u'14',
+            'cfgDesc' : u'Enter here'},
+        {'cfgId' : 6, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'buy'           , 'cfgValue' : u'17',
+            'cfgDesc':u'Enter here'},
+        {'cfgId' : 7, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'sell'          , 'cfgValue' : u'18',
+            'cfgDesc':u'Enter here'},
+        {'cfgId' : 8, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'sell-discount' , 'cfgValue' : u'25',
+            'cfgDesc':u'Enter here'},
+        {'cfgId' : 9, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'tax'           , 'cfgValue' : u'33',
+            'cfgDesc':u'Enter here'},
+        #{'cfgId' :10, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'sell-adds'     , 'cfgValue' : u'??',
+        #    'cfgDesc':u'Enter here'},  #TODO cfgKey
+        #{'cfgId' :11, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'fund'          , 'cfgValue' : u'??',
+        #    'cfgDesc':u'Enter here'},  #TODO cfgKey
+        #{'cfgId' :12, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'acc-receivable', 'cfgValue' : u'??',
+        #    'cfgDesc':u'Enter here',}, #TODO cfgKey
+        #{'cfgId' :13, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' :u'commission'     , 'cfgValue' : u'??',
+        #    'cfgDesc':u'Enter here'}   #TODO cfgKey
      )
                
 

@@ -469,32 +469,41 @@ class Setting(gobject.GObject):
         self.config_items = []
 
         for row in query:
-            if row.cfgCat == 1:
+            if   row.cfgCat == 0:
                 table = company
                 top = company_top = company_top+1
-            elif row.cfgCat == 2:
+            elif row.cfgCat == 1:
                 table = subjects
                 top = subjects_top= subjects_top+1
             else:
                 table = others
                 top = others_top = others_top+1
 
-            widget2=None
-            if   row.cfgType in (1, 3):
-                widget = gtk.Entry()
-                widget.set_text(row.cfgValue)
-                self.config_items.append((row.cfgId, widget.get_text, row.cfgKey))
-            elif row.cfgType == 2:
+            # self.config_items( 0 => item_id, 1 => get_val function, 2 => item_key)
+            if   row.cfgType == 0:
                 widget = gtk.FileChooserButton(row.cfgKey)
                 if row.cfgValue != '':
                     widget.set_filename(row.cfgValue)
-
                 self.config_items.append((row.cfgId, widget.get_filename, row.cfgKey))
-                
-            if row.cfgType == 3:
-                widget2 = gtk.Button('Select')
-                widget2.connect('clicked', self.on_select_button_clicked, widget)
+            elif row.cfgType in (1, 2, 3):
+                widget = gtk.Entry()
+                widget.set_text(row.cfgValue)
+                self.config_items.append((row.cfgId, widget.get_text, row.cfgKey))
 
+            widget2=None
+            if row.cfgType in (2, 3):
+                widget.set_sensitive(False)
+                widget2 = gtk.HBox()
+                select = gtk.Button('Select')
+                clear  = gtk.Button('Clear')
+                widget2.pack_start(clear)
+                widget2.pack_start(select)
+                if   row.cfgType == 2:
+                    multivalue = False
+                elif row.cfgType == 3:
+                    multivalue = True
+                select.connect('clicked', self.on_select_button_clicked, widget, multivalue)
+                clear.connect('clicked', lambda button, entry: entry.set_text(''), widget)
 
             table.attach(gtk.Label(row.cfgKey), 0, 1, top-1, top)
             table.attach(widget, 1, 2, top-1, top)
@@ -502,28 +511,31 @@ class Setting(gobject.GObject):
                 table.attach(widget2, 2, 3, top-1, top)
             table.attach(gtk.Label(row.cfgDesc), 3, 4, top-1, top)
 
-    def on_select_button_clicked(self, button, entry):
+    def on_select_button_clicked(self, button, entry, multivalue):
         sub = subjects.Subjects()
-        sub.connect('subject-selected', self.on_subject_selected, entry)
+        sub.connect('subject-selected', self.on_subject_selected, entry, multivalue)
 
-    def on_subject_selected(self, subject, id, code, name, entry):
-        old = []
-        try:
-            for item in entry.get_text().split(','):
-                old.append(int(item))
-
-            if not id in old:
-                old.append(id)
-
-            if len(old) == 1:
-                new_txt = str(id)
-            else:
-                new_txt = ''
-                for i in old:
-                    new_txt += str(i)+','
-                new_txt = new_txt[:-1]
-        except ValueError:
+    def on_subject_selected(self, subject, id, code, name, entry, multivalue):
+        if not multivalue:
             new_txt = str(id)
+        else:
+            old = []
+            try:
+                for item in entry.get_text().split(','):
+                    old.append(int(item))
+
+                if not id in old:
+                    old.append(id)
+
+                if len(old) == 1:
+                    new_txt = str(id)
+                else:
+                    new_txt = ''
+                    for i in old:
+                        new_txt += str(i)+','
+                    new_txt = new_txt[:-1]
+            except ValueError:
+                new_txt = str(id)
                 
         entry.set_text(new_txt)
         subject.window.destroy()
