@@ -490,6 +490,16 @@ class Setting(gobject.GObject):
             # self.config_items( 0 => item_id, 1 => get_val function, 2 => item_key)
             if   row.cfgType == 0:
                 widget = gtk.FileChooserButton(row.cfgKey)
+                filt = gtk.FileFilter()
+                filt.set_name('png,jpg')
+                filt.add_pattern('*.png')
+                filt.add_pattern('*.jpg')
+                widget.add_filter(filt)
+                filt = gtk.FileFilter()
+                filt.set_name('All files')
+                filt.add_pattern('*')
+                widget.add_filter(filt)
+
                 if row.cfgValue != '':
                     widget.set_filename(row.cfgValue)
                 self.config_items.append((row.cfgId, widget.get_filename, row.cfgKey))
@@ -498,7 +508,12 @@ class Setting(gobject.GObject):
                 self.config_items.append((row.cfgId, widget.get_text, row.cfgKey))
 
             widget2=None
-            if   row.cfgType == 1:
+            if   row.cfgType == 0:
+                widget2 = gtk.Button()
+                widget2.set_image(gtk.image_new_from_stock(gtk.STOCK_CLEAR, gtk.ICON_SIZE_MENU))
+                widget2.connect('clicked', lambda widget2, widget: widget.unselect_all(), widget)
+
+            elif row.cfgType == 1:
                 widget.set_text(row.cfgValue)
             elif row.cfgType in (2, 3):
                 txt = ''
