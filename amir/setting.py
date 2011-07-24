@@ -555,30 +555,13 @@ class Setting(gobject.GObject):
 
     def on_subject_multi_selected(self, subject, items, entry):
         sub = class_subject.Subjects()
-        old = []
+        selected = []
 
-        try:
-            if entry.get_text_length():
-                for item in entry.get_text().split(','):
-                    old.append(item)
-
-            for item in items:
-                code = sub.get_code(item[0])
-                if not code in old:
-                    old.append(code)
-
-            if len(old) == 1:
-                new_txt = old[0]
-            else:
-                new_txt = ''
-                for i in old:
-                    new_txt += i+','
-                new_txt = new_txt[:-1]
-        except ValueError:
-            new_txt = ''
-            for item in items:
-                new_txt += sub.get_code(item[0]) + ','
-            new_txt = new_txt[:-1]
+        new_txt = ''
+        for item in items:
+            code = sub.get_code(item[0])
+            new_txt += '%s,' % code
+        new_txt = new_txt[:-1]
                 
         entry.set_text(new_txt)
         subject.window.destroy()
