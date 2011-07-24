@@ -513,30 +513,40 @@ class Setting(gobject.GObject):
             table.attach(gtk.Label(row.cfgDesc), 3, 4, top-1, top)
 
     def on_select_button_clicked(self, button, entry, multivalue):
-        sub = subjects.Subjects()
-        sub.connect('subject-selected', self.on_subject_selected, entry, multivalue)
-
-    def on_subject_selected(self, subject, id, code, name, entry, multivalue):
-        if not multivalue:
-            new_txt = str(id)
+        sub = subjects.Subjects(multiselect=multivalue)
+        if multivalue:
+            sub.connect('subject-multi-selected', self.on_subject_multi_selected, entry)
         else:
-            old = []
-            try:
-                for item in entry.get_text().split(','):
-                    old.append(int(item))
+            sub.connect('subject-selected', self.on_subject_selected, entry)
 
-                if not id in old:
-                    old.append(id)
+    def on_subject_selected(self, subject, id, code, name, entry):
+        new_txt = str(id)
+        entry.set_text(new_txt)
+        subject.window.destroy()
 
-                if len(old) == 1:
-                    new_txt = str(id)
-                else:
-                    new_txt = ''
-                    for i in old:
-                        new_txt += str(i)+','
-                    new_txt = new_txt[:-1]
-            except ValueError:
+    def on_subject_multi_selected(self, subject, items, entry):
+        old = []
+
+        try:
+            for item in entry.get_text().split(','):
+                old.append(int(item))
+
+            for item in items:
+                if not item[0] in old:
+                    old.append(item[0])
+
+            if len(old) == 1:
                 new_txt = str(id)
+            else:
+                new_txt = ''
+                for i in old:
+                    new_txt += str(i)+','
+                new_txt = new_txt[:-1]
+        except ValueError:
+            new_txt = ''
+            for item in items:
+                new_txt += str(item[0]) + ','
+            new_txt = new_txt[:-1]
                 
         entry.set_text(new_txt)
         subject.window.destroy()

@@ -17,7 +17,7 @@ from helpers import get_builder
 class Subjects(gobject.GObject):
     subjecttypes = ["Debtor", "Creditor", "Both"]
     
-    def __init__ (self, ledgers_only=False, parent_id=0):
+    def __init__ (self, ledgers_only=False, parent_id=0, multiselect=False):
         gobject.GObject.__init__(self)
 
         self.builder = get_builder("notebook")
@@ -26,6 +26,7 @@ class Subjects(gobject.GObject):
         self.window.set_modal(True)
         
         self.treeview = self.builder.get_object("treeview")
+
         if gtk.widget_get_default_direction() == gtk.TEXT_DIR_RTL :
             halign = 1
         else:
@@ -110,6 +111,13 @@ class Subjects(gobject.GObject):
         self.window.show_all()
         self.builder.connect_signals(self)
         #self.rebuild_nested_set(0, 0)  
+
+        if multiselect:
+            self.treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
+            self.builder.get_object('toolbar4').hide_all()
+            self.builder.get_object('statusbar1').hide_all()
+        else:
+            self.builder.get_object('hbox5').hide_all()
         
     def addLedger(self, sender):
         dialog = self.builder.get_object("dialog1")
@@ -578,6 +586,9 @@ class Subjects(gobject.GObject):
     def on_key_release_event(self, sender, event):
         expand = 0
         selection = self.treeview.get_selection()
+        if selection.get_mode() == gtk.SELECTION_MULTIPLE:
+            return
+
         iter = selection.get_selected()[1]
         if iter != None :
             if gtk.gdk.keyval_name(event.keyval) == "Left":
@@ -612,6 +623,10 @@ class Subjects(gobject.GObject):
 #            if gtk.gdk.keyval_name(event.keyval) == Ri:
             
     def selectSubjectFromList(self, treeview, path, view_column):
+        selection = self.treeview.get_selection()
+        if selection.get_mode() == gtk.SELECTION_MULTIPLE:
+            return
+
         iter = self.treestore.get_iter(path)
         code = utility.convertToLatin(self.treestore.get(iter, 0)[0])
         name = self.treestore.get(iter, 1)[0]
@@ -623,8 +638,25 @@ class Subjects(gobject.GObject):
 
     def dbChanged(self, sender, active_dbpath):
         self.window.destroy()
-                            
+
+    def on_select_clicked(self, button):
+        selection = self.treeview.get_selection()
+        items = []
+        model, pathes = selection.get_selected_rows()
+        for path in pathes:
+            iter = self.treestore.get_iter(path)
+            code = utility.convertToLatin(self.treestore.get(iter, 0)[0])
+            name = self.treestore.get(iter, 1)[0]
+
+            query = config.db.session.query(Subject).select_from(Subject)
+            query = query.filter(Subject.code == code)
+            sub_id = query.first().id
+            items.append((sub_id, code, name))
+        self.emit("subject-multi-selected", items)
+
 gobject.type_register(Subjects)
 gobject.signal_new("subject-selected", Subjects, gobject.SIGNAL_RUN_LAST,
                    gobject.TYPE_NONE, (gobject.TYPE_INT, gobject.TYPE_STRING, gobject.TYPE_STRING))
+gobject.signal_new("subject-multi-selected", Subjects, gobject.SIGNAL_RUN_LAST,
+                   gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,))
    

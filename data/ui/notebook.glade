@@ -397,6 +397,33 @@
             <property name="position">2</property>
           </packing>
         </child>
+        <child>
+          <object class="GtkHBox" id="hbox5">
+            <property name="visible">True</property>
+            <property name="border_width">10</property>
+            <child>
+              <object class="GtkButton" id="select">
+                <property name="label" translatable="yes">_Select</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_underline">True</property>
+                <signal name="clicked" handler="on_select_clicked"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="pack_type">end</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
       </object>
     </child>
   </object>
