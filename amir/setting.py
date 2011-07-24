@@ -5,6 +5,7 @@ import time
 import gobject
 from sqlalchemy.orm import sessionmaker
 
+import class_subject
 import upgrade
 import database
 import dbconfig
@@ -423,12 +424,18 @@ class Setting(gobject.GObject):
    
     def applyConfigSetting(self):
         conf = dbconfig.dbConfig()
+        sub  = class_subject.Subjects()
+
         for item in self.config_items:
-            val = unicode(item[1]())
+            val = item[1]()
 
             if val == None or val == '':
-                conf = dbconfig.dbConfig()
                 val = unicode(conf.get_default(item[2]))
+            elif not item[2] in ('co-name', 'co-logo'):
+                ids = ''
+                for code in val.split(','):
+                    ids += '%d,' % sub.get_id(code)
+                val = ids[:-1]
 
             conf.set_value(item[0], val, False)
 
@@ -459,6 +466,7 @@ class Setting(gobject.GObject):
             defaults.set_sensitive(False)
 
     def setup_config_tab(self):
+        sub = class_subject.Subjects()
         query = config.db.session.query(database.Config).all()
 
         company  = self.builder.get_object('company_table')
@@ -487,11 +495,18 @@ class Setting(gobject.GObject):
                 self.config_items.append((row.cfgId, widget.get_filename, row.cfgKey))
             elif row.cfgType in (1, 2, 3):
                 widget = gtk.Entry()
-                widget.set_text(row.cfgValue)
                 self.config_items.append((row.cfgId, widget.get_text, row.cfgKey))
 
             widget2=None
-            if row.cfgType in (2, 3):
+            if   row.cfgType == 1:
+                widget.set_text(row.cfgValue)
+            elif row.cfgType in (2, 3):
+                txt = ''
+                for id in row.cfgValue.split(','):
+                    txt += sub.get_code(id)+','
+                txt = txt[:-1]
+                widget.set_text(txt)
+
                 widget.set_sensitive(False)
                 widget2 = gtk.HBox()
                 select = gtk.Button('Select')
@@ -520,32 +535,34 @@ class Setting(gobject.GObject):
             sub.connect('subject-selected', self.on_subject_selected, entry)
 
     def on_subject_selected(self, subject, id, code, name, entry):
-        new_txt = str(id)
-        entry.set_text(new_txt)
+        entry.set_text(code)
         subject.window.destroy()
 
     def on_subject_multi_selected(self, subject, items, entry):
+        sub = class_subject.Subjects()
         old = []
 
         try:
-            for item in entry.get_text().split(','):
-                old.append(int(item))
+            if entry.get_text_length():
+                for item in entry.get_text().split(','):
+                    old.append(item)
 
             for item in items:
-                if not item[0] in old:
-                    old.append(item[0])
+                code = sub.get_code(item[0])
+                if not code in old:
+                    old.append(code)
 
             if len(old) == 1:
-                new_txt = str(id)
+                new_txt = old[0]
             else:
                 new_txt = ''
                 for i in old:
-                    new_txt += str(i)+','
+                    new_txt += i+','
                 new_txt = new_txt[:-1]
         except ValueError:
             new_txt = ''
             for item in items:
-                new_txt += str(item[0]) + ','
+                new_txt += sub.get_code(item[0]) + ','
             new_txt = new_txt[:-1]
                 
         entry.set_text(new_txt)

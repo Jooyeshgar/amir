@@ -42,6 +42,7 @@ class dbConfig:
         return query.first().cfgValue
 
     def set_value(self, key, val, commit=True):
+        val = unicode(val)
         query = config.db.session.query(Config)
         query = query.filter(Config.cfgId == key)
         query = query.update({u'cfgValue':val})

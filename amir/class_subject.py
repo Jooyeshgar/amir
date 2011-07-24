@@ -51,3 +51,13 @@ class Subjects():
         query = config.db.session.query(Subject).select_from(Subject)
         query = query.filter(Subject.code == customercode)
         return query.first().id
+
+    def get_code(self, id):
+        query = config.db.session.query(Subject).select_from(Subject)
+        query = query.filter(Subject.id == id)
+        return query.first().code
+
+    def get_id(self, code):
+        query = config.db.session.query(Subject).select_from(Subject)
+        query = query.filter(Subject.code == code)
+        return query.first().id
