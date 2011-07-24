@@ -431,7 +431,7 @@ class Setting(gobject.GObject):
 
             if val == None or val == '':
                 val = unicode(conf.get_default(item[2]))
-            elif not item[2] in ('co-name', 'co-logo'):
+            elif item[2] == True:
                 ids = ''
                 for code in val.split(','):
                     ids += '%d,' % sub.get_id(code)
@@ -474,6 +474,12 @@ class Setting(gobject.GObject):
         others   = self.builder.get_object('others_table')
         company_top = subjects_top = others_top = 0
 
+        destroy = lambda table: [widget.destroy() for widget in table.get_children()]
+        destroy(company)
+        destroy(subjects)
+        destroy(others)
+        del destroy
+
         self.config_items = []
 
         for row in query:
@@ -487,7 +493,7 @@ class Setting(gobject.GObject):
                 table = others
                 top = others_top = others_top+1
 
-            # self.config_items( 0 => item_id, 1 => get_val function, 2 => item_key)
+            # self.config_items( 0 => item_id, 1 => get_val function, 2 => exists in subjects)
             if   row.cfgType == 0:
                 widget = gtk.FileChooserButton(row.cfgKey)
                 filt = gtk.FileFilter()
@@ -502,45 +508,65 @@ class Setting(gobject.GObject):
 
                 if row.cfgValue != '':
                     widget.set_filename(row.cfgValue)
-                self.config_items.append((row.cfgId, widget.get_filename, row.cfgKey))
+                self.config_items.append((row.cfgId, widget.get_filename, False))
             elif row.cfgType in (1, 2, 3):
                 widget = gtk.Entry()
-                self.config_items.append((row.cfgId, widget.get_text, row.cfgKey))
+                if row.cfgType == 1:
+                    self.config_items.append((row.cfgId, widget.get_text, False))
+                else:
+                    self.config_items.append((row.cfgId, widget.get_text, True))
 
-            widget2=None
+            widget2 = None
+            widget3 = None
+            widget4 = None
             if   row.cfgType == 0:
-                widget2 = gtk.Button()
+                widget2 = gtk.Button() # clear button
                 widget2.set_image(gtk.image_new_from_stock(gtk.STOCK_CLEAR, gtk.ICON_SIZE_MENU))
                 widget2.connect('clicked', lambda widget2, widget: widget.unselect_all(), widget)
-
             elif row.cfgType == 1:
                 widget.set_text(row.cfgValue)
             elif row.cfgType in (2, 3):
                 txt = ''
-                for id in row.cfgValue.split(','):
-                    txt += sub.get_code(id)+','
-                txt = txt[:-1]
+                if len(row.cfgValue) != 0:
+                    for id in row.cfgValue.split(','):
+                        txt += sub.get_code(id)+','
+                    txt = txt[:-1]
                 widget.set_text(txt)
 
                 widget.set_sensitive(False)
-                widget2 = gtk.HBox()
-                select = gtk.Button('Select')
-                clear  = gtk.Button()
-                clear.set_image(gtk.image_new_from_stock(gtk.STOCK_CLEAR, gtk.ICON_SIZE_MENU))
-                widget2.pack_start(clear , False, False)
-                widget2.pack_start(select, False, False)
+                widget2 = gtk.Button()         # clear button
+                widget2.set_image(gtk.image_new_from_stock(gtk.STOCK_CLEAR, gtk.ICON_SIZE_MENU))
+                widget3 = gtk.Button('Select') # select button
                 if   row.cfgType == 2:
                     multivalue = False
                 elif row.cfgType == 3:
                     multivalue = True
-                select.connect('clicked', self.on_select_button_clicked, widget, multivalue)
-                clear.connect('clicked', lambda button, entry: entry.set_text(''), widget)
+                widget2.connect('clicked', lambda button, entry: entry.set_text(''), widget)
+                widget3.connect('clicked', self.on_select_button_clicked, widget, multivalue)
+
+            if row.cfgCat == 2:
+                widget4 = gtk.Button()         # Delete Button
+                widget4.set_image(gtk.image_new_from_stock(gtk.STOCK_DELETE, gtk.ICON_SIZE_MENU))
+                widget4.connect('clicked', self.on_delete_row_clicked, row.cfgId)
 
             table.attach(gtk.Label(row.cfgKey), 0, 1, top-1, top, gtk.SHRINK)
             table.attach(widget, 1, 2, top-1, top)
             if widget2:
                 table.attach(widget2, 2, 3, top-1, top, gtk.SHRINK)
-            table.attach(gtk.Label(row.cfgDesc), 3, 4, top-1, top)
+            if widget3:
+                table.attach(widget3, 3, 4, top-1, top, gtk.SHRINK)
+            if widget4:
+                table.attach(widget4, 4, 5, top-1, top, gtk.SHRINK)
+            table.attach(gtk.Label(row.cfgDesc), 5, 6, top-1, top)
+            table.show_all()
+
+        if others_top == 0:
+            others.attach(gtk.Label(), 0, 5, 0, 1, gtk.SHRINK)
+
+    def on_delete_row_clicked(self, button, id):
+        conf = dbconfig.dbConfig()
+        conf.delete(id)
+        self.setup_config_tab()
 
     def on_select_button_clicked(self, button, entry, multivalue):
         sub = subjects.Subjects(multiselect=multivalue)
@@ -565,6 +591,48 @@ class Setting(gobject.GObject):
                 
         entry.set_text(new_txt)
         subject.window.destroy()
+
+    def on_conf_key_changed(self, entry):
+        add   = self.builder.get_object('add_config')
+
+        entry.set_icon_from_stock(gtk.ENTRY_ICON_SECONDARY, None)
+
+        key = entry.get_text()
+        if len(key) == 0:
+            add.set_sensitive(False)
+            return
+
+        conf = dbconfig.dbConfig()
+        if conf.get_value(key) != None:
+            entry.set_icon_from_stock(gtk.ENTRY_ICON_SECONDARY, gtk.STOCK_DIALOG_WARNING)
+            entry.set_icon_tooltip_text(gtk.ENTRY_ICON_SECONDARY, 'Key already exists')
+            add.set_sensitive(False)
+            return
+
+        add.set_sensitive(True)
+
+
+    def on_add_config_clicked(self, button):
+        key  = self.builder.get_object('conf_key').get_text()
+        desc = self.builder.get_object('conf_desc').get_text()
+
+        if   self.builder.get_object('conf_mode_file').get_active():
+            mode = 0
+        elif self.builder.get_object('conf_mode_entry').get_active():
+            mode = 1
+        elif self.builder.get_object('conf_mode_single_subject').get_active():
+            mode = 2
+        else:
+            mode = 3
+
+        self.builder.get_object('conf_key').set_text('')
+        self.builder.get_object('conf_desc').set_text('')
+        self.builder.get_object('conf_mode_file').set_active(True)
+
+        conf = dbconfig.dbConfig()
+        conf.add(key, mode, desc)
+
+        self.setup_config_tab()
 
 gobject.type_register(Setting)
 gobject.signal_new("database-changed", Setting, gobject.SIGNAL_RUN_LAST,

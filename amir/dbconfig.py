@@ -33,13 +33,19 @@ class dbConfig:
     }
 
     def get_default(self, key):
-        return self.data[key]
+        try:
+            return self.data[key]
+        except KeyError:
+            return ''
 
     def get_value(self, key):
         key = unicode(key)
         query = config.db.session.query(Config)
         query = query.filter(Config.cfgKey == key)
-        return query.first().cfgValue
+        try:
+            return query.first().cfgValue
+        except AttributeError:
+            return None
 
     def set_value(self, key, val, commit=True):
         val = unicode(val)
@@ -48,6 +54,16 @@ class dbConfig:
         query = query.update({u'cfgValue':val})
         if commit: # commit all of the at once for more speed
             config.db.session.commit()
+
+    def add(self, key, mode, desc):
+        row = Config(unicode(key), u'', unicode(desc), mode, 2)
+        config.db.session.add(row)
+        config.db.session.commit()
+
+    def delete(self, id):
+        query = config.db.session.query(Config).filter(Config.cfgId == id).first()
+        config.db.session.delete(query)
+        config.db.session.commit()
         
     def get_int(self ,key):
         return int(self.get_value(key))
