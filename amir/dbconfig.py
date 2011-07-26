@@ -66,7 +66,10 @@ class dbConfig:
         config.db.session.commit()
         
     def get_int(self ,key):
-        return int(self.get_value(key))
+        try:
+            return int(self.get_value(key))
+        except ValueError:
+            return None
 
     def get_int_list(self, key):
         val = []
@@ -74,6 +77,6 @@ class dbConfig:
             for item in self.get_value(key).split(','):
                 val.appned(int(item))
         except ValueError:
-            return False
+            return None
         return val
 
