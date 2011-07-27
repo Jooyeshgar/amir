@@ -1,9 +1,6 @@
-import pygtk
 import gtk
-from datetime import date
 
-from sqlalchemy.orm.util import outerjoin
-
+import class_document
 import numberentry
 import dateentry
 import subjects
@@ -13,7 +10,6 @@ from amirconfig import config
 from helpers import get_builder
 
 class AddEditDoc:
-        
     def __init__(self, number=0):
         self.builder = get_builder("document")
         
@@ -83,20 +79,16 @@ class AddEditDoc:
 
         self.treeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
         
-#        self.session = config.db.session
-        self.debt_sum = 0
+        self.debt_sum   = 0
         self.credit_sum = 0
-        self.numrows = 0
-        self.permanent = False 
-        
+        self.numrows    = 0
+
+        self.cl_document = class_document.Document(number)
+
         if number > 0:
-            query = config.db.session.query(Bill).select_from(Bill)
-            bill = query.filter(Bill.number == number).first()
-            self.docnumber = number
+            bill = self.cl_document.get_bill()
             if bill == None:
-                numstring = str(number)
-                if config.digittype == 1:
-                    numstring = utility.convertToPersian(numstring)
+                numstring = self.cl_document.get_bill_number()
                 msg = _("No document found with number %s\nDo you want to register a document with this number?") % numstring
                 msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, msg)
                 msgbox.set_title(_("No Documents found"))
@@ -105,22 +97,15 @@ class AddEditDoc:
                 if result == gtk.RESPONSE_CANCEL:
                     return
                 else:
-                    self.docid = 0
-                    docnum = str(self.docnumber)
-                    if config.digittype == 1:
-                        docnum = utility.convertToPersian(docnum)
-                    self.builder.get_object("docnumber").set_text (docnum)
+                    self.builder.get_object("docnumber").set_text (numstring)
             else:
-                self.showRows(number)
-                self.permanent = bill.permanent
+                self.showRows()
                 self.window.set_title(_("Edit document"))
-        else:
-            self.docnumber = 0
-            self.docid = 0
     
         self.treeview.set_model(self.liststore)
         self.window.show_all()
-        if self.permanent:
+        
+        if self.cl_document.permanent:
             self.builder.get_object("editable").hide()
             self.builder.get_object("non-editable").show()
         else:
@@ -128,17 +113,12 @@ class AddEditDoc:
             self.builder.get_object("non-editable").hide()
         
         self.builder.connect_signals(self)
-#        self.connect("database-changed", self.dbChanged)
+        #self.connect("database-changed", self.dbChanged)
         
-    def showRows(self, docnumber):
-        query = config.db.session.query(Bill).select_from(Bill)
-        bill = query.filter(Bill.number == docnumber).first()
-        self.date.showDateObject(bill.date)
-        self.docid = bill.id
+    def showRows(self):
+        self.date.showDateObject(self.cl_document.date)
         
-        query = config.db.session.query(Notebook, Subject)
-        query = query.select_from(outerjoin(Notebook, Subject, Notebook.subject_id == Subject.id))
-        rows = query.filter(Notebook.bill_id == bill.id).all()
+        rows = self.cl_document.get_notebook_rows()
         for n, s in rows:
             self.numrows += 1
             if n.value < 0:
@@ -158,9 +138,7 @@ class AddEditDoc:
                 numrows = utility.convertToPersian(numrows)
             self.liststore.append((numrows, code, s.name, debt, credit, n.desc))
             
-        docnum = str(docnumber)
-        if config.digittype == 1:
-            docnum = utility.convertToPersian(docnum)
+        docnum = self.cl_document.get_bill_number()
         self.builder.get_object("docnumber").set_text (docnum)
         self.builder.get_object("debtsum").set_text (utility.showNumber(self.debt_sum))
         self.builder.get_object("creditsum").set_text (utility.showNumber(self.credit_sum))
@@ -170,7 +148,6 @@ class AddEditDoc:
             diff = self.credit_sum - self.debt_sum
         self.builder.get_object("difference").set_text (utility.showNumber(diff))
         
-    
     def addRow(self, sender):
         dialog = self.builder.get_object("dialog1")
         dialog.set_title(_("Add new row"))
@@ -180,16 +157,15 @@ class AddEditDoc:
         
         result = dialog.run()
         if result == 1:
-            if self.builder.get_object("debtor").get_active() == True:
-                type = 0
-            else:
-                type = 1;
+            type = not (self.builder.get_object("debtor").get_active() == True)
                 
             code = self.code.get_text()
             amount = self.amount.get_text()
             if code != '' and amount != '':
-                self.saveRow(utility.convertToLatin(code), int(unicode(amount)), type, desc.get_text())
-        
+                self.saveRow(utility.convertToLatin(code),
+                             int(unicode(amount)),
+                             type,
+                             desc.get_text())
         dialog.hide()
     
     def editRow(self, sender):
@@ -198,10 +174,11 @@ class AddEditDoc:
         
         selection = self.treeview.get_selection()
         iter = selection.get_selected()[1]
+        
         if iter != None :
-            code = self.liststore.get(iter, 1)[0]
-            debt = self.liststore.get(iter, 3)[0].replace(",", "")
-            credit = self.liststore.get(iter, 4)[0].replace(",", "")
+            code    = self.liststore.get(iter, 1)[0]
+            debt    = self.liststore.get(iter, 3)[0].replace(",", "")
+            credit  = self.liststore.get(iter, 4)[0].replace(",", "")
             desctxt = self.liststore.get(iter, 5)[0]
             
             if int(unicode(debt)) != 0:
@@ -210,16 +187,14 @@ class AddEditDoc:
             else:
                 self.builder.get_object("creditor").set_active(True)
                 self.amount.set_text(credit)
+                
             self.code.set_text(code)
             desc = self.builder.get_object("desc")
             desc.set_text(desctxt)
         
             result = dialog.run()
             if result == 1:
-                if self.builder.get_object("debtor").get_active() == True:
-                    type = 0
-                else:
-                    type = 1
+                type = not (self.builder.get_object("debtor").get_active() == True)
                     
                 if int(unicode(debt)) != 0:
                     self.debt_sum -= int(unicode(debt))
@@ -229,7 +204,11 @@ class AddEditDoc:
                 code = self.code.get_text()
                 amount = self.amount.get_text()
                 if code != '' and amount != '':
-                    self.saveRow(utility.convertToLatin(code), int(unicode(amount)), type, desc.get_text(), iter)
+                    self.saveRow(utility.convertToLatin(code),
+                                 int(unicode(amount)),
+                                 int(type),
+                                 desc.get_text(),
+                                 iter)
             
             dialog.hide()
         
@@ -251,12 +230,13 @@ class AddEditDoc:
         if sub.type != 2:
             type = sub.type
         
-        debt = "0"
+        debt   = "0"
         credit = "0"
+
         if config.digittype == 1:
-            debt = utility.convertToPersian(debt)
+            debt   = utility.convertToPersian(debt)
             credit = utility.convertToPersian(credit)
-            code = utility.convertToPersian(code)
+            code   = utility.convertToPersian(code)
         
         if type == 0:
             debt = utility.showNumber(amount)
@@ -293,10 +273,10 @@ class AddEditDoc:
             result = msgbox.run();
             if result == gtk.RESPONSE_OK :
                 
-                debt = int(unicode(self.liststore.get(iter, 3)[0].replace(",", "")))
+                debt   = int(unicode(self.liststore.get(iter, 3)[0].replace(",", "")))
                 credit = int(unicode(self.liststore.get(iter, 4)[0].replace(",", "")))
-                index = int(unicode(self.liststore.get(iter, 0)[0]))
-                res = self.liststore.remove(iter)
+                index  = int(unicode(self.liststore.get(iter, 0)[0]))
+                res    = self.liststore.remove(iter)
                 #Update index of next rows
                 if res:
                     while iter != None:
@@ -346,69 +326,46 @@ class AddEditDoc:
             msgbox.run()
             msgbox.destroy()
             return
-        else:
-            #number = 0
-            today = date.today()
-            if self.docid > 0 :
-                query = config.db.session.query(Bill).select_from(Bill)
-                bill = query.filter(Bill.id == self.docid).first()
-                bill.lastedit_date = today
-                bill.date = self.date.getDateObject()
-                #number = bill.number
-                query = config.db.session.query(Notebook).filter(Notebook.bill_id == bill.id).delete()
-            else :
-                if self.docnumber == 0:
-                    number = 0
-                    query = config.db.session.query(Bill.number).select_from(Bill)
-                    lastnumbert = query.order_by(Bill.number.desc()).first()
-                    if lastnumbert != None:
-                        number = lastnumbert[0]
-                    self.docnumber = number + 1
+        
+        self.cl_document.date_new = self.date.getDateObject()
+        
+        if self.cl_document.bill_id > 0 :
+            self.cl_document.delete()
+        #TODO if number is not equal to the maximum BigInteger value, prevent bill registration.
+        self.cl_document.add_bill()
                 
-                #TODO if number is not equal to the maximum BigInteger value, prevent bill registration.
-                bill = Bill (self.docnumber, today, today, self.date.getDateObject(), False)
-                config.db.session.add(bill)
-                config.db.session.commit()
-                self.docid = bill.id
-                
-            iter = self.liststore.get_iter_first()
+        iter = self.liststore.get_iter_first()
+        while iter != None :
+            code = utility.convertToLatin(self.liststore.get(iter, 1)[0])
+            debt = unicode(self.liststore.get(iter, 3)[0].replace(",", ""))
+            value = -(int(debt))
+            if value == 0 :
+                credit = unicode(self.liststore.get(iter, 4)[0].replace(",", ""))
+                value = int(credit)
+            desctxt = unicode(self.liststore.get(iter, 5)[0])
             
-            while iter != None :
-                code = utility.convertToLatin(self.liststore.get(iter, 1)[0])
-                debt = unicode(self.liststore.get(iter, 3)[0].replace(",", ""))
-                value = -(int(debt))
-                if value == 0 :
-                    credit = unicode(self.liststore.get(iter, 4)[0].replace(",", ""))
-                    value = int(credit)
-                desctxt = unicode(self.liststore.get(iter, 5)[0])
-                
-                query = config.db.session.query(Subject).select_from(Subject)
-                query = query.filter(Subject.code == code)
-                sub = query.first().id
-                
-                row = Notebook (sub, self.docid, value, desctxt)
-                config.db.session.add(row)
-                iter = self.liststore.iter_next(iter)
-                
-            config.db.session.commit()
-            docnum = str(self.docnumber)
-            if config.digittype == 1:
-                docnum = utility.convertToPersian(docnum)
-            self.builder.get_object("docnumber").set_text (docnum)
+            query = config.db.session.query(Subject).select_from(Subject)
+            query = query.filter(Subject.code == code)
+            subject_id = query.first().id
             
-            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 
-                                       _("Document saved with number %s.") % docnum)
-            msgbox.set_title(_("Successfully saved"))
-            msgbox.run()
-            msgbox.destroy()
+            self.cl_document.add_notebook(subject_id, value, desctxt)
+            
+            iter = self.liststore.iter_next(iter)
+            
+        config.db.session.commit()
+        
+        docnum = self.cl_document.get_bill_number()
+        self.builder.get_object("docnumber").set_text (docnum)
+        
+        msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 
+                                   _("Document saved with number %s.") % docnum)
+        msgbox.set_title(_("Successfully saved"))
+        msgbox.run()
+        msgbox.destroy()
         
     def makePermanent(self, sender):
-        if self.docid > 0 :
-            query = config.db.session.query(Bill).select_from(Bill)
-            bill = query.filter(Bill.id == self.docid).first()
-            bill.permanent = True
-            config.db.session.add(bill)
-            config.db.session.commit()
+        if self.cl_document.bill_id > 0 :
+            self.cl_document.toggle_permanent(True)
             self.builder.get_object("editable").hide()
             self.builder.get_object("non-editable").show()
         else:
@@ -425,34 +382,22 @@ class AddEditDoc:
         result = msgbox.run();
         msgbox.destroy()
         
-        if result == gtk.RESPONSE_OK :
-            if self.docid > 0 :
-                query = config.db.session.query(Bill).select_from(Bill)
-                bill = query.filter(Bill.id == self.docid).first()
-                bill.permanent = False
-                config.db.session.add(bill)
-                config.db.session.commit()
-                self.builder.get_object("non-editable").hide()
-                self.builder.get_object("editable").show()
-#            else:
-#                msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 
-#                                       _("You should save the document before make it permanent"))
-#                msgbox.set_title(_("Document is not saved"))
-#                msgbox.run()
-#                msgbox.destroy()
+        if result == gtk.RESPONSE_OK and self.cl_document.bill_id > 0 :
+            self.cl_document.toggle_permanent(False)
+            self.builder.get_object("non-editable").hide()
+            self.builder.get_object("editable").show()
                            
     def deleteDocument(self, sender):
-        if self.docid <= 0 :
+        if self.cl_document.bill_id <= 0 :
             return
         
-        msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, _("Are you sure to delete the whole document?"))
+        msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL,
+                                   _("Are you sure to delete the whole document?"))
         msgbox.set_title(_("Are you sure?"))
         result = msgbox.run();
         
         if result == gtk.RESPONSE_OK :
-            config.db.session.query(Notebook).filter(Notebook.bill_id == self.docid).delete()
-            config.db.session.query(Bill).filter(Bill.id == self.docid).delete()
-            config.db.session.commit()
+            self.cl_document.delete()
             self.window.destroy()
         msgbox.destroy() 
 
@@ -463,12 +408,10 @@ class AddEditDoc:
         subject_win.connect("subject-selected", self.subjectSelected)
         
     def subjectSelected(self, sender, id, code, name):
-	if config.digittype == 1:
+        if config.digittype == 1:
             code = utility.convertToPersian(code)
         self.code.set_text(code)
         sender.window.destroy()      
           
     def dbChanged(self, sender, active_dbpath):
         self.window.destroy()
-        
-
