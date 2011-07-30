@@ -11,23 +11,25 @@ from database import Subject
 import gtk
 
 types = (
-    (0 , 'Get From Customer'),
-    (1 , 'Pay To Customer'),
-    (2 , 'Bank To Bank'),
-    (3 , 'Fund To Bank'),
-    (4 , 'Bank To Fund'),
-    (5 , 'Bank Wage'),
-    (6 , 'havale taraf hesab'),
-    (7 , 'Padakhte naghdi az bank'),
-    (8 , 'Investment'),
-    (9 , 'Cost'),
-    (10, 'Income'),
-    (11, 'Removel'),
+    #id, name               , non cash, discount, spend_cheque
+    (0 , 'Get From Customer'      , True , True , False),
+    (1 , 'Pay To Customer'        , True , False, True ),
+    (2 , 'Bank To Bank'           , True , False, False),
+    (3 , 'Fund To Bank'           , False, False, False),
+    (4 , 'Bank To Fund'           , True , False, False),
+    (5 , 'Bank Wage'              , False, False, False),
+    (6 , 'havale taraf hesab'     , False, False, False),
+    (7 , 'Padakhte naghdi az bank', False, False, False),
+    (8 , 'Investment'             , True , False, True ),
+    (9 , 'Cost'                   , True , False, True ),
+    (10, 'Income'                 , True , False, False),
+    (11, 'Removel'                , True , False, True ),
 )
 
 class AutomaticAccounting:
     def __init__(self):
         self.type_index = None
+        
         self.builder = helpers.get_builder('automaticaccounting')
         self.builder.connect_signals(self)
 
@@ -88,78 +90,38 @@ class AutomaticAccounting:
 
         if iter == None:
             return
-
-        save_button = self.builder.get_object('save-button')
-        save_button.set_sensitive(False)
-
+        
         model = combo.get_model()
         index = model.get(iter, 0)[0]
         self.type_index = index = int(index)
+        
+        save_button = self.builder.get_object('save-button')
+        save_button.set_sensitive(False)
+        
+        for item in types:
+            if item[0] == index:
+                non_cash     = item[2]
+                discount     = item[3]
+                spend_cheque = item[4]
 
-        # sensitive on insensitive
-        if index   == 0:
-            non_cash     = True
-            discount     = True
-            spend_cheque = False
-        elif index == 1:
-            non_cash     = True
-            discount     = False
-            spend_cheque = True
-        elif index == 2:
-            non_cash     = True
-            discount     = False
-            spend_cheque = False
-        elif index == 3:
-            non_cash     = False
-            discount     = False
-            spend_cheque = False
-        elif index == 4:
-            non_cash     = True
-            discount     = False
-            spend_cheque = False
-        elif index == 5:
-            non_cash     = False
-            discount     = False
-            spend_cheque = False
-        elif index == 6:
-            non_cash     = False
-            discount     = False
-            spend_cheque = False
-        elif index == 7:
-            non_cash     = False
-            discount     = False
-            spend_cheque = False
-        elif index == 8:
-            non_cash     = True
-            discount     = False
-            spend_cheque = True
-        elif index == 9:
-            non_cash     = True
-            discount     = False
-            spend_cheque = True
-        elif index == 10:
-            non_cash     = True
-            discount     = False
-            spend_cheque = False
-        elif index == 11:
-            non_cash     = True
-            discount     = False
-            spend_cheque = True
+                w = self.builder.get_object('discount-button')
+                w.set_sensitive(discount)
+                self.discount_entry.set_sensitive(discount)
+                
+                w = self.builder.get_object('list-cheque-button')
+                w.set_sensitive(spend_cheque)
+                w = self.builder.get_object('spend-cheque-label')
+                w.set_sensitive(spend_cheque)
 
-        w = self.builder.get_object('discount-button')
-        w.set_sensitive(discount)
-        self.discount_entry.set_sensitive(discount)
+                w = self.builder.get_object('non-cash-payment-label')
+                w.set_sensitive(non_cash)
+                w = self.builder.get_object('non-cash-payment-button')
+                w.set_sensitive(non_cash)
+        
+                self.cash_payment_entry.set_sensitive((non_cash or spend_cheque))
+                break
 
-        w = self.builder.get_object('list-cheque-button')
-        w.set_sensitive(spend_cheque)
-        w = self.builder.get_object('spend-cheque-label')
-        w.set_sensitive(spend_cheque)
-
-        w = self.builder.get_object('non-cash-payment-label')
-        w.set_sensitive(non_cash)
-        w = self.builder.get_object('non-cash-payment-button')
-        w.set_sensitive(non_cash)
-
+        self.cash_payment_entry.set_text('')
         self.from_entry.set_text("")
         self.to_entry.set_text("")
         self.discount_entry.set_text('0.0')
