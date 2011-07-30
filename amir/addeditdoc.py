@@ -5,8 +5,8 @@ import numberentry
 import dateentry
 import subjects
 import utility
-from database import *
 from amirconfig import config
+from database import Subject
 from helpers import get_builder
 
 class AddEditDoc:
@@ -83,12 +83,14 @@ class AddEditDoc:
         self.credit_sum = 0
         self.numrows    = 0
 
-        self.cl_document = class_document.Document(number)
+        self.cl_document = class_document.Document()
 
         if number > 0:
-            bill = self.cl_document.get_bill()
-            if bill == None:
-                numstring = self.cl_document.get_bill_number()
+            if self.cl_document.set_bill(number):
+                self.showRows()
+                self.window.set_title(_("Edit document"))
+            else:
+                numstring = utility.localizeNumber(self.cl_document.number)
                 msg = _("No document found with number %s\nDo you want to register a document with this number?") % numstring
                 msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, msg)
                 msgbox.set_title(_("No Documents found"))
@@ -98,9 +100,6 @@ class AddEditDoc:
                     return
                 else:
                     self.builder.get_object("docnumber").set_text (numstring)
-            else:
-                self.showRows()
-                self.window.set_title(_("Edit document"))
     
         self.treeview.set_model(self.liststore)
         self.window.show_all()
@@ -138,7 +137,7 @@ class AddEditDoc:
                 numrows = utility.convertToPersian(numrows)
             self.liststore.append((numrows, code, s.name, debt, credit, n.desc))
             
-        docnum = self.cl_document.get_bill_number()
+        docnum = utility.localizeNumber(self.cl_document.number)
         self.builder.get_object("docnumber").set_text (docnum)
         self.builder.get_object("debtsum").set_text (utility.showNumber(self.debt_sum))
         self.builder.get_object("creditsum").set_text (utility.showNumber(self.credit_sum))
@@ -327,12 +326,9 @@ class AddEditDoc:
             msgbox.destroy()
             return
         
-        self.cl_document.date_new = self.date.getDateObject()
+        self.cl_document.new_date = self.date.getDateObject()
         
-        if self.cl_document.bill_id > 0 :
-            self.cl_document.delete()
         #TODO if number is not equal to the maximum BigInteger value, prevent bill registration.
-        self.cl_document.add_bill()
                 
         iter = self.liststore.get_iter_first()
         while iter != None :
@@ -351,10 +347,10 @@ class AddEditDoc:
             self.cl_document.add_notebook(subject_id, value, desctxt)
             
             iter = self.liststore.iter_next(iter)
-            
-        config.db.session.commit()
+
+        self.cl_document.save()
         
-        docnum = self.cl_document.get_bill_number()
+        docnum = utility.localizeNumber(self.cl_document.number)
         self.builder.get_object("docnumber").set_text (docnum)
         
         msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 
@@ -364,8 +360,8 @@ class AddEditDoc:
         msgbox.destroy()
         
     def makePermanent(self, sender):
-        if self.cl_document.bill_id > 0 :
-            self.cl_document.toggle_permanent(True)
+        if self.cl_document.id > 0 :
+            self.cl_document.set_permanent(True)
             self.builder.get_object("editable").hide()
             self.builder.get_object("non-editable").show()
         else:
@@ -373,7 +369,7 @@ class AddEditDoc:
                                    _("You should save the document before make it permanent"))
             msgbox.set_title(_("Document is not saved"))
             msgbox.run()
-            msgbox.destroy() 
+            msgbox.destroy()
  
     def makeTemporary(self, sender):
         msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, 
@@ -382,13 +378,13 @@ class AddEditDoc:
         result = msgbox.run();
         msgbox.destroy()
         
-        if result == gtk.RESPONSE_OK and self.cl_document.bill_id > 0 :
-            self.cl_document.toggle_permanent(False)
+        if result == gtk.RESPONSE_OK and self.cl_document.id > 0 :
+            self.cl_document.set_permanent(False)
             self.builder.get_object("non-editable").hide()
             self.builder.get_object("editable").show()
                            
     def deleteDocument(self, sender):
-        if self.cl_document.bill_id <= 0 :
+        if self.cl_document.id == 0 :
             return
         
         msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL,

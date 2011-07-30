@@ -79,6 +79,7 @@ def convertToPersian (input_string):
     """
         Searchs for latin digits in input_string and converts them to persian ones.
     """
+    
     en_numbers = '0123456789.%'
     fa_numbers = u'۰۱۲۳۴۵۶۷۸۹/٪'
     
@@ -89,6 +90,14 @@ def convertToPersian (input_string):
         output_string += c
         
     return output_string
+   
+def localizeNumber(num):
+    if type(num) == int:
+        num = str(num)
+        
+    if config.digittype == 1:
+        return utility.convertToPersian(num)
+    return num
 
 def is_numeric(var):
     try:
