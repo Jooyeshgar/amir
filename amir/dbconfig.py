@@ -1,21 +1,7 @@
-import  sys
-import  os
-
-import  utility
-
-from    sqlalchemy.orm              import  sessionmaker, join
-from    sqlalchemy.orm.util         import  outerjoin
-from    sqlalchemy.sql              import  and_, or_
-from    sqlalchemy.sql.functions    import  *
-
-from    helpers                     import  get_builder
-from    amirconfig                  import  config
-from    datetime                    import  date
-from    database                    import  *
-
+import database
+from amirconfig import config
 
 class dbConfig:
-
     data = {
         'co-name':'Enter Company name',
         'co-logo':'',
@@ -40,13 +26,17 @@ class dbConfig:
 
     def get_value(self, key):
         key = unicode(key)
+        query = config.db.session.query(database.Config)
+        query = query.filter(database.Config.cfgKey == key)
+        return query.first().cfgValue
+
+    def exists(self, key):
         query = config.db.session.query(Config)
         query = query.filter(Config.cfgKey == key)
-        try:
-            return query.first().cfgValue
-        except AttributeError:
-            return None
-
+        if query.first():
+            return True
+        return False
+    
     def set_value(self, key, val, commit=True):
         val = unicode(val)
         query = config.db.session.query(Config)
@@ -56,6 +46,9 @@ class dbConfig:
             config.db.session.commit()
 
     def add(self, key, mode, desc):
+        if self.exists(key):
+            raise Exception('Key already exists')
+        
         row = Config(unicode(key), u'', unicode(desc), mode, 2)
         config.db.session.add(row)
         config.db.session.commit()
@@ -75,6 +68,8 @@ class dbConfig:
         val = []
         try:
             for item in self.get_value(key).split(','):
+                if len(val) == 0:
+                    continue
                 val.appned(int(item))
         except ValueError:
             return None

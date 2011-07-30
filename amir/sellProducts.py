@@ -848,8 +848,7 @@ class SellProducts:
 		return True
 
 	def registerDocument(self):
-		dbconf = dbconfig.dbConfig()
-		
+		dbconf = dbconfig.dbConfig()	
 		# Find last document number
 		query = config.db.session.query(Bill.id, Bill.number).select_from(Bill)
 		lastnumber = query.order_by(Bill.number.desc()).first()

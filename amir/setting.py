@@ -1,9 +1,6 @@
-import pygtk
 import gtk
 import os
-import time
 import gobject
-from sqlalchemy.orm import sessionmaker
 
 import class_subject
 import upgrade
@@ -13,8 +10,7 @@ import subjects
 from amirconfig import config
 from helpers import get_builder, comboInsertItems
 
-class Setting(gobject.GObject):
-    
+class Setting(gobject.GObject):    
     def __init__(self):
         gobject.GObject.__init__(self)
         
@@ -603,7 +599,7 @@ class Setting(gobject.GObject):
             return
 
         conf = dbconfig.dbConfig()
-        if conf.get_value(key) != None:
+        if conf.exists(key):
             entry.set_icon_from_stock(gtk.ENTRY_ICON_SECONDARY, gtk.STOCK_DIALOG_WARNING)
             entry.set_icon_tooltip_text(gtk.ENTRY_ICON_SECONDARY, 'Key already exists')
             add.set_sensitive(False)
