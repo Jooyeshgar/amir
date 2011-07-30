@@ -300,32 +300,7 @@ class AddEditDoc:
     
     def saveDocument(self, sender):
         sender.grab_focus()
-        if self.numrows == 0:
-            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 
-                                       _("Document should not be empty"))
-            msgbox.set_title(_("Can not save document"))
-            msgbox.run()
-            msgbox.destroy()
-            return
-        
-        iter = self.liststore.get_iter_first()
-        debt_sum = 0
-        credit_sum = 0
-        while iter != None :
-            value = unicode(self.liststore.get(iter, 3)[0].replace(",", ""))
-            debt_sum += int(value)
-            value = unicode(self.liststore.get(iter, 4)[0].replace(",", ""))
-            credit_sum += int(value)
-            iter = self.liststore.iter_next(iter)
                 
-        if debt_sum != credit_sum:        
-            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 
-                                       _("Debt sum and Credit sum should be equal"))
-            msgbox.set_title(_("Can not save document"))
-            msgbox.run()
-            msgbox.destroy()
-            return
-        
         self.cl_document.new_date = self.date.getDateObject()
         
         #TODO if number is not equal to the maximum BigInteger value, prevent bill registration.
@@ -348,7 +323,21 @@ class AddEditDoc:
             
             iter = self.liststore.iter_next(iter)
 
-        self.cl_document.save()
+        result = self.cl_document.save()
+        if result == -1:
+            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 
+                                       _("Document should not be empty"))
+            msgbox.set_title(_("Can not save document"))
+            msgbox.run()
+            msgbox.destroy()
+            return
+        if result == -2:
+            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 
+                                       _("Debt sum and Credit sum should be equal"))
+            msgbox.set_title(_("Can not save document"))
+            msgbox.run()
+            msgbox.destroy()
+            return
         
         docnum = utility.localizeNumber(self.cl_document.number)
         self.builder.get_object("docnumber").set_text (docnum)

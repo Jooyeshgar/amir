@@ -14,7 +14,7 @@ class Document:
         self.lastedit_date = date.today()
         self.date          = date.today()
         self.permanent     = False
-        
+
         self.new_date      = date.today()
         self.notebooks     = []
 
@@ -58,6 +58,17 @@ class Document:
         self.notebooks.append((subject_id, value, desctxt))
         
     def save(self):
+        if len(self.notebooks) == 0:
+            self.notebooks = []
+            return -1
+        
+        sum = 0
+        for notebook in self.notebooks:
+            sum += notebook[1]
+        if sum != 0:
+            self.notebooks = []
+            return -2
+        
         if self.number > 0:
             self.delete()
         else:
@@ -80,3 +91,5 @@ class Document:
                 config.db.session.add(Notebook(notebook[0], self.id, notebook[1], notebook[2]))
 
         config.db.session.commit()
+        self.notebooks = []
+        return True
