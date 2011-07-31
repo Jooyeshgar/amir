@@ -426,13 +426,12 @@ class Setting(gobject.GObject):
             val = item[1]()
 
             if val == None or val == '':
-                val = unicode(conf.get_default(item[2]))
+                val = conf.get_default(item[3])
             elif item[2] == True:
                 ids = ''
                 for code in val.split(','):
                     ids += '%d,' % sub.get_id(code)
                 val = ids[:-1]
-
             conf.set_value(item[0], val, False)
 
         config.db.session.commit()
@@ -504,13 +503,13 @@ class Setting(gobject.GObject):
 
                 if row.cfgValue != '':
                     widget.set_filename(row.cfgValue)
-                self.config_items.append((row.cfgId, widget.get_filename, False))
+                self.config_items.append((row.cfgId, widget.get_filename, False,row.cfgKey))
             elif row.cfgType in (1, 2, 3):
                 widget = gtk.Entry()
                 if row.cfgType == 1:
-                    self.config_items.append((row.cfgId, widget.get_text, False))
+                    self.config_items.append((row.cfgId, widget.get_text, False, row.cfgKey))
                 else:
-                    self.config_items.append((row.cfgId, widget.get_text, True))
+                    self.config_items.append((row.cfgId, widget.get_text, True , row.cfgKey))
 
             widget2 = None
             widget3 = None

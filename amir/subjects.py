@@ -17,7 +17,7 @@ from helpers import get_builder
 class Subjects(gobject.GObject):
     subjecttypes = ["Debtor", "Creditor", "Both"]
     
-    def __init__ (self, ledgers_only=False, parent_id=0, multiselect=False):
+    def __init__ (self, ledgers_only=False, parent_id=[0,], multiselect=False):
         gobject.GObject.__init__(self)
 
         self.builder = get_builder("notebook")
@@ -73,10 +73,9 @@ class Subjects(gobject.GObject):
                                         Subject1.rgt,
                                         count(Subject2.id))
         query = query.select_from(outerjoin(Subject1, Subject2, Subject1.id == Subject2.parent_id))
-        try:
-            int(parent_id)
-            result = query.filter(Subject1.parent_id == parent_id).group_by(Subject1.id).all()
-        except TypeError:
+        if len(parent_id) == 1:
+            result = query.filter(Subject1.parent_id == parent_id[0]).group_by(Subject1.id).all()
+        else:
             result = query.filter(Subject1.id.in_(parent_id)).group_by(Subject1.id).all()
 
         for a in result :

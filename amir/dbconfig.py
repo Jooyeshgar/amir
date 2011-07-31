@@ -31,16 +31,16 @@ class dbConfig:
         return query.first().cfgValue
 
     def exists(self, key):
-        query = config.db.session.query(Config)
-        query = query.filter(Config.cfgKey == key)
+        query = config.db.session.query(database.Config)
+        query = query.filter(database.Config.cfgKey == key)
         if query.first():
             return True
         return False
     
     def set_value(self, key, val, commit=True):
         val = unicode(val)
-        query = config.db.session.query(Config)
-        query = query.filter(Config.cfgId == key)
+        query = config.db.session.query(database.Config)
+        query = query.filter(database.Config.cfgId == key)
         query = query.update({u'cfgValue':val})
         if commit: # commit all of the at once for more speed
             config.db.session.commit()
@@ -49,12 +49,12 @@ class dbConfig:
         if self.exists(key):
             raise Exception('Key already exists')
         
-        row = Config(unicode(key), u'', unicode(desc), mode, 2)
+        row = database.Config(unicode(key), u'', unicode(desc), mode, 2)
         config.db.session.add(row)
         config.db.session.commit()
 
     def delete(self, id):
-        query = config.db.session.query(Config).filter(Config.cfgId == id).first()
+        query = config.db.session.query(database.Config).filter(database.Config.cfgId == id).first()
         config.db.session.delete(query)
         config.db.session.commit()
         
@@ -68,10 +68,8 @@ class dbConfig:
         val = []
         try:
             for item in self.get_value(key).split(','):
-                if len(val) == 0:
-                    continue
-                val.appned(int(item))
+                if len(item) != 0:
+                    val.append(int(item))
         except ValueError:
             return None
         return val
-

@@ -11,7 +11,7 @@ from database import Subject
 import gtk
 
 types = (
-    #id, name               , non cash, discount, spend_cheque
+    # 0 id, 1 nam , 2 non cash, 3 discount, 4 spend_cheque
     (0 , 'Get From Customer'      , True , True , False),
     (1 , 'Pay To Customer'        , True , False, True ),
     (2 , 'Bank To Bank'           , True , False, False),
@@ -28,6 +28,7 @@ types = (
 
 class AutomaticAccounting:
     def __init__(self):
+        # Chosen Type
         self.type_index = None
         
         self.builder = helpers.get_builder('automaticaccounting')
@@ -71,10 +72,12 @@ class AutomaticAccounting:
         table = self.builder.get_object('names-table')
 
         self.from_entry = numberentry.NumberEntry()
+        self.from_entry.set_sensitive(False)
         self.from_entry.connect('changed', self.on_from_entry_changed)
         table.attach(self.from_entry, 1, 2, 0, 1)
 
         self.to_entry = numberentry.NumberEntry()
+        self.to_entry.set_sensitive(False)
         self.to_entry.connect('changed', self.on_to_entry_changed)
         table.attach(self.to_entry, 1, 2, 1, 2)
 
@@ -93,42 +96,37 @@ class AutomaticAccounting:
         
         model = combo.get_model()
         index = model.get(iter, 0)[0]
-        self.type_index = index = int(index)
+        self.type_index = int(index)
         
         save_button = self.builder.get_object('save-button')
         save_button.set_sensitive(False)
         
         for item in types:
-            if item[0] == index:
+            if item[0] == self.type_index:
                 non_cash     = item[2]
                 discount     = item[3]
                 spend_cheque = item[4]
 
-                w = self.builder.get_object('discount-button')
-                w.set_sensitive(discount)
+                self.builder.get_object('discount-button').set_sensitive(discount)
                 self.discount_entry.set_sensitive(discount)
                 
-                w = self.builder.get_object('list-cheque-button')
-                w.set_sensitive(spend_cheque)
-                w = self.builder.get_object('spend-cheque-label')
-                w.set_sensitive(spend_cheque)
+                self.builder.get_object('list-cheque-button').set_sensitive(spend_cheque)
+                self.builder.get_object('spend-cheque-label').set_sensitive(spend_cheque)
 
-                w = self.builder.get_object('non-cash-payment-label')
-                w.set_sensitive(non_cash)
-                w = self.builder.get_object('non-cash-payment-button')
-                w.set_sensitive(non_cash)
+                self.builder.get_object('non-cash-payment-label').set_sensitive(non_cash)
+                self.builder.get_object('non-cash-payment-button').set_sensitive(non_cash)
         
                 self.cash_payment_entry.set_sensitive((non_cash or spend_cheque))
-                break
 
-        self.cash_payment_entry.set_text('')
         self.from_entry.set_text("")
         self.to_entry.set_text("")
+        self.cash_payment_entry.set_text('0.0')
+        self.total_credit_entry.set_text('0.0')
         self.discount_entry.set_text('0.0')
 
     def on_from_clicked(self, button):
-        index = self.type_index
-        entry = self.from_entry
+        index  = self.type_index
+        entry  = self.from_entry
         dbconf = dbconfig.dbConfig()
 
         if index in (0, 6, 8):
@@ -139,7 +137,7 @@ class AutomaticAccounting:
             sub = subjects.Subjects()
             sub.connect('subject-selected', self.on_subject_selected, entry)
         elif index in (2, 4, 7):
-            sub = subjects.Subjects(parent_id=dbconf.get_value('bank'))
+            sub = subjects.Subjects(parent_id=dbconf.get_int_list('bank'))
             sub.connect('subject-selected', self.on_subject_selected, entry)
         else:
             print 'From?'
@@ -157,14 +155,15 @@ class AutomaticAccounting:
             cust.connect('customer-selected', self.on_customer_selected, entry)
             cust.viewCustomers(True)
         elif index in (2, 3, 5, 6):
-            sub = subjects.Subjects(parent_id=dbconf.get_value('bank'))
+            sub = subjects.Subjects(parent_id=dbconf.get_int_list('bank'))
             sub.connect('subject-selected', self.on_subject_selected, entry)
         else:
             print 'To?'     
 
     def on_total_credit_entry_change(self, entry):
-        if self.type_index in (3, 5, 6, 7):
-            self.cash_payment_entry.set_text(entry.get_text())
+        for item in types:
+            if item[0] == self.type_index and not (item[2] or item[4]):
+                self.cash_payment_entry.set_text(entry.get_text())
         self.on_cash_payment_entry_change(None)
 
     def on_discount_entry_change(self, entry):
@@ -234,22 +233,19 @@ class AutomaticAccounting:
 
     def check_save_button(self):
         save_button = self.builder.get_object('save-button')
+        save_button.set_sensitive(False)
 
         if self.from_entry.get_text_length() == 0: # TODO: and exists
-            save_button.set_sensitive(False)
             return
 
         if self.to_entry.get_text_length() == 0 :  # TODO: and exists
-            save_button.set_sensitive(False)
             return
 
         if self.total_credit_entry.get_float() == 0:
-            save_button.set_sensitive(False)
             return
 
         mod = self.builder.get_object('mod')
         if float(mod.get_text()) != 0:
-            save_button.set_sensitive(False)
             return
 
         save_button.set_sensitive(True)
@@ -283,8 +279,6 @@ class AutomaticAccounting:
         if parent:
             win.set_transient_for(parent)
         win.set_position(gtk.WIN_POS_CENTER)
-        # TODO: has problem with customer window
-        # win.set_modal(True)
         win.set_destroy_with_parent(True)
         win.show_all()
 
