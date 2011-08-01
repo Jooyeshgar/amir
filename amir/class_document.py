@@ -92,4 +92,5 @@ class Document:
 
         config.db.session.commit()
         self.notebooks = []
-        return True
+
+        return self.id
