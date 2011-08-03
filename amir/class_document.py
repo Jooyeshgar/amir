@@ -61,7 +61,7 @@ class Document:
         if len(self.notebooks) == 0:
             self.notebooks = []
             return -1
-        
+
         sum = 0
         for notebook in self.notebooks:
             sum += notebook[1]

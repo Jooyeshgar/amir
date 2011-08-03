@@ -299,7 +299,7 @@ class AutomaticAccounting:
             query = config.db.session.query(Subject).select_from(Subject)
             result['from'] = query.filter(Subject.code == result['from']).first().id
         else:
-            query = onfig.db.session.query(Customers).select_from(Subject)
+            query = config.db.session.query(Customers).select_from(Subject)
             result['from'] = query.filter(Customers.custCode == result['from']).first().custId
 
         result['to']   = self.to_entry.get_text()
@@ -308,15 +308,13 @@ class AutomaticAccounting:
         else:
             result['to'] = config.db.session.query(Customers).select_from(Subject).filter(Customers.custCode == result['to']).first().custSubj
 
-        for i in result:
-            print i, ' => ', result[i]
-        print 'END'
+        dbconf = dbconfig.dbConfig()
 
         document = class_document.Document()
         document.add_notebook(result['from'],  result['total_value'], result['desc'])
-        document.add_notebook(result['to']  , -result['total_value'], result['desc'])
-        if result['discount']:
-            document.add_notebook(result['to'], -result['discount']   , result['desc'])
+        document.add_notebook(result['to']  , -result['cash_payment'], result['desc'])
+        if result['discount'] :
+            document.add_notebook(dbconf.get_int('sell-discount'), -result['discount'], result['desc'])
         print 'Result : ',document.save()
 
         self.on_destroy(self.builder.get_object('general'))

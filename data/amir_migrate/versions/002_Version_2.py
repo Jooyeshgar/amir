@@ -216,7 +216,7 @@ def upgrade(migrate_engine):
             'cfgDesc':u'Enter here'},
         {'cfgId' : 7, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'sell'          , 'cfgValue' : u'18',
             'cfgDesc':u'Enter here'},
-        {'cfgId' : 8, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'sell-discount' , 'cfgValue' : u'25',
+        {'cfgId' : 8, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'sell-discount' , 'cfgValue' : u'25',
             'cfgDesc':u'Enter here'},
         {'cfgId' : 9, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'tax'           , 'cfgValue' : u'33',
             'cfgDesc':u'Enter here'},
