@@ -10,6 +10,7 @@ from amirconfig import config
 from database import Subject
 from database import Customers
 
+import glib
 import gtk
 
 type_names = (
@@ -52,7 +53,8 @@ type_configs = {
 }
 
 class AutomaticAccounting:
-    def __init__(self):
+    def __init__(self, box):
+        self.main_window_box = box
         # Chosen Type
         self.type_index = None
         
@@ -316,12 +318,20 @@ class AutomaticAccounting:
             document.add_notebook(dbconf.get_int('sell-discount'), -result['discount'], result['desc'])
         result = document.save()
         if result > 0:
-            dialog = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 'Data successfully added!')
             self.on_destroy(self.builder.get_object('general'))
+
+            infobar = gtk.InfoBar()
+            box = gtk.HBox()
+            box.pack_start(gtk.Label('successfully added'), False, False)
+            infobar.get_content_area().add(box)
+            self.main_window_box.pack_start(infobar)
+            infobar.show_all()
+
+            glib.timeout_add_seconds(3, lambda w: w.destroy(), infobar)
         else:
             dialog = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 'Failed, return code: %d' % result)
-        dialog.run()
-        dialog.destroy()
+            dialog.run()
+            dialog.destroy()
 
     def on_destroy(self, window):
         window.destroy()

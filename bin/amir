@@ -285,7 +285,7 @@ class MainWindow(gobject.GObject):
         logging.info('New locale: ' + new_locale)
 
     def automaticAccounting(self, sender):
-        obj = automaticaccounting.AutomaticAccounting()
+        obj = automaticaccounting.AutomaticAccounting(self.builder.get_object('vbox2'))
         obj.run()
         
     def main(self):
