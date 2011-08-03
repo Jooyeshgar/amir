@@ -17,8 +17,8 @@ type_names = (
     (0 , 'Get From Customer'      ),
     (1 , 'Pay To Customer'        ),
     (2 , 'Bank To Bank'           ),
-    (3 , 'Fund To Bank'           ),
-    (4 , 'Bank To Fund'           ),
+    (3 , 'Cash To Bank'           ),
+    (4 , 'Bank To Cash'           ),
     (5 , 'Bank Wage'              ),
     (6 , 'havale taraf hesab'     ),
     (7 , 'Padakhte naghdi az bank'),
@@ -36,19 +36,19 @@ type_configs = {
     #4 to   is subject?
     #5 from key
     #6 to   key
-    #    0    , 1    , 2    , 3   , 4   , 5   , 6
-    0:  (True , True , False, False, True , None, None),
-    1:  (True , False, True , True , True , None, None),
-    2:  (True , False, False, True , True , None, None),
-    3:  (False, False, False, True , True , None, None),
-    4:  (True , False, False, True , True , None, None),
-    5:  (False, False, False, True , True , None, None),
-    6:  (False, False, False, True , True , None, None),
-    7:  (False, False, False, True , True , None, None),
-    8:  (True , False, True , True , True , None, None),
-    9:  (True , False, True , True , True , None, None),
-    10: (True , False, False, True , True , None, None),
-    11: (True , False, True , True , True , None, None),
+    #    0    , 1    , 2    , 3    , 4    , 5         , 6
+    0:  (True , True , False, False, True , None       , 'cash'),
+    1:  (True , False, True , True , False, 'cash'     , None  ),
+    2:  (True , False, False, True , True , 'bank'     , 'bank'),
+    3:  (False, False, False, True , True , 'cash'     , 'bank'),
+    4:  (True , False, False, True , True , 'bank'     , 'cash'),
+    5:  (False, False, False, True , True , 'cash'     , 'bank'),
+    6:  (False, False, False, False, True , None       , 'bank'),
+    7:  (False, False, False, True , False, 'bank'     , None),
+    8:  (True , False, True , True , True , 'partners' , 'cash,bank'),
+    9:  (True , False, True , True , True , 'cash'     , 'cost'),
+    10: (True , False, False, True , True , None       , 'cash,bank'),
+    11: (True , False, True , True , True , 'cash,bank', 'partner'),
 }
 
 class AutomaticAccounting:
@@ -151,7 +151,14 @@ class AutomaticAccounting:
         dbconf = dbconfig.dbConfig()
 
         if type_configs[self.type_index][3]:
-            sub = subjects.Subjects()
+            if type_configs[self.type_index][5] == None:
+                sub = subjects.Subjects()
+            else:
+                keys = type_configs[self.type_index][5]
+                parent_id=[]
+                for key in keys.split(','):
+                    parent_id+=dbconf.get_int_list(key)
+                sub = subjects.Subjects(parent_id=parent_id)
             sub.connect('subject-selected',
                         self.on_subject_selected,
                         entry)
@@ -167,10 +174,15 @@ class AutomaticAccounting:
         dbconf = dbconfig.dbConfig()
 
         if type_configs[self.type_index][4]:
-            if type_configs[self.type_index] == None:
+            if type_configs[self.type_index][6] == None:
                 sub = subjects.Subjects()
             else:
-                sub = subjects.Subjects()
+                keys = type_configs[self.type_index][6]
+                print 'keys', keys
+                parent_id=[]
+                for key in keys.split(','):
+                    parent_id+=dbconf.get_int_list(key)
+                sub = subjects.Subjects(parent_id=parent_id)
             sub.connect('subject-selected',
                         self.on_subject_selected,
                         entry)
@@ -284,15 +296,17 @@ class AutomaticAccounting:
 
         result['from'] = self.from_entry.get_text()
         if type_configs[self.type_index][3]:
-            result['from'] = config.db.session.query(Subject).select_from(Subject).filter(Subject.code == result['from']).first().id
+            query = config.db.session.query(Subject).select_from(Subject)
+            result['from'] = query.filter(Subject.code == result['from']).first().id
         else:
-            result['from'] = config.db.session.query(Customers).select_from(Subject).filter(Customers.custCode == result['from']).first().custId
+            query = onfig.db.session.query(Customers).select_from(Subject)
+            result['from'] = query.filter(Customers.custCode == result['from']).first().custId
 
         result['to']   = self.to_entry.get_text()
         if type_configs[self.type_index][4]:
             result['to']   = config.db.session.query(Subject).select_from(Subject).filter(Subject.code == result['to'  ]).first().id
         else:
-            result['to'] = config.db.session.query(Customers).select_from(Subject).filter(Customers.custCode == result['to']).first().custId
+            result['to'] = config.db.session.query(Customers).select_from(Subject).filter(Customers.custCode == result['to']).first().custSubj
 
         for i in result:
             print i, ' => ', result[i]
@@ -300,7 +314,7 @@ class AutomaticAccounting:
 
         document = class_document.Document()
         document.add_notebook(result['from'],  result['total_value'], result['desc'])
-        document.add_notebook(result['to'], -result['total_value'], result['desc'])
+        document.add_notebook(result['to']  , -result['total_value'], result['desc'])
         if result['discount']:
             document.add_notebook(result['to'], -result['discount']   , result['desc'])
         print 'Result : ',document.save()

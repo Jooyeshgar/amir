@@ -220,6 +220,10 @@ def upgrade(migrate_engine):
             'cfgDesc':u'Enter here'},
         {'cfgId' : 9, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'tax'           , 'cfgValue' : u'33',
             'cfgDesc':u'Enter here'},
+        {'cfgId' :10, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'partners'      , 'cfgValue' : u'8',
+            'cfgDesc':u'Enter here'},
+        {'cfgId' :11, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'cost'          , 'cfgValue' : u'2',
+            'cfgDesc':u'Enter here'},
         #{'cfgId' :10, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'sell-adds'     , 'cfgValue' : u'??',
         #    'cfgDesc':u'Enter here'},  #TODO cfgKey
         #{'cfgId' :11, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'fund'          , 'cfgValue' : u'??',
