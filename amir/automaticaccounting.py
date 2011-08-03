@@ -178,7 +178,6 @@ class AutomaticAccounting:
                 sub = subjects.Subjects()
             else:
                 keys = type_configs[self.type_index][6]
-                print 'keys', keys
                 parent_id=[]
                 for key in keys.split(','):
                     parent_id+=dbconf.get_int_list(key)
@@ -315,9 +314,14 @@ class AutomaticAccounting:
         document.add_notebook(result['to']  , -result['cash_payment'], result['desc'])
         if result['discount'] :
             document.add_notebook(dbconf.get_int('sell-discount'), -result['discount'], result['desc'])
-        print 'Result : ',document.save()
-
-        self.on_destroy(self.builder.get_object('general'))
+        result = document.save()
+        if result > 0:
+            dialog = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 'Data successfully added!')
+            self.on_destroy(self.builder.get_object('general'))
+        else:
+            dialog = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 'Failed, return code: %d' % result)
+        dialog.run()
+        dialog.destroy()
 
     def on_destroy(self, window):
         window.destroy()
