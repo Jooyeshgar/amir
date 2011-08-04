@@ -322,7 +322,7 @@ class AutomaticAccounting:
 
             infobar = gtk.InfoBar()
             box = gtk.HBox()
-            box.pack_start(gtk.Label('successfully added'), False, False)
+            box.pack_start(gtk.Label('successfully added. Document number : %d' % document.number), False, False)
             infobar.get_content_area().add(box)
             self.main_window_box.pack_start(infobar)
             infobar.show_all()
