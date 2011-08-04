@@ -1,4 +1,3 @@
-import sys
 import os
 
 import  product
@@ -12,7 +11,6 @@ import  dbconfig
 import  customers
 
 import  gobject
-import  pygtk
 import  gtk
 
 from    sqlalchemy.orm              import  sessionmaker, join
@@ -23,8 +21,6 @@ from    datetime                    import  date
 from    sqlalchemy.sql              import  and_
 from    sqlalchemy.sql.functions    import  *
 from    database                    import  *
-
-pygtk.require('2.0')
 
 class SellProducts:
 	def __init__(self,transId=None):

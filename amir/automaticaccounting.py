@@ -15,18 +15,18 @@ import gtk
 
 type_names = (
     # 0 id, 1 name
-    (0 , 'Get From Customer'      ),
-    (1 , 'Pay To Customer'        ),
-    (2 , 'Bank To Bank'           ),
-    (3 , 'Cash To Bank'           ),
-    (4 , 'Bank To Cash'           ),
-    (5 , 'Bank Wage'              ),
-    (6 , 'havale taraf hesab'     ),
+    (0 , 'Get From Customer'),
+    (1 , 'Pay To Customer'),
+    (2 , 'Bank To Bank'),
+    (3 , 'Cash To Bank'),
+    (4 , 'Bank To Cash'),
+    (5 , 'Bank Wage'),
+    (6 , 'havale taraf hesab'),
     (7 , 'Padakhte naghdi az bank'),
-    (8 , 'Investment'             ),
-    (9 , 'Cost'                   ),
-    (10, 'Income'                 ),
-    (11, 'Removel'                ),
+    (8 , 'Investment'),
+    (9 , 'Cost'),
+    (10, 'Income'),
+    (11, 'Removel'),
 )
 
 type_configs = {
@@ -37,7 +37,7 @@ type_configs = {
     #4 to   is subject?
     #5 from key
     #6 to   key
-    #    0    , 1    , 2    , 3    , 4    , 5         , 6
+    #    0    , 1    , 2    , 3    , 4    , 5          , 6
     0:  (True , True , False, False, True , None       , 'cash'),
     1:  (True , False, True , True , False, 'cash'     , None  ),
     2:  (True , False, False, True , True , 'bank'     , 'bank'),

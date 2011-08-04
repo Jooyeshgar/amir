@@ -241,22 +241,21 @@ class Payment(Base):
 
 class Cheque(Base):
     __tablename__ = "cheque"
-    chqId       = Column( Integer,      primary_key = True                )
-    chqAmount   = Column( Float,        ColumnDefault(0), nullable = False)
-    chqWrtDate  = Column( Date,         nullable = False                  )
-    chqDueDate  = Column( Date,         nullable = False                  )
-    #chqBank     = Column( Unicode(50),  nullable = True                   )
-    chqAccount  = Column( Integer,      ForeignKey('bankAccounts.accId'),
-                                        nullable = True                   )
-    chqSerial   = Column( Unicode(50),  nullable = False                  )
-    chqStatus   = Column( Integer,      ColumnDefault(0), nullable = False)
-    #chqPaid     = Column( Boolean,      ColumnDefault(0),   nullable = False    )
-    chqCust     = Column( Integer,      ForeignKey('customers.custId')    )
-    #chqSpent    = Column( Boolean,      ColumnDefault(0),   nullable = False    )
-    chqTransId  = Column( Integer,      ColumnDefault(0)                  ) #Transaction id is zero for non-invoice cheques.
-    chqBillId   = Column( Integer,      ColumnDefault(0)                  ) #Bill id is zero for temporary transactions.
-    chqDesc     = Column( Unicode(200), nullable = True                   )
-    chqOrder    = Column( Integer,      ColumnDefault(0), nullable = False)
+    chqId       = Column(Integer,      primary_key = True)
+    chqAmount   = Column(Float,        ColumnDefault(0), nullable = False)
+    chqWrtDate  = Column(Date,         nullable = False)
+    chqDueDate  = Column(Date,         nullable = False)
+    #chqBank    = Column( Unicode(50),  nullable = True)
+    chqAccount  = Column(Integer,      ForeignKey('bankAccounts.accId'), nullable = True)
+    chqSerial   = Column(Unicode(50),  nullable = False)
+    chqStatus   = Column(Integer,      ColumnDefault(0), nullable = False)
+    #chqPaid    = Column( Boolean,      ColumnDefault(0),   nullable = False)
+    chqCust     = Column( Integer,      ForeignKey('customers.custId'))
+    #chqSpen    = Column( Boolean,      ColumnDefault(0),   nullable = False)
+    chqTransId  = Column(Integer,      ColumnDefault(0)) #Transaction id is zero for non-invoice cheques.
+    chqBillId   = Column(Integer,      ColumnDefault(0)) #Bill id is zero for temporary transactions.
+    chqDesc     = Column(Unicode(200), nullable = True)
+    chqOrder    = Column(Integer,      ColumnDefault(0), nullable = False)
 
     def __init__( self, chqAmount, chqWrtDate, chqDueDate, chqSerial,
                   chqStatus, chqCust, chqTransId, chqBillId, chqDesc, chqOrder):
