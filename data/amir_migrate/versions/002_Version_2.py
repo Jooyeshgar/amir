@@ -1,3 +1,6 @@
+#!/usr/bin/python2
+# -*- coding: utf-8 -*-
+
 from sqlalchemy import *
 from migrate import *
 import logging
@@ -172,6 +175,10 @@ config = Table("config", meta,
     Column('cfgCat'  , Integer     , nullable = True)
 )
 
+banknames = Table("BankNames", meta,
+    Column('Id'  , Integer    , primary_key=True),
+    Column('Name', Unicode(50), nullable=False)
+)
 
 def upgrade(migrate_engine):
     # Upgrade operations go here. Don't create your own engine; bind migrate_engine
@@ -188,6 +195,7 @@ def upgrade(migrate_engine):
     customers.create(     checkfirst=True)
     bankAccounts.create(  checkfirst=True)
     config.create(checkfirst=True)
+    banknames.create(checkfirst=True)
     logging.debug("upgrade to 2")
 
     op = config.insert()
@@ -234,6 +242,12 @@ def upgrade(migrate_engine):
         #    'cfgDesc':u'Enter here'}   #TODO cfgKey
      )
                
+    op = banknames.insert()
+    op.execute(
+        { 'Id': 1, "Name":u"ملی"},
+        { 'Id': 2, "Name":u"صادرات"},
+        { 'Id': 3, "Name":u"سپه"}
+    )
 
 def downgrade(migrate_engine):
     # Operations to reverse the above upgrade go here.
@@ -244,6 +258,7 @@ def downgrade(migrate_engine):
     transactions.drop()
     exchanges.drop()
     payments.drop()
+
     cheques.drop()
     custGroups.drop()
     customers.drop()

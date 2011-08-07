@@ -368,6 +368,14 @@ class Customers(Base):
         self.custReason      = custReason
         self.custDiscRate    = custDiscRate
         
+class BankNames(Base):
+    __tablename__ = 'BankNames'
+    Id   = Column(Integer    , primary_key=True)
+    Name = Column(Unicode(50), nullable=False)
+
+    def __init__(self, id, name):
+        self.Id   = id
+        self.Name = name
 
 class BankAccounts(Base):
     __tablename__   = "bankAccounts"
