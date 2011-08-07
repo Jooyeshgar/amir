@@ -57,6 +57,7 @@ class AutomaticAccounting:
         self.main_window_box = box
         # Chosen Type
         self.type_index = None
+        self.from_id = self.to_id = -1
         
         self.builder = helpers.get_builder('automaticaccounting')
         self.builder.connect_signals(self)
@@ -98,14 +99,12 @@ class AutomaticAccounting:
         # names table
         table = self.builder.get_object('names-table')
 
-        self.from_entry = numberentry.NumberEntry()
+        self.from_entry = gtk.Entry()
         self.from_entry.set_sensitive(False)
-        self.from_entry.connect('changed', self.on_from_entry_changed)
         table.attach(self.from_entry, 1, 2, 0, 1)
 
-        self.to_entry = numberentry.NumberEntry()
+        self.to_entry = gtk.Entry()
         self.to_entry.set_sensitive(False)
-        self.to_entry.connect('changed', self.on_to_entry_changed)
         table.attach(self.to_entry, 1, 2, 1, 2)
 
         self.total_credit_entry = decimalentry.DecimalEntry()
@@ -163,12 +162,12 @@ class AutomaticAccounting:
                 sub = subjects.Subjects(parent_id=parent_id)
             sub.connect('subject-selected',
                         self.on_subject_selected,
-                        entry)
+                        entry, False)
         else:
             cust = customers.Customer()
             cust.connect('customer-selected',
                          self.on_customer_selected,
-                         entry)
+                         entry, False)
             cust.viewCustomers(True)
 
     def on_to_clicked(self, button):
@@ -186,12 +185,12 @@ class AutomaticAccounting:
                 sub = subjects.Subjects(parent_id=parent_id)
             sub.connect('subject-selected',
                         self.on_subject_selected,
-                        entry)
+                        entry, True)
         else:
             cust = customers.Customer()
             cust.connect('customer-selected',
                          self.on_customer_selected,
-                         entry)
+                         entry, True)
             cust.viewCustomers(True)
 
     def on_total_credit_entry_change(self, entry):
@@ -203,7 +202,7 @@ class AutomaticAccounting:
         self.on_cash_payment_entry_change(None)
 
     def on_discount_clicked(self, button):
-        dialog = gtk.Dialog("My dialog",
+        dialog = gtk.Dialog("Discount percentage",
                             self.builder.get_object('general'),
                             gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
                             (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OK, gtk.RESPONSE_OK)
@@ -244,34 +243,39 @@ class AutomaticAccounting:
 
         self.check_save_button()
 
-    def on_subject_selected(self, subject, id, code, name, entry):
+    def on_subject_selected(self, subject, id, code, name, entry, to):
         query = config.db.session.query(Subject).select_from(Subject)
         query = query.filter(Subject.code == code)
         if query.first().parent_id == 0:
             print 'Can not select it'
             return
 
-        entry.set_text(str(code))
+        if to:
+            self.to_id = id
+        else:
+            self.from_id = id
+
+        entry.set_text(name)
         subject.window.destroy()
 
-    def on_customer_selected(self, customer, id, code, entry):
-        entry.set_text(str(code))
+    def on_customer_selected(self, customer, id, code, entry, to):
+        if to:
+            self.to_id = id
+        else:
+            self.from_id = id
+        query = config.db.session.query(Customers).select_from(Customers)
+        query = query.filter(Customers.custCode == code)
+        entry.set_text(query.first().custName)
         customer.window.destroy()
-
-    def on_from_entry_changed(self, entry):
-        self.check_save_button()
-
-    def on_to_entry_changed(self, entry):
-        self.check_save_button()
 
     def check_save_button(self):
         save_button = self.builder.get_object('save-button')
         save_button.set_sensitive(False)
 
-        if self.from_entry.get_text_length() == 0: # TODO: and exists
+        if self.from_entry.get_text_length() == 0:
             return
 
-        if self.to_entry.get_text_length() == 0 :  # TODO: and exists
+        if self.to_entry.get_text_length() == 0 :
             return
 
         if self.total_credit_entry.get_float() == 0:
@@ -294,20 +298,8 @@ class AutomaticAccounting:
         result['non-cash-payment-info'] = None # TODO: = non cash payment infos
         result['spend-cheque-info']     = None # TODO = spent cheque infos
         result['desc']                  = self.builder.get_object('desc').get_text()
-
-        result['from'] = self.from_entry.get_text()
-        if type_configs[self.type_index][3]:
-            query = config.db.session.query(Subject).select_from(Subject)
-            result['from'] = query.filter(Subject.code == result['from']).first().id
-        else:
-            query = config.db.session.query(Customers).select_from(Subject)
-            result['from'] = query.filter(Customers.custCode == result['from']).first().custId
-
-        result['to']   = self.to_entry.get_text()
-        if type_configs[self.type_index][4]:
-            result['to']   = config.db.session.query(Subject).select_from(Subject).filter(Subject.code == result['to'  ]).first().id
-        else:
-            result['to'] = config.db.session.query(Customers).select_from(Subject).filter(Customers.custCode == result['to']).first().custSubj
+        result['from'] = self.from_id
+        result['to']   = self.to_id
 
         dbconf = dbconfig.dbConfig()
 
