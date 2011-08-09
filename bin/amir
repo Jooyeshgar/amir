@@ -202,6 +202,12 @@ class MainWindow(gobject.GObject):
         self.dblist = self.builder.get_object("dblist")
         helpers.comboInsertItems(self.dblist, config.dbnames)
         self.dblist.set_active(config.currentdb - 1)
+
+        main_box = self.builder.get_object('vbox2')
+        self.background = gtk.Fixed()
+        main_box.add(self.background)
+        self.background.put(gtk.image_new_from_file('../data/media/background.png'), 0, 0)
+        self.background.show_all()
         
         #NOTE: Bad idea, because until initial menu is shown, user can not register any bill;
         #so the below query always returns zero.
@@ -285,7 +291,7 @@ class MainWindow(gobject.GObject):
         logging.info('New locale: ' + new_locale)
 
     def automaticAccounting(self, sender):
-        obj = automaticaccounting.AutomaticAccounting(self.builder.get_object('vbox2'))
+        obj = automaticaccounting.AutomaticAccounting(self.background)
         obj.run()
         
     def main(self):

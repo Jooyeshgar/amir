@@ -53,8 +53,8 @@ type_configs = {
 }
 
 class AutomaticAccounting:
-    def __init__(self, box):
-        self.main_window_box = box
+    def __init__(self, background):
+        self.main_window_background = background
         # Chosen Type
         self.type_index = None
         self.from_id = self.to_id = -1
@@ -142,9 +142,9 @@ class AutomaticAccounting:
 
         self.from_entry.set_text("")
         self.to_entry.set_text("")
-        self.cash_payment_entry.set_text('0.0')
-        self.total_credit_entry.set_text('0.0')
-        self.discount_entry.set_text('0.0')
+        self.cash_payment_entry.set_text('0')
+        self.total_credit_entry.set_text('0')
+        self.discount_entry.set_text('0')
 
     def on_from_clicked(self, button):
         index  = self.type_index
@@ -313,10 +313,11 @@ class AutomaticAccounting:
             self.on_destroy(self.builder.get_object('general'))
 
             infobar = gtk.InfoBar()
-            box = gtk.HBox()
-            box.pack_start(gtk.Label('successfully added. Document number : %d' % document.number), False, False)
-            infobar.get_content_area().add(box)
-            self.main_window_box.pack_start(infobar)
+            label = gtk.Label('successfully added. Document number : %d' % document.number)
+            infobar.get_content_area().add(label)
+            width , height = self.main_window_background.window.get_size()
+            infobar.set_size_request(width, -1)
+            self.main_window_background.put(infobar ,0 , 0)
             infobar.show_all()
 
             glib.timeout_add_seconds(3, lambda w: w.destroy(), infobar)
