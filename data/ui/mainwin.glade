@@ -225,6 +225,7 @@
                                 <property name="visible">True</property>
                                 <property name="label" translatable="yes">View Bank Accounts</property>
                                 <property name="use_underline">True</property>
+                                <signal name="activate" handler="showBankAccounts"/>
                               </object>
                             </child>
                             <child>
@@ -232,6 +233,7 @@
                                 <property name="visible">True</property>
                                 <property name="label" translatable="yes">Add Bank Account</property>
                                 <property name="use_underline">True</property>
+                                <signal name="activate" handler="addBankAccount"/>
                               </object>
                             </child>
                           </object>

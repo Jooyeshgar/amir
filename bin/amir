@@ -71,6 +71,7 @@ gettext.install('amir', config.locale_path, unicode=1)
 from amir import subjects, addeditdoc, database, numberentry, notebookreport, docreport, tbalancereport, notebookutils, \
 setting, helpers, sellProducts, customers, customergroup, product, productgroup
 from amir import automaticaccounting
+from amir import bankaccountsui
      
 class MainWindow(gobject.GObject):
 
@@ -293,6 +294,14 @@ class MainWindow(gobject.GObject):
     def automaticAccounting(self, sender):
         obj = automaticaccounting.AutomaticAccounting(self.background)
         obj.run()
+
+    def showBankAccounts(self, sender):
+        obj = bankaccountsui.BankAccountsUI()
+        obj.show_accounts()
+
+    def addBankAccount(self, sender):
+        obj = bankaccountsui.BankAccountsUI()
+        obj.add_account()
         
     def main(self):
         gtk.main()

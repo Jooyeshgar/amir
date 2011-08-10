@@ -244,9 +244,15 @@ def upgrade(migrate_engine):
                
     op = banknames.insert()
     op.execute(
-        { 'Id': 1, "Name":u"ملی"},
-        { 'Id': 2, "Name":u"صادرات"},
-        { 'Id': 3, "Name":u"سپه"}
+        { 'Id': 1, "Name":u"پارسیان"},
+        { 'Id': 2, "Name":u"دی"},
+        { 'Id': 3, "Name":u"سامان"},
+        { 'Id': 4, "Name":u"سپه"},
+        { 'Id': 5, "Name":u"سرمایه"},
+        { 'Id': 6, "Name":u"صادرات"},
+        { 'Id': 7, "Name":u"کشاورزی"},
+        { 'Id': 8, "Name":u"ملت"},
+        { 'Id': 9, "Name":u"ملی"}
     )
 
 def downgrade(migrate_engine):
