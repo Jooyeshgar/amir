@@ -83,9 +83,10 @@ class BankAccountsUI:
                 model = combo.get_model()
 
                 iter = model.append()
-                model.set(iter, 1, text)
+                model.set(iter, 0, text)
                 self.bank_names_count+=1
                 combo.set_active(self.bank_names_count-1)
+                #TODO add to database
         dialog.destroy()
 
     def on_add_window_destroy(self, window):
@@ -113,3 +114,6 @@ class BankAccountsUI:
             dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, msg)
             dialog.run()
             dialog.destroy()
+            return
+
+        print 'Save!'
