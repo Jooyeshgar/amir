@@ -296,11 +296,11 @@ class MainWindow(gobject.GObject):
         obj.run()
 
     def showBankAccounts(self, sender):
-        obj = bankaccountsui.BankAccountsUI()
+        obj = bankaccountsui.BankAccountsUI(self.background)
         obj.show_accounts()
 
     def addBankAccount(self, sender):
-        obj = bankaccountsui.BankAccountsUI()
+        obj = bankaccountsui.BankAccountsUI(self.background)
         obj.add_account()
         
     def main(self):

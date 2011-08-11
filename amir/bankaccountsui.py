@@ -5,10 +5,13 @@ import helpers
 from amirconfig import config
 from database import Customers
 
+import glib
 import gtk
 
 class BankAccountsUI:
-    def __init__(self):
+    def __init__(self, background):
+        self.main_window_background = background
+
         self.bank_names_count = 0
         self.owner_id = -1
 
@@ -51,18 +54,6 @@ class BankAccountsUI:
         window.resize(600, 1)
         window.show_all()
 
-    def on_select_owner_clicked(self, sender):
-        cust = customers.Customer()
-        cust.connect('customer-selected', self.on_customer_selected)
-        cust.viewCustomers(True)
-
-    def on_customer_selected(self, customer, id, code):
-        self.owner_id = id
-        query = config.db.session.query(Customers).select_from(Customers)
-        query = query.filter(Customers.custCode == code)
-        self.builder.get_object('owner_entry').set_text(query.first().custName)
-        customer.window.destroy()
-
     def on_general_window_destroy(self, window):
         self.builder.get_object('general_window').destroy()
 
@@ -97,18 +88,19 @@ class BankAccountsUI:
         account_name = self.builder.get_object('account_name').get_text()
         account_number = self.builder.get_object('account_number').get_text()
         account_type = self.builder.get_object('account_types_combo').get_active()
-        bank_name = self.builder.get_object('bank_names_combo').get_active()
+        account_owner = self.builder.get_object('account_owner').get_text()
+        bank_name = self.builder.get_object('bank_names_combo').get_active_text()
 
         if len(account_name) == 0:
             msg+= 'Account Name Can not be empty\n'
         if len(account_number) == 0:
             msg+= 'Account Number Can not be empty\n'
+        if len(account_owner) == 0:
+            msg+= 'Account Owner Can not be empty\n'
         if account_type == -1:
             msg+= 'Select an account type\n'
-        if bank_name == -1:
+        if bank_name == None:
             msg+= 'Select a Bank\n'
-        if self.owner_id == -1:
-            msg+= 'Select Account owner\n'
 
         if len(msg):
             dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, msg)
@@ -116,4 +108,26 @@ class BankAccountsUI:
             dialog.destroy()
             return
 
-        print 'Save!'
+        result = self.bankaccounts_class.add_account(account_name,
+                                                     account_number,
+                                                     account_type,
+                                                     account_owner,
+                                                     bank_name,
+                                                     self.builder.get_object('bank_branch').get_text(),
+                                                     self.builder.get_object('bank_address').get_text(),
+                                                     self.builder.get_object('bank_phone').get_text(),
+                                                     self.builder.get_object('bank_webpage').get_text(),
+                                                     self.builder.get_object('desc').get_text())
+        if result:
+            window = self.builder.get_object('add_window').hide()
+            infobar = gtk.InfoBar()
+            label = gtk.Label('successfully added.')
+            infobar.get_content_area().add(label)
+            width , height = self.main_window_background.window.get_size()
+            infobar.set_size_request(width, -1)
+            self.main_window_background.put(infobar ,0 , 0)
+            infobar.show_all()
+
+            glib.timeout_add_seconds(3, lambda w: w.destroy(), infobar)
+
+

@@ -373,8 +373,7 @@ class BankNames(Base):
     Id   = Column(Integer    , primary_key=True)
     Name = Column(Unicode(50), nullable=False)
 
-    def __init__(self, id, name):
-        self.Id   = id
+    def __init__(self, name):
         self.Name = name
 
 class BankAccounts(Base):
@@ -382,9 +381,9 @@ class BankAccounts(Base):
     accId           = Column( Integer,      primary_key = True  )
     accName         = Column( Unicode(100), nullable = False    )
     accNumber       = Column( String,       nullable = False    )
-    accType         = Column( String,       nullable = True     )
+    accType         = Column( Integer,       nullable = True     )
     accOwner        = Column( Unicode(50),  nullable = True     )
-    accBank         = Column( Unicode(50),  nullable = True     )
+    accBank         = Column( Integer,  nullable = True     )
     accBankBranch   = Column( Unicode(50),  nullable = True     )
     accBankAddress  = Column( Unicode(100), nullable = True     )
     accBankPhone    = Column( String,       nullable = True     )
