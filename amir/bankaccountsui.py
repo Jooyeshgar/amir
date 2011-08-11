@@ -54,6 +54,9 @@ class BankAccountsUI:
         window.resize(600, 1)
         window.show_all()
 
+    def on_add_account_clicked(self, sender):
+        self.add_account()
+
     def on_general_window_destroy(self, window):
         self.builder.get_object('general_window').destroy()
 
