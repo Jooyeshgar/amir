@@ -50,6 +50,17 @@ class BankAccountsUI:
         window.show_all()
 
     def add_account(self):
+        self.builder.get_object('account_name').set_text('')
+        self.builder.get_object('account_number').set_text('')
+        self.builder.get_object('account_owner').set_text('')
+        self.builder.get_object('account_types_combo').set_active(-1)
+        self.builder.get_object('bank_names_combo').set_active(-1)
+        self.builder.get_object('bank_branch').set_text('')
+        self.builder.get_object('bank_address').set_text('')
+        self.builder.get_object('bank_phone').set_text('')
+        self.builder.get_object('bank_webpage').set_text('')
+        self.builder.get_object('desc').set_text('')
+
         window = self.builder.get_object('add_window')
         window.resize(600, 1)
         window.show_all()
