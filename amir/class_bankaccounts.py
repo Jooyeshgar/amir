@@ -2,12 +2,22 @@ from amirconfig import config
 from database import BankAccounts
 from database import BankNames
 
+from sqlalchemy.orm.util import outerjoin
+from sqlalchemy.orm.query import aliased
+from sqlalchemy.sql.functions import *
+
 class BankAccountsClass:
     def __init__(self):
         pass
 
     def get_bank_names(self):
         return config.db.session.query(BankNames).select_from(BankNames).all()
+
+    def get_all_accounts(self):
+        return config.db.session.query(BankAccounts).select_from(BankAccounts).order_by(BankAccounts.accBank).all()
+
+    def get_bank_name(self, id):
+        return config.db.session.query(BankNames).select_from(BankNames).filter(BankNames.Id == id).first().Name
 
     def add_account(self, name, number, type, owner, bank, branch, address, phone, webpage, desc):
         name    = unicode(name)

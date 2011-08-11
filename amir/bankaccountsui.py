@@ -45,8 +45,34 @@ class BankAccountsUI:
             iter = model.append()
             model.set(iter, 0, item)
 
+        treeview = self.builder.get_object('treeview')
+        model = gtk.ListStore(str, str, str, str, str)
+        treeview.set_model(model)
+
+        column = gtk.TreeViewColumn('Account Name', gtk.CellRendererText(), text=0)
+        treeview.append_column(column)
+        column = gtk.TreeViewColumn('Number', gtk.CellRendererText(), text=1)
+        treeview.append_column(column)
+        column = gtk.TreeViewColumn('Owner', gtk.CellRendererText(), text=2)
+        treeview.append_column(column)
+        column = gtk.TreeViewColumn('Type', gtk.CellRendererText(), text=3)
+        treeview.append_column(column)
+        column = gtk.TreeViewColumn('Bank Name', gtk.CellRendererText(), text=4)
+        treeview.append_column(column)
+
     def show_accounts(self):
         window = self.builder.get_object('general_window')
+        window.resize(600, 400)
+        accounts = self.bankaccounts_class.get_all_accounts()
+        model = self.builder.get_object('treeview').get_model()
+        for account in accounts:
+            iter = model.append()
+            if account.accType == 0:
+                accType = 'جاری'
+            else:
+                accType = 'حساب پس انداز'
+            accBank = self.bankaccounts_class.get_bank_name(account.accBank)
+            model.set(iter, 0, account.accName, 1, account.accNumber, 2, account.accOwner, 3, accType, 4, accBank)
         window.show_all()
 
     def add_account(self):
