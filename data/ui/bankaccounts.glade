@@ -3,6 +3,7 @@
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy project-wide -->
   <object class="GtkWindow" id="general_window">
+    <property name="title" translatable="yes">Bank Accounts</property>
     <signal name="destroy" handler="on_general_window_destroy"/>
     <child>
       <object class="GtkVBox" id="vbox1">
@@ -25,11 +26,12 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="toolbutton2">
+              <object class="GtkToolButton" id="delete_account">
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">_Delete</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-delete</property>
+                <signal name="clicked" handler="on_delete_account_clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -75,7 +77,7 @@
     </child>
   </object>
   <object class="GtkWindow" id="add_window">
-    <signal name="destroy" handler="on_add_window_destroy"/>
+    <signal name="delete_event" handler="on_add_window_delete_event"/>
     <child>
       <object class="GtkVBox" id="vbox4">
         <property name="visible">True</property>

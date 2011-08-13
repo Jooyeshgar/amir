@@ -46,18 +46,20 @@ class BankAccountsUI:
             model.set(iter, 0, item)
 
         treeview = self.builder.get_object('treeview')
-        model = gtk.ListStore(str, str, str, str, str)
+        model = gtk.ListStore(str, str, str, str, str, str)
         treeview.set_model(model)
 
-        column = gtk.TreeViewColumn('Account Name', gtk.CellRendererText(), text=0)
+        column = gtk.TreeViewColumn('id', gtk.CellRendererText(), text=0)
         treeview.append_column(column)
-        column = gtk.TreeViewColumn('Number', gtk.CellRendererText(), text=1)
+        column = gtk.TreeViewColumn('Account Name', gtk.CellRendererText(), text=1)
         treeview.append_column(column)
-        column = gtk.TreeViewColumn('Owner', gtk.CellRendererText(), text=2)
+        column = gtk.TreeViewColumn('Number', gtk.CellRendererText(), text=2)
         treeview.append_column(column)
-        column = gtk.TreeViewColumn('Type', gtk.CellRendererText(), text=3)
+        column = gtk.TreeViewColumn('Owner', gtk.CellRendererText(), text=3)
         treeview.append_column(column)
-        column = gtk.TreeViewColumn('Bank Name', gtk.CellRendererText(), text=4)
+        column = gtk.TreeViewColumn('Type', gtk.CellRendererText(), text=4)
+        treeview.append_column(column)
+        column = gtk.TreeViewColumn('Bank Name', gtk.CellRendererText(), text=5)
         treeview.append_column(column)
 
     def show_accounts(self):
@@ -74,7 +76,7 @@ class BankAccountsUI:
             else:
                 accType = 'حساب پس انداز'
             accBank = self.bankaccounts_class.get_bank_name(account.accBank)
-            model.set(iter, 0, account.accName, 1, account.accNumber, 2, account.accOwner, 3, accType, 4, accBank)
+            model.set(iter, 0, account.accId, 1, account.accName, 2, account.accNumber, 3, account.accOwner, 4, accType, 5, accBank)
         window.show_all()
 
     def add_account(self):
@@ -96,8 +98,18 @@ class BankAccountsUI:
     def on_add_account_clicked(self, sender):
         self.add_account()
 
+    def on_delete_account_clicked(self, sender):
+        treeview = self.builder.get_object('treeview')
+        selection = treeview.get_selection()
+        model, iter = selection.get_selected()
+        if iter == None:
+            return
+        id = model.get_value(iter, 0)
+        model.remove(iter)
+        self.bankaccounts_class.delete_account(id)
+
     def on_general_window_destroy(self, window):
-        self.builder.get_object('general_window').destroy()
+        self.builder.get_object('general_window').hide()
 
     def on_add_bank_clicked(self, sender):
         dialog = gtk.Dialog(None, None,
@@ -110,19 +122,23 @@ class BankAccountsUI:
         dialog.vbox.pack_start(entry, False, False)
         dialog.show_all()
         result = dialog.run()
-        text = entry.get_text()
-        if result == gtk.RESPONSE_OK and len(text) != 0:
+        bank_name = entry.get_text()
+        if result == gtk.RESPONSE_OK and len(bank_name) != 0:
                 combo = self.builder.get_object('bank_names_combo')
                 model = combo.get_model()
 
                 iter = model.append()
-                model.set(iter, 0, text)
+                model.set(iter, 0, bank_name)
                 self.bank_names_count+=1
                 combo.set_active(self.bank_names_count-1)
+
+                self.bankaccounts_class.add_bank(bank_name)
+
         dialog.destroy()
 
-    def on_add_window_destroy(self, window):
+    def on_add_window_delete_event(self, window, event):
         window.hide()
+        return True
 
     def on_save_clicked(self, button):
         msg = ''
@@ -150,17 +166,17 @@ class BankAccountsUI:
             return
 
         result = self.bankaccounts_class.add_account(account_name,
-                                                     account_number,
-                                                     account_type,
-                                                     account_owner,
-                                                     bank_name,
-                                                     self.builder.get_object('bank_branch').get_text(),
-                                                     self.builder.get_object('bank_address').get_text(),
-                                                     self.builder.get_object('bank_phone').get_text(),
-                                                     self.builder.get_object('bank_webpage').get_text(),
-                                                     self.builder.get_object('desc').get_text())
-        if result:
-            window = self.builder.get_object('add_window').hide()
+                account_number,
+                account_type,
+                account_owner,
+                bank_name,
+                self.builder.get_object('bank_branch').get_text(),
+                self.builder.get_object('bank_address').get_text(), 
+                self.builder.get_object('bank_phone').get_text(),
+                self.builder.get_object('bank_webpage').get_text(), 
+                self.builder.get_object('desc').get_text())
+        if result > 0:
+            window = self.builder.get_object('add_window').hide_all()
             infobar = gtk.InfoBar()
             label = gtk.Label('successfully added.')
             infobar.get_content_area().add(label)
@@ -175,7 +191,7 @@ class BankAccountsUI:
                 accType = 'جاری'
             else:
                 accType = 'حساب پس انداز'
-            model.set(iter, 0, account_name, 1, account_number, 2, account_owner, 3, accType, 4, bank_name)
+            model.set(iter, 0, result, 1, account_name, 2, account_number, 3, account_owner, 4, accType, 5, bank_name)
             glib.timeout_add_seconds(3, lambda w: w.destroy(), infobar)
 
 

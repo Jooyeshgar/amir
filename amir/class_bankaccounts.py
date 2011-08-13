@@ -23,6 +23,13 @@ class BankAccountsClass:
     def get_bank_name(self, id):
         return config.db.session.query(BankNames).select_from(BankNames).filter(BankNames.Id == id).first().Name
 
+    def add_bank(self, bank_name):
+        bank_name = unicode(bank_name)
+        query = config.db.session.query(BankNames).select_from(BankNames).filter(BankNames.Name == bank_name).first()
+        if query == None:
+            config.db.session.add(BankNames(bank_name))
+            config.db.session.commit()
+
     def add_account(self, name, number, type, owner, bank, branch, address, phone, webpage, desc):
         name    = unicode(name)
         number  = unicode(number)
@@ -34,14 +41,14 @@ class BankAccountsClass:
         webpage = unicode(webpage)
         desc    = unicode(desc)
 
-        query = config.db.session.query(BankNames).select_from(BankNames).filter(BankNames.Name == bank).first()
-        if query != None:
-            bank_id = query.Id
-        else:
-            config.db.session.add(BankNames(bank))
-            config.db.session.commit()
-            bank_id = config.db.session.query(BankNames).select_from(BankNames).filter(BankNames.Name == bank).first().Id
+        bank_id = config.db.session.query(BankNames).select_from(BankNames).filter(BankNames.Name == bank).first().Id
 
-        config.db.session.add(BankAccounts(name, number, type, owner, bank_id, branch, address, phone, webpage, desc))
+        bank_account_db = BankAccounts(name, number, type, owner, bank_id, branch, address, phone, webpage, desc)
+        config.db.session.add(bank_account_db)
         config.db.session.commit()
-        return True
+
+        return bank_account_db.accId
+
+    def delete_account(self, id):
+        config.db.session.query(BankAccounts).filter(BankAccounts.accId == id).delete()
+        config.db.session.commit()
