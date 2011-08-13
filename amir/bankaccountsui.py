@@ -111,6 +111,7 @@ class BankAccountsUI:
                     self.builder.get_object('bank_names_combo').set_active(c)
                     iter  = combo_box.get_active_iter()
 
+        self.builder.get_object('save').connect('clicked', self.on_save_clicked, id)
         window = self.builder.get_object('add_window')
         window.resize(600, 1)
         window.show_all()
@@ -177,7 +178,7 @@ class BankAccountsUI:
         window.hide()
         return True
 
-    def on_save_clicked(self, button):
+    def on_save_clicked(self, button, id):
         msg = ''
         account_name = self.builder.get_object('account_name').get_text()
         account_number = self.builder.get_object('account_number').get_text()
@@ -202,7 +203,8 @@ class BankAccountsUI:
             dialog.destroy()
             return
 
-        result = self.bankaccounts_class.add_account(account_name,
+        result = self.bankaccounts_class.add_account(id,
+                account_name,
                 account_number,
                 account_type,
                 account_owner,
@@ -223,7 +225,15 @@ class BankAccountsUI:
             infobar.show_all()
 
             model = self.builder.get_object('treeview').get_model()
-            iter = model.append()
+            if id == -1:
+                iter = model.append()
+            else:
+                iter = model.get_iter_first()
+                while iter != None:
+                    if model.get_value(iter, 0) == id:
+                        break
+                    else:
+                        iter = model.iter_next(iter)
             if account_type == 0:
                 accType = 'جاری'
             else:

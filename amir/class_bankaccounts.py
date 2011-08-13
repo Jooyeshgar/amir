@@ -33,7 +33,7 @@ class BankAccountsClass:
             config.db.session.add(BankNames(bank_name))
             config.db.session.commit()
 
-    def add_account(self, name, number, type, owner, bank, branch, address, phone, webpage, desc):
+    def add_account(self, id, name, number, type, owner, bank, branch, address, phone, webpage, desc):
         name    = unicode(name)
         number  = unicode(number)
         owner   = unicode(owner)
@@ -46,11 +46,27 @@ class BankAccountsClass:
 
         bank_id = config.db.session.query(BankNames).select_from(BankNames).filter(BankNames.Name == bank).first().Id
 
-        bank_account_db = BankAccounts(name, number, type, owner, bank_id, branch, address, phone, webpage, desc)
-        config.db.session.add(bank_account_db)
+        if id == -1:
+            bank_account = BankAccounts(name, number, type, owner, bank_id, branch, address, phone, webpage, desc)
+            config.db.session.add(bank_account)
+        else:
+            query = config.db.session.query(BankAccounts).select_from(BankAccounts)
+            query = query.filter(BankAccounts.accId == id)
+            query.update( {BankAccounts.accName        : name,
+                           BankAccounts.accNumber      : number,
+                           BankAccounts.accType        : type,
+                           BankAccounts.accOwner       : owner,
+                           BankAccounts.accBank        : bank_id,
+                           BankAccounts.accBankBranch  : branch,
+                           BankAccounts.accBankAddress : address,
+                           BankAccounts.accBankPhone   : phone,
+                           BankAccounts.accBankWebPage : webpage,
+                           BankAccounts.accDesc        : desc})
         config.db.session.commit()
 
-        return bank_account_db.accId
+        if id == -1:
+            return bank_account.accId
+        return id
 
     def delete_account(self, id):
         config.db.session.query(BankAccounts).filter(BankAccounts.accId == id).delete()
