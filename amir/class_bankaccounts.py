@@ -14,6 +14,9 @@ class BankAccountsClass:
     def get_bank_names(self):
         return config.db.session.query(BankNames).select_from(BankNames).all()
 
+    def get_account(self, id):
+        return config.db.session.query(BankAccounts).select_from(BankAccounts).filter(BankAccounts.accId == id).first()
+
     def get_all_accounts(self):
         return config.db.session.query(BankAccounts).select_from(BankAccounts).order_by(BankAccounts.accBank).all()
 

@@ -3,6 +3,7 @@ import class_bankaccounts
 import customers
 import helpers
 from amirconfig import config
+from database import BankAccounts
 from database import Customers
 
 import glib
@@ -79,17 +80,36 @@ class BankAccountsUI:
             model.set(iter, 0, account.accId, 1, account.accName, 2, account.accNumber, 3, account.accOwner, 4, accType, 5, accBank)
         window.show_all()
 
-    def add_account(self):
-        self.builder.get_object('account_name').set_text('')
-        self.builder.get_object('account_number').set_text('')
-        self.builder.get_object('account_owner').set_text('')
-        self.builder.get_object('account_types_combo').set_active(-1)
-        self.builder.get_object('bank_names_combo').set_active(-1)
-        self.builder.get_object('bank_branch').set_text('')
-        self.builder.get_object('bank_address').set_text('')
-        self.builder.get_object('bank_phone').set_text('')
-        self.builder.get_object('bank_webpage').set_text('')
-        self.builder.get_object('desc').set_text('')
+    def add_account(self, id=-1):
+        if id > 0:
+            account = self.bankaccounts_class.get_account(id)
+        else:
+            account = BankAccounts('', '', -1, '', -1, '', '', '', '', '')
+        self.builder.get_object('account_name').set_text(account.accName)
+        self.builder.get_object('account_number').set_text(account.accNumber)
+        self.builder.get_object('account_owner').set_text(account.accOwner)
+        self.builder.get_object('bank_branch').set_text(account.accBankBranch)
+        self.builder.get_object('bank_address').set_text(account.accBankAddress)
+        self.builder.get_object('bank_phone').set_text(account.accBankPhone)
+        self.builder.get_object('bank_webpage').set_text(account.accBankWebPage)
+        self.builder.get_object('desc').set_text(account.accDesc)
+        self.builder.get_object('account_types_combo').set_active(account.accType)
+        if account.accBank == -1:
+            self.builder.get_object('bank_names_combo').set_active(account.accBank)
+        else:
+            c = 0
+            bank_name = self.bankaccounts_class.get_bank_name(account.accBank)
+            combo_box = self.builder.get_object('bank_names_combo')
+            combo_box.set_active(c)
+            model = combo_box.get_model()
+            iter  = combo_box.get_active_iter()
+            while iter != None:
+                if model.get_value(iter, 0) == bank_name:
+                    break
+                else:
+                    c+=1
+                    self.builder.get_object('bank_names_combo').set_active(c)
+                    iter  = combo_box.get_active_iter()
 
         window = self.builder.get_object('add_window')
         window.resize(600, 1)
@@ -107,6 +127,23 @@ class BankAccountsUI:
         id = model.get_value(iter, 0)
         model.remove(iter)
         self.bankaccounts_class.delete_account(id)
+
+    def on_edit_account_clicked(self, sender):
+        treeview = self.builder.get_object('treeview')
+        selection = treeview.get_selection()
+        model, iter = selection.get_selected()
+        if iter == None:
+            return
+        id = model.get_value(iter, 0)
+        self.add_account(id)
+
+    def on_treeview_row_activated(self, treeview, path, column):
+        selection = treeview.get_selection()
+        model, iter = selection.get_selected()
+        if iter == None:
+            return
+        id = model.get_value(iter, 0)
+        self.add_account(id)
 
     def on_general_window_destroy(self, window):
         self.builder.get_object('general_window').hide()

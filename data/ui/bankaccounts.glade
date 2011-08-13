@@ -39,11 +39,12 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="toolbutton3">
+              <object class="GtkToolButton" id="edit_account">
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">_Edit</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-edit</property>
+                <signal name="clicked" handler="on_edit_account_clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -66,6 +67,7 @@
               <object class="GtkTreeView" id="treeview">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <signal name="row_activated" handler="on_treeview_row_activated"/>
               </object>
             </child>
           </object>
