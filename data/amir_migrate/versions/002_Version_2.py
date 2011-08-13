@@ -155,14 +155,14 @@ customers = Table('customers', meta,
 bankAccounts = Table('bankAccounts', meta,
     Column('accId',           Integer,      primary_key = True  ),
     Column('accName',         Unicode(100), nullable = False    ),
-    Column('accNumber',       String,       nullable = False    ),
+    Column('accNumber',       Unicode(40),       nullable = False    ),
     Column('accType',         Integer,       nullable = True     ),
     Column('accOwner',        Unicode(50),  nullable = True     ),
     Column('accBank',         Integer,  nullable = True     ),
     Column('accBankBranch',   Unicode(50),  nullable = True     ),
     Column('accBankAddress',  Unicode(100), nullable = True     ),
-    Column('accBankPhone',    String,       nullable = True     ),
-    Column('accBankWebPage',  String,       nullable = True     ), #TODO change to unicode
+    Column('accBankPhone',    Unicode(40),       nullable = True     ),
+    Column('accBankWebPage',  Unicode(100),       nullable = True     ), #TODO change to unicode
     Column('accDesc',         Unicode(200), nullable = True     )
 )
 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from amirconfig import config
 from database import BankAccounts
 from database import BankNames
@@ -16,15 +17,21 @@ class BankAccountsClass:
     def get_all_accounts(self):
         return config.db.session.query(BankAccounts).select_from(BankAccounts).order_by(BankAccounts.accBank).all()
 
+    def get_bank_id(self, name):
+        return config.db.session.query(BankNames).select_from(BankNames).filter(BankNames.Name == unicode(name)).first().Id
+
     def get_bank_name(self, id):
         return config.db.session.query(BankNames).select_from(BankNames).filter(BankNames.Id == id).first().Name
 
     def add_account(self, name, number, type, owner, bank, branch, address, phone, webpage, desc):
         name    = unicode(name)
+        number  = unicode(number)
         owner   = unicode(owner)
         bank    = unicode(bank)
         branch  = unicode(branch)
         address = unicode(address)
+        phone   = unicode(phone)
+        webpage = unicode(webpage)
         desc    = unicode(desc)
 
         query = config.db.session.query(BankNames).select_from(BankNames).filter(BankNames.Name == bank).first()
@@ -37,5 +44,4 @@ class BankAccountsClass:
 
         config.db.session.add(BankAccounts(name, number, type, owner, bank_id, branch, address, phone, webpage, desc))
         config.db.session.commit()
-
         return True

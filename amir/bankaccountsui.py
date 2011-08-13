@@ -63,8 +63,10 @@ class BankAccountsUI:
     def show_accounts(self):
         window = self.builder.get_object('general_window')
         window.resize(600, 400)
+
         accounts = self.bankaccounts_class.get_all_accounts()
         model = self.builder.get_object('treeview').get_model()
+        model.clear()
         for account in accounts:
             iter = model.append()
             if account.accType == 0:
@@ -117,7 +119,6 @@ class BankAccountsUI:
                 model.set(iter, 0, text)
                 self.bank_names_count+=1
                 combo.set_active(self.bank_names_count-1)
-                #TODO add to database
         dialog.destroy()
 
     def on_add_window_destroy(self, window):
@@ -168,6 +169,13 @@ class BankAccountsUI:
             self.main_window_background.put(infobar ,0 , 0)
             infobar.show_all()
 
+            model = self.builder.get_object('treeview').get_model()
+            iter = model.append()
+            if account_type == 0:
+                accType = 'جاری'
+            else:
+                accType = 'حساب پس انداز'
+            model.set(iter, 0, account_name, 1, account_number, 2, account_owner, 3, accType, 4, bank_name)
             glib.timeout_add_seconds(3, lambda w: w.destroy(), infobar)
 
 
