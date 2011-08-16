@@ -121,7 +121,7 @@ class BankAccountsUI:
                     self.builder.get_object('bank_names_combo').set_active(c)
                     iter  = combo_box.get_active_iter()
 
-        self.builder.get_object('save').connect('clicked', self.on_save_clicked, id)
+        self.selected_id = id
         window = self.builder.get_object('add_window')
         window.resize(600, 1)
         window.show_all()
@@ -188,7 +188,9 @@ class BankAccountsUI:
         window.hide()
         return True
 
-    def on_save_clicked(self, button, id):
+    def on_save_clicked(self, button):
+        id = self.selected_id
+
         msg = ''
         account_name = self.builder.get_object('account_name').get_text()
         account_number = self.builder.get_object('account_number').get_text()
