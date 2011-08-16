@@ -2,6 +2,9 @@
 
 from amirconfig import config
 
+## \defgroup Utility
+## @{
+
 #===============================================================================
 # TODO: Instead of using just persian characters, 
 # Check the active locale and choose number characters from that locale
@@ -106,3 +109,4 @@ def is_numeric(var):
     except ValueError:
         return False
 
+## @}

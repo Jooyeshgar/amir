@@ -11,6 +11,9 @@ from migrate.versioning import exceptions,api
 # metadata.create_all
 Base = declarative_base()
 
+## \defgroup Database
+## @{
+
 class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
@@ -28,7 +31,6 @@ class User(Base):
         self.lft = left
         self.rgt = right
         self.type = type
-
 class Subject2(Base):
     __tablename__ = "subject2"
     id = Column(Integer, primary_key=True)
@@ -459,3 +461,5 @@ class Database:
         self.session.commit()
         
         return right+1;
+
+## @}

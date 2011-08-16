@@ -9,7 +9,14 @@ from database import Customers
 import glib
 import gtk
 
+## \defgroup UserInterface
+## @{
+
+## User Interface for create/edit/select a bank account.
 class BankAccountsUI:
+    ## initialize 
+    #
+    # @param background GtkFixed
     def __init__(self, background):
         self.main_window_background = background
 
@@ -63,6 +70,9 @@ class BankAccountsUI:
         column = gtk.TreeViewColumn('Bank Name', gtk.CellRendererText(), text=5)
         treeview.append_column(column)
 
+    ## List all accounts in a window
+    #
+    # User can add/delete/edit accounts from here
     def show_accounts(self):
         window = self.builder.get_object('general_window')
         window.resize(600, 400)
@@ -240,5 +250,5 @@ class BankAccountsUI:
                 accType = 'حساب پس انداز'
             model.set(iter, 0, result, 1, account_name, 2, account_number, 3, account_owner, 4, accType, 5, bank_name)
             glib.timeout_add_seconds(3, lambda w: w.destroy(), infobar)
-
+## @}
 

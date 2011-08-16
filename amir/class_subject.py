@@ -2,6 +2,9 @@ from amirconfig                 import config
 from amir.database              import *
 from sqlalchemy.sql.functions   import *
 
+## \defgroup Controller
+## @{
+
 class Subjects():
 
     def __init__(self):
@@ -61,3 +64,5 @@ class Subjects():
         query = config.db.session.query(Subject).select_from(Subject)
         query = query.filter(Subject.code == code)
         return query.first().id
+
+## @}

@@ -26,6 +26,9 @@ import gtk,logging
 #from amir.amirconfig import get_data_file
 from amirconfig import config
 
+## \defgroup Utility
+## @{
+
 def get_builder(builder_file_name):
     """Return a fully-instantiated gtk.Builder instance from specified ui 
     file
@@ -57,4 +60,4 @@ def comboInsertItems(combo, items):
     combo.pack_start(cellr)
     combo.add_attribute(cellr, 'text', 0)
     
-    
+## @}

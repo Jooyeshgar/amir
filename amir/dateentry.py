@@ -8,6 +8,9 @@ import utility
 from amirconfig import config
 from calverter import calverter
 
+## \defgroup Utility
+## @{
+
 def dateToString(date):
     if config.datetypes[config.datetype] == "jalali":
         jd = DateEntry.cal.gregorian_to_jd(date.year, date.month, date.day)
@@ -38,7 +41,12 @@ def stringToDate(dateString):
         dd = dateList[2]
         dateObj = date(int(dy),int(dm),int(dd))
         return dateObj 
+
+## @}
     
+## \defgroup Widgets
+## @{
+
 class DateEntry(gtk.Entry):
     
     cal = calverter()
@@ -177,3 +185,5 @@ class DateEntry(gtk.Entry):
         self.year = year
         self.month = month
         self.day = day
+
+## @}

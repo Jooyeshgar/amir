@@ -13,46 +13,48 @@ from database import Customers
 import glib
 import gtk
 
-type_names = (
-    # 0 id, 1 name
-    (0 , 'Get From Customer'),
-    (1 , 'Pay To Customer'),
-    (2 , 'Bank To Bank'),
-    (3 , 'Cash To Bank'),
-    (4 , 'Bank To Cash'),
-    (5 , 'Bank Wage'),
-    (6 , 'havale taraf hesab'),
-    (7 , 'Padakhte naghdi az bank'),
-    (8 , 'Investment'),
-    (9 , 'Cost'),
-    (10, 'Income'),
-    (11, 'Removel'),
-)
-
-type_configs = {
-    #0 non cash
-    #1 discount
-    #2 spend_cheque
-    #3 from is subject?
-    #4 to   is subject?
-    #5 from key
-    #6 to   key
-    #    0    , 1    , 2    , 3    , 4    , 5          , 6
-    0:  (True , True , False, False, True , None       , 'cash'),
-    1:  (True , False, True , True , False, 'cash'     , None  ),
-    2:  (True , False, False, True , True , 'bank'     , 'bank'),
-    3:  (False, False, False, True , True , 'cash'     , 'bank'),
-    4:  (True , False, False, True , True , 'bank'     , 'cash'),
-    5:  (False, False, False, True , True , 'cash'     , 'bank'),
-    6:  (False, False, False, False, True , None       , 'bank'),
-    7:  (False, False, False, True , False, 'bank'     , None),
-    8:  (True , False, True , True , True , 'partners' , 'cash,bank'),
-    9:  (True , False, True , True , True , 'cash'     , 'cost'),
-    10: (True , False, False, True , True , None       , 'cash,bank'),
-    11: (True , False, True , True , True , 'cash,bank', 'partner'),
-}
+## \defgroup UserInterface
+## @{
 
 class AutomaticAccounting:
+    type_names = (
+        # 0 id, 1 name
+        (0 , 'Get From Customer'),
+        (1 , 'Pay To Customer'),
+        (2 , 'Bank To Bank'),
+        (3 , 'Cash To Bank'),
+        (4 , 'Bank To Cash'),
+        (5 , 'Bank Wage'),
+        (6 , 'havale taraf hesab'),
+        (7 , 'Padakhte naghdi az bank'),
+        (8 , 'Investment'),
+        (9 , 'Cost'),
+        (10, 'Income'),
+        (11, 'Removel'),
+    )
+
+    type_configs = {
+        #0 non cash
+        #1 discount
+        #2 spend_cheque
+        #3 from is subject?
+        #4 to   is subject?
+        #5 from key
+        #6 to   key
+        #    0    , 1    , 2    , 3    , 4    , 5          , 6
+        0:  (True , True , False, False, True , None       , 'cash'),
+        1:  (True , False, True , True , False, 'cash'     , None  ),
+        2:  (True , False, False, True , True , 'bank'     , 'bank'),
+        3:  (False, False, False, True , True , 'cash'     , 'bank'),
+        4:  (True , False, False, True , True , 'bank'     , 'cash'),
+        5:  (False, False, False, True , True , 'cash'     , 'bank'),
+        6:  (False, False, False, False, True , None       , 'bank'),
+        7:  (False, False, False, True , False, 'bank'     , None),
+        8:  (True , False, True , True , True , 'partners' , 'cash,bank'),
+        9:  (True , False, True , True , True , 'cash'     , 'cost'),
+        10: (True , False, False, True , True , None       , 'cash,bank'),
+        11: (True , False, True , True , True , 'cash,bank', 'partner'),
+    }
     def __init__(self, background):
         self.main_window_background = background
         # Chosen Type
@@ -81,7 +83,7 @@ class AutomaticAccounting:
         type_combo.pack_start(cell)
         type_combo.add_attribute(cell, 'text', 1)
 
-        for item in type_names:
+        for item in self.type_names:
             iter = model.append()
             model.set(iter, 0, item[0], 1, item[1])
 
@@ -127,7 +129,7 @@ class AutomaticAccounting:
         save_button = self.builder.get_object('save-button')
         save_button.set_sensitive(False)
         
-        non_cash, discount, spend_cheque = type_configs[self.type_index][:3]
+        non_cash, discount, spend_cheque = self.type_configs[self.type_index][:3]
 
         self.builder.get_object('discount-button').set_sensitive(discount)
         self.discount_entry.set_sensitive(discount)
@@ -151,11 +153,11 @@ class AutomaticAccounting:
         entry  = self.from_entry
         dbconf = dbconfig.dbConfig()
 
-        if type_configs[self.type_index][3]:
-            if type_configs[self.type_index][5] == None:
+        if self.type_configs[self.type_index][3]:
+            if self.type_configs[self.type_index][5] == None:
                 sub = subjects.Subjects()
             else:
-                keys = type_configs[self.type_index][5]
+                keys = self.type_configs[self.type_index][5]
                 parent_id=[]
                 for key in keys.split(','):
                     parent_id+=dbconf.get_int_list(key)
@@ -174,11 +176,11 @@ class AutomaticAccounting:
         entry = self.to_entry
         dbconf = dbconfig.dbConfig()
 
-        if type_configs[self.type_index][4]:
-            if type_configs[self.type_index][6] == None:
+        if self.type_configs[self.type_index][4]:
+            if self.type_configs[self.type_index][6] == None:
                 sub = subjects.Subjects()
             else:
-                keys = type_configs[self.type_index][6]
+                keys = self.type_configs[self.type_index][6]
                 parent_id=[]
                 for key in keys.split(','):
                     parent_id+=dbconf.get_int_list(key)
@@ -194,7 +196,7 @@ class AutomaticAccounting:
             cust.viewCustomers(True)
 
     def on_total_credit_entry_change(self, entry):
-        if not (type_configs[0] or type_configs[2]):
+        if not (self.type_configs[0] or self.type_configs[2]):
             self.cash_payment_entry.set_text(entry.get_text())
         self.on_cash_payment_entry_change(None)
 
@@ -338,4 +340,4 @@ class AutomaticAccounting:
         win.set_position(gtk.WIN_POS_CENTER)
         win.set_destroy_with_parent(True)
         win.show_all()
-
+## @}

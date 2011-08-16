@@ -9,6 +9,9 @@ from amirconfig import config
 from database import Subject
 from helpers import get_builder
 
+## \defgroup UserInterface
+## @{
+
 class AddEditDoc:
     def __init__(self, number=0):
         self.builder = get_builder("document")
@@ -400,3 +403,5 @@ class AddEditDoc:
           
     def dbChanged(self, sender, active_dbpath):
         self.window.destroy()
+
+## @}

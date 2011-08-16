@@ -28,6 +28,8 @@ __version__ = "0.1.5"
 
 import math
 
+## \defgroup Utility
+## @{
 
 class calverter:
           
@@ -291,3 +293,5 @@ class calverter:
              
           day = int(jd - self.jalali_to_jd(year, month, 1)) + 1
           return year, month, day
+
+## @}

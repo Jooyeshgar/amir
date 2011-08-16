@@ -6,6 +6,9 @@ from database import Subject
 from datetime import date
 from sqlalchemy.orm.util import outerjoin
 
+## \defgroup Controller
+## @{
+
 class Document:
     def __init__(self):
         self.id            = 0
@@ -94,3 +97,5 @@ class Document:
         self.notebooks = []
 
         return self.id
+
+## @}

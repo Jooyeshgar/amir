@@ -636,3 +636,4 @@ gobject.signal_new("dblist-changed", Setting, gobject.SIGNAL_RUN_LAST,
                    gobject.TYPE_NONE, (gobject.TYPE_STRING,))
 gobject.signal_new("locale-changed", Setting, gobject.SIGNAL_RUN_LAST,
                    gobject.TYPE_NONE, (gobject.TYPE_STRING,))
+

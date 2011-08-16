@@ -35,6 +35,9 @@ import platform
 
 import database
     
+## \defgroup Utility
+## @{
+
 class IndentedHelpFormatterWithNL(IndentedHelpFormatter):
     def format_option(self, option):
         result = []
@@ -317,9 +320,10 @@ class AmirConfig:
         self.headerfont = int(self.defaultConfig["header_font"])
         self.contentfont = int(self.defaultConfig["content_font"])
         self.footerfont = int(self.defaultConfig["footer_font"])
+
+## @}
 try:
     config
 except NameError:
     config = AmirConfig()
-
 

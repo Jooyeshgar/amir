@@ -7,6 +7,9 @@ from sqlalchemy.orm.util import outerjoin
 from sqlalchemy.orm.query import aliased
 from sqlalchemy.sql.functions import *
 
+## \defgroup Controller
+## @{
+
 class BankAccountsClass:
     def __init__(self):
         pass
@@ -68,6 +71,11 @@ class BankAccountsClass:
             return bank_account.accId
         return id
 
+    ## Delete account from databaSE
+    #
+    ## @param Integer bank account id
     def delete_account(self, id):
         config.db.session.query(BankAccounts).filter(BankAccounts.accId == id).delete()
         config.db.session.commit()
+
+## @}

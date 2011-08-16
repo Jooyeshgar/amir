@@ -26,6 +26,9 @@ from    database                    import  *
 
 pygtk.require('2.0')
 
+## \defgroup UserInterface
+## @{
+
 class Customer(customergroup.Group):
 
     def __init__(self):
@@ -499,3 +502,5 @@ class Customer(customergroup.Group):
 gobject.type_register(Customer)
 gobject.signal_new("customer-selected", Customer, gobject.SIGNAL_RUN_LAST,
                    gobject.TYPE_NONE, (gobject.TYPE_INT, gobject.TYPE_STRING))
+
+## @}

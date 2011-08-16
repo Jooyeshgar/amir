@@ -1,6 +1,9 @@
 import database
 from amirconfig import config
 
+## \defgroup Controller
+## @{
+
 class dbConfig:
     data = {
         'co-name':'Enter Company name',
@@ -75,3 +78,5 @@ class dbConfig:
         except ValueError:
             return None
         return val
+
+## @}

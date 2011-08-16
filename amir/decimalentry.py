@@ -8,6 +8,9 @@ import utility
 
 from string import replace
 
+## \defgroup Widgets
+## @{
+
 class DecimalEntry(gtk.Entry):
     """
         Creates a text entry widget that just accepts number keys. no dots, spaces or commas.
@@ -78,3 +81,4 @@ class DecimalEntry(gtk.Entry):
             
         #return str
  
+## @}
