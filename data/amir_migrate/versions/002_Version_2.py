@@ -152,20 +152,6 @@ customers = Table('customers', meta,
     Column('custDiscRate',     String,       nullable = True     )
 )
 
-bankAccounts = Table('bankAccounts', meta,
-    Column('accId',           Integer,      primary_key = True  ),
-    Column('accName',         Unicode(100), nullable = False    ),
-    Column('accNumber',       Unicode(40),       nullable = False    ),
-    Column('accType',         Integer,       nullable = True     ),
-    Column('accOwner',        Unicode(50),  nullable = True     ),
-    Column('accBank',         Integer,  nullable = True     ),
-    Column('accBankBranch',   Unicode(50),  nullable = True     ),
-    Column('accBankAddress',  Unicode(100), nullable = True     ),
-    Column('accBankPhone',    Unicode(40),       nullable = True     ),
-    Column('accBankWebPage',  Unicode(100),       nullable = True     ), #TODO change to unicode
-    Column('accDesc',         Unicode(200), nullable = True     )
-)
-
 config = Table("config", meta,
     Column('cfgId'   , Integer     , primary_key = True),
     Column('cfgKey'  , Unicode(100), nullable = False, unique = True),
@@ -178,6 +164,20 @@ config = Table("config", meta,
 banknames = Table("BankNames", meta,
     Column('Id'  , Integer    , primary_key=True),
     Column('Name', Unicode(50), nullable=False)
+)
+
+bankAccounts = Table('bankAccounts', meta,
+    Column('accId',           Integer,      primary_key = True  ),
+    Column('accName',         Unicode(100), nullable = False    ),
+    Column('accNumber',       Unicode(40),       nullable = False    ),
+    Column('accType',         Integer,       nullable = True     ),
+    Column('accOwner',        Unicode(50),  nullable = True     ),
+    Column('accBank',         Integer, ForeignKey('BankNames.Id'), nullable = True     ),
+    Column('accBankBranch',   Unicode(50),  nullable = True     ),
+    Column('accBankAddress',  Unicode(100), nullable = True     ),
+    Column('accBankPhone',    Unicode(40),       nullable = True     ),
+    Column('accBankWebPage',  Unicode(100),       nullable = True     ), #TODO change to unicode
+    Column('accDesc',         Unicode(200), nullable = True     )
 )
 
 def upgrade(migrate_engine):

@@ -385,7 +385,7 @@ class BankAccounts(Base):
     accNumber       = Column( Unicode(40) , nullable = False    )
     accType         = Column( Integer,       nullable = True     )
     accOwner        = Column( Unicode(50),  nullable = True     )
-    accBank         = Column( Integer,  nullable = True     )
+    accBank         = Column( Integer,  ForeignKey('BankNames.Id'), nullable = True     )
     accBankBranch   = Column( Unicode(50),  nullable = True     )
     accBankAddress  = Column( Unicode(100), nullable = True     )
     accBankPhone    = Column( Unicode(40),  nullable = True     )
