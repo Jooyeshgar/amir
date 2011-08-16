@@ -31,23 +31,6 @@ class User(Base):
         self.lft = left
         self.rgt = right
         self.type = type
-class Subject2(Base):
-    __tablename__ = "subject2"
-    id = Column(Integer, primary_key=True)
-    code = Column(String(20), unique=True)
-    name = Column(String(60), nullable=False)
-    parent_id = Column(Integer, ColumnDefault(0), ForeignKey('subject2.id'), nullable=False)
-    lft = Column(Integer, nullable=False)
-    rgt = Column(Integer, nullable=False)
-    type = Column(Integer)      # 0 for Debtor, 1 for Creditor, 2 for both
-    
-    def __init__(self, code, name, parent_id, left, right, type):
-        self.code = code
-        self.name = name
-        self.parent_id = parent_id
-        self.lft = left
-        self.rgt = right
-        self.type = type    
         
 #Version 0.1 tables
 class Subject(Base):
@@ -245,7 +228,7 @@ class Cheque(Base):
     __tablename__ = "cheque"
     chqId       = Column(Integer,      primary_key = True)
     chqAmount   = Column(Float,        ColumnDefault(0), nullable = False)
-    chqWrtDate  = Column(Date,         nullable = False)
+    chqWritDate  = Column(Date,         nullable = False)
     chqDueDate  = Column(Date,         nullable = False)
     #chqBank    = Column( Unicode(50),  nullable = True)
     chqAccount  = Column(Integer,      ForeignKey('bankAccounts.accId'), nullable = True)
