@@ -3,10 +3,6 @@ from sqlalchemy import Column, ForeignKey, ColumnDefault
 from sqlalchemy import Integer, String, Date, Boolean, Unicode, Float
 from sqlalchemy.ext.declarative import declarative_base
 
-import sys
-for i in sys.path:
-    print i
-
 from amir.database import get_declarative_base
 Base = get_declarative_base()
 
