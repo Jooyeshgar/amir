@@ -1,3 +1,4 @@
+import chequeui
 import class_document
 import customers
 import dateentry
@@ -60,6 +61,8 @@ class AutomaticAccounting:
         # Chosen Type
         self.type_index = None
         self.from_id = self.to_id = -1
+
+        self.chequeui = chequeui.ChequeUI()
         
         self.builder = helpers.get_builder('automaticaccounting')
         self.builder.connect_signals(self)
@@ -138,7 +141,7 @@ class AutomaticAccounting:
         self.builder.get_object('spend-cheque-label').set_sensitive(spend_cheque)
 
         self.builder.get_object('non-cash-payment-label').set_sensitive(non_cash)
-        self.builder.get_object('non-cash-payment-button').set_sensitive(non_cash)
+        self.builder.get_object('non_cash_payment_button').set_sensitive(non_cash)
 
         self.cash_payment_entry.set_sensitive((non_cash or spend_cheque))
 
@@ -288,6 +291,9 @@ class AutomaticAccounting:
             return
 
         save_button.set_sensitive(True)
+
+    def on_non_cash_payment_button_clicked(self, button):
+       self.chequeui.list_selected_cheques()
 
     def on_save_button_clicked(self, button):
         result = {}
