@@ -1,4 +1,3 @@
-import chequeui
 import class_document
 import customers
 import dateentry
@@ -62,8 +61,6 @@ class AutomaticAccounting:
         self.type_index = None
         self.from_id = self.to_id = -1
 
-        self.chequeui = chequeui.ChequeUI()
-        
         self.builder = helpers.get_builder('automaticaccounting')
         self.builder.connect_signals(self)
 
@@ -293,7 +290,7 @@ class AutomaticAccounting:
         save_button.set_sensitive(True)
 
     def on_non_cash_payment_button_clicked(self, button):
-       self.chequeui.list_selected_cheques()
+        pass
 
     def on_save_button_clicked(self, button):
         result = {}
