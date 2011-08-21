@@ -17,8 +17,10 @@ class ChequeHistory(Base):
     ## ForeignKey Cheque::Cheque::chqId
     ChequeId   = Column(Integer,  nullable = False, ForeignKey('Cheque.chqId'))
     Status   = Column(Integer,      ColumnDefault(0), nullable = False)
-    Cust     = Column( Integer,      ForeignKey('customers.custId'))
-    Account  = Column(Integer,      ForeignKey('bankAccounts.accId'), nullable = True)
+    #Cust     = Column( Integer,      ForeignKey('customers.custId'))
+    #Account  = Column(Integer,      ForeignKey('bankAccounts.accId'), nullable = True)
+    From = None
+    To = None
     TransId  = Column(Integer,      ColumnDefault(0)) #Transaction id is zero for non-invoice cheques.
     BillId   = Column(Integer,      ColumnDefault(0)) #Bill id is zero for temporary transactions.
     Order    = Column(Integer,      ColumnDefault(0), nullable = False)
