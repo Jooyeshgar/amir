@@ -14,26 +14,24 @@ Base = get_declarative_base()
 ## TODO: Problems!
 class ChequeHistroy(Base):
     __tablename__ = "cheque"
-    chqId       = Column(Integer,      primary_key = True)
-    chqSerial   = Column(Unicode(50),  nullable = False)
-    chqAccount  = Column(Integer,      ForeignKey('bankAccounts.accId'), nullable = True)
-    chqCust     = Column( Integer,      ForeignKey('customers.custId'))
-    chqTransId  = Column(Integer,      ColumnDefault(0)) #Transaction id is zero for non-invoice cheques.
-    chqBillId   = Column(Integer,      ColumnDefault(0)) #Bill id is zero for temporary transactions.
-    chqStatus   = Column(Integer,      ColumnDefault(0), nullable = False)
-    chqOrder    = Column(Integer,      ColumnDefault(0), nullable = False)
-    chqUpdateDate = Column(Date, nullable=False)
+    Id = Column(Integer,      primary_key = True)
+    ChequeId = Column(Unicode(50),  nullable = False, primary_key('Cheque.chqId')
+    Account  = Column(Integer  ,      ForeignKey('bankAccounts.accId'), nullable = True)
+    Cust     = Column( Integer,      ForeignKey('customers.custId'))
+    TransId  = Column(Integer,      ColumnDefault(0)) #Transaction id is zero for non-invoice cheques.
+    BillId   = Column(Integer,      ColumnDefault(0)) #Bill id is zero for temporary transactions.
+    Status   = Column(Integer,      ColumnDefault(0), nullable = False)
+    Order    = Column(Integer,      ColumnDefault(0), nullable = False)
+    UpdateDate = Column(Date, nullable=False)
 
-    def __init__( self, chqAmount, chqWrtDate, chqDueDate, chqSerial,
-                  chqStatus, chqCust, chqTransId, chqBillId, chqDesc, chqOrder):
-        self.chqAmount   = chqAmount
-        self.chqSerial   = chqSerial
-        self.chqAccount  = chqAccount
-        self.chqCust     = chqCust
-        self.chqStatus   = chqStatus
-        self.chqTransId  = chqTransId
-        self.chqBillId   = chqBillId
-        self.chqOrder    = chqOrder
-        self.chqUpdateDate = chqUpdateDate
+    def __init__( self, ChequeId, Account, Cust, TransId, BillId, Status, Order, UpdateDate):
+        self.ChequeId = ChequeId
+        self.Account = Account
+        self.Cust = Cust
+        self.TransId = TransId
+        self.BillId = BillId
+        self.Status = Status
+        self.Order - Order
+        self.UpdateDate = UpdateDate
 
 ## @}

@@ -12,8 +12,22 @@ class ClassCheque:
     def get_spendable_cheques(self):
         pass
 
+    ## get the history of a single cheque
+    #
+    # @param id cheque id
+    # @return histroy as a list
+    def get_histroy(self, id):
+        pass
+
+    ## get cheque id from cheque number
+    #
+    # @param number Cheque Serial Number
+    # @return cheque id
+
     ## Add Cheque to db
-    def add_cheque(self):
+    #
+    # @param information of new account as a dictionary
+    def add_cheque(self, info):
         pass
 
     ## update cheque status

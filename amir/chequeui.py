@@ -28,6 +28,12 @@ class ChequeUI:
     def list_spend_cheque(self):
         pass
 
+    ## show histroy of cheque.
+    #
+    # there is a text entry in window so user can enter cheque id
+    def show_history(self):
+        pass
+
     ## Save datas to database.
     #
     # do not call any other function after this step.
@@ -43,7 +49,7 @@ class ChequeUI:
     #
     # <b>Signal</b> new_cheque_selected
     #
-    # <b>Signal Handler</b> (Window)
+    # <b>Signal Handler</b> (Window, dictionary of items)
     # @return GtkWindow
     def new_cheque(self):
         pass
@@ -57,7 +63,7 @@ class ChequeUI:
     # <b>Signal</b> spend_cheque_selected
     #
     # <b>Signal Handler</b> (Window)
-    # Signal Handler (Window)
+    # Signal Handler (Window, cheque_id)
     # @return GtkWindow
     def spend_cheque(self):
         pass
