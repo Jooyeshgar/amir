@@ -11,27 +11,29 @@ Base = get_declarative_base()
 
 #Version 0.2 tables
 
-## TODO: Problems!
-class ChequeHistroy(Base):
-    __tablename__ = "cheque"
-    Id = Column(Integer,      primary_key = True)
-    ChequeId = Column(Unicode(50),  nullable = False, primary_key('Cheque.chqId')
-    Account  = Column(Integer  ,      ForeignKey('bankAccounts.accId'), nullable = True)
+class ChequeHistory(Base):
+    __tablename__ = "ChequeHistory"
+    Id       = Column(Integer,      primary_key = True)
+    ## ForeignKey Cheque::Cheque::chqId
+    ChequeId   = Column(Integer,  nullable = False, ForeignKey('Cheque.chqId'))
+    Status   = Column(Integer,      ColumnDefault(0), nullable = False)
     Cust     = Column( Integer,      ForeignKey('customers.custId'))
+    Account  = Column(Integer,      ForeignKey('bankAccounts.accId'), nullable = True)
     TransId  = Column(Integer,      ColumnDefault(0)) #Transaction id is zero for non-invoice cheques.
     BillId   = Column(Integer,      ColumnDefault(0)) #Bill id is zero for temporary transactions.
-    Status   = Column(Integer,      ColumnDefault(0), nullable = False)
     Order    = Column(Integer,      ColumnDefault(0), nullable = False)
-    UpdateDate = Column(Date, nullable=False)
+    EditDate     = Column(Date)
 
-    def __init__( self, ChequeId, Account, Cust, TransId, BillId, Status, Order, UpdateDate):
-        self.ChequeId = ChequeId
-        self.Account = Account
+    def __init__( self, Id, ChequeSerial, Status, Cust, Account, TransId, BillId, Order, EditDate):
+        self.Id = Id
+        self.ChequeSerial = ChequeSerial
+        self.Status = Status
         self.Cust = Cust
+        self.Account = Account
         self.TransId = TransId
         self.BillId = BillId
-        self.Status = Status
-        self.Order - Order
-        self.UpdateDate = UpdateDate
+        self.Order = Order
+        self.EditDate = EditDate
 
 ## @}
+

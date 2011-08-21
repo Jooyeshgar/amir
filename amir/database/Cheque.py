@@ -15,7 +15,7 @@ class Cheque(Base):
     __tablename__ = "cheque"
     chqId       = Column(Integer,      primary_key = True)
     chqAmount   = Column(Float,        ColumnDefault(0), nullable = False)
-    chqWrtDate = Column(Date,         nullable = False)
+    chqWrtDate  = Column(Date,         nullable = False)
     chqDueDate  = Column(Date,         nullable = False)
     chqSerial   = Column(Unicode(50),  nullable = False)
     chqStatus   = Column(Integer,      ColumnDefault(0), nullable = False)

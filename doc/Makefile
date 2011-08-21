@@ -1,5 +1,5 @@
 all:
 	doxygen Doxyfile
-clear:
+clean:
 	rm -R html latex
     

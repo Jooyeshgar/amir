@@ -19,6 +19,7 @@ from BankNames import BankNames
 from BankAccounts import BankAccounts
 from Bill import Bill
 from Cheque import Cheque
+from ChequeHistory import ChequeHistory
 from Config import Config
 from CustGroups import CustGroups
 from Customers import Customers
