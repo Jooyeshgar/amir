@@ -129,10 +129,10 @@ class MainWindow(gobject.GObject):
         msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, "Are you sure to close the app?")
         msgbox.set_title("Are you sure?")
         result = msgbox.run();
-        if result == gtk.RESPONSE_CANCEL :
-            msgbox.destroy()
-        else :
+        if result == gtk.RESPONSE_OK:
             self.window.destroy()
+        else:
+            msgbox.destroy()
 
     def addNewProduct(   self,   sender  ):
         obj = product.Product()
