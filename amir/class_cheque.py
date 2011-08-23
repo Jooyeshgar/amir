@@ -19,6 +19,23 @@ class ClassCheque:
     def get_histroy(self, id):
         pass
 
+    ## return all cheques from database
+    def get_all_cheques(self):
+        pass
+
+    ## delete cheque from database
+    #
+    # only deletes from Cheque table. ChequeHistory will be updated cheque new status (deleted)
+    def delete(self, id):
+        pass
+
+    # edit cheque
+    # 
+    # edit cheque and put last configs in database
+    # @param info new configs as a dictionary
+    def edit(self, info):
+        pass
+
     ## get cheque id from cheque number
     #
     # @param number Cheque Serial Number
