@@ -15,7 +15,7 @@ class ChequeHistory(Base):
     __tablename__ = "ChequeHistory"
     Id       = Column(Integer,      primary_key = True)
     ## ForeignKey Cheque::Cheque::chqId
-    ChequeId   = Column(Integer,  nullable = False, ForeignKey('Cheque.chqId'))
+    ChequeId   = Column(Integer, ForeignKey('Cheque.chqId'))
     Status   = Column(Integer,      ColumnDefault(0), nullable = False)
     #Cust     = Column( Integer,      ForeignKey('customers.custId'))
     #Account  = Column(Integer,      ForeignKey('bankAccounts.accId'), nullable = True)

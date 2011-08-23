@@ -1,5 +1,7 @@
 import helpers
 
+import gtk
+
 ## \defgroup UserInterface
 ## @{
 
@@ -10,14 +12,24 @@ class ChequeUI:
         ## a list contains informations about selected cheques for spending
         self.spend_cheques = []
 
-    ## list cheques you are going to add to database
+        ## GtkBuilder for cheque widgets
+        self.builder = helpers.get_builder('cheque')
+        self.builder.connect_signals(self)
+
+        w = self.builder.get_object('list_cheque_window').resize(400, 1)
+
+    ## list cheques you are going to add/ or all cheques in database
     #
     # if you want to add a list of cheques (more than one) to database you should use this.
     # it shows a list of currently added cheques in a window.
     # there is an add button to append new cheques to the list.
     # remember to call ChequeUI::save to save to database or you will lose everything.
-    def list_new_cheques(self):
-        pass
+    # @param mode, 'all' -> all cheques, 'add'-> if you want to add cheques (used in automatic accounting)
+    def list_cheques(self, mode):
+        w = self.builder.get_object('list_cheque_window')
+        w.set_position(gtk.WIN_POS_CENTER)
+        w.set_modal(True)
+        w.show_all()
 
     ## list cheques you are going to spend
     #
@@ -67,5 +79,12 @@ class ChequeUI:
     # @return GtkWindow
     def spend_cheque(self):
         pass
+
+    ## Signal Handler (When User Clicks On Add in list_cheque_window 
+    def on_add_cheque_clicked(self, sender):
+        w = self.builder.get_object('add_cheque_widnow')
+        w.set_position(gtk.WIN_POS_CENTER)
+        w.set_modal(True)
+        w.show_all()
 
 ## @}

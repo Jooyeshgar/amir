@@ -12,7 +12,7 @@ Base = get_declarative_base()
 #Version 0.2 tables
 
 class Cheque(Base):
-    __tablename__ = "cheque"
+    __tablename__ = "Cheque"
     chqId       = Column(Integer,      primary_key = True)
     chqAmount   = Column(Float,        ColumnDefault(0), nullable = False)
     chqWrtDate  = Column(Date,         nullable = False)

@@ -1,3 +1,4 @@
+import chequeui
 import class_document
 import customers
 import dateentry
@@ -290,7 +291,8 @@ class AutomaticAccounting:
         save_button.set_sensitive(True)
 
     def on_non_cash_payment_button_clicked(self, button):
-        pass
+        ch = chequeui.ChequeUI()
+        ch.list_cheques('add')
 
     def on_save_button_clicked(self, button):
         result = {}

@@ -89,7 +89,7 @@ payments = Table('payment', meta,
 #    Column('paymntChq',         Unicode,      nullable = True                         )
 )
 
-cheques = Table('cheque', meta,
+cheque = Table('Cheque', meta,
     Column('chqId',          Integer,      primary_key = True                      ),
     Column('chqAmount',      Float,        ColumnDefault(0),                  nullable = False ),
     Column('chqWrtDate',     Date,         nullable = False                        ),
@@ -190,7 +190,7 @@ def upgrade(migrate_engine):
     transactions.create(  checkfirst=True)
     exchanges.create(     checkfirst=True)
     payments.create(      checkfirst=True)
-    cheques.create(       checkfirst=True)
+    cheque.create(       checkfirst=True)
     custGroups.create(    checkfirst=True)
     customers.create(     checkfirst=True)
     bankAccounts.create(  checkfirst=True)
