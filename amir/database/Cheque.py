@@ -13,7 +13,7 @@ Base = get_declarative_base()
 
 class Cheque(Base):
     __tablename__ = "Cheque"
-    chqId       = Column(Integer,      primary_key = True)
+     chqId       = Column(Integer,      primary_key = True)
     chqAmount   = Column(Float,        ColumnDefault(0), nullable = False)
     chqWrtDate  = Column(Date,         nullable = False)
     chqDueDate  = Column(Date,         nullable = False)
@@ -24,7 +24,6 @@ class Cheque(Base):
     chqTransId  = Column(Integer,      ColumnDefault(0)) #Transaction id is zero for non-invoice cheques.
     chqBillId   = Column(Integer,      ColumnDefault(0)) #Bill id is zero for temporary transactions.
     chqDesc     = Column(Unicode(200), nullable = True)
-    chqOrder    = Column(Integer,      ColumnDefault(0), nullable = False)
 
     def __init__( self, chqAmount, chqWrtDate, chqDueDate, chqSerial,
                   chqStatus, chqCust, chqAccount, chqTransId, chqBillId, chqDesc, chqOrder):
