@@ -13,7 +13,7 @@ Base = get_declarative_base()
 
 class Cheque(Base):
     __tablename__ = "Cheque"
-     chqId       = Column(Integer,      primary_key = True)
+    chqId       = Column(Integer,      primary_key = True)
     chqAmount   = Column(Float,        ColumnDefault(0), nullable = False)
     chqWrtDate  = Column(Date,         nullable = False)
     chqDueDate  = Column(Date,         nullable = False)

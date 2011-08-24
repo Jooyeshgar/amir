@@ -25,7 +25,6 @@ class ChequeHistory(Base):
     TransId  = Column(Integer,      ColumnDefault(0)) #Transaction id is zero for non-invoice cheques.
     BillId   = Column(Integer,      ColumnDefault(0)) #Bill id is zero for temporary transactions.
     Desc     = Column(Unicode(200), nullable = True)
-    Order    = Column(Integer,      ColumnDefault(0), nullable = False)
     Date     = Column(Date, nullable=False)
 
     def __init__( self, ChequeId, Amount, WrtDate, DueDate, Serial,

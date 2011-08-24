@@ -1,3 +1,5 @@
+import dateentry
+import decimalentry
 import helpers
 
 import gtk
@@ -16,7 +18,17 @@ class ChequeUI:
         self.builder = helpers.get_builder('cheque')
         self.builder.connect_signals(self)
 
-        w = self.builder.get_object('list_cheque_window').resize(400, 1)
+        self.amount_entry = decimalentry.DecimalEntry()
+        self.write_date = dateentry.DateEntry()
+        self.due_date = dateentry.DateEntry()
+        
+        add_table = self.builder.get_object('add_table')
+        add_table.attach(self.amount_entry, 1, 2, 1, 2, gtk.EXPAND|gtk.FILL, gtk.SHRINK)
+        add_table.attach(self.write_date , 1, 2, 3, 4, gtk.EXPAND|gtk.FILL, gtk.SHRINK)
+        add_table.attach(self.due_date   , 1, 2, 4, 5, gtk.EXPAND|gtk.FILL, gtk.SHRINK)
+
+        self.builder.get_object('list_cheque_window').resize(400, 1)
+        self.builder.get_object('desc_frame').set_size_request(0, 100)
 
     ## list cheques you are going to add/ or all cheques in database
     #
@@ -82,9 +94,18 @@ class ChequeUI:
 
     ## Signal Handler (When User Clicks On Add in list_cheque_window 
     def on_add_cheque_clicked(self, sender):
-        w = self.builder.get_object('add_cheque_widnow')
+        w = self.builder.get_object('add_cheque_window')
         w.set_position(gtk.WIN_POS_CENTER)
         w.set_modal(True)
         w.show_all()
+
+    ## Signal Handler (When User Closes add Window)
+    def on_add_cheque_window_delete_event(self, window, event):
+        window.hide_all()
+        return True
+
+    ## Signal Handler (When User Clicks on cancel in add window)
+    def on_cancel_add_clicked(self, button):
+        self.builder.get_object('add_cheque_window').emit('delete_event', None)
 
 ## @}
