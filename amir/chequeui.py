@@ -14,6 +14,8 @@ class ChequeUI:
         ## a list contains informations about selected cheques for spending
         self.spend_cheques = []
 
+        self.mode = 'our'
+
         ## GtkBuilder for cheque widgets
         self.builder = helpers.get_builder('cheque')
         self.builder.connect_signals(self)
@@ -31,16 +33,20 @@ class ChequeUI:
         self.builder.get_object('desc_frame').set_size_request(0, 100)
 
         treeview = self.builder.get_object('list_cheque_treeview')
-        model = gtk.ListStore(str, str, str, str)
+        model = gtk.ListStore(str, str, str, str, str, str)
         treeview.set_model(model)
 
-        column = gtk.TreeViewColumn("Header"  , gtk.CellRendererText(), text=0)
+        column = gtk.TreeViewColumn("Customer"  , gtk.CellRendererText(), text=0)
         treeview.append_column(column)
-        column = gtk.TreeViewColumn("Serial"  , gtk.CellRendererText(), text=1)
+        column = gtk.TreeViewColumn("Bank Account"  , gtk.CellRendererText(), text=1)
         treeview.append_column(column)
-        column = gtk.TreeViewColumn("Amount"  , gtk.CellRendererText(), text=2)
+        column = gtk.TreeViewColumn("Bank/Branch"  , gtk.CellRendererText(), text=2)
         treeview.append_column(column)
-        column = gtk.TreeViewColumn("Due Date", gtk.CellRendererText(), text=3)
+        column = gtk.TreeViewColumn("Serial"  , gtk.CellRendererText(), text=3)
+        treeview.append_column(column)
+        column = gtk.TreeViewColumn("Amount"  , gtk.CellRendererText(), text=4)
+        treeview.append_column(column)
+        column = gtk.TreeViewColumn("Due Date", gtk.CellRendererText(), text=5)
         treeview.append_column(column)
 
     ## list cheques you are going to add/ or all cheques in database
@@ -51,6 +57,7 @@ class ChequeUI:
     # remember to call ChequeUI::save to save to database or you will lose everything.
     # @param mode, 'our' -> if you want to add or show cheques created by you.
     def list_cheques(self, mode):
+        self.mode = mode
         w = self.builder.get_object('list_cheque_window')
         w.set_position(gtk.WIN_POS_CENTER)
         w.set_modal(True)
@@ -145,6 +152,6 @@ class ChequeUI:
 
         model = self.builder.get_object('list_cheque_treeview').get_model()
         iter = model.append()
-        model.set(iter, 0, 'aaaa', 1, info['serial'], 2, info['amount'], 3, info['due_date'])
+        model.set(iter, 0, 'aaaa', 3, info['serial'], 4, info['amount'], 5, info['due_date'])
 
 ## @}
