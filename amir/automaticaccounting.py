@@ -292,7 +292,12 @@ class AutomaticAccounting:
 
     def on_non_cash_payment_button_clicked(self, button):
         ch = chequeui.ChequeUI()
-        ch.list_cheques('add')
+
+        if self.type_configs[self.type_index][3]:
+            mode = 'our'
+        else:
+            mode = 'other'
+        ch.list_cheques(mode)
 
     def on_save_button_clicked(self, button):
         result = {}

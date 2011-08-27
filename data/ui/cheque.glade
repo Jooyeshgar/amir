@@ -169,7 +169,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkComboBox" id="combobox1">
+          <object class="GtkComboBox" id="bank_accounts">
             <property name="visible">True</property>
           </object>
           <packing>
@@ -193,8 +193,9 @@
           </packing>
         </child>
         <child>
-          <object class="GtkEntry" id="entry2">
+          <object class="GtkEntry" id="customer_name">
             <property name="visible">True</property>
+            <property name="sensitive">False</property>
             <property name="can_focus">True</property>
             <property name="invisible_char">●</property>
           </object>
@@ -207,11 +208,12 @@
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="button1">
+          <object class="GtkButton" id="customer_button">
             <property name="label" translatable="yes">Select</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <signal name="clicked" handler="on_customer_button_clicked"/>
           </object>
           <packing>
             <property name="left_attach">2</property>
