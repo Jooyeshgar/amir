@@ -30,13 +30,26 @@ class ChequeUI:
         self.builder.get_object('list_cheque_window').resize(400, 1)
         self.builder.get_object('desc_frame').set_size_request(0, 100)
 
+        treeview = self.builder.get_object('list_cheque_treeview')
+        model = gtk.ListStore(str, str, str, str)
+        treeview.set_model(model)
+
+        column = gtk.TreeViewColumn("Header"  , gtk.CellRendererText(), text=0)
+        treeview.append_column(column)
+        column = gtk.TreeViewColumn("Serial"  , gtk.CellRendererText(), text=1)
+        treeview.append_column(column)
+        column = gtk.TreeViewColumn("Amount"  , gtk.CellRendererText(), text=2)
+        treeview.append_column(column)
+        column = gtk.TreeViewColumn("Due Date", gtk.CellRendererText(), text=3)
+        treeview.append_column(column)
+
     ## list cheques you are going to add/ or all cheques in database
     #
     # if you want to add a list of cheques (more than one) to database you should use this.
     # it shows a list of currently added cheques in a window.
     # there is an add button to append new cheques to the list.
     # remember to call ChequeUI::save to save to database or you will lose everything.
-    # @param mode, 'all' -> all cheques, 'add'-> if you want to add cheques (used in automatic accounting)
+    # @param mode, 'our' -> if you want to add or show cheques created by you.
     def list_cheques(self, mode):
         w = self.builder.get_object('list_cheque_window')
         w.set_position(gtk.WIN_POS_CENTER)
@@ -107,5 +120,31 @@ class ChequeUI:
     ## Signal Handler (When User Clicks on cancel in add window)
     def on_cancel_add_clicked(self, button):
         self.builder.get_object('add_cheque_window').emit('delete_event', None)
+    
+    ## Signal Handler (When User Clicks on Add in add window to save new cheque)
+    #
+    # automatically updated list_cheque_window
+    def on_confirm_add_clicked(self, button):
+        self.builder.get_object('add_cheque_window').emit('delete_event', None)
+
+        info = {}
+        info['serial'] = self.builder.get_object('cheque_serial').get_text()
+        info['amount'] = self.amount_entry.get_float()
+        info['write_date'] = self.write_date.getDateObject()
+        info['due_date'] = self.due_date.getDateObject()
+        info['bank'] = self.builder.get_object('bank').get_text()
+        info['branch'] = self.builder.get_object('branch').get_text()
+        info['customer'] = None
+        info['bank_account'] = None
+
+        buf = self.builder.get_object('desc').get_buffer()
+        info['desc'] = buf.get_text(buf.get_start_iter(), buf.get_end_iter())
+
+        for i in info:
+            print (i, ' =>', info[i])
+
+        model = self.builder.get_object('list_cheque_treeview').get_model()
+        iter = model.append()
+        model.set(iter, 0, 'aaaa', 1, info['serial'], 2, info['amount'], 3, info['due_date'])
 
 ## @}

@@ -58,7 +58,7 @@
             <property name="hscrollbar_policy">automatic</property>
             <property name="vscrollbar_policy">automatic</property>
             <child>
-              <object class="GtkTreeView" id="treeview1">
+              <object class="GtkTreeView" id="list_cheque_treeview">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
               </object>
@@ -89,7 +89,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkEntry" id="entry1">
+          <object class="GtkEntry" id="cheque_serial">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="invisible_char">●</property>
@@ -247,7 +247,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkEntry" id="entry3">
+          <object class="GtkEntry" id="bank">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="invisible_char">●</property>
@@ -261,7 +261,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkEntry" id="entry4">
+          <object class="GtkEntry" id="branch">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="invisible_char">●</property>
@@ -355,12 +355,13 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="button3">
+              <object class="GtkButton" id="confirm_add">
                 <property name="label">gtk-add</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
+                <signal name="clicked" handler="on_confirm_add_clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>
