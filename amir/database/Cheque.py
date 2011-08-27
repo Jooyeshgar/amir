@@ -22,11 +22,11 @@ class Cheque(Base):
     chqCust     = Column( Integer,      ForeignKey('customers.custId'))
     chqAccount  = Column(Integer,      ForeignKey('bankAccounts.accId'), nullable = True)
     chqTransId  = Column(Integer,      ColumnDefault(0)) #Transaction id is zero for non-invoice cheques.
-    chqBillId   = Column(Integer,      ColumnDefault(0)) #Bill id is zero for temporary transactions.
+    chqNoteBookId = Column(Integer, ColumnDefault(0))
     chqDesc     = Column(Unicode(200), nullable = True)
 
     def __init__( self, chqAmount, chqWrtDate, chqDueDate, chqSerial,
-                  chqStatus, chqCust, chqAccount, chqTransId, chqBillId, chqDesc, chqOrder):
+                  chqStatus, chqCust, chqAccount, chqTransId, chqNoteBookId, chqDesc, chqOrder):
         self.chqAmount   = chqAmount
         self.chqWrtDate  = chqWrtDate
         self.chqDueDate  = chqDueDate
@@ -35,8 +35,10 @@ class Cheque(Base):
         self.chqCust     = chqCust
         self.chqAccount  = chqAccount
         self.chqTransId  = chqTransId
-        self.chqBillId   = chqBillId
+        self.chqNoteBookId = chqNoteBookId
+        #self.chqBillId   = chqBillId
         self.chqDesc     = chqDesc
         self.chqOrder    = chqOrder
 
 ## @}
+
