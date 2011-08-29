@@ -337,7 +337,7 @@ class AutomaticAccounting:
 
             glib.timeout_add_seconds(3, lambda w: w.destroy(), infobar)
         else:
-            dialog = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 'Failed, return code: %d' % result)
+            dialog = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 'Failed, %s' % document.get_error_message(result))
             dialog.run()
             dialog.destroy()
 

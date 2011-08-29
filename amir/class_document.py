@@ -62,7 +62,6 @@ class Document:
         
     def save(self):
         if len(self.notebooks) == 0:
-            self.notebooks = []
             return -1
 
         sum = 0
@@ -97,5 +96,11 @@ class Document:
         self.notebooks = []
 
         return self.id
+
+    def get_error_message(self, code):
+        if   code == -1:
+            return "add some notebook items"
+        elif code == -2:
+            return "transation sum should be 0"
 
 ## @}
