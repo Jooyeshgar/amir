@@ -22,7 +22,7 @@ class Cheque(Base):
     chqCust     = Column( Integer,      ForeignKey('customers.custId'))
     chqAccount  = Column(Integer,      ForeignKey('bankAccounts.accId'), nullable = True)
     chqTransId  = Column(Integer,      ColumnDefault(0)) #Transaction id is zero for non-invoice cheques.
-    chqNoteBookId = Column(Integer, ColumnDefault(0))
+    chqNoteBookId = Column(Integer, ColumnDefault(0), ForeignKey('notebook.id'))
     chqDesc     = Column(Unicode(200), nullable = True)
 
     def __init__( self, chqAmount, chqWrtDate, chqDueDate, chqSerial,

@@ -102,7 +102,7 @@ cheque = Table('Cheque', meta,
     Column('chqCust',        Integer,      ForeignKey('customers.custId')          ),
     #Column('chqSpent',       Boolean,      ColumnDefault(0),   nullable = False    ),
     Column('chqTransId',     Integer,      ColumnDefault(0)                        ),
-    Column('chqBillId',      Integer,      ColumnDefault(0)                        ),
+    Column('chqNoteBookId', Integer, ColumnDefault(0), ForeignKey('notebook.id')
     Column('chqDesc',        Unicode(200), nullable = True                         ),
     Column('chqOrder',       Integer,       ColumnDefault(0),   nullable = False    )
 )
