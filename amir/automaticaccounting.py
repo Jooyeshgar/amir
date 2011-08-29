@@ -65,6 +65,8 @@ class AutomaticAccounting:
         self.builder = helpers.get_builder('automaticaccounting')
         self.builder.connect_signals(self)
 
+        self.chequeui = chequeui.ChequeUI(self.builder.get_object('non-cash-payment-label'))
+
         # Date entry
         date_box = self.builder.get_object('date-box')
         self.date_entry = dateentry.DateEntry()
@@ -123,6 +125,8 @@ class AutomaticAccounting:
         if iter == None:
             return
         
+        self.chequeui.new_cheques = []
+
         model = combo.get_model()
         index = model.get(iter, 0)[0]
         self.type_index = int(index)
@@ -291,13 +295,12 @@ class AutomaticAccounting:
         save_button.set_sensitive(True)
 
     def on_non_cash_payment_button_clicked(self, button):
-        ch = chequeui.ChequeUI()
-
         if self.type_configs[self.type_index][3]:
             mode = 'our'
         else:
             mode = 'other'
-        ch.list_cheques(mode)
+
+        self.chequeui.list_cheques(mode)
 
     def on_save_button_clicked(self, button):
         result = {}
