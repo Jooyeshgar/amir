@@ -18,8 +18,10 @@ class Document:
         self.date          = date.today()
         self.permanent     = False
 
-        self.new_date      = date.today()
-        self.notebooks     = []
+        self.new_date = date.today()
+        self.notebooks = []
+        self.cheques = []
+        self.cheques_result = {}
 
     def set_bill(self, number):
         query = config.db.session.query(Bill)
@@ -59,7 +61,11 @@ class Document:
         
     def add_notebook(self, subject_id, value, desctxt):
         self.notebooks.append((subject_id, value, desctxt))
-        
+
+    def add_cheque(self, subject_id, value, desctxt, cheque_id):
+        self.cheques.append((subject_id, value, desctxt, cheque_id))
+        self.cheques_result[cheque_id] = None
+
     def save(self):
         if len(self.notebooks) == 0:
             return -1
@@ -67,8 +73,9 @@ class Document:
         sum = 0
         for notebook in self.notebooks:
             sum += notebook[1]
+        for cheque in self.cheques:
+            sum += cheque[1]
         if sum != 0:
-            self.notebooks = []
             return -2
         
         if self.number > 0:
@@ -90,9 +97,16 @@ class Document:
         self.id = query.first().id
         
         for notebook in self.notebooks:
-                config.db.session.add(Notebook(notebook[0], self.id, notebook[1], notebook[2]))
+            config.db.session.add(Notebook(notebook[0], self.id, notebook[1], notebook[2]))
 
         config.db.session.commit()
+
+        for cheque in self.cheques:
+            n = Notebook(cheque[0], self.id, cheque[1], cheque[2])
+            config.db.session.add(n)
+            config.db.session.commit()
+            print n.id
+
         self.notebooks = []
 
         return self.id
