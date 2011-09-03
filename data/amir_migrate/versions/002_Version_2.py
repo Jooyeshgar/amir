@@ -89,6 +89,13 @@ payments = Table('payment', meta,
 #    Column('paymntChq',         Unicode,      nullable = True                         )
 )
 
+notebook = Table("notebook", meta,
+    Column('id', Integer, primary_key=True),
+    Column('subject_id', Integer, ForeignKey('subject.id')),
+    Column('bill_id', Integer, ForeignKey('bill.id')),
+    Column('desc', Unicode, ColumnDefault("")),
+    Column('value', Integer, ColumnDefault(0), nullable = False),
+)
 cheque = Table('Cheque', meta,
     Column('chqId',          Integer,      primary_key = True                      ),
     Column('chqAmount',      Float,        ColumnDefault(0),                  nullable = False ),
@@ -102,7 +109,7 @@ cheque = Table('Cheque', meta,
     Column('chqCust',        Integer,      ForeignKey('customers.custId')          ),
     #Column('chqSpent',       Boolean,      ColumnDefault(0),   nullable = False    ),
     Column('chqTransId',     Integer,      ColumnDefault(0)                        ),
-    Column('chqNoteBookId', Integer, ColumnDefault(0), ForeignKey('notebook.id')
+    Column('chqNoteBookId', Integer, ColumnDefault(0), ForeignKey('notebook.id')),
     Column('chqDesc',        Unicode(200), nullable = True                         ),
     Column('chqOrder',       Integer,       ColumnDefault(0),   nullable = False    )
 )
@@ -196,6 +203,7 @@ def upgrade(migrate_engine):
     bankAccounts.create(  checkfirst=True)
     config.create(checkfirst=True)
     banknames.create(checkfirst=True)
+    notebook.create(checkfirst=True)
     logging.debug("upgrade to 2")
 
     op = config.insert()
