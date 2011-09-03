@@ -1,10 +1,11 @@
-
+from amirconfig import config
+from database import Cheque
 ## \defgroup Controller
 ## @{
 
 class ClassCheque:
     def __init__(self):
-        pass
+        self.new_cheques = []
 
     ##
     #
@@ -42,10 +43,9 @@ class ClassCheque:
     # @return cheque id
 
     ## Add Cheque to db
-    #
-    # @param information of new account as a dictionary
-    def add_cheque(self, info):
-        pass
+    def add_cheque(self, amount, write_date, due_date, serial, status, customer_id, account_id, trans_id, notebook_id, desc):
+        ch = Cheque(amount, write_date, due_date, serial, status, customer_id, account_id, trans_id, notebook_id, desc)
+        self.new_cheques.append(ch)
 
     ## update cheque status
     #
@@ -59,5 +59,8 @@ class ClassCheque:
 
     ## Save datas to database
     def save(self):
-        pass
+        for cheque in self.new_cheques:
+            config.db.session.add(cheque)
+
+        config.db.session.commit()
 ## @}

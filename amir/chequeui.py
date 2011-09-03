@@ -2,9 +2,7 @@ import class_bankaccounts
 import dateentry
 import decimalentry
 import helpers
-import customers
 from amirconfig import config
-from database import Customers
 
 import gtk
 
@@ -14,6 +12,8 @@ import gtk
 class ChequeUI:
     def __init__(self, non_cash_label=None):
         ## A list contains information about new cheques
+        #
+        # to remove all cheques for reseting form cheques_ui_obj.new_cheques = []
         self.new_cheques = []
         ## a list contains informations about selected cheques for spending
         self.spend_cheques = []
@@ -89,7 +89,7 @@ class ChequeUI:
 
         for info in self.new_cheques:
             iter = model.append()
-            model.set(iter, 0, info['customer_name'], 1, info['bank_account_name'],
+            model.set(iter, 0, 'Customer Name', 1, info['bank_account_name'],
                             2, '%s/%s' % (info['bank_name'], info['branch_name']) ,
                             3, info['serial'], 4, info['amount'], 5, info['due_date'])
 
@@ -158,10 +158,7 @@ class ChequeUI:
 
     ## Signal Handler (When User Clicks On Add in list_cheque_window 
     def on_add_cheque_clicked(self, sender, info=None):
-        self.customer_id = None
-        self.customer_name = '---'
-
-        self.bank_account_id = None
+        self.bank_account_id = 0
         self.bank_account_name = '---'
 
         w = self.builder.get_object('add_cheque_window')
@@ -178,13 +175,11 @@ class ChequeUI:
 
         m = (self.mode == 'our')
         self.builder.get_object('bank_accounts').set_sensitive(m)
-        self.builder.get_object('customer_button').set_sensitive(not m)
         self.builder.get_object('bank').set_sensitive(not m)
         self.builder.get_object('branch').set_sensitive(not m)
 
         self.builder.get_object('cheque_serial').set_text('') 
         self.builder.get_object('bank_accounts').set_active(-1)
-        self.builder.get_object('customer_name').set_text('') 
         self.builder.get_object('bank').set_text('') 
         self.builder.get_object('branch').set_text('') 
         self.builder.get_object('desc').get_buffer().set_text('')
@@ -232,12 +227,11 @@ class ChequeUI:
         info['due_date'] = self.due_date.getDateObject()
         info['bank'] = self.builder.get_object('bank').get_text()
         info['branch'] = self.builder.get_object('branch').get_text()
-        info['customer_id'] = self.customer_id
-        info['customer_name'] = self.customer_name
         info['bank_account_name'] = self.bank_account_name
         info['bank_account_id'] = self.bank_account_id
         info['bank_name'] = self.builder.get_object('bank').get_text()
         info['branch_name'] = self.builder.get_object('branch').get_text()
+        info['status'] = 1 if self.mode == 'our' else 4
 
         buf = self.builder.get_object('desc').get_buffer()
         info['desc'] = buf.get_text(buf.get_start_iter(), buf.get_end_iter())
@@ -255,8 +249,6 @@ class ChequeUI:
             msg += 'Serial Number is Empty\n'
         if info['amount'] <=0:
             msg += 'Amount is wron\n'
-        if self.mode == 'other' and info['customer_id'] == None:
-            msg += 'Select a customer\n'
         if self.mode == 'our' and info['bank_account_id'] == None:
             msg += 'Select a bank account\n'
 
@@ -271,25 +263,11 @@ class ChequeUI:
         model = self.builder.get_object('list_cheque_treeview').get_model()
 
         iter = model.append()
-        model.set(iter, 0, info['customer_name'], 1, info['bank_account_name'],
+        model.set(iter, 0, 'customer_name', 1, info['bank_account_name'],
                         2, '%s/%s' % (info['bank_name'], info['branch_name']) ,
                         3, info['serial'], 4, info['amount'], 5, info['due_date'])
         self.update_non_cash_payment_label()
         self.builder.get_object('add_cheque_window').emit('delete_event', None)
-
-    def on_customer_button_clicked(self, button):
-        cust = customers.Customer()
-        cust.connect('customer-selected', self.on_customer_selected)
-        cust.viewCustomers(True)
-        cust.window.set_position(gtk.WIN_POS_CENTER)
-
-    def on_customer_selected(self, customer, id, code):
-        customer.window.destroy()
-        self.customer_id = id
-        query = config.db.session.query(Customers).select_from(Customers)
-        query = query.filter(Customers.custCode == code)
-        self.customer_name = query.first().custName
-        self.builder.get_object('customer_name').set_text(self.customer_name)
 
     def on_list_cheque_window_delete_event(self, window, event):
         window.hide_all()

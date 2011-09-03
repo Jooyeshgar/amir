@@ -18,15 +18,22 @@ class Cheque(Base):
     chqWrtDate  = Column(Date,         nullable = False)
     chqDueDate  = Column(Date,         nullable = False)
     chqSerial   = Column(Unicode(50),  nullable = False)
+    ## an integer describes cheque status
+    #
+    # 1 Pardakhti, Vosol nashode
+    # 2 Pardakhti, Vosol shode
+    # 3 Daryafti, Vosol shode
+    # 4 Daryafti, Vosol nashode
+    # 5 Kharj shode
     chqStatus   = Column(Integer,      ColumnDefault(0), nullable = False)
-    chqCust     = Column( Integer,      ForeignKey('customers.custId'))
+    chqCust     = Column(Integer,      ForeignKey('customers.custId'))
     chqAccount  = Column(Integer,      ForeignKey('bankAccounts.accId'), nullable = True)
     chqTransId  = Column(Integer,      ColumnDefault(0)) #Transaction id is zero for non-invoice cheques.
     chqNoteBookId = Column(Integer, ColumnDefault(0), ForeignKey('notebook.id'))
     chqDesc     = Column(Unicode(200), nullable = True)
 
     def __init__( self, chqAmount, chqWrtDate, chqDueDate, chqSerial,
-                  chqStatus, chqCust, chqAccount, chqTransId, chqNoteBookId, chqDesc, chqOrder):
+                  chqStatus, chqCust, chqAccount, chqTransId, chqNoteBookId, chqDesc):
         self.chqAmount   = chqAmount
         self.chqWrtDate  = chqWrtDate
         self.chqDueDate  = chqDueDate
@@ -36,9 +43,7 @@ class Cheque(Base):
         self.chqAccount  = chqAccount
         self.chqTransId  = chqTransId
         self.chqNoteBookId = chqNoteBookId
-        #self.chqBillId   = chqBillId
         self.chqDesc     = chqDesc
-        self.chqOrder    = chqOrder
 
 ## @}
 

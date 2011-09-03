@@ -1,4 +1,5 @@
 import chequeui
+import class_cheque
 import class_document
 import customers
 import dateentry
@@ -254,7 +255,7 @@ class AutomaticAccounting:
         query = config.db.session.query(Subject).select_from(Subject)
         query = query.filter(Subject.code == code)
         if query.first().parent_id == 0:
-            print 'Can not select it'
+            print 'You Can not select it'
             return
 
         if to:
@@ -266,6 +267,7 @@ class AutomaticAccounting:
         subject.window.destroy()
 
     def on_customer_selected(self, customer, id, code, entry, to):
+        id = config.db.session.query(Customers).select_from(Customers).filter(Customers.custId==id).first().custSubj
         if to:
             self.to_id = id
         else:
@@ -323,23 +325,42 @@ class AutomaticAccounting:
         document.add_notebook(result['to']  , -result['cash_payment'], result['desc'])
         if result['discount'] :
             document.add_notebook(dbconf.get_int('sell-discount'), -result['discount'], result['desc'])
+        cl_cheque = class_cheque.ClassCheque()
+        for cheque in self.chequeui.new_cheques:
+            document.add_cheque(result['to'], -cheque['amount'], cheque['desc'], cheque['serial'])
+
         result = document.save()
-        if result > 0:
-            self.on_destroy(self.builder.get_object('general'))
 
-            infobar = gtk.InfoBar()
-            label = gtk.Label('successfully added. Document number : %d' % document.number)
-            infobar.get_content_area().add(label)
-            width , height = self.main_window_background.window.get_size()
-            infobar.set_size_request(width, -1)
-            self.main_window_background.put(infobar ,0 , 0)
-            infobar.show_all()
-
-            glib.timeout_add_seconds(3, lambda w: w.destroy(), infobar)
-        else:
+        if result < 0:
             dialog = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 'Failed, %s' % document.get_error_message(result))
             dialog.run()
             dialog.destroy()
+            return
+
+        if self.type_configs[self.type_index][3] == True: # from is subject
+            customer_id = 0
+        else: # from is customer
+            customer_id = config.db.session.query(Customers).select_from(Customers).filter(Customers.custSubj==self.from_id).first().custId
+
+        for cheque in self.chequeui.new_cheques:
+            notebook_id =document.cheques_result[cheque['serial']]
+            cl_cheque.add_cheque(cheque['amount'], cheque['write_date'], cheque['due_date'],
+                                 cheque['serial'], cheque['status'],
+                                 customer_id, cheque['bank_account_id'],
+                                 0, notebook_id, cheque['desc'])
+        cl_cheque.save()
+
+        self.on_destroy(self.builder.get_object('general'))
+
+        infobar = gtk.InfoBar()
+        label = gtk.Label('successfully added. Document number : %d' % document.number)
+        infobar.get_content_area().add(label)
+        width , height = self.main_window_background.window.get_size()
+        infobar.set_size_request(width, -1)
+        self.main_window_background.put(infobar ,0 , 0)
+        infobar.show_all()
+
+        glib.timeout_add_seconds(3, lambda w: w.destroy(), infobar)
 
     def on_destroy(self, window):
         window.destroy()

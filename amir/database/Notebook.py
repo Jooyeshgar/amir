@@ -13,8 +13,8 @@ Base = get_declarative_base()
 class Notebook(Base):
     __tablename__ = "notebook"
     id = Column(Integer, primary_key=True)
-    subject_id = Column(None, ForeignKey('subject.id'))
-    bill_id = Column(None, ForeignKey('bill.id'))
+    subject_id = Column(Integer, ForeignKey('subject.id'))
+    bill_id = Column(Integer, ForeignKey('bill.id'))
     desc = Column(Unicode, ColumnDefault(""))
     value = Column(Integer, ColumnDefault(0), nullable = False)
     

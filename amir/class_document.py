@@ -105,7 +105,7 @@ class Document:
             n = Notebook(cheque[0], self.id, cheque[1], cheque[2])
             config.db.session.add(n)
             config.db.session.commit()
-            print n.id
+            self.cheques_result[cheque[3]] = n.id
 
         self.notebooks = []
 
