@@ -202,7 +202,7 @@ class AutomaticAccounting:
             cust.viewCustomers(True)
 
     def on_total_credit_entry_change(self, entry):
-        if not (self.type_configs[0] or self.type_configs[2]):
+        if not (self.type_configs[self.type_index][0] or self.type_configs[self.type_index][2]):
             self.cash_payment_entry.set_text(entry.get_text())
         self.on_cash_payment_entry_change(None)
 
