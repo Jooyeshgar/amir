@@ -49,7 +49,7 @@ class AutomaticAccounting:
         2:  (True , False, False, True , True , 'bank'     , 'bank'),
         3:  (False, False, False, True , True , 'cash'     , 'bank'),
         4:  (True , False, False, True , True , 'bank'     , 'cash'),
-        5:  (False, False, False, True , True , 'cash'     , 'bank'),
+        5:  (False, False, False, True , True , 'bank'     , 'bank-wage'),
         6:  (False, False, False, False, True , None       , 'bank'),
         7:  (False, False, False, True , False, 'bank'     , None),
         8:  (True , False, True , True , True , 'partners' , 'cash,bank'),

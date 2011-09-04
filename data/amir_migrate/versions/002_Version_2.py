@@ -239,6 +239,8 @@ def upgrade(migrate_engine):
             'cfgDesc':u'Enter here'},
         {'cfgId' :11, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'cost'          , 'cfgValue' : u'2',
             'cfgDesc':u'Enter here'},
+        {'cfgId' :12, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'bank-wage'     , 'cfgValue' : u'31',
+            'cfgDesc':u'Enter here'},
         #{'cfgId' :10, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'sell-adds'     , 'cfgValue' : u'??',
         #    'cfgDesc':u'Enter here'},  #TODO cfgKey
         #{'cfgId' :11, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'fund'          , 'cfgValue' : u'??',

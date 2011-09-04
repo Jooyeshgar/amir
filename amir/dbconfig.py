@@ -17,6 +17,7 @@ class dbConfig:
         'tax'           :'33', 
         'partners'      : '8',
         'cost'          : '2',
+        'bank-wage'     : '31',
         #"sell-adds": '7',
         #"fund": '9', 
         #"acc-receivable": '10', 
