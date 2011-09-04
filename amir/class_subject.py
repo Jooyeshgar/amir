@@ -10,7 +10,7 @@ class Subjects():
     def __init__(self):
         pass
                 
-    def add(self, parentid, name, customercode=None, type=2):
+    def add(self, parentid, name, code=None, type=2):
 
         parent = config.db.session.query(Subject.code, Subject.lft).select_from(Subject).filter(Subject.id == parentid).first()
 
@@ -37,22 +37,22 @@ class Subjects():
         sub_left  = sub_right + 1
         sub_right = sub_left + 1
         
-        if customercode == None :
+        if code == None :
             #get customer code
             code = config.db.session.query(Subject.code).select_from(Subject).order_by(Subject.id.desc()).filter(Subject.parent_id == parentid).first()
             if code == None :
-                customercode = "01"
+                code = "01"
             else :
-                customercode = "%02d" % (int(code[0][-2:]) + 1)
+                code = "%02d" % (int(code[0][-2:]) + 1)
 
-        customercode = parent[0] + customercode
+        code = parent[0] + code
 
-        mysubject = Subject(customercode, name, parentid, sub_left, sub_right, 2)
+        mysubject = Subject(code, name, parentid, sub_left, sub_right, 2)
         config.db.session.add(mysubject)
         config.db.session.commit()
         
         query = config.db.session.query(Subject).select_from(Subject)
-        query = query.filter(Subject.code == customercode)
+        query = query.filter(Subject.code == code)
         return query.first().id
 
     def get_code(self, id):

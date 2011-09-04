@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import class_subject
+import dbconfig
 from amirconfig import config
 from database import BankAccounts
 from database import BankNames
@@ -52,6 +54,9 @@ class BankAccountsClass:
         if id == -1:
             bank_account = BankAccounts(name, number, type, owner, bank_id, branch, address, phone, webpage, desc)
             config.db.session.add(bank_account)
+            sub = class_subject.Subjects()
+            dbconf = dbconfig.dbConfig()
+            sub.add(dbconf.get_int('bank'), name, str(bank_account.accId).rjust(2, '0'))
         else:
             query = config.db.session.query(BankAccounts).select_from(BankAccounts)
             query = query.filter(BankAccounts.accId == id)

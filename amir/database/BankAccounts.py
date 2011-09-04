@@ -14,7 +14,7 @@ class BankAccounts(Base):
     __tablename__   = "bankAccounts"
     accId           = Column( Integer,      primary_key = True  )
     accName         = Column( Unicode(100), nullable = False    )
-    accNumber       = Column( Unicode(40) , nullable = False    )
+    accNumber       = Column( Unicode(40) , nullable = False, unique=True)
     accType         = Column( Integer,       nullable = True     )
     accOwner        = Column( Unicode(50),  nullable = True     )
     accBank         = Column( Integer,  ForeignKey('BankNames.Id'), nullable = True     )
