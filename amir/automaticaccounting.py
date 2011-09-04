@@ -49,7 +49,7 @@ class AutomaticAccounting:
         2:  (True , False, False, True , True , 'bank'     , 'bank'),
         3:  (False, False, False, True , True , 'cash'     , 'bank'),
         4:  (True , False, False, True , True , 'bank'     , 'cash'),
-        5:  (False, False, False, True , True , 'bank'     , 'bank-wage'),
+        5:  (False, False, False, True , True , 'bank'     , 'bank-wage'), # 'to' is not changeable
         6:  (False, False, False, False, True , None       , 'bank'),
         7:  (False, False, False, True , False, 'bank'     , None),
         8:  (True , False, True , True , True , 'partners' , 'cash,bank'),
@@ -153,6 +153,18 @@ class AutomaticAccounting:
         self.cash_payment_entry.set_text('0')
         self.total_credit_entry.set_text('0')
         self.discount_entry.set_text('0')
+
+        dbconf = dbconfig.dbConfig()
+
+        if self.type_index == 5:
+            self.builder.get_object('to-button').set_sensitive(False)
+            query = config.db.session.query(Subject).select_from(Subject)
+            query = query.filter(Subject.id == dbconf.get_int('bank-wage'))
+            query = query.first()
+            self.to_id =  query.id
+            self.to_entry.set_text(query.name)
+        else:
+            self.builder.get_object('to-button').set_sensitive(True)
 
     def on_from_clicked(self, button):
         index  = self.type_index
