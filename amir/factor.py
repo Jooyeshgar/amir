@@ -3,32 +3,44 @@ class factor:
     bill_id = None
     trans_id = None
     dirty = False
-    facotr_type = "sell" # type of factor can be sell, buy, ...
 
+    ## type of factor can be sell, buy
+    facotr_type = "sell" 
     def __init__(self, number):
-        if(number)
+        if(number):
             #get bill_id and trans_id and type from database
 
-    def set_detail(self, detail)
+    ## set current factor deatils
+    #
+    # @param detail dictionary contains details
+    # \note keys:
+    def set_detail(self, detail):
         self.type=type
 
-    def add_product(self, product_id, count, price, discount, description)
+    ## add a new product to list of products.
+    #
+    # it doesn't save to db you should call factor::save to save all products at once
+    def add_product(self, product_id, count, price, discount, description):
         pass
 
-    def add_noncash_peyment(self, cheque_id, description)
+    def add_noncash_peyment(self, cheque_id, description):
         pass
 
     ##save or update the factor row and set bill_id and transaction id and return factor number
-    def save(self)
+    #
+    # do not call any other function after save
+    def save(self):
         pass
 
-    ##return all factor rows
-    def get_product(self)
+    ##return all factors
+    def get_product(self):
         pass
 
-    def get_noncash_peyment(self)
+    def get_noncash_peyment(self):
         pass
 
-    ##return factor detail
-    def get_detail(self, number=0)
+    ## return factor detail
+    #
+    # @return dictionary of details
+    def get_detail(self, number=0):
         pass
