@@ -44,6 +44,8 @@ sys.path.insert(0, os.path.dirname(fullPath))
 from amir.amirconfig import config
 from amir.database   import  *
 
+logging.debug('LANG=%s' % (config.locale))
+os.environ['LANGUAGE'] = config.locale
 os.environ['LANG'] = config.locale
 if sys.platform == 'win32':
     lang = config.locale
@@ -64,6 +66,7 @@ try:
 except:
     logging.error("Unable to set locale.")
 
+logging.debug('Locale Path=%s' % (config.locale_path))
 gtk.glade.bindtextdomain('amir', config.locale_path)
 gtk.glade.textdomain('amir')
 gettext.install('amir', config.locale_path, unicode=1)
@@ -157,14 +160,14 @@ class MainWindow(gobject.GObject):
         
     
     def delete_event(self, widget, event, data=None):
-         msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, _("Are you sure to close the app?"))
-         msgbox.set_title(_("Are you sure?"))
-         result = msgbox.run();
-         if result == gtk.RESPONSE_CANCEL :
-            msgbox.destroy()
-            return True
-         else :
-            return False
+#         msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, _("Are you sure to close the app?"))
+#         msgbox.set_title(_("Are you sure?"))
+#         result = msgbox.run();
+#         if result == gtk.RESPONSE_CANCEL :
+        msgbox.destroy()
+        return True
+#         else :
+#            return False
         # Change FALSE to TRUE and the main window will not be destroyed
         # with a "delete_event".
 
