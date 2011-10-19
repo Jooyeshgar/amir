@@ -207,7 +207,7 @@ class MainWindow(gobject.GObject):
         main_box = self.builder.get_object('vbox2')
         self.background = gtk.Fixed()
         main_box.add(self.background)
-        self.background.put(gtk.image_new_from_file('../data/media/background.png'), 0, 0)
+        self.background.put(gtk.image_new_from_file(os.path.join(config.data_path, "media", "background.png")), 0, 0)
         self.background.show_all()
         
         #NOTE: Bad idea, because until initial menu is shown, user can not register any bill;
