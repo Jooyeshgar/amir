@@ -116,7 +116,7 @@ class MainWindow(gobject.GObject):
         dialog.hide()
         if res == gtk.RESPONSE_OK:
             if self.numentry.get_text() != "":
-                dialog = addeditdoc.AddEditDoc(int(unicode(self.numentry.get_text())))
+                dialog = addeditdoc.AddEditDoc(self.numentry.get_int())
                 self.connect("database-changed", dialog.dbChanged)
             
     def arrangeDocments(self, sender):

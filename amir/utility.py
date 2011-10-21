@@ -99,7 +99,7 @@ def localizeNumber(num):
         num = str(num)
         
     if config.digittype == 1:
-        return utility.convertToPersian(num)
+        return convertToPersian(num)
     return num
 
 def is_numeric(var):

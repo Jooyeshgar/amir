@@ -93,7 +93,7 @@ class AddEditDoc:
                 self.showRows()
                 self.window.set_title(_("Edit document"))
             else:
-                numstring = utility.localizeNumber(self.cl_document.number)
+                numstring = utility.localizeNumber(number)
                 msg = _("No document found with number %s\nDo you want to register a document with this number?") % numstring
                 msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, msg)
                 msgbox.set_title(_("No Documents found"))

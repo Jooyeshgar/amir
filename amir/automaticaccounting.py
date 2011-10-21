@@ -21,18 +21,18 @@ import gtk
 class AutomaticAccounting:
     type_names = (
         # 0 id, 1 name
-        (0 , 'Get From Customer'),
-        (1 , 'Pay To Customer'),
-        (2 , 'Bank To Bank'),
-        (3 , 'Cash To Bank'),
-        (4 , 'Bank To Cash'),
-        (5 , 'Bank Wage'),
-        (6 , 'havale taraf hesab'),
-        (7 , 'Padakhte naghdi az bank'),
-        (8 , 'Investment'),
-        (9 , 'Cost'),
-        (10, 'Income'),
-        (11, 'Removel'),
+        (0 , _('Get From Customer')),
+        (1 , _('Pay To Customer')),
+        (2 , _('Bank To Bank')),
+        (3 , _('Cash To Bank')),
+        (4 , _('Bank To Cash')),
+        (5 , _('Bank Wage')),
+        (6 , _('havale taraf hesab')),
+        (7 , _('Padakhte naghdi az bank')),
+        (8 , _('Investment')),
+        (9 , _('Cost')),
+        (10, _('Income')),
+        (11, _('Removal')),
     )
 
     type_configs = {
