@@ -62,6 +62,14 @@ class Subjects():
             return str(id);
         else :
             return query.code
+    
+    def get_name(self, id):
+        query = config.db.session.query(Subject).select_from(Subject)
+        query = query.filter(Subject.id == id).first()
+        if query == None :
+            return str(id);
+        else :
+            return query.name
 
     def get_id(self, code):
         query = config.db.session.query(Subject).select_from(Subject)

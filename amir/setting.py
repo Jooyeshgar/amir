@@ -524,7 +524,7 @@ class Setting(gobject.GObject):
                 txt = ''
                 if len(row.cfgValue) != 0:
                     for id in row.cfgValue.split(','):
-                        txt += sub.get_code(id)+','
+                        txt += sub.get_name(id)+','
                     txt = txt[:-1]
                 widget.set_text(txt)
 

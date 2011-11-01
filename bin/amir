@@ -164,7 +164,7 @@ class MainWindow(gobject.GObject):
 #         msgbox.set_title(_("Are you sure?"))
 #         result = msgbox.run();
 #         if result == gtk.RESPONSE_CANCEL :
-        msgbox.destroy()
+#        msgbox.destroy()
         return True
 #         else :
 #            return False

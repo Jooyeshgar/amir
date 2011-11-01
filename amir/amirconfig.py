@@ -158,15 +158,6 @@ class AmirConfig:
             self.sconfig.add_section('Paper Setup')
         
 
-#        self.configfile = ConfigFile(confpath)
-        
-#        if self.options.database != None:
-#            dbfile = self.options.database
-#        elif self.configfile.returnStringValue("database") == None:
-#            logging.error("Database registered in config file (%s) does not exist." % self.configfile.returnStringValue("database"))
-#        else :
-#            dbfile = self.configfile.returnStringValue("database")
-
         self.dblist = []
         self.dbnames = []
         #NOTE: Current Db indice starts from 1 to be more readable for users
@@ -188,7 +179,7 @@ class AmirConfig:
                 dbfile = ''
             
         if dbfile == '':
-            dbfile = os.path.join(confdir, 'amir.sqlite')
+            dbfile = 'sqlite:///'+os.path.join(confdir, 'amir.sqlite')
             self.dblist.append(dbfile)
             self.dbnames.append('amir.sqlite')
             logging.error("No database path found. the default database %s will be opened for use." % dbfile)

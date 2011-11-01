@@ -44,17 +44,17 @@ class ChequeUI:
         treeview = self.builder.get_object('list_cheque_treeview')
         treeview.set_model(model)
 
-        column = gtk.TreeViewColumn("Customer"  , gtk.CellRendererText(), text=0)
+        column = gtk.TreeViewColumn(_("Customer"), gtk.CellRendererText(), text=0)
         treeview.append_column(column)
-        column = gtk.TreeViewColumn("Bank Account"  , gtk.CellRendererText(), text=1)
+        column = gtk.TreeViewColumn(_("Bank Account"), gtk.CellRendererText(), text=1)
         treeview.append_column(column)
-        column = gtk.TreeViewColumn("Bank/Branch"  , gtk.CellRendererText(), text=2)
+        column = gtk.TreeViewColumn(_("Bank/Branch"), gtk.CellRendererText(), text=2)
         treeview.append_column(column)
-        column = gtk.TreeViewColumn("Serial"  , gtk.CellRendererText(), text=3)
+        column = gtk.TreeViewColumn(_("Serial"), gtk.CellRendererText(), text=3)
         treeview.append_column(column)
-        column = gtk.TreeViewColumn("Amount"  , gtk.CellRendererText(), text=4)
+        column = gtk.TreeViewColumn(_("Amount"), gtk.CellRendererText(), text=4)
         treeview.append_column(column)
-        column = gtk.TreeViewColumn("Due Date", gtk.CellRendererText(), text=5)
+        column = gtk.TreeViewColumn(_("Due Date"), gtk.CellRendererText(), text=5)
         treeview.append_column(column)
 
         model = gtk.ListStore(str, str, str)
@@ -145,6 +145,9 @@ class ChequeUI:
     # @return GtkWindow
     def spend_cheque(self):
         pass
+    
+    def on_destroy(self, window):
+        window.destroy()
 
     def update_non_cash_payment_label(self):
         s = 0

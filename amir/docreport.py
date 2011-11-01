@@ -3,6 +3,7 @@ import gtk
 from datetime import date
 import os
 import platform
+import re
 
 from sqlalchemy.orm.util import outerjoin
 from sqlalchemy.sql import between
@@ -24,7 +25,7 @@ class DocumentReport:
         
         self.window = self.builder.get_object("window2")
         
-        self.number = numberentry.NumberEntry()
+        self.number = gtk.Entry(max=0) #numberentry.NumberEntry()
         box = self.builder.get_object("numbox")
         box.add(self.number)
         self.number.set_activates_default(True)
@@ -35,17 +36,27 @@ class DocumentReport:
         self.builder.connect_signals(self)
 
     def createReport(self):
-        self.docnumber = self.number.get_text()
-        if self.docnumber == "":
+        number = unicode(self.number.get_text())
+        if re.match('^\d$', number) != None:
+            self.docnumbers=[int(number)]
+        elif re.match('^(\d+)-(\d+)$', number) != None:
+            m = re.match('^(\d+)-(\d+)$', number)
+            self.docnumbers=range(int(m.group(1)),int(m.group(2))+1)
+        else:
             return
+        
+#        self.docnumber = self.number.get_text()
+#        if self.docnumber == "":
+#            return
         
         report_header = []
         report_data = []
         col_width = []
+        debt_sum = 0
+        credit_sum = 0
         query1 = config.db.session.query(Bill, Notebook, Subject)
-        query1 = query1.select_from(outerjoin(outerjoin(Notebook, Subject, Notebook.subject_id == Subject.id), 
-                                            Bill, Notebook.bill_id == Bill.id))
-        query1 = query1.filter(Bill.number == int(unicode(self.docnumber))).order_by(Notebook.id.asc())
+        query1 = query1.select_from(outerjoin(outerjoin(Notebook, Subject, Notebook.subject_id == Subject.id), Bill, Notebook.bill_id == Bill.id))
+        query1 = query1.filter(Bill.number.in_(self.docnumbers)).order_by([Bill.number.asc(),Notebook.id.asc()])
         res = query1.all()
         if len(res) == 0:
             msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 
@@ -60,6 +71,7 @@ class DocumentReport:
         #define the percentage of table width that each column needs
         col_width = [5, 11, 15, 43, 13, 13 ]
         index = 1
+        doc_number0 = 0
         for b, n, s in res:
             desc = n.desc
             if n.value < 0:
@@ -70,12 +82,18 @@ class DocumentReport:
                 debt = utility.showNumber(0)
                 desc = "   " + desc
                 
-            code = s.code
-            strindex = str(index)
-            if config.digittype == 1:
-                code = utility.convertToPersian(code)
-                strindex = utility.convertToPersian(strindex)
-            report_data.append((strindex, code, s.name, desc, debt, credit))
+            code = utility.localizeNumber(s.code)
+            doc_number = utility.localizeNumber(b.number)
+            if doc_number != doc_number0:
+                index = 1
+                debt_sum = 0
+                credit_sum = 0
+            debt_sum += int(debt.replace(",", ""))
+            credit_sum += int(credit.replace(",", ""))
+            strindex = utility.localizeNumber(str(index))
+            doc_number0 = doc_number
+            date = dateToString(b.date)
+            report_data.append((strindex, code, s.name, desc, debt, credit, doc_number, date, debt_sum, credit_sum))
             index += 1
         
         return {"data":report_data, "col-width":col_width ,"heading":report_header}
@@ -86,7 +104,7 @@ class DocumentReport:
             return
         #if len(report["data"]) == 0:
         datestr = dateToString(self.docdate)
-        docnumber = self.docnumber
+        docnumber = self.docnumbers[0]
         if config.digittype == 1:
             docnumber = utility.convertToPersian(docnumber)
             

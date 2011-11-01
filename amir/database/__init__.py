@@ -31,27 +31,35 @@ from Products import Products
 from Subject import Subject
 from Transactions import Transactions
 from User import User
+import re
 
 class Database:
     def __init__(self, file, repository, echoresults):
+        
+        #for backward compatibelity
+        if re.match('^\w+://', file) == None:
+            file = 'sqlite:///'+file   
+        
         self.version = 2
         self.dbfile = file
         self.repository = repository
         
+     
+        
         #migrate code
         try:
-            dbversion = api.db_version('sqlite:///%s' % file, self.repository)
+            dbversion = api.db_version(file, self.repository)
             #print dbversion
         except exceptions.DatabaseNotControlledError:
             dbversion = 0
-            api.version_control('sqlite:///%s' % file, self.repository, dbversion)
+            api.version_control(file, self.repository, dbversion)
         
         if dbversion < self.version:
-            api.upgrade('sqlite:///%s' % file, self.repository, self.version)
+            api.upgrade(file, self.repository, self.version)
         elif  dbversion > self.version:
-            api.downgrade('sqlite:///%s' % file, self.repository, self.version)
+            api.downgrade(file, self.repository, self.version)
         
-        engine = create_engine('sqlite:///%s' % file , echo=echoresults)
+        engine = create_engine(file , echo=echoresults)
         
         metadata = Base.metadata
         metadata.create_all(engine)

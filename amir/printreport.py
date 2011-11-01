@@ -8,6 +8,7 @@ import math
 
 import utility
 from amirconfig import config
+from amir.dateentry import dateToString
 
 class PrintReport:
     def __init__(self, content, cols_width, heading=None):
@@ -63,13 +64,33 @@ class PrintReport:
         self.lines_per_page = int(math.floor(tableheight / self.row_height))
         #Subtract two lines that show "Sum of previous page" and "Sum" 
         self.lines_per_page -= 2
-        
-        pages = ((len(self.content) - 1) / self.lines_per_page ) + 1
+        if self.drawfunction == 'drawDocument':
+            lencontent = len(self.content)
+            rindex = 0
+            pages = 0
+            self.documents = {}
+            while (rindex < lencontent):
+                docnumber = self.content[rindex][6]
+                offset = 0
+                self.documents[pages] = []
+                while (offset < self.lines_per_page and rindex < lencontent):
+                    #detect new document
+                    if docnumber != self.content[rindex][6]:
+                        break
+                    self.documents[pages].append(self.content[rindex])
+                    rindex += 1
+                    offset += 1
+                    
+                pages+=1
+        else:
+            pages = ((len(self.content) - 1) / self.lines_per_page ) + 1
+            
         operation.set_n_pages(pages)
     
     def doPrintJob(self, action):
         self.operation.run(action)
     
+    '''Handel the print page signal and call correct draw function'''
     def printPage(self, operation, context, page_nr):
         self.pangolayout = context.create_pango_layout()
         self.cairo_context = context.get_cairo_context()
@@ -77,7 +98,6 @@ class PrintReport:
         self.pangolayout.set_width(-1)
         self.pangocairo = pangocairo.CairoContext(self.cairo_context)
         
-        self.formatHeader()
         getattr(self, self.drawfunction)(page_nr)
         #self.drawDailyNotebook(page_nr)
  
@@ -132,6 +152,8 @@ class PrintReport:
             
             
     def drawDailyNotebook(self, page_nr):
+        self.formatHeader()
+                
 #        RIGHT_EDGE = 570  #(table width + PAGE_MARGIN)
         RIGHT_EDGE = self.page_setup.get_page_width(gtk.UNIT_POINTS) - config.rightmargin
         HEADER_HEIGHT = self.header_height
@@ -326,6 +348,7 @@ class PrintReport:
         cr.stroke()
     
     def drawSubjectNotebook(self, page_nr):
+        self.formatHeader()
 #        RIGHT_EDGE = 570  #(table width + PAGE_MARGIN)
         RIGHT_EDGE = self.page_setup.get_page_width(gtk.UNIT_POINTS) - config.rightmargin
         HEADER_HEIGHT = self.header_height
@@ -580,6 +603,11 @@ class PrintReport:
         cr.stroke()
             
     def drawDocument(self, page_nr):
+        content = self.documents[page_nr]
+        docnumber = content[0][6]
+        datestr = content[0][7]
+        self.fields = {_("Document Number"):docnumber, _("Date"):datestr}
+        self.formatHeader()
 #        RIGHT_EDGE = 570  #(table width + PAGE_MARGIN)
         RIGHT_EDGE = self.page_setup.get_page_width(gtk.UNIT_POINTS) - config.rightmargin
         HEADER_HEIGHT = self.header_height
@@ -596,64 +624,58 @@ class PrintReport:
         fdesc.set_size(fontsize * pango.SCALE)
         self.pangolayout.set_font_description(fdesc)
 
-#        #Table top line
-#        cr.move_to(PAGE_MARGIN, TABLE_TOP)
-#        cr.line_to(RIGHT_EDGE, TABLE_TOP)
         
         self.drawTableHeading()
           
         #Draw table data
-        rindex = page_nr * self.lines_per_page
         offset = 0
-        
         self.debt_sum = 0
         self.credit_sum = 0
         
         addh= TABLE_TOP
-        try:
-            while (offset < self.lines_per_page):
-                row = self.content[rindex + offset]
+        for row in content:
+            cr.move_to(RIGHT_EDGE, addh)
+            cr.line_to(RIGHT_EDGE, addh+ROW_HEIGHT)
+            
+            right_txt = RIGHT_EDGE
+            dindex = 0
+            for data in row:
+                right_txt -= MARGIN+LINE
+                if dindex==6 or dindex==7 or dindex==8 or dindex==9:
+                    break
+                elif dindex == 2 or dindex == 3:
+                    fontsize -= 1
+                    fdesc.set_size(fontsize * pango.SCALE)
+                    self.pangolayout.set_font_description(fdesc)
+                    self.pangolayout.set_text(data)
+                    (width, height) = self.pangolayout.get_size()
+                    self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
+                    cr.move_to (right_txt -(width / pango.SCALE), addh + (ROW_HEIGHT-(height / pango.SCALE))/2)
+                    self.pangocairo.show_layout(self.pangolayout)
+                    fontsize = config.contentfont
+                    fdesc.set_size(fontsize * pango.SCALE)
+                    self.pangolayout.set_font_description(fdesc)
+                else:
+                    self.pangolayout.set_text(data)
+                    (width, height) = self.pangolayout.get_size()
+                    self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
+                    cr.move_to (right_txt -(width / pango.SCALE), addh + (ROW_HEIGHT-(height / pango.SCALE))/2)
+                    self.pangocairo.show_layout(self.pangolayout)
+            
+                right_txt -= self.cols_width[dindex]
+                cr.move_to(right_txt, addh)
+                cr.line_to(right_txt, addh + ROW_HEIGHT)
                 
-                cr.move_to(RIGHT_EDGE, addh)
-                cr.line_to(RIGHT_EDGE, addh+ROW_HEIGHT)
+                dindex += 1
                 
-                right_txt = RIGHT_EDGE
-                dindex = 0
-                for data in row:
-                    right_txt -= MARGIN+LINE
-                    if dindex == 2 or dindex == 3:
-                        fontsize -= 1
-                        fdesc.set_size(fontsize * pango.SCALE)
-                        self.pangolayout.set_font_description(fdesc)
-                        self.pangolayout.set_text(data)
-                        (width, height) = self.pangolayout.get_size()
-                        self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
-                        cr.move_to (right_txt -(width / pango.SCALE), addh + (ROW_HEIGHT-(height / pango.SCALE))/2)
-                        self.pangocairo.show_layout(self.pangolayout)
-                        fontsize = config.contentfont
-                        fdesc.set_size(fontsize * pango.SCALE)
-                        self.pangolayout.set_font_description(fdesc)
-                    else:
-                        self.pangolayout.set_text(data)
-                        (width, height) = self.pangolayout.get_size()
-                        self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
-                        cr.move_to (right_txt -(width / pango.SCALE), addh + (ROW_HEIGHT-(height / pango.SCALE))/2)
-                        self.pangocairo.show_layout(self.pangolayout)
-                
-                    right_txt -= self.cols_width[dindex]
-                    cr.move_to(right_txt, addh)
-                    cr.line_to(right_txt, addh + ROW_HEIGHT)
-                    
-                    dindex += 1
-                    
-                self.debt_sum += int(row[4].replace(",", ""))
-                self.credit_sum += int(row[5].replace(",", ""))
-                
-                addh += ROW_HEIGHT
-                offset += 1
-        except IndexError:
-            pass
+#            self.debt_sum += int(row[4].replace(",", ""))
+#            self.credit_sum += int(row[5].replace(",", ""))
+            
+            addh += ROW_HEIGHT
+            offset += 1
         
+        self.debt_sum = int(row[8])
+        self.credit_sum = int(row[9])
         right_txt = RIGHT_EDGE
         cr.move_to(right_txt, addh)
         cr.line_to(right_txt, addh + ROW_HEIGHT)
@@ -702,6 +724,7 @@ class PrintReport:
         cr.stroke()
         
     def drawTrialReport(self, page_nr):
+        self.formatHeader()
         RIGHT_EDGE = self.page_setup.get_page_width(gtk.UNIT_POINTS) - config.rightmargin
         HEADER_HEIGHT = self.header_height
         HEADING_HEIGHT = self.heading_height

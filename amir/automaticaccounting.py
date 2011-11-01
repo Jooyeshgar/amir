@@ -248,7 +248,7 @@ class AutomaticAccounting:
 
     def on_cash_payment_entry_change(self, entry):
         val1 = self.cash_payment_entry.get_float()
-        val2 = float(self.builder.get_object('non-cash-payment-label').get_text())
+        val2 = float(unicode(self.builder.get_object('non-cash-payment-label').get_text()).replace('/', '.'))
 
         discount = self.discount_entry.get_float()
 
@@ -365,7 +365,7 @@ class AutomaticAccounting:
         self.on_destroy(self.builder.get_object('general'))
 
         infobar = gtk.InfoBar()
-        label = gtk.Label('successfully added. Document number : %d' % document.number)
+        label = gtk.Label(_('successfully added. Document number : %d') % document.number)
         infobar.get_content_area().add(label)
         width , height = self.main_window_background.window.get_size()
         infobar.set_size_request(width, -1)

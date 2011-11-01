@@ -48,6 +48,7 @@ class PreviewReport:
         self.drawfunction = func
     
     def doPreviewJob(self):
+        print "doPreviewJob"
         getattr(self, self.drawfunction)()
         self.pagecount.set_text(str(self.pages))
         self.drawPage(1)

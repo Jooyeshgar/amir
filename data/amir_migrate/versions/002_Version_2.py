@@ -225,7 +225,7 @@ def upgrade(migrate_engine):
             'cfgDesc' : u'Enter here'},
         {'cfgId' : 4, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'bank'          , 'cfgValue' : u'1',
             'cfgDesc' : u'Enter here'},
-        {'cfgId' : 5, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'cash'          , 'cfgValue' : u'14',
+        {'cfgId' : 5, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'cash'          , 'cfgValue' : u'3',
             'cfgDesc' : u'Enter here'},
         {'cfgId' : 6, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'buy'           , 'cfgValue' : u'17',
             'cfgDesc':u'Enter here'},
@@ -262,6 +262,10 @@ def upgrade(migrate_engine):
         { 'Id': 7, "Name":u"کشاورزی"},
         { 'Id': 8, "Name":u"ملت"},
         { 'Id': 9, "Name":u"ملی"}
+    )
+    op = custGroups.insert()
+    op.execute(
+        { 'custGrpId': 1, 'custGrpCode': 1, "custGrpName":u"عمومی", 'custGrpDesc': u"مشتریان عمومی"},
     )
 
 def downgrade(migrate_engine):

@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: amir\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-10-21 16:53+0330\n"
-"PO-Revision-Date: 2011-10-21 16:59+0330\n"
+"PO-Revision-Date: 2011-10-31 11:56+0330\n"
 "Last-Translator: Golnaz Nilieh <g382nilieh@gmail.com>\n"
 "Language-Team: persian <info@jooyeshgar.com>\n"
 "Language: \n"
@@ -1476,7 +1476,7 @@ msgstr "مجموع :"
 
 #: data/ui/automaticaccounting.glade:427
 msgid "Mod:"
-msgstr ""
+msgstr "مانده:"
 
 #: data/ui/automaticaccounting.glade:463 data/ui/bankaccounts.glade:152
 #: data/ui/cheque.glade:280
@@ -1956,6 +1956,19 @@ msgid ""
 "Amir; if not, write to the Free Software Foundation, Inc., 51 Franklin "
 "Street, Fifth Floor, Boston, MA  02110-1301  USA"
 msgstr ""
+"Amir is free software; you can redistribute it and/or modify it under the "
+"terms of the GNU General Public License as published by the Free Software "
+"Foundation; either version 3 of the License, or (at your option) any later "
+"version.\n"
+"\n"
+"Amir is distributed in the hope that it will be useful, but WITHOUT ANY "
+"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
+"FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
+"details.\n"
+"\n"
+"You should have received a copy of the GNU General Public License along with "
+"Amir; if not, write to the Free Software Foundation, Inc., 51 Franklin "
+"Street, Fifth Floor, Boston, MA  02110-1301  USA"
 
 #: data/ui/notebook.glade:7 data/ui/notebook.glade:288
 msgid "Add ledger"
