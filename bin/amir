@@ -165,9 +165,9 @@ class MainWindow(gobject.GObject):
 #         result = msgbox.run();
 #         if result == gtk.RESPONSE_CANCEL :
 #        msgbox.destroy()
-        return True
+#         return True
 #         else :
-#            return False
+        return False
         # Change FALSE to TRUE and the main window will not be destroyed
         # with a "delete_event".
 

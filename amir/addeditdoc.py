@@ -333,6 +333,7 @@ class AddEditDoc:
             msgbox.set_title(_("Can not save document"))
             msgbox.run()
             msgbox.destroy()
+            self.cl_document.clear_notebook()
             return
         if result == -2:
             msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 
@@ -340,6 +341,7 @@ class AddEditDoc:
             msgbox.set_title(_("Can not save document"))
             msgbox.run()
             msgbox.destroy()
+            self.cl_document.clear_notebook()
             return
         
         docnum = utility.localizeNumber(self.cl_document.number)

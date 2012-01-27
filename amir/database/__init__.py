@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-from migrate.versioning import exceptions,api
+from migrate.versioning import api
 # metadata = MetaData(bind=engine)
 
 ## \defgroup DataBase
@@ -50,7 +50,7 @@ class Database:
         try:
             dbversion = api.db_version(file, self.repository)
             #print dbversion
-        except exceptions.DatabaseNotControlledError:
+        except :
             dbversion = 0
             api.version_control(file, self.repository, dbversion)
         

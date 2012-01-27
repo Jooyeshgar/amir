@@ -62,6 +62,11 @@ class Document:
     def add_notebook(self, subject_id, value, desctxt):
         self.notebooks.append((subject_id, value, desctxt))
 
+    def clear_notebook(self):
+        self.notebooks = []
+        self.cheques = []
+        self.cheques_result = {}
+
     def add_cheque(self, subject_id, value, desctxt, cheque_id):
         self.cheques.append((subject_id, value, desctxt, cheque_id))
         self.cheques_result[cheque_id] = None
