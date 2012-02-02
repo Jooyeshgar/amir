@@ -37,12 +37,14 @@ class DocumentReport:
 
     def createReport(self):
         number = unicode(self.number.get_text())
-        if re.match('^\d$', number) != None:
+        
+        if re.match('^\d+$', number) != None:
             self.docnumbers=[int(number)]
         elif re.match('^(\d+)-(\d+)$', number) != None:
             m = re.match('^(\d+)-(\d+)$', number)
             self.docnumbers=range(int(m.group(1)),int(m.group(2))+1)
         else:
+            print 'error'
             return
         
 #        self.docnumber = self.number.get_text()
@@ -56,7 +58,7 @@ class DocumentReport:
         credit_sum = 0
         query1 = config.db.session.query(Bill, Notebook, Subject)
         query1 = query1.select_from(outerjoin(outerjoin(Notebook, Subject, Notebook.subject_id == Subject.id), Bill, Notebook.bill_id == Bill.id))
-        query1 = query1.filter(Bill.number.in_(self.docnumbers)).order_by([Bill.number.asc(),Notebook.id.asc()])
+        query1 = query1.filter(Bill.number.in_(self.docnumbers)).order_by(Bill.number.asc(),Notebook.id.asc())
         res = query1.all()
         if len(res) == 0:
             msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 

@@ -20,15 +20,14 @@ class ChequeHistory(Base):
     DueDate  = Column(Date,         nullable = False)
     Serial   = Column(Unicode(50),  nullable = False)
     Status   = Column(Integer,      ColumnDefault(0), nullable = False)
-    Cust     = Column( Integer,      ForeignKey('customers.custId'))
+    Cust     = Column(Integer,      ForeignKey('customers.custId'))
     Account  = Column(Integer,      ForeignKey('bankAccounts.accId'), nullable = True)
     TransId  = Column(Integer,      ColumnDefault(0)) #Transaction id is zero for non-invoice cheques.
-    BillId   = Column(Integer,      ColumnDefault(0)) #Bill id is zero for temporary transactions.
     Desc     = Column(Unicode(200), nullable = True)
     Date     = Column(Date, nullable=False)
 
     def __init__( self, ChequeId, Amount, WrtDate, DueDate, Serial,
-                  Status, Cust, Account, TransId, BillId, Desc, Order):
+                  Status, Cust, Account, TransId, Desc, Date):
         self.ChequeId = ChequeId
         self.Amount   = Amount
         self.WrtDate  = WrtDate
@@ -38,9 +37,8 @@ class ChequeHistory(Base):
         self.Cust     = Cust
         self.Account  = Account
         self.TransId  = TransId
-        self.BillId   = BillId
         self.Desc     = Desc
-        self.Order    = Order
+        self.Date    = Date
 
 ## @}
 

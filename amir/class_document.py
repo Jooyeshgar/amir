@@ -2,6 +2,8 @@ from amirconfig import config
 from database import Bill
 from database import Notebook
 from database import Subject
+from database import Cheque
+from database import ChequeHistory
 
 from datetime import date
 from sqlalchemy.orm.util import outerjoin
@@ -21,6 +23,7 @@ class Document:
         self.new_date = date.today()
         self.notebooks = []
         self.cheques = []
+        self.spend_cheques = []
         self.cheques_result = {}
 
     def set_bill(self, number):
@@ -59,20 +62,22 @@ class Document:
         config.db.session.query(Bill).filter(Bill.id == self.id).delete()
         config.db.session.commit()
         
-    def add_notebook(self, subject_id, value, desctxt):
-        self.notebooks.append((subject_id, value, desctxt))
-
+    def add_notebook(self, subject_id, value, desctxt, id=None):
+        self.notebooks.append((subject_id, value, desctxt ,id))
+    
     def clear_notebook(self):
         self.notebooks = []
         self.cheques = []
         self.cheques_result = {}
 
     def add_cheque(self, subject_id, value, desctxt, cheque_id):
-        self.cheques.append((subject_id, value, desctxt, cheque_id))
+        self.cheques.append((subject_id, float(value), desctxt, cheque_id))
         self.cheques_result[cheque_id] = None
-
-    def save(self):
+    
+        
+    def save(self,delete_items=None):
         if len(self.notebooks) == 0:
+            self.notebooks = []
             return -1
 
         sum = 0
@@ -81,10 +86,40 @@ class Document:
         for cheque in self.cheques:
             sum += cheque[1]
         if sum != 0:
+            self.notebooks = []
             return -2
         
         if self.number > 0:
-            self.delete()
+            bill = config.db.session.query(Bill).select_from(Bill)
+            notebooks = config.db.session.query(Notebook).select_from(Notebook)
+            bill = bill.filter(Bill.number == self.number).first()
+            bill.lastedit_date = date.today()
+            notebook_ides = []
+            for notbook in self.notebooks:
+                
+                print notbook
+                if notbook[3] == 0:
+                    config.db.session.add(Notebook(notbook[0], self.id, notbook[1], notbook[2]))
+                else:
+                    print 'fff'
+                    temp = None
+                    temp = notebooks.filter(Notebook.id == notbook[3]).first()
+                    print temp
+                    temp.subject_id = notbook[0]
+                    temp.desc = notbook[2]
+                    temp.value = notbook[1]
+                    temp_2 = None
+                    temp_2 = config.db.session.query(Cheque).select_from(Cheque).filter(Cheque.chqNoteBookId == notbook[3]).first()
+                    print temp_2
+                    if temp_2 != None:
+                        print 'it_is_cheque'
+                        temp_2.chqAmount = abs(notbook[1])
+                        temp_2.chqDesc = notbook[2]
+                        cheque_his = ChequeHistory(temp_2.chqId,temp_2.chqAmount,temp_2.chqWrtDate,temp_2.chqDueDate,temp_2.chqSerial,temp_2.chqStatus
+                                                            , temp_2.chqCust, temp_2.chqAccount, temp_2.chqTransId, temp_2.chqDesc , date.today())
+                        config.db.session.add(cheque_his)
+            for deletes in delete_items:
+                config.db.session.query(Notebook).filter(Notebook.id == deletes).delete()
         else:
             query = config.db.session.query(Bill.number).select_from(Bill)
             last = query.order_by(Bill.number.desc()).first()
@@ -93,27 +128,27 @@ class Document:
             else:
                 self.number = 1
 
-        bill = Bill(self.number, self.creation_date, date.today(), self.new_date, False)
-        config.db.session.add(bill)
-        config.db.session.commit()
-        
-        query = config.db.session.query(Bill).select_from(Bill)
-        query = query.filter(Bill.number == self.number)
-        self.id = query.first().id
-        
-        for notebook in self.notebooks:
-            config.db.session.add(Notebook(notebook[0], self.id, notebook[1], notebook[2]))
-
-        config.db.session.commit()
-
-        for cheque in self.cheques:
-            n = Notebook(cheque[0], self.id, cheque[1], cheque[2])
-            config.db.session.add(n)
+            bill = Bill(self.number, self.creation_date, date.today(), self.new_date, False)
+            config.db.session.add(bill)
             config.db.session.commit()
-            self.cheques_result[cheque[3]] = n.id
+        
+            query = config.db.session.query(Bill).select_from(Bill)
+            query = query.filter(Bill.number == self.number)
+            self.id = query.first().id
+        
+            for notebook in self.notebooks:
+                config.db.session.add(Notebook(notebook[0], self.id, notebook[1], notebook[2]))
+
+            config.db.session.commit()
+
+            for cheque in self.cheques:
+                n = Notebook(cheque[0], self.id, cheque[1], cheque[2])
+                config.db.session.add(n)
+                config.db.session.commit()
+                self.cheques_result[cheque[3]] = n.id
 
         self.notebooks = []
-
+        config.db.session.commit()
         return self.id
 
     def get_error_message(self, code):

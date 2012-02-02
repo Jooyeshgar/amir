@@ -89,7 +89,7 @@ class BankAccountsUI:
             accBank = self.bankaccounts_class.get_bank_name(account.accBank)
             model.set(iter, 0, account.accId, 1, account.accName, 2, account.accNumber, 3, account.accOwner, 4, accType, 5, accBank)
         window.show_all()
-
+    #add acount
     def add_account(self, id=-1):
         if id > 0:
             account = self.bankaccounts_class.get_account(id)

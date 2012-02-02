@@ -1,5 +1,4 @@
 import gtk
-
 import class_document
 import numberentry
 import dateentry
@@ -14,6 +13,9 @@ from helpers import get_builder
 
 class AddEditDoc:
     def __init__(self, number=0):
+        self.new_items = []
+        self.deleted_items = []
+        self.edit_items = []
         self.builder = get_builder("document")
         
         self.window = self.builder.get_object("window1")
@@ -43,7 +45,7 @@ class AddEditDoc:
             halign = 1
         else:
             halign = 0
-        self.liststore = gtk.ListStore(str, str, str, str, str, str)
+        self.liststore = gtk.ListStore(str, str, str, str, str, str, str)
         
         column = gtk.TreeViewColumn(_("Index"), gtk.CellRendererText(), text=0)
         column.set_alignment(halign)
@@ -75,6 +77,11 @@ class AddEditDoc:
         column.set_resizable(True)
         self.treeview.append_column(column)
         column = gtk.TreeViewColumn(_("Description"), gtk.CellRendererText(), text=5)
+        column.set_alignment(halign)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        self.treeview.append_column(column)
+        column = gtk.TreeViewColumn(_("Notebook ID") , gtk.CellRendererText(), text=6)
         column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
@@ -138,7 +145,7 @@ class AddEditDoc:
             if config.digittype == 1:
                 code = utility.convertToPersian(code)
                 numrows = utility.convertToPersian(numrows)
-            self.liststore.append((numrows, code, s.name, debt, credit, n.desc))
+            self.liststore.append((numrows, code, s.name, debt, credit, n.desc, n.id))
             
         docnum = utility.localizeNumber(self.cl_document.number)
         self.builder.get_object("docnumber").set_text (docnum)
@@ -255,7 +262,7 @@ class AddEditDoc:
             numrows = str(self.numrows)
             if config.digittype == 1:
                 numrows = utility.convertToPersian(numrows)
-            self.liststore.append ((numrows, code, sub.name, debt, credit, desc))
+            self.liststore.append ((numrows, code, sub.name, debt, credit, desc, None))
             
         self.builder.get_object("debtsum").set_text (utility.showNumber(self.debt_sum))
         self.builder.get_object("creditsum").set_text (utility.showNumber(self.credit_sum))
@@ -274,11 +281,13 @@ class AddEditDoc:
             msgbox.set_title(_("Are you sure?"))
             result = msgbox.run();
             if result == gtk.RESPONSE_OK :
-                
+                id     = int(unicode(self.liststore.get(iter, 6)[0]))
+                code   = int(unicode(self.liststore.get(iter, 1)[0]))
                 debt   = int(unicode(self.liststore.get(iter, 3)[0].replace(",", "")))
                 credit = int(unicode(self.liststore.get(iter, 4)[0].replace(",", "")))
                 index  = int(unicode(self.liststore.get(iter, 0)[0]))
                 res    = self.liststore.remove(iter)
+                self.deleted_items.append(id)
                 #Update index of next rows
                 if res:
                     while iter != None:
@@ -313,6 +322,11 @@ class AddEditDoc:
             code = utility.convertToLatin(self.liststore.get(iter, 1)[0])
             debt = unicode(self.liststore.get(iter, 3)[0].replace(",", ""))
             value = -(int(debt))
+            if(self.liststore.get(iter,6)[0] != None):
+                id = self.liststore.get(iter,6)[0]
+            else:
+                id = 0
+            print id
             if value == 0 :
                 credit = unicode(self.liststore.get(iter, 4)[0].replace(",", ""))
                 value = int(credit)
@@ -322,11 +336,11 @@ class AddEditDoc:
             query = query.filter(Subject.code == code)
             subject_id = query.first().id
             
-            self.cl_document.add_notebook(subject_id, value, desctxt)
+            self.cl_document.add_notebook(subject_id, value, desctxt, int(id))
             
             iter = self.liststore.iter_next(iter)
 
-        result = self.cl_document.save()
+        result = self.cl_document.save(self.deleted_items)
         if result == -1:
             msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 
                                        _("Document should not be empty"))

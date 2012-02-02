@@ -58,6 +58,7 @@ class AutomaticAccounting:
         11: (True , False, True , True , True , 'cash,bank', 'partner'),
     }
     def __init__(self, background):
+        self.mode = None
         self.main_window_background = background
         # Chosen Type
         self.type_index = None
@@ -66,13 +67,13 @@ class AutomaticAccounting:
         self.builder = helpers.get_builder('automaticaccounting')
         self.builder.connect_signals(self)
 
-        self.chequeui = chequeui.ChequeUI(self.builder.get_object('non-cash-payment-label'))
-
+        self.chequeui = chequeui.ChequeUI(self.builder.get_object('non-cash-payment-label'),self.builder.get_object('spend-cheque-label'))
         # Date entry
         date_box = self.builder.get_object('date-box')
         self.date_entry = dateentry.DateEntry()
         date_box.pack_start(self.date_entry, False, False)
-
+        self.current_time = self.date_entry.getDateObject()
+        print self.current_time
         # type combo
         type_combo = self.builder.get_object('select-type')
         model = gtk.ListStore(str, str)
@@ -127,13 +128,12 @@ class AutomaticAccounting:
             return
         
         self.chequeui.new_cheques = []
-
+        self.chequeui.spend_cheques = []
         model = combo.get_model()
         index = model.get(iter, 0)[0]
         self.type_index = int(index)
         
         save_button = self.builder.get_object('save-button')
-        save_button.set_sensitive(False)
         
         non_cash, discount, spend_cheque = self.type_configs[self.type_index][:3]
 
@@ -249,10 +249,10 @@ class AutomaticAccounting:
     def on_cash_payment_entry_change(self, entry):
         val1 = self.cash_payment_entry.get_float()
         val2 = float(unicode(self.builder.get_object('non-cash-payment-label').get_text()).replace('/', '.'))
-
+        val3 = float(unicode(self.builder.get_object('spend-cheque-label').get_text()).replace('/','.'))
         discount = self.discount_entry.get_float()
 
-        paid = val1+val2+discount
+        paid = val1+val2+val3+discount
         paid_label = self.builder.get_object('paid')
         paid_label.set_text(str(paid))
 
@@ -310,12 +310,18 @@ class AutomaticAccounting:
 
     def on_non_cash_payment_button_clicked(self, button):
         if self.type_configs[self.type_index][3]:
-            mode = 'our'
+            self.mode = 'our'
         else:
-            mode = 'other'
+            self.mode = 'other'
 
-        self.chequeui.list_cheques(mode)
+        self.chequeui.list_cheques(self.mode)
 
+    def on_spend_cheque_buttun_clicked(self,button):
+        cl_cheque = class_cheque.ClassCheque()
+        self.chequeui.list_cheques(None, 1)
+        cl_cheque.save_cheque_history()
+        
+        
     def on_save_button_clicked(self, button):
         result = {}
         result['type']                  = self.type_index
@@ -339,10 +345,16 @@ class AutomaticAccounting:
             document.add_notebook(dbconf.get_int('sell-discount'), -result['discount'], result['desc'])
         cl_cheque = class_cheque.ClassCheque()
         for cheque in self.chequeui.new_cheques:
-            document.add_cheque(result['to'], -cheque['amount'], cheque['desc'], cheque['serial'])
-
+            if self.mode == 'our':
+                document.add_cheque(dbconf.get_int('our_cheque'), -cheque['amount'], cheque['desc'], cheque['serial'])
+            else:
+                document.add_cheque(dbconf.get_int('other_cheque'), -cheque['amount'], cheque['desc'], cheque['serial'])
+        #spendble cheque
+        for sp_cheque in self.chequeui.spend_cheques:
+            cl_cheque.update_status(sp_cheque['serial'],5)
+            document.add_cheque(dbconf.get_int('other_cheque'), -sp_cheque['amount'] , unicode('kharj shodeh') , sp_cheque['serial'])
+                
         result = document.save()
-
         if result < 0:
             dialog = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 'Failed, %s' % document.get_error_message(result))
             dialog.run()
@@ -359,9 +371,9 @@ class AutomaticAccounting:
             cl_cheque.add_cheque(cheque['amount'], cheque['write_date'], cheque['due_date'],
                                  cheque['serial'], cheque['status'],
                                  customer_id, cheque['bank_account_id'],
-                                 0, notebook_id, cheque['desc'])
+                                 result, notebook_id, cheque['desc'])
         cl_cheque.save()
-
+        cl_cheque.save_cheque_history(self.current_time)
         self.on_destroy(self.builder.get_object('general'))
 
         infobar = gtk.InfoBar()
