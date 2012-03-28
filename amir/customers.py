@@ -378,7 +378,7 @@ class Customer(customergroup.Group):
             self.builder.get_object("custTypeSellerChk").set_active(customer.custTypeSeller)
             self.builder.get_object("custTypeMateChk").set_active(customer.custTypeMate)
             self.builder.get_object("custTypeAgentChk").set_active(customer.custTypeAgent)
-            self.custIntroducerEntry.set_text(customer.custIntroducer)
+            #self.custIntroducerEntry.set_text(customer.custIntroducer)
             self.boxCommissionRateEntry.set_text(customer.custCommission)
             self.boxDiscRateEntry.set_text(customer.custDiscRate)
             self.builder.get_object("markedChk").set_active(customer.custMarked)

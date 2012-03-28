@@ -124,9 +124,11 @@ class Payments(gobject.GObject):
 		total = 0
 		query = self.session.query(Cheque, Customers.custName)
 		query = query.select_from(outerjoin(Cheque, Customers, Cheque.chqCust == Customers.custId))
-		query = query.filter(and_(Cheque.chqTransId == self.transId, 
-		                          Cheque.chqBillId == self.billId))
-		cheqlist = query.order_by(Cheque.chqOrder.asc()).all()
+		#TODO find why chqBillId  and chqOrder has been removed and what must be do!
+		#query = query.filter(and_(Cheque.chqTransId == self.transId, Cheque.chqBillId == self.billId))
+		query = query.filter(Cheque.chqTransId == self.transId)
+		#cheqlist = query.order_by(Cheque.chqOrder.asc()).all()
+		cheqlist = query.all()
 		for cheq, cname in cheqlist:
 			self.numcheqs += 1
 			total += cheq.chqAmount

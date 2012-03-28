@@ -48,17 +48,14 @@ class AddEditDoc:
         self.liststore = gtk.ListStore(str, str, str, str, str, str, str)
         
         column = gtk.TreeViewColumn(_("Index"), gtk.CellRendererText(), text=0)
-        column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
         column = gtk.TreeViewColumn(_("Subject Code"), gtk.CellRendererText(), text=1)
-        column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
         column = gtk.TreeViewColumn(_("Subject Name"), gtk.CellRendererText(), text=2)
-        column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
         
@@ -67,25 +64,22 @@ class AddEditDoc:
         
         self.treeview.append_column(column)
         column = gtk.TreeViewColumn(_("Debt"), money_cell_renderer, text=3)
-        column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
         column = gtk.TreeViewColumn(_("Credit"), money_cell_renderer, text=4)
-        column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
         column = gtk.TreeViewColumn(_("Description"), gtk.CellRendererText(), text=5)
-        column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
-        column = gtk.TreeViewColumn(_("Notebook ID") , gtk.CellRendererText(), text=6)
-        column.set_alignment(halign)
-        column.set_spacing(5)
-        column.set_resizable(True)
-        self.treeview.append_column(column)
+        #column = gtk.TreeViewColumn(_("Notebook ID") , gtk.CellRendererText(), text=6)
+        #column.set_alignment(halign)
+        #column.set_spacing(5)
+        #column.set_resizable(True)
+        #self.treeview.append_column(column)
 
         self.treeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
         
@@ -326,7 +320,6 @@ class AddEditDoc:
                 id = self.liststore.get(iter,6)[0]
             else:
                 id = 0
-            print id
             if value == 0 :
                 credit = unicode(self.liststore.get(iter, 4)[0].replace(",", ""))
                 value = int(credit)
@@ -349,7 +342,7 @@ class AddEditDoc:
             msgbox.destroy()
             self.cl_document.clear_notebook()
             return
-        if result == -2:
+        elif result == -2:
             msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 
                                        _("Debt sum and Credit sum should be equal"))
             msgbox.set_title(_("Can not save document"))
@@ -357,6 +350,10 @@ class AddEditDoc:
             msgbox.destroy()
             self.cl_document.clear_notebook()
             return
+        else:
+            self.liststore.clear()
+            self.deleted_items = []
+            self.showRows()
         
         docnum = utility.localizeNumber(self.cl_document.number)
         self.builder.get_object("docnumber").set_text (docnum)

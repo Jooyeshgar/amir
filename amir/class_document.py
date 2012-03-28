@@ -97,22 +97,17 @@ class Document:
             notebook_ides = []
             for notbook in self.notebooks:
                 
-                print notbook
                 if notbook[3] == 0:
                     config.db.session.add(Notebook(notbook[0], self.id, notbook[1], notbook[2]))
                 else:
-                    print 'fff'
                     temp = None
                     temp = notebooks.filter(Notebook.id == notbook[3]).first()
-                    print temp
                     temp.subject_id = notbook[0]
                     temp.desc = notbook[2]
                     temp.value = notbook[1]
                     temp_2 = None
                     temp_2 = config.db.session.query(Cheque).select_from(Cheque).filter(Cheque.chqNoteBookId == notbook[3]).first()
-                    print temp_2
                     if temp_2 != None:
-                        print 'it_is_cheque'
                         temp_2.chqAmount = abs(notbook[1])
                         temp_2.chqDesc = notbook[2]
                         cheque_his = ChequeHistory(temp_2.chqId,temp_2.chqAmount,temp_2.chqWrtDate,temp_2.chqDueDate,temp_2.chqSerial,temp_2.chqStatus
