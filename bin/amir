@@ -295,7 +295,7 @@ class MainWindow(gobject.GObject):
         logging.info('New locale: ' + new_locale)
 
     def automaticAccounting(self, sender):
-        obj = automaticaccounting.AutomaticAccounting(self.background)
+        obj = automaticaccounting.AutomaticAccounting()
         obj.run()
 
     def showBankAccounts(self, sender):

@@ -4,6 +4,7 @@ import numberentry
 import dateentry
 import subjects
 import utility
+import automaticaccounting
 from amirconfig import config
 from database import Subject
 from helpers import get_builder
@@ -86,7 +87,8 @@ class AddEditDoc:
         self.debt_sum   = 0
         self.credit_sum = 0
         self.numrows    = 0
-
+        
+        self.auto_win   = None
         self.cl_document = class_document.Document()
 
         if number > 0:
@@ -165,10 +167,7 @@ class AddEditDoc:
             code = self.code.get_text()
             amount = self.amount.get_text()
             if code != '' and amount != '':
-                self.saveRow(utility.convertToLatin(code),
-                             int(unicode(amount)),
-                             type,
-                             desc.get_text())
+                self.saveRow(utility.convertToLatin(code), int(unicode(amount)), type, desc.get_text())
         dialog.hide()
     
     def editRow(self, sender):
@@ -215,7 +214,6 @@ class AddEditDoc:
             
             dialog.hide()
         
-    #TODO add progress bar
     def saveRow(self, code, amount, type, desc, iter=None):
         query = config.db.session.query(Subject).select_from(Subject)
         query = query.filter(Subject.code == code)
@@ -244,10 +242,9 @@ class AddEditDoc:
         if type == 0:
             debt = utility.showNumber(amount)
             self.debt_sum += amount
-        else:
-            if type == 1:
-                credit = utility.showNumber(amount)
-                self.credit_sum += amount
+        elif type == 1:
+            credit = utility.showNumber(amount)
+            self.credit_sum += amount
                  
         if iter != None:
             self.liststore.set (iter, 1, code, 2, sub.name, 3, debt, 4, credit, 5, desc)
@@ -310,7 +307,6 @@ class AddEditDoc:
         self.cl_document.new_date = self.date.getDateObject()
         
         #TODO if number is not equal to the maximum BigInteger value, prevent bill registration.
-                
         iter = self.liststore.get_iter_first()
         while iter != None :
             code = utility.convertToLatin(self.liststore.get(iter, 1)[0])
@@ -401,6 +397,14 @@ class AddEditDoc:
             self.cl_document.delete()
             self.window.destroy()
         msgbox.destroy() 
+
+    def auto_Document(self, sender):
+        auto_win = automaticaccounting.AutomaticAccounting()
+        #auto_win.connect("auto-saved", self.auto_Saved)
+        auto_win.run(self.window, self.liststore)
+
+    def auto_Saved(self, sender):
+        self.showRows()
 
     def selectSubject(self, sender):
         subject_win = subjects.Subjects()

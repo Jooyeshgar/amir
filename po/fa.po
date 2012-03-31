@@ -2,14 +2,14 @@
 # Copyright (C) YEAR ORGANIZATION
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # Hadi Aminzadeh <ha_60@yahoo.com>, 2010.
-# Golnaz Nilieh <g382nilieh@gmail.com>, 2011.
+# Golnaz Nilieh <g382nilieh@gmail.com>, 2011, 2012.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: amir\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-21 16:53+0330\n"
-"PO-Revision-Date: 2011-10-31 11:56+0330\n"
+"POT-Creation-Date: 2012-03-30 20:56+0430\n"
+"PO-Revision-Date: 2012-03-30 21:41+0430\n"
 "Last-Translator: Golnaz Nilieh <g382nilieh@gmail.com>\n"
 "Language-Team: persian <info@jooyeshgar.com>\n"
 "Language: \n"
@@ -20,52 +20,52 @@ msgstr ""
 "X-Generator: Launchpad (build Unknown)\n"
 "Generated-By: pygettext.py 1.5\n"
 
-#: amir/addeditdoc.py:20
+#: amir/addeditdoc.py:23
 msgid "Register new document"
 msgstr "ثبت سند جدید"
 
-#: amir/addeditdoc.py:32 amir/notebookreport.py:38 amir/productgroup.py:42
+#: amir/addeditdoc.py:35 amir/notebookreport.py:38 amir/productgroup.py:42
 #: amir/productgroup.py:49
 msgid "Press Enter to see available subjects."
 msgstr "برای مشاهده سرفصل ها اینتر را فشار دهید."
 
-#: amir/addeditdoc.py:48 amir/docreport.py:59
+#: amir/addeditdoc.py:51 amir/docreport.py:72
 msgid "Index"
 msgstr "ردیف"
 
-#: amir/addeditdoc.py:53 amir/docreport.py:59 amir/notebookreport.py:177
+#: amir/addeditdoc.py:55 amir/docreport.py:72 amir/notebookreport.py:177
 #: amir/notebookreport.py:275 amir/notebookreport.py:277 amir/subjects.py:36
 msgid "Subject Code"
 msgstr "کد سرفصل"
 
-#: amir/addeditdoc.py:58 amir/docreport.py:59 amir/notebookreport.py:275
+#: amir/addeditdoc.py:59 amir/docreport.py:72 amir/notebookreport.py:275
 #: amir/notebookreport.py:277 amir/subjects.py:41
 msgid "Subject Name"
 msgstr "عنوان سرفصل"
 
-#: amir/addeditdoc.py:67 amir/docreport.py:59 amir/notebookreport.py:177
+#: amir/addeditdoc.py:67 amir/docreport.py:72 amir/notebookreport.py:177
 #: amir/notebookreport.py:201 amir/tbalancereport.py:53
-#: data/ui/document.glade:501
+#: data/ui/document.glade:150
 msgid "Debt"
 msgstr "بدهکاری"
 
-#: amir/addeditdoc.py:72 amir/customers.py:91 amir/docreport.py:59
+#: amir/addeditdoc.py:71 amir/customers.py:91 amir/docreport.py:72
 #: amir/notebookreport.py:177 amir/notebookreport.py:201
-#: amir/tbalancereport.py:53 data/ui/document.glade:514
+#: amir/tbalancereport.py:53 data/ui/document.glade:166
 msgid "Credit"
 msgstr "بستانکاری"
 
-#: amir/addeditdoc.py:77 amir/customergroup.py:62 amir/docreport.py:59
+#: amir/addeditdoc.py:75 amir/customergroup.py:62 amir/docreport.py:72
 #: amir/notebookreport.py:177 amir/notebookreport.py:201 amir/payments.py:76
 #: amir/payments.py:86 amir/sellProducts.py:105 amir/warehousing.py:142
 msgid "Description"
 msgstr "توضیح"
 
-#: amir/addeditdoc.py:94
+#: amir/addeditdoc.py:97
 msgid "Edit document"
 msgstr "ویرایش سند"
 
-#: amir/addeditdoc.py:97
+#: amir/addeditdoc.py:100
 #, python-format
 msgid ""
 "No document found with number %s\n"
@@ -74,122 +74,153 @@ msgstr ""
 "سندی با شماره %s پیدا نشد\n"
 "آیا مایلید سندی با این شماره ثبت کنید؟"
 
-#: amir/addeditdoc.py:99
+#: amir/addeditdoc.py:102
 msgid "No Documents found"
 msgstr "هیچ سندی پیدا نشد"
 
-#: amir/addeditdoc.py:155
+#: amir/addeditdoc.py:158
 msgid "Add new row"
 msgstr "اضافه کردن سطر جدید"
 
-#: amir/addeditdoc.py:175 data/ui/document.glade:38
+#: amir/addeditdoc.py:175 data/ui/document.glade:386
 msgid "Edit row"
 msgstr "ویرایش سطر"
 
-#: amir/addeditdoc.py:225 amir/notebookreport.py:111
+#: amir/addeditdoc.py:224 amir/notebookreport.py:111
 #, python-format
 msgid "No subject is registered with the code: %s"
 msgstr "هیچ سرفصلی با کد %s ثبت نشده است"
 
-#: amir/addeditdoc.py:227 amir/notebookreport.py:113
+#: amir/addeditdoc.py:226 amir/notebookreport.py:113
 msgid "No subjects found"
 msgstr "هیچ سرفصلی پیدا نشد"
 
-#: amir/addeditdoc.py:273
+#: amir/addeditdoc.py:271
 msgid "Are you sure to remove this row?"
 msgstr "آیا از حذف این ردیف مطمئن هستید؟"
 
-#: amir/addeditdoc.py:274 amir/addeditdoc.py:369 amir/addeditdoc.py:384
+#: amir/addeditdoc.py:272 amir/addeditdoc.py:378 amir/addeditdoc.py:393
 #: amir/sellProducts.py:342 amir/setting.py:180 amir/setting.py:226
 #: amir/warehousing.py:214 amir/warehousing.py:243 amir/warehousing.py:801
 #: bin/amir:260
 msgid "Are you sure?"
 msgstr "آیا مطمئن هستید؟"
 
-#: amir/addeditdoc.py:332
+#: amir/addeditdoc.py:335
 msgid "Document should not be empty"
 msgstr "سند نمی تواند خالی باشد"
 
-#: amir/addeditdoc.py:333 amir/addeditdoc.py:340
+#: amir/addeditdoc.py:336 amir/addeditdoc.py:344
 msgid "Can not save document"
 msgstr "امکان ذخیره سند وجود ندارد"
 
-#: amir/addeditdoc.py:339
+#: amir/addeditdoc.py:343
 msgid "Debt sum and Credit sum should be equal"
 msgstr "جمع بدهکاری و جمع بستانکاری باید با هم برابر باشند"
 
-#: amir/addeditdoc.py:349
+#: amir/addeditdoc.py:358
 #, python-format
 msgid "Document saved with number %s."
 msgstr "سند با شماره %s ذخیره شد."
 
-#: amir/addeditdoc.py:350
+#: amir/addeditdoc.py:359
 msgid "Successfully saved"
 msgstr "با موفقیت ذخیره شد."
 
-#: amir/addeditdoc.py:361
+#: amir/addeditdoc.py:370
 msgid "You should save the document before make it permanent"
 msgstr "قبل از اینکه سند را دائمی کنید باید آنرا ذخیره کنید."
 
-#: amir/addeditdoc.py:362
+#: amir/addeditdoc.py:371
 msgid "Document is not saved"
 msgstr "سند ذخیره نشده"
 
-#: amir/addeditdoc.py:368
+#: amir/addeditdoc.py:377
 msgid "Are you sure to make this document temporary?"
 msgstr "آیا از موقت کردن سند اطمینان دارید؟"
 
-#: amir/addeditdoc.py:383
+#: amir/addeditdoc.py:392
 msgid "Are you sure to delete the whole document?"
 msgstr "آیا از حذف کامل سند اطمینان دارید؟"
 
-#: amir/automaticaccounting.py:24
+#: amir/automaticaccounting.py:26
 msgid "Get From Customer"
 msgstr "دریافت از طرف حساب"
 
-#: amir/automaticaccounting.py:25
+#: amir/automaticaccounting.py:27
 msgid "Pay To Customer"
 msgstr "پرداخت به طرف حساب"
 
-#: amir/automaticaccounting.py:26
+#: amir/automaticaccounting.py:28
 msgid "Bank To Bank"
 msgstr "بانک به بانک"
 
-#: amir/automaticaccounting.py:27
+#: amir/automaticaccounting.py:29
 msgid "Cash To Bank"
 msgstr "صندوق به بانک"
 
-#: amir/automaticaccounting.py:28
+#: amir/automaticaccounting.py:30
 msgid "Bank To Cash"
 msgstr "بانک به صندوق"
 
-#: amir/automaticaccounting.py:29
-msgid "Bank Wage"
-msgstr "بهره بانکی"
-
-#: amir/automaticaccounting.py:30
-msgid "havale taraf hesab"
-msgstr "حواله طرف حساب"
-
 #: amir/automaticaccounting.py:31
-msgid "Padakhte naghdi az bank"
-msgstr "پرداخت نقدی از بانک"
+msgid "Bank Fee"
+msgstr "کارمزد بانک"
 
 #: amir/automaticaccounting.py:32
+msgid "Transfer To Customer"
+msgstr "پرداخت به طرف حساب"
+
+#: amir/automaticaccounting.py:33
 msgid "Investment"
 msgstr "سرمایه گذاری"
 
-#: amir/automaticaccounting.py:33
+#: amir/automaticaccounting.py:34
 msgid "Cost"
 msgstr "پرداخت هزینه"
 
-#: amir/automaticaccounting.py:34
+#: amir/automaticaccounting.py:35
 msgid "Income"
 msgstr "درآمد"
 
-#: amir/automaticaccounting.py:35
+#: amir/automaticaccounting.py:36
 msgid "Removal"
 msgstr "برداشت"
+
+#: amir/automaticaccounting.py:385
+#, python-format
+msgid "successfully added. Document number : %d"
+msgstr "با موفقیت اضافه شد. شماره سند : %d"
+
+#: amir/chequeui.py:52
+msgid "Customer"
+msgstr "طرف حساب"
+
+#: amir/chequeui.py:54 data/ui/cheque.glade:105
+msgid "Bank Account"
+msgstr "حساب بانکی"
+
+#: amir/chequeui.py:56
+msgid "Bank/Branch"
+msgstr "شعبه"
+
+#: amir/chequeui.py:58 data/ui/cheque.glade:17
+msgid "Serial"
+msgstr "شماره سریال"
+
+#: amir/chequeui.py:60 amir/payments.py:75 amir/payments.py:85
+#: data/ui/cheque.glade:42
+msgid "Amount"
+msgstr "مقدار"
+
+#: amir/chequeui.py:63 amir/payments.py:75 amir/payments.py:85
+#: data/ui/cheque.glade:80
+msgid "Due Date"
+msgstr "تاریخ سررسید"
+
+#: amir/chequeui.py:104
+msgid "Use Ctrl to select multiply"
+msgstr "برای انتخاب دسته جمعی از Ctrl استفاده کنید."
 
 #: amir/customergroup.py:48 amir/customers.py:72 amir/product.py:57
 #: amir/productgroup.py:62 amir/warehousing.py:68 amir/warehousing.py:720
@@ -288,24 +319,25 @@ msgstr "ویرایش طرف حساب"
 msgid "Save Customer"
 msgstr "ذخیره طرف حساب"
 
-#: amir/docreport.py:52
+#: amir/docreport.py:65
 msgid "No document found with the requested number."
 msgstr "سندی با شماره خواسته شده پیدا نشد."
 
-#: amir/docreport.py:53
+#: amir/docreport.py:66
 msgid "Invalid document number"
 msgstr "شماره سند نادرست است"
 
-#: amir/docreport.py:94
+#: amir/docreport.py:114
 msgid "Accounting Document"
 msgstr "سند حسابداری"
 
-#: amir/docreport.py:94
+#: amir/docreport.py:114 amir/printreport.py:609
 msgid "Document Number"
 msgstr "شماره سند"
 
-#: amir/docreport.py:94 amir/notebookreport.py:177 amir/notebookreport.py:201
-#: amir/notebookreport.py:266 amir/tbalancereport.py:119
+#: amir/docreport.py:114 amir/notebookreport.py:177 amir/notebookreport.py:201
+#: amir/notebookreport.py:266 amir/printreport.py:609
+#: amir/tbalancereport.py:119
 msgid "Date"
 msgstr "تاریخ"
 
@@ -353,18 +385,18 @@ msgstr "ت.ش"
 msgid "Remaining"
 msgstr "مانده"
 
-#: amir/notebookreport.py:217 amir/previewreport.py:103
-#: amir/previewreport.py:108 amir/printreport.py:417 amir/printreport.py:422
+#: amir/notebookreport.py:217 amir/previewreport.py:104
+#: amir/previewreport.py:109 amir/printreport.py:440 amir/printreport.py:445
 msgid "deb"
 msgstr "بد"
 
-#: amir/notebookreport.py:221 amir/previewreport.py:112
-#: amir/printreport.py:426
+#: amir/notebookreport.py:221 amir/previewreport.py:113
+#: amir/printreport.py:449
 msgid "equ"
 msgstr "بی"
 
-#: amir/notebookreport.py:223 amir/previewreport.py:114
-#: amir/printreport.py:428
+#: amir/notebookreport.py:223 amir/previewreport.py:115
+#: amir/printreport.py:451
 msgid "cre"
 msgstr "بس"
 
@@ -438,20 +470,12 @@ msgstr "خیر."
 msgid "Paid by"
 msgstr "پرداخت توسط"
 
-#: amir/payments.py:75 amir/payments.py:85 data/ui/cheque.glade:110
-msgid "Amount"
-msgstr "مقدار"
-
 #: amir/payments.py:75 amir/payments.py:85
 msgid "Writing date"
 msgstr "تاریخ ثبت"
 
-#: amir/payments.py:75 amir/payments.py:85 data/ui/cheque.glade:145
-msgid "Due Date"
-msgstr "تاریخ سررسید"
-
 #: amir/payments.py:76 amir/payments.py:86 data/ui/bankaccounts.glade:477
-#: data/ui/cheque.glade:192
+#: data/ui/cheque.glade:131
 msgid "Bank"
 msgstr "بانک"
 
@@ -467,35 +491,35 @@ msgstr "کد رهگیری:"
 msgid "Status"
 msgstr "وضعیت"
 
-#: amir/payments.py:159
+#: amir/payments.py:161
 msgid "Add Non-Cash Payment"
 msgstr "اضافه کردن پرداخت غیر نقدی"
 
-#: amir/payments.py:161
+#: amir/payments.py:163
 msgid "Add payment to list"
 msgstr "اضافه کردن پرداخت به لیست"
 
-#: amir/payments.py:281
+#: amir/payments.py:283
 msgid "You must enter the due date for the non-cash payment.\n"
 msgstr "شما باید زمانی را برای پرداخت غیر نقدی وارد کنید.\n"
 
-#: amir/payments.py:290
+#: amir/payments.py:292
 msgid "The payer code you entered is not a valid customer code.\n"
 msgstr "کد پرداخت کننده که وارد کرده اید، یک کد مشتری معتبر نمی باشد.\n"
 
-#: amir/payments.py:296
+#: amir/payments.py:298
 msgid "You must enter a writing date for the cheque.\n"
 msgstr "باید یک تاریخ برای نوشتن چک کنید وارد کنید.\n"
 
-#: amir/payments.py:301
+#: amir/payments.py:303
 msgid "You must enter the serial number for the non-cash payment.\n"
 msgstr "شما باید شماره سریالی برای پرداخت غیر نقدی وارد کنید.\n"
 
-#: amir/payments.py:306
+#: amir/payments.py:308
 msgid "You must enter the bank for the non-cash payment.\n"
 msgstr "شما باید بانکی برای پرداخت غیر نقدی وارد کنید.\n"
 
-#: amir/payments.py:312
+#: amir/payments.py:314
 #, python-format
 msgid ""
 "The payment cannot be saved.\n"
@@ -506,44 +530,44 @@ msgstr ""
 "\n"
 "%s"
 
-#: amir/payments.py:315
+#: amir/payments.py:317
 msgid "Invalid data"
 msgstr "اطلاعات نادرست"
 
-#: amir/payments.py:328
+#: amir/payments.py:330
 msgid "The payer code you entered is not a valid customer code."
 msgstr "کد پرداخت کننده که وارد کرده اید، یک کد مشتری معتبر نمی باشد."
 
-#: amir/payments.py:390
+#: amir/payments.py:392
 msgid "Edit Non-Cash Payment"
 msgstr "ویرایش پرداخت غیر نقدی"
 
-#: amir/payments.py:391
+#: amir/payments.py:393
 msgid "Save Changes..."
 msgstr "ذخیره تغییرات"
 
-#: amir/payments.py:415
+#: amir/payments.py:417
 #, python-format
 msgid "Are you sure to delete the cheque number %d?"
 msgstr "آیا شما از حذف چک شماره %d اطمینان دارید؟"
 
-#: amir/payments.py:418 amir/payments.py:444 amir/sellProducts.py:165
+#: amir/payments.py:420 amir/payments.py:446 amir/sellProducts.py:165
 msgid "Confirm Deletion"
 msgstr "تایید حذف"
 
-#: amir/payments.py:441
+#: amir/payments.py:443
 #, python-format
 msgid "Are you sure to delete the receipt number %d?"
 msgstr "آیا از حذف رسید شماره %d اطمینان دارید؟"
 
-#: amir/previewreport.py:91 amir/previewreport.py:119 amir/printreport.py:181
-#: amir/printreport.py:375
+#: amir/previewreport.py:92 amir/previewreport.py:120 amir/printreport.py:203
+#: amir/printreport.py:398
 msgid "Sum of previous page"
 msgstr "مجموع صفحه قبل"
 
-#: amir/previewreport.py:95 amir/previewreport.py:126
-#: amir/previewreport.py:136 amir/printreport.py:286 amir/printreport.py:519
-#: amir/printreport.py:662 amir/subjects.py:51
+#: amir/previewreport.py:96 amir/previewreport.py:127
+#: amir/previewreport.py:137 amir/printreport.py:308 amir/printreport.py:542
+#: amir/printreport.py:684 amir/subjects.py:51
 msgid "Sum"
 msgstr "جمع"
 
@@ -1104,7 +1128,7 @@ msgid "Amir Warehousing Buy Form"
 msgstr "فرم خرید"
 
 #: data/ui/PurchasingForm.glade:21 data/ui/SellingForm.glade:2102
-#: data/ui/automaticaccounting.glade:98 data/ui/document.glade:162
+#: data/ui/automaticaccounting.glade:119 data/ui/document.glade:528
 msgid "Date:"
 msgstr "تاریخ:"
 
@@ -1113,11 +1137,11 @@ msgid "Bought From:"
 msgstr "خریداری شده از :"
 
 #: data/ui/PurchasingForm.glade:59 data/ui/PurchasingForm.glade:1286
-#: data/ui/SellingForm.glade:2177 data/ui/automaticaccounting.glade:184
-#: data/ui/automaticaccounting.glade:199 data/ui/document.glade:429
-#: data/ui/report.glade:56 data/ui/setting.glade:1490
-#: data/ui/warehousing.glade:377 data/ui/warehousing.glade:569
-#: data/ui/warehousing.glade:587
+#: data/ui/SellingForm.glade:2177 data/ui/automaticaccounting.glade:212
+#: data/ui/automaticaccounting.glade:228 data/ui/cheque.glade:405
+#: data/ui/document.glade:61 data/ui/report.glade:236
+#: data/ui/setting.glade:1490 data/ui/warehousing.glade:377
+#: data/ui/warehousing.glade:569 data/ui/warehousing.glade:587
 msgid "Select"
 msgstr "انتخاب"
 
@@ -1127,7 +1151,7 @@ msgstr "اضافه کردن خرید"
 
 #: data/ui/PurchasingForm.glade:96 data/ui/PurchasingForm.glade:181
 #: data/ui/SellingForm.glade:1234 data/ui/SellingForm.glade:2440
-#: data/ui/cheque.glade:29 data/ui/customers.glade:1415
+#: data/ui/cheque.glade:335 data/ui/customers.glade:1415
 #: data/ui/customers.glade:1712 data/ui/notebook.glade:322
 #: data/ui/warehousing.glade:759 data/ui/warehousing.glade:892
 msgid "Edit"
@@ -1145,7 +1169,7 @@ msgstr "اضافه کردن پرداخت"
 #: data/ui/PurchasingForm.glade:248 data/ui/PurchasingForm.glade:1252
 #: data/ui/SellingForm.glade:80 data/ui/SellingForm.glade:708
 #: data/ui/SellingForm.glade:1584 data/ui/customers.glade:565
-#: data/ui/customers.glade:1537 data/ui/document.glade:550
+#: data/ui/customers.glade:1537 data/ui/document.glade:210
 msgid "Description:"
 msgstr "توضیح:"
 
@@ -1179,9 +1203,9 @@ msgstr "مقدار قابل پرداخت: "
 #: data/ui/PurchasingForm.glade:654 data/ui/PurchasingForm.glade:1318
 #: data/ui/PurchasingForm.glade:1350 data/ui/PurchasingForm.glade:1383
 #: data/ui/SellingForm.glade:1402 data/ui/SellingForm.glade:1960
-#: data/ui/SellingForm.glade:1975 data/ui/automaticaccounting.glade:286
-#: data/ui/automaticaccounting.glade:322 data/ui/automaticaccounting.glade:438
-#: data/ui/automaticaccounting.glade:449
+#: data/ui/SellingForm.glade:1975 data/ui/automaticaccounting.glade:322
+#: data/ui/automaticaccounting.glade:361 data/ui/automaticaccounting.glade:488
+#: data/ui/automaticaccounting.glade:500
 msgid "0"
 msgstr "۰"
 
@@ -1270,8 +1294,8 @@ msgstr "قیمت فروش"
 msgid "             "
 msgstr "             "
 
-#: data/ui/PurchasingForm.glade:1483 data/ui/automaticaccounting.glade:365
-#: data/ui/cheque.glade:16
+#: data/ui/PurchasingForm.glade:1483 data/ui/automaticaccounting.glade:407
+#: data/ui/cheque.glade:255 data/ui/cheque.glade:321
 msgid "Add"
 msgstr "اضافه کردن"
 
@@ -1391,9 +1415,9 @@ msgstr "تخفیف خریدار:"
 msgid "Sold To:"
 msgstr "فروخته شده به:"
 
-#: data/ui/SellingForm.glade:2232 data/ui/document.glade:207
-#: data/ui/document.glade:275 data/ui/document.glade:307
-#: data/ui/document.glade:338
+#: data/ui/SellingForm.glade:2232 data/ui/document.glade:581
+#: data/ui/document.glade:661 data/ui/document.glade:700
+#: data/ui/document.glade:740
 msgid "----"
 msgstr "----"
 
@@ -1401,8 +1425,8 @@ msgstr "----"
 msgid "Pre-Invoice"
 msgstr "پیش فاکتور"
 
-#: data/ui/SellingForm.glade:2318 data/ui/report.glade:449
-#: data/ui/report.glade:615 data/ui/report.glade:912
+#: data/ui/SellingForm.glade:2318 data/ui/report.glade:698
+#: data/ui/report.glade:910 data/ui/report.glade:1261
 msgid "Print"
 msgstr "چاپ"
 
@@ -1430,56 +1454,56 @@ msgstr "Insert: اضافه کردن    Ctrl+E: ویرایش    Del: حذف"
 msgid "Close"
 msgstr "بستن"
 
-#: data/ui/automaticaccounting.glade:34
+#: data/ui/automaticaccounting.glade:44
 msgid "Type:"
 msgstr "نوع :"
 
-#: data/ui/automaticaccounting.glade:163
+#: data/ui/automaticaccounting.glade:190
 msgid "From: "
 msgstr "از :"
 
-#: data/ui/automaticaccounting.glade:173
+#: data/ui/automaticaccounting.glade:201
 msgid "To"
 msgstr "به"
 
-#: data/ui/automaticaccounting.glade:217
+#: data/ui/automaticaccounting.glade:248
 msgid "Value:"
 msgstr "مقدار:"
 
-#: data/ui/automaticaccounting.glade:264
+#: data/ui/automaticaccounting.glade:298
 msgid "Cash Payment"
 msgstr "پرداخت نقدی"
 
-#: data/ui/automaticaccounting.glade:274
+#: data/ui/automaticaccounting.glade:309
 msgid "Non-Cash Payment"
 msgstr "پرداخت غیر نقدی"
 
-#: data/ui/automaticaccounting.glade:300
+#: data/ui/automaticaccounting.glade:337
 msgid "discount"
 msgstr "تخفیف"
 
-#: data/ui/automaticaccounting.glade:311
+#: data/ui/automaticaccounting.glade:349
 msgid "Spend Cheque"
 msgstr "خرج چک"
 
-#: data/ui/automaticaccounting.glade:334
+#: data/ui/automaticaccounting.glade:373
 msgid "%"
 msgstr "٪"
 
-#: data/ui/automaticaccounting.glade:350
+#: data/ui/automaticaccounting.glade:390
 msgid "List"
 msgstr "لیست"
 
-#: data/ui/automaticaccounting.glade:417
+#: data/ui/automaticaccounting.glade:465
 msgid "Total:"
 msgstr "مجموع :"
 
-#: data/ui/automaticaccounting.glade:427
+#: data/ui/automaticaccounting.glade:476
 msgid "Mod:"
 msgstr "مانده:"
 
-#: data/ui/automaticaccounting.glade:463 data/ui/bankaccounts.glade:152
-#: data/ui/cheque.glade:280
+#: data/ui/automaticaccounting.glade:515 data/ui/bankaccounts.glade:152
+#: data/ui/cheque.glade:226
 msgid "Desc"
 msgstr "توضیح"
 
@@ -1523,7 +1547,7 @@ msgstr "حساب"
 msgid "Bank *"
 msgstr "بانک *"
 
-#: data/ui/bankaccounts.glade:307 data/ui/cheque.glade:204
+#: data/ui/bankaccounts.glade:307 data/ui/cheque.glade:144
 msgid "Branch"
 msgstr "شعبه"
 
@@ -1539,23 +1563,15 @@ msgstr "تلفن"
 msgid "Webpage"
 msgstr "صفحه وب"
 
-#: data/ui/cheque.glade:42 data/ui/customers.glade:1427
+#: data/ui/cheque.glade:67
+msgid "Write Date"
+msgstr "تاریخ ثبت"
+
+#: data/ui/cheque.glade:349 data/ui/customers.glade:1427
 #: data/ui/customers.glade:1725 data/ui/notebook.glade:338
 #: data/ui/warehousing.glade:773 data/ui/warehousing.glade:907
 msgid "Delete"
 msgstr "حذف"
-
-#: data/ui/cheque.glade:88
-msgid "Serial"
-msgstr "شماره سریال"
-
-#: data/ui/cheque.glade:133
-msgid "Write Date"
-msgstr "تاریخ ثبت"
-
-#: data/ui/cheque.glade:168
-msgid "Bank Account"
-msgstr "حساب بانکی"
 
 #: data/ui/customers.glade:52
 msgid "Customer Code:"
@@ -1752,70 +1768,74 @@ msgstr "گروه طرف حساب ها"
 msgid "Insert: Add group    Ctrl+E: Edit    Del: Delete"
 msgstr "Insert: اضافه گروه  Ctrl+E: ویرایش Del: حذف"
 
-#: data/ui/document.glade:23
+#: data/ui/document.glade:32 data/ui/report.glade:210
+msgid "Subject Code: "
+msgstr "کد سرفصل: "
+
+#: data/ui/document.glade:100
+msgid "Amount: "
+msgstr "مقدار: "
+
+#: data/ui/document.glade:188
+msgid "Transaction type"
+msgstr "نوع تراکنش"
+
+#: data/ui/document.glade:307
+msgid "Enter, Ctrl+S: Save    Escape: Cancel"
+msgstr "Enter, Ctrl+S: ذخیره    Escape: انصراف"
+
+#: data/ui/document.glade:354
+msgid "Auto"
+msgstr "خودکار"
+
+#: data/ui/document.glade:370
 msgid "Add row"
 msgstr "اضافه کردن سطر"
 
-#: data/ui/document.glade:53
+#: data/ui/document.glade:402
 msgid "Remove row"
 msgstr "پاک کردن سطر"
 
-#: data/ui/document.glade:76
+#: data/ui/document.glade:427
 msgid "Save Document"
 msgstr "ذخیره سند"
 
 #. Convert to permanent document
-#: data/ui/document.glade:90
+#: data/ui/document.glade:443
 msgid "Make permanent"
 msgstr "تبدیل به دائم"
 
-#: data/ui/document.glade:105
+#: data/ui/document.glade:459
 msgid "Delete Document"
 msgstr "حذف سند"
 
 #. Convert to temporary document
-#: data/ui/document.glade:126
+#: data/ui/document.glade:485
 msgid "Make tepmporary"
 msgstr "تبدیل به موقت"
 
-#: data/ui/document.glade:197
+#: data/ui/document.glade:569
 msgid "Document Number:"
 msgstr "شماره سند: "
 
-#: data/ui/document.glade:266
+#: data/ui/document.glade:649
 msgid "Debt Sum: "
 msgstr "جمع بدهکاری: "
 
-#: data/ui/document.glade:296
+#: data/ui/document.glade:687
 msgid "Credit Sum: "
 msgstr "جمع بستانکاری: "
 
-#: data/ui/document.glade:328
+#: data/ui/document.glade:727
 msgid "Difference: "
 msgstr "اختلاف: "
 
-#: data/ui/document.glade:368
+#: data/ui/document.glade:776
 msgid ""
 "Insert: Add row    Ctrl+E: Edit row    Del: Delete row    Ctrl+S: Save "
 "document    Ctrl+P: Make permanent"
 msgstr ""
 "Insert: اضافه    Ctrl+E: ویرایش    Del: حذف   Ctrl+S: ذخیره    Ctrl+P: دائمی"
-
-#: data/ui/document.glade:405 data/ui/report.glade:33
-msgid "Subject Code: "
-msgstr "کد سرفصل: "
-
-#: data/ui/document.glade:460
-msgid "Amount: "
-msgstr "مقدار: "
-
-#: data/ui/document.glade:532
-msgid "Transaction type"
-msgstr "نوع تراکنش"
-
-#: data/ui/document.glade:590
-msgid "Enter, Ctrl+S: Save    Escape: Cancel"
-msgstr "Enter, Ctrl+S: ذخیره    Escape: انصراف"
 
 #: data/ui/mainwin.glade:17
 msgid "_Actions"
@@ -1928,7 +1948,7 @@ msgstr "برچسب"
 msgid "Select document to edit"
 msgstr "یک سند برای ویرایش انتخاب کنید"
 
-#: data/ui/mainwin.glade:593 data/ui/report.glade:533
+#: data/ui/mainwin.glade:593 data/ui/report.glade:804
 msgid "Document Number: "
 msgstr "شماره سند: "
 
@@ -2025,69 +2045,73 @@ msgstr ""
 msgid "_Select"
 msgstr "انتخاب"
 
-#: data/ui/report.glade:74
-msgid "Subject"
-msgstr "سرفصل"
-
-#: data/ui/report.glade:107 data/ui/report.glade:708
-msgid "Show the whole content"
-msgstr "نمایش تمام محتوای دفتر"
-
-#: data/ui/report.glade:125 data/ui/report.glade:726
-msgid "Show content at date: "
-msgstr "نمایش محتوا در تاریخ: "
-
-#: data/ui/report.glade:181 data/ui/report.glade:782
-msgid "Show content between dates: "
-msgstr "نمایش محتوا بین تاریخ‌های: "
-
-#: data/ui/report.glade:214 data/ui/report.glade:296 data/ui/report.glade:815
-msgid "to"
-msgstr "تا"
-
-#: data/ui/report.glade:264
-msgid "Show content between document numbers"
-msgstr "نمایش محتوا بین شماره سند‌های:"
-
-#: data/ui/report.glade:337 data/ui/report.glade:856
-msgid "Report parameters"
-msgstr "ویژگی‌های گزارش"
-
-#: data/ui/report.glade:365
-msgid "Find documents which contain: "
-msgstr "اسنادی که شامل :"
-
-#: data/ui/report.glade:392
-msgid "Search"
-msgstr "جستجو"
-
-#: data/ui/report.glade:411 data/ui/report.glade:577 data/ui/report.glade:874
-msgid "Preview"
-msgstr "پیش‌نمایش"
-
-#: data/ui/report.glade:467 data/ui/report.glade:633 data/ui/report.glade:930
-msgid "Export to CSV format"
-msgstr "تبدیل به فرمت CSV"
-
-#: data/ui/report.glade:496 data/ui/report.glade:663 data/ui/report.glade:959
-msgid "Ctrl+P: Print    Enter: Preview    Ctrl+F: Export to CSV"
-msgstr "Ctrl+P: پرینت    Enter: مشاهده    Ctrl+F: Export to CSV"
-
-#: data/ui/report.glade:513
-msgid "Select Document"
-msgstr "انتخاب سند"
-
-#: data/ui/report.glade:988
+#: data/ui/report.glade:39
 msgid "Previous"
 msgstr "قبلی"
 
-#: data/ui/report.glade:1004
+#: data/ui/report.glade:57
 msgid "Next"
 msgstr "بعدی"
 
-#: data/ui/report.glade:1047
+#: data/ui/report.glade:110
 msgid "of"
 msgstr "از"
+
+#: data/ui/report.glade:257
+msgid "Subject"
+msgstr "سرفصل"
+
+#: data/ui/report.glade:295 data/ui/report.glade:1024
+msgid "Show the whole content"
+msgstr "نمایش تمام محتوای دفتر"
+
+#: data/ui/report.glade:316 data/ui/report.glade:1045
+msgid "Show content at date: "
+msgstr "نمایش محتوا در تاریخ: "
+
+#: data/ui/report.glade:382 data/ui/report.glade:1111
+msgid "Show content between dates: "
+msgstr "نمایش محتوا بین تاریخ‌های: "
+
+#: data/ui/report.glade:422 data/ui/report.glade:520 data/ui/report.glade:1151
+msgid "to"
+msgstr "تا"
+
+#: data/ui/report.glade:481
+msgid "Show content between document numbers"
+msgstr "نمایش محتوا بین شماره سند‌های:"
+
+#: data/ui/report.glade:568 data/ui/report.glade:1199
+msgid "Report parameters"
+msgstr "ویژگی‌های گزارش"
+
+#: data/ui/report.glade:601
+msgid "Find documents which contain: "
+msgstr "اسنادی که شامل :"
+
+#: data/ui/report.glade:635
+msgid "Search"
+msgstr "جستجو"
+
+#: data/ui/report.glade:653 data/ui/report.glade:865 data/ui/report.glade:1216
+msgid "Export to CSV format"
+msgstr "تبدیل به فرمت CSV"
+
+#: data/ui/report.glade:719 data/ui/report.glade:931 data/ui/report.glade:1282
+msgid "Preview"
+msgstr "پیش‌نمایش"
+
+#: data/ui/report.glade:757 data/ui/report.glade:970 data/ui/report.glade:1320
+msgid "Ctrl+P: Print    Enter: Preview    Ctrl+F: Export to CSV"
+msgstr "Ctrl+P: پرینت    Enter: مشاهده    Ctrl+F: Export to CSV"
+
+#: data/ui/report.glade:778
+msgid "Select Document"
+msgstr "انتخاب سند"
+
+#: data/ui/report.glade:832
+msgid "Eg: 1-15"
+msgstr "برای مثال: 1-15"
 
 #: data/ui/setting.glade:39
 msgid "Choose language from the list: "
@@ -2354,6 +2378,15 @@ msgstr ""
 "Ctrl+L:     Insert: اضافه کردن زیر فصل    Ctrl+E: Edit    Del: Delete\n"
 "Insert: اضافه کردن محصول    Ctrl+G: اضافه کردن گروه   Ctrl+E: ویرایش    Del: "
 "حذف"
+
+#~ msgid "Bank Wage"
+#~ msgstr "بهره بانکی"
+
+#~ msgid "havale taraf hesab"
+#~ msgstr "حواله طرف حساب"
+
+#~ msgid "Padakhte naghdi az bank"
+#~ msgstr "پرداخت نقدی از بانک"
 
 #, fuzzy
 #~ msgid "Edit Non-Cash Payment:\t%s - %s"

@@ -11,6 +11,8 @@ import subjects
 from amirconfig import config
 from database import Subject
 from database import Customers
+from class_subject import Subjects
+from utility import localizeNumber
 
 import glib
 import gtk
@@ -26,13 +28,12 @@ class AutomaticAccounting:
         (2 , _('Bank To Bank')),
         (3 , _('Cash To Bank')),
         (4 , _('Bank To Cash')),
-        (5 , _('Bank Wage')),
-        (6 , _('havale taraf hesab')),
-        (7 , _('Padakhte naghdi az bank')),
-        (8 , _('Investment')),
-        (9 , _('Cost')),
-        (10, _('Income')),
-        (11, _('Removal')),
+        (5 , _('Bank Fee')),
+        (6 , _('Transfer To Customer')),
+        (7 , _('Investment')),
+        (8 , _('Cost')),
+        (9, _('Income')),
+        (10, _('Removal')),
     )
 
     type_configs = {
@@ -51,15 +52,16 @@ class AutomaticAccounting:
         4:  (True , False, False, True , True , 'bank'     , 'cash'),
         5:  (False, False, False, True , True , 'bank'     , 'bank-wage'), # 'to' is not changeable
         6:  (False, False, False, False, True , None       , 'bank'),
-        7:  (False, False, False, True , False, 'bank'     , None),
-        8:  (True , False, True , True , True , 'partners' , 'cash,bank'),
-        9:  (True , False, True , True , True , 'cash'     , 'cost'),
-        10: (True , False, False, True , True , None       , 'cash,bank'),
-        11: (True , False, True , True , True , 'cash,bank', 'partner'),
+        7:  (True , False, True , True , True , 'partners' , 'cash,bank'),
+        8:  (True , False, True , True , True , 'cash'     , 'cost'),
+        9: (True , False, False, True , True , None       , 'cash,bank'),
+        10: (True , False, True , True , True , 'cash,bank', 'partner'),
     }
-    def __init__(self, background):
+    def __init__(self):
         self.mode = None
-        self.main_window_background = background
+        self.liststore = None
+        
+        #self.main_window_background = background
         # Chosen Type
         self.type_index = None
         self.from_id = self.to_id = -1
@@ -333,69 +335,117 @@ class AutomaticAccounting:
         result['non-cash-payment-info'] = None # TODO: = non cash payment infos
         result['spend-cheque-info']     = None # TODO = spent cheque infos
         result['desc']                  = self.builder.get_object('desc').get_text()
-        result['from'] = self.from_id
-        result['to']   = self.to_id
+        result['from']                     = self.from_id
+        result['to']                       = self.to_id
 
         dbconf = dbconfig.dbConfig()
 
-        document = class_document.Document()
-        document.add_notebook(result['from'],  result['total_value'], result['desc'])
-        document.add_notebook(result['to']  , -result['cash_payment'], result['desc'])
-        if result['discount'] :
-            document.add_notebook(dbconf.get_int('sell-discount'), -result['discount'], result['desc'])
-        cl_cheque = class_cheque.ClassCheque()
-        for cheque in self.chequeui.new_cheques:
-            if self.mode == 'our':
-                document.add_cheque(dbconf.get_int('our_cheque'), -cheque['amount'], cheque['desc'], cheque['serial'])
-            else:
-                document.add_cheque(dbconf.get_int('other_cheque'), -cheque['amount'], cheque['desc'], cheque['serial'])
-        #spendble cheque
-        for sp_cheque in self.chequeui.spend_cheques:
-            cl_cheque.update_status(sp_cheque['serial'],5)
-            document.add_cheque(dbconf.get_int('other_cheque'), -sp_cheque['amount'] , unicode('kharj shodeh') , sp_cheque['serial'])
-                
-        result = document.save()
-        if result < 0:
-            dialog = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 'Failed, %s' % document.get_error_message(result))
-            dialog.run()
-            dialog.destroy()
-            return
+        if self.liststore == None:
+        #Save data in data base for single use
+            document = class_document.Document()
+            document.add_notebook(result['from'],  result['total_value'], result['desc'])
+            document.add_notebook(result['to']  , -result['cash_payment'], result['desc'])
+            if result['discount'] :
+                document.add_notebook(dbconf.get_int('sell-discount'), -result['discount'], result['desc'])
+            cl_cheque = class_cheque.ClassCheque()
+            for cheque in self.chequeui.new_cheques:
+                if self.mode == 'our':
+                    document.add_cheque(dbconf.get_int('our_cheque'), -cheque['amount'], cheque['desc'], cheque['serial'])
+                else:
+                    document.add_cheque(dbconf.get_int('other_cheque'), -cheque['amount'], cheque['desc'], cheque['serial'])
+            #spendble cheque
+            for sp_cheque in self.chequeui.spend_cheques:
+                cl_cheque.update_status(sp_cheque['serial'],5)
+                document.add_cheque(dbconf.get_int('other_cheque'), -sp_cheque['amount'] , unicode('kharj shodeh') , sp_cheque['serial'])
+                    
+            result = document.save()
 
-        if self.type_configs[self.type_index][3] == True: # from is subject
-            customer_id = 0
-        else: # from is customer
-            customer_id = config.db.session.query(Customers).select_from(Customers).filter(Customers.custSubj==self.from_id).first().custId
+            if result < 0:
+                dialog = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 'Failed, %s' % document.get_error_message(result))
+                dialog.run()
+                dialog.destroy()
+                return
 
-        for cheque in self.chequeui.new_cheques:
-            notebook_id =document.cheques_result[cheque['serial']]
-            cl_cheque.add_cheque(cheque['amount'], cheque['write_date'], cheque['due_date'],
-                                 cheque['serial'], cheque['status'],
-                                 customer_id, cheque['bank_account_id'],
-                                 result, notebook_id, cheque['desc'])
-        cl_cheque.save()
-        cl_cheque.save_cheque_history(self.current_time)
-        self.on_destroy(self.builder.get_object('general'))
+            if self.type_configs[self.type_index][3] == True: # from is subject
+                customer_id = 0
+            else: # from is customer
+                customer_id = config.db.session.query(Customers).select_from(Customers).filter(Customers.custSubj==self.from_id).first().custId
 
-        infobar = gtk.InfoBar()
-        label = gtk.Label(_('successfully added. Document number : %d') % document.number)
-        infobar.get_content_area().add(label)
-        width , height = self.main_window_background.window.get_size()
-        infobar.set_size_request(width, -1)
-        self.main_window_background.put(infobar ,0 , 0)
-        infobar.show_all()
+            for cheque in self.chequeui.new_cheques:
+                notebook_id =document.cheques_result[cheque['serial']]
+                cl_cheque.add_cheque(cheque['amount'], cheque['write_date'], cheque['due_date'],
+                                     cheque['serial'], cheque['status'],
+                                     customer_id, cheque['bank_account_id'],
+                                     result, notebook_id, cheque['desc'])
+            cl_cheque.save()
+            cl_cheque.save_cheque_history(self.current_time)
+            self.on_destroy(self.builder.get_object('general'))
 
-        glib.timeout_add_seconds(3, lambda w: w.destroy(), infobar)
+            infobar = gtk.InfoBar()
+            label = gtk.Label(_('successfully added. Document number : %d') % document.number)
+            infobar.get_content_area().add(label)
+            width , height = self.main_window_background.window.get_size()
+            infobar.set_size_request(width, -1)
+            self.main_window_background.put(infobar ,0 , 0)
+            infobar.show_all()
+
+            glib.timeout_add_seconds(3, lambda w: w.destroy(), infobar)
+
+        #Store result in list store for showing in addeditdoc
+        else:
+            mysubject = Subjects()
+            numrows = len(self.liststore) + 1
+            #document.add_notebook(result['from'],  result['total_value'], result['desc'])
+            self.liststore.append ((localizeNumber(numrows), localizeNumber(result['from']), mysubject.get_name(result['from']), 0, localizeNumber(result['total_value']), result['desc'], None))
+            #document.add_notebook(result['to']  , -result['cash_payment'], result['desc'])
+            numrows += 1
+            self.liststore.append ((localizeNumber(numrows), localizeNumber(result['to']), mysubject.get_name(result['to']), 0, localizeNumber(result['cash_payment']), result['desc'], None))
+            if result['discount'] :
+                #document.add_notebook(dbconf.get_int('sell-discount'), -result['discount'], result['desc'])
+                self.liststore.append ((localizeNumber(numrows), localizeNumber(dbconf.get_int('sell-discount')), mysubject.get_name(dbconf.get_int('sell-discount')), localizeNumber(result['discount']), 0, result['desc'], None))
+
+            #cl_cheque = class_cheque.ClassCheque()
+            #or cheque in self.chequeui.new_cheques:
+            #    if self.mode == 'our':
+            #        document.add_cheque(dbconf.get_int('our_cheque'), -cheque['amount'], cheque['desc'], cheque['serial'])
+            #    else:
+            #        document.add_cheque(dbconf.get_int('other_cheque'), -cheque['amount'], cheque['desc'], cheque['serial'])
+            #spendble cheque
+            #for sp_cheque in self.chequeui.spend_cheques:
+            #   cl_cheque.update_status(sp_cheque['serial'],5)
+            #    document.add_cheque(dbconf.get_int('other_cheque'), -sp_cheque['amount'] , unicode('kharj shodeh') , sp_cheque['serial'])
+                    
+
+            #if self.type_configs[self.type_index][3] == True: # from is subject
+            #    customer_id = 0
+            #else: # from is customer
+            #    customer_id = config.db.session.query(Customers).select_from(Customers).filter(Customers.custSubj==self.from_id).first().custId
+
+            #for cheque in self.chequeui.new_cheques:
+            #    notebook_id =document.cheques_result[cheque['serial']]
+            #    cl_cheque.add_cheque(cheque['amount'], cheque['write_date'], cheque['due_date'],
+            #                         cheque['serial'], cheque['status'],
+            #                         customer_id, cheque['bank_account_id'],
+            #                         result, notebook_id, cheque['desc'])
+            #cl_cheque.save()
+            #cl_cheque.save_cheque_history(self.current_time)
+            self.on_destroy(self.builder.get_object('general'))
+
 
     def on_destroy(self, window):
         window.destroy()
 
-    def run(self, parent=None):
+    #TODO get a parameter to can send data to parent
+    def run(self, parent=None, liststore=None):
+        self.liststore = liststore
         win  = self.builder.get_object('general')
         win.connect('destroy', self.on_destroy)
 
         if parent:
             win.set_transient_for(parent)
-        win.set_position(gtk.WIN_POS_CENTER)
+        #win.set_position(gtk.WIN_POS_CENTER)
         win.set_destroy_with_parent(True)
         win.show_all()
+
+
 ## @}

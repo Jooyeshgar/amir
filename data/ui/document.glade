@@ -330,8 +330,8 @@
   <object class="GtkWindow" id="window1">
     <property name="can_focus">False</property>
     <property name="window_position">center</property>
-    <property name="default_width">980</property>
-    <property name="default_height">400</property>
+    <property name="default_width">750</property>
+    <property name="default_height">450</property>
     <child>
       <object class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
@@ -346,6 +346,22 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="toolbar_style">both</property>
+                <child>
+                  <object class="GtkToolButton" id="Auto">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="use_action_appearance">False</property>
+                    <property name="label" translatable="yes">Auto</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">gtk-dialog-authentication</property>
+                    <accelerator key="a" signal="clicked"/>
+                    <signal name="clicked" handler="auto_Document" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
                 <child>
                   <object class="GtkToolButton" id="addrow">
                     <property name="visible">True</property>
