@@ -10,9 +10,13 @@ from database import Subject
 from helpers import get_builder
 
 ## \defgroup UserInterface
-## @{
+# @{
 
+## Register or edit a document
 class AddEditDoc:
+    
+    ##Create a new window and initialize it.
+    # \param number Document number for edit or zero for new document
     def __init__(self, number=0):
         self.new_items = []
         self.deleted_items = []
@@ -120,6 +124,7 @@ class AddEditDoc:
         self.builder.connect_signals(self)
         #self.connect("database-changed", self.dbChanged)
         
+    ##Add the document row to liststore to show in list view    
     def showRows(self):
         self.date.showDateObject(self.cl_document.date)
         
@@ -152,7 +157,8 @@ class AddEditDoc:
         else:
             diff = self.credit_sum - self.debt_sum
         self.builder.get_object("difference").set_text (utility.showNumber(diff))
-        
+    
+    ##Show add_row dialog and call saveRow() to save row to list store'   
     def addRow(self, sender):
         dialog = self.builder.get_object("dialog1")
         dialog.set_title(_("Add new row"))
@@ -170,6 +176,7 @@ class AddEditDoc:
                 self.saveRow(utility.convertToLatin(code), int(unicode(amount)), type, desc.get_text())
         dialog.hide()
     
+    ##Show add_row dialog and call saveRow() to edit the current row
     def editRow(self, sender):
         dialog = self.builder.get_object("dialog1")
         dialog.set_title(_("Edit row"))
@@ -213,7 +220,8 @@ class AddEditDoc:
                                  iter)
             
             dialog.hide()
-        
+    
+    ## Save or update row from liststore and update the sum and diff of row    
     def saveRow(self, code, amount, type, desc, iter=None):
         query = config.db.session.query(Subject).select_from(Subject)
         query = query.filter(Subject.code == code)
@@ -263,6 +271,7 @@ class AddEditDoc:
             diff = self.credit_sum - self.debt_sum
         self.builder.get_object("difference").set_text (utility.showNumber(diff))
     
+    ## Delte the selected row from liststore and update sum and diff
     def deleteRow(self, sender):
         selection = self.treeview.get_selection()
         iter = selection.get_selected()[1]
@@ -301,6 +310,7 @@ class AddEditDoc:
                 self.builder.get_object("difference").set_text (utility.showNumber(diff))
             msgbox.destroy()
     
+    ##Save liststore change to database
     def saveDocument(self, sender):
         sender.grab_focus()
                 
@@ -359,7 +369,8 @@ class AddEditDoc:
         msgbox.set_title(_("Successfully saved"))
         msgbox.run()
         msgbox.destroy()
-        
+    
+    ##Mark document as permanent    
     def makePermanent(self, sender):
         if self.cl_document.id > 0 :
             self.cl_document.set_permanent(True)
@@ -371,7 +382,8 @@ class AddEditDoc:
             msgbox.set_title(_("Document is not saved"))
             msgbox.run()
             msgbox.destroy()
- 
+    
+    ##Mark document as temporary 
     def makeTemporary(self, sender):
         msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, 
                                    _("Are you sure to make this document temporary?"))
@@ -383,7 +395,8 @@ class AddEditDoc:
             self.cl_document.set_permanent(False)
             self.builder.get_object("non-editable").hide()
             self.builder.get_object("editable").show()
-                           
+    
+    ##delete all document from database                        
     def deleteDocument(self, sender):
         if self.cl_document.id == 0 :
             return
@@ -398,26 +411,31 @@ class AddEditDoc:
             self.window.destroy()
         msgbox.destroy() 
 
+    ##Call automaticaccounting::AutomaticAccounting to show automaticacconting window
     def auto_Document(self, sender):
         auto_win = automaticaccounting.AutomaticAccounting()
         #auto_win.connect("auto-saved", self.auto_Saved)
         auto_win.run(self.window, self.liststore)
-
-    def auto_Saved(self, sender):
-        self.showRows()
-
+    
+    #Call  to show automaticacconting window
+    #def auto_Saved(self, sender):
+    #    self.showRows()
+    
+    ##Call subjects::Subjects to show Subject window
     def selectSubject(self, sender):
         subject_win = subjects.Subjects()
         code = self.code.get_text()
         subject_win.highlightSubject(code)
         subject_win.connect("subject-selected", self.subjectSelected)
         
+    ##Call back when subject selected from subjects::Subjects::selectSubjectFromList()
     def subjectSelected(self, sender, id, code, name):
         if config.digittype == 1:
             code = utility.convertToPersian(code)
         self.code.set_text(code)
         sender.window.destroy()      
-          
+    
+    ##Call when Databese changed from main window      
     def dbChanged(self, sender, active_dbpath):
         self.window.destroy()
 

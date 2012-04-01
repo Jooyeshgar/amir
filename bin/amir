@@ -1,18 +1,47 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 <jooyeshgar> <info@jooyeshgar.com>
-#This program is free software: you can redistribute it and/or modify it 
-#under the terms of the GNU General Public License version 3, as published 
-#by the Free Software Foundation.
-#
-#This program is distributed in the hope that it will be useful, but 
-#WITHOUT ANY WARRANTY; without even the implied warranties of 
-#MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR 
-#PURPOSE.  See the GNU General Public License for more details.
-#
-#You should have received a copy of the GNU General Public License along 
-#with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+## \mainpage Amir accounting software 
+#
+# \section intro_sec Introduction
+# Just another accounting software for persian users that written in python and licenses under GNU GPL v3.
+#
+# You can find other information about this program on https://launchpad.net/amir and http://www.freeamir.com 
+#
+# \section install_sec Installation
+# \subsection ppa Adding PPA to your system:
+#  
+# If you use the Ubuntu 9.10 or higher. You can add the following PPA to your repositories and install it using Pakage Manager.
+# sudo add-apt-repository ppa:hadi60/jooyeshgar
+# OR
+# deb http://ppa.launchpad.net/hadi60/jooyeshgar/ubuntu YOUR_UBUNTU_VERSION_HERE main
+# deb-src http://ppa.launchpad.net/hadi60/jooyeshgar/ubuntu YOUR_UBUNTU_VERSION_HERE main
+#
+# See https://launchpad.net/~hadi60/+archive/jooyeshgar
+#
+# \subsection binary Installing biary file:
+# Go to the download page "https://launchpad.net/amir/+download" and get the latest version taht compatible with your OS
+#
+# \subsection sourec Installing from source:
+# You can simple run amir from source code. befor that you must install python-migrate with dependency and then run this command 
+#
+# bin/amir
+#
+# \section lisense_sec Licenses:
+# This program is free software: you can redistribute it and/or modify it 
+# under the terms of the GNU General Public License version 3, as published 
+# by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful, but 
+# WITHOUT ANY WARRANTY; without even the implied warranties of 
+# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR 
+# PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along 
+# with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# \section copyright_sec Copyright:
+# Copyright (C) 2010 <jooyeshgar> <info@jooyeshgar.com>
 
 import sys
 

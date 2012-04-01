@@ -37,13 +37,8 @@ class AutomaticAccounting:
     )
 
     type_configs = {
-        #0 non cash
-        #1 discount
-        #2 spend_cheque
-        #3 from is subject?
-        #4 to   is subject?
-        #5 from key
-        #6 to   key
+        #    0:non cash   2:spend_cheque 4:to is subject?   6:to key
+        #           1:discount    3:from subj?  5:from key
         #    0    , 1    , 2    , 3    , 4    , 5          , 6
         0:  (True , True , False, False, True , None       , 'cash'),
         1:  (True , False, True , True , False, 'cash'     , None  ),
