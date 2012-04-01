@@ -84,15 +84,15 @@ class DocumentReport:
                 debt = utility.showNumber(0)
                 desc = "   " + desc
                 
-            code = utility.localizeNumber(s.code)
-            doc_number = utility.localizeNumber(b.number)
+            code = utility.LN(s.code)
+            doc_number = utility.LN(b.number)
             if doc_number != doc_number0:
                 index = 1
                 debt_sum = 0
                 credit_sum = 0
             debt_sum += int(debt.replace(",", ""))
             credit_sum += int(credit.replace(",", ""))
-            strindex = utility.localizeNumber(str(index))
+            strindex = utility.LN(str(index))
             doc_number0 = doc_number
             date = dateToString(b.date)
             report_data.append((strindex, code, s.name, desc, debt, credit, doc_number, date, debt_sum, credit_sum))

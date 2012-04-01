@@ -421,16 +421,19 @@ class Setting(gobject.GObject):
     def applyConfigSetting(self):
         conf = dbconfig.dbConfig()
         sub  = class_subject.Subjects()
-
+        
+        # self.config_items( 0 => item_id, 1 => get_val function, 2 => exists in subjects)
         for item in self.config_items:
             val = item[1]()
-
+            
             if val == None or val == '':
+                #TODO Can be return on empty row
                 val = conf.get_default(item[3])
             elif item[2] == True:
                 ids = ''
-                for code in val.split(','):
-                    ids += '%d,' % sub.get_id(code)
+                val = unicode(val)
+                for name in val.split(','):
+                    ids += '%d,' % sub.get_id_from_name(name)
                 val = ids[:-1]
             conf.set_value(item[0], val, False)
 
@@ -571,7 +574,7 @@ class Setting(gobject.GObject):
             sub.connect('subject-selected', self.on_subject_selected, entry)
 
     def on_subject_selected(self, subject, id, code, name, entry):
-        entry.set_text(code)
+        entry.set_text(name)
         subject.window.destroy()
 
     def on_subject_multi_selected(self, subject, items, entry):
@@ -580,8 +583,8 @@ class Setting(gobject.GObject):
 
         new_txt = ''
         for item in items:
-            code = sub.get_code(item[0])
-            new_txt += '%s,' % code
+            name = sub.get_name(item[0])
+            new_txt += '%s,' % name
         new_txt = new_txt[:-1]
                 
         entry.set_text(new_txt)

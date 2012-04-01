@@ -187,6 +187,8 @@
                       <object class="GtkLabel" id="label3">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="xpad">1</property>
+                        <property name="ypad">1</property>
                         <property name="label" translatable="yes">From: </property>
                       </object>
                       <packing>
@@ -198,6 +200,8 @@
                       <object class="GtkLabel" id="label4">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="xpad">1</property>
+                        <property name="ypad">1</property>
                         <property name="label" translatable="yes">To</property>
                       </object>
                       <packing>
@@ -245,6 +249,8 @@
                       <object class="GtkLabel" id="label8">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="xpad">1</property>
+                        <property name="ypad">1</property>
                         <property name="label" translatable="yes">Value:</property>
                       </object>
                       <packing>

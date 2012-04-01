@@ -75,5 +75,11 @@ class Subjects():
         query = config.db.session.query(Subject).select_from(Subject)
         query = query.filter(Subject.code == code)
         return query.first().id
+    
+    ##Get id from name of subject
+    def get_id_from_name(self, name):
+        query = config.db.session.query(Subject.id).select_from(Subject)
+        query = query.filter(Subject.name == name)
+        return query.first().id
 
 ## @}

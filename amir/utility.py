@@ -93,11 +93,15 @@ def convertToPersian (input_string):
         output_string += c
         
     return output_string
-   
-def localizeNumber(num):
+
+## Localize number base on config file   
+def LN(num):
     if type(num) == int:
         num = str(num)
-        
+    elif type(num) == float:
+        num = str(num)
+        if num[-2:]==".0":
+            num = num[:-2]       
     if config.digittype == 1:
         return convertToPersian(num)
     return num

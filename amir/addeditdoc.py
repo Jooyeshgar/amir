@@ -100,7 +100,7 @@ class AddEditDoc:
                 self.showRows()
                 self.window.set_title(_("Edit document"))
             else:
-                numstring = utility.localizeNumber(number)
+                numstring = utility.LN(number)
                 msg = _("No document found with number %s\nDo you want to register a document with this number?") % numstring
                 msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, msg)
                 msgbox.set_title(_("No Documents found"))
@@ -148,7 +148,7 @@ class AddEditDoc:
                 numrows = utility.convertToPersian(numrows)
             self.liststore.append((numrows, code, s.name, debt, credit, n.desc, n.id))
             
-        docnum = utility.localizeNumber(self.cl_document.number)
+        docnum = utility.LN(self.cl_document.number)
         self.builder.get_object("docnumber").set_text (docnum)
         self.builder.get_object("debtsum").set_text (utility.showNumber(self.debt_sum))
         self.builder.get_object("creditsum").set_text (utility.showNumber(self.credit_sum))
@@ -361,7 +361,7 @@ class AddEditDoc:
             self.deleted_items = []
             self.showRows()
         
-        docnum = utility.localizeNumber(self.cl_document.number)
+        docnum = utility.LN(self.cl_document.number)
         self.builder.get_object("docnumber").set_text (docnum)
         
         msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 

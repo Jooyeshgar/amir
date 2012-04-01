@@ -12,7 +12,7 @@ from amirconfig import config
 from database import Subject
 from database import Customers
 from class_subject import Subjects
-from utility import localizeNumber
+from utility import LN
 
 import glib
 import gtk
@@ -60,7 +60,9 @@ class AutomaticAccounting:
         # Chosen Type
         self.type_index = None
         self.from_id = self.to_id = -1
-
+        self.from_code = self.to_code = ""
+        self.from_name = self.to_name = ""
+        
         self.builder = helpers.get_builder('automaticaccounting')
         self.builder.connect_signals(self)
 
@@ -70,7 +72,6 @@ class AutomaticAccounting:
         self.date_entry = dateentry.DateEntry()
         date_box.pack_start(self.date_entry, False, False)
         self.current_time = self.date_entry.getDateObject()
-        print self.current_time
         # type combo
         type_combo = self.builder.get_object('select-type')
         model = gtk.ListStore(str, str)
@@ -164,10 +165,10 @@ class AutomaticAccounting:
             self.builder.get_object('to-button').set_sensitive(True)
 
     def on_from_clicked(self, button):
-        index  = self.type_index
         entry  = self.from_entry
         dbconf = dbconfig.dbConfig()
-
+        
+        #3:from subj?    5:from key
         if self.type_configs[self.type_index][3]:
             if self.type_configs[self.type_index][5] == None:
                 sub = subjects.Subjects()
@@ -177,14 +178,10 @@ class AutomaticAccounting:
                 for key in keys.split(','):
                     parent_id+=dbconf.get_int_list(key)
                 sub = subjects.Subjects(parent_id=parent_id)
-            sub.connect('subject-selected',
-                        self.on_subject_selected,
-                        entry, False)
+            sub.connect('subject-selected', self.on_subject_selected, entry, False)
         else:
             cust = customers.Customer()
-            cust.connect('customer-selected',
-                         self.on_customer_selected,
-                         entry, False)
+            cust.connect('customer-selected', self.on_customer_selected, entry, False)
             cust.viewCustomers(True)
 
     def on_to_clicked(self, button):
@@ -200,14 +197,10 @@ class AutomaticAccounting:
                 for key in keys.split(','):
                     parent_id+=dbconf.get_int_list(key)
                 sub = subjects.Subjects(parent_id=parent_id)
-            sub.connect('subject-selected',
-                        self.on_subject_selected,
-                        entry, True)
+            sub.connect('subject-selected', self.on_subject_selected, entry, True)
         else:
             cust = customers.Customer()
-            cust.connect('customer-selected',
-                         self.on_customer_selected,
-                         entry, True)
+            cust.connect('customer-selected', self.on_customer_selected, entry, True)
             cust.viewCustomers(True)
 
     def on_total_credit_entry_change(self, entry):
@@ -261,29 +254,30 @@ class AutomaticAccounting:
         self.check_save_button()
 
     def on_subject_selected(self, subject, id, code, name, entry, to):
-        query = config.db.session.query(Subject).select_from(Subject)
-        query = query.filter(Subject.code == code)
-        if query.first().parent_id == 0:
-            print 'You Can not select it'
-            return
-
         if to:
-            self.to_id = id
+            self.to_id   = id
+            self.to_code = code
+            self.to_name = name
         else:
-            self.from_id = id
+            self.from_id   = id
+            self.from_code = code
+            self.from_name = name
 
         entry.set_text(name)
         subject.window.destroy()
 
     def on_customer_selected(self, customer, id, code, entry, to):
-        id = config.db.session.query(Customers).select_from(Customers).filter(Customers.custId==id).first().custSubj
+        cust = config.db.session.query(Customers.custSubj, Customers.custName).select_from(Customers).filter(Customers.custId==id).first()
+        subj = config.db.session.query(Subject.code).select_from(Subject).filter(Subject.id==cust.custSubj).first()
         if to:
-            self.to_id = id
+            self.to_id   = cust.custSubj
+            self.to_code = subj.code
+            self.to_name = cust.custName
         else:
-            self.from_id = id
-        query = config.db.session.query(Customers).select_from(Customers)
-        query = query.filter(Customers.custCode == code)
-        entry.set_text(query.first().custName)
+            self.from_id   = cust.custSubj
+            self.from_code = subj.code
+            self.from_name = cust.custName
+        entry.set_text(cust.custName)
         customer.window.destroy()
 
     def check_save_button(self):
@@ -330,8 +324,8 @@ class AutomaticAccounting:
         result['non-cash-payment-info'] = None # TODO: = non cash payment infos
         result['spend-cheque-info']     = None # TODO = spent cheque infos
         result['desc']                  = self.builder.get_object('desc').get_text()
-        result['from']                     = self.from_id
-        result['to']                       = self.to_id
+        result['from']                  = self.from_id
+        result['to']                    = self.to_id
 
         dbconf = dbconfig.dbConfig()
 
@@ -391,13 +385,14 @@ class AutomaticAccounting:
             mysubject = Subjects()
             numrows = len(self.liststore) + 1
             #document.add_notebook(result['from'],  result['total_value'], result['desc'])
-            self.liststore.append ((localizeNumber(numrows), localizeNumber(result['from']), mysubject.get_name(result['from']), 0, localizeNumber(result['total_value']), result['desc'], None))
+            self.liststore.append ((LN(numrows), LN(self.from_code), self.from_name, LN(0), LN(result['total_value']), result['desc'], None))
+            #self.liststore.append ((numrows,                 code,                           sub.name,                          debt, credit,                              desc,           None))
             #document.add_notebook(result['to']  , -result['cash_payment'], result['desc'])
             numrows += 1
-            self.liststore.append ((localizeNumber(numrows), localizeNumber(result['to']), mysubject.get_name(result['to']), 0, localizeNumber(result['cash_payment']), result['desc'], None))
+            self.liststore.append ((LN(numrows), LN(self.to_code), self.to_name, LN(result['cash_payment']), LN(0), result['desc'], None))
             if result['discount'] :
                 #document.add_notebook(dbconf.get_int('sell-discount'), -result['discount'], result['desc'])
-                self.liststore.append ((localizeNumber(numrows), localizeNumber(dbconf.get_int('sell-discount')), mysubject.get_name(dbconf.get_int('sell-discount')), localizeNumber(result['discount']), 0, result['desc'], None))
+                self.liststore.append ((LN(numrows), LN(dbconf.get_int('sell-discount')), mysubject.get_name(dbconf.get_int('sell-discount')), LN(result['discount']), 0, result['desc'], None))
 
             #cl_cheque = class_cheque.ClassCheque()
             #or cheque in self.chequeui.new_cheques:
@@ -433,14 +428,14 @@ class AutomaticAccounting:
     #TODO get a parameter to can send data to parent
     def run(self, parent=None, liststore=None):
         self.liststore = liststore
-        win  = self.builder.get_object('general')
-        win.connect('destroy', self.on_destroy)
+        self.win  = self.builder.get_object('general')
+        self.win.connect('destroy', self.on_destroy)
 
         if parent:
-            win.set_transient_for(parent)
+            self.win.set_transient_for(parent)
         #win.set_position(gtk.WIN_POS_CENTER)
-        win.set_destroy_with_parent(True)
-        win.show_all()
+        self.win.set_destroy_with_parent(True)
+        self.win.show_all()
 
 
 ## @}
