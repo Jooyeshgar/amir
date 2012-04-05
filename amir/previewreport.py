@@ -107,13 +107,13 @@ class PreviewReport:
             remaining += int(self.content[0][6].replace(",", ""))
         if remaining < 0:
             diagnose = _("deb")
-            sr = utility.showNumber(-(remaining))
+            sr = utility.LN(-(remaining))
         else:
             if remaining == 0:
                 diagnose = _("equ")
             else:
                 diagnose = _("cre")
-            sr = utility.showNumber(remaining)
+            sr = utility.LN(remaining)
             
         for page_nr in range(1, self.pages + 1) :
             temp = self.lines_per_page * page_nr

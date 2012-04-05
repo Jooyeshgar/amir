@@ -89,12 +89,12 @@ class Subjects(gobject.GObject):
             subject_sum = subject_sum[0]
             
             if(subject_sum == None):
-                subject_sum = utility.showNumber("0")
+                subject_sum = utility.LN("0")
             else :
                 if(subject_sum < 0):
-                    subject_sum = "( -" + utility.showNumber(-subject_sum) + " )"
+                    subject_sum = "( -" + utility.LN(-subject_sum) + " )"
                 else :
-                    subject_sum = utility.showNumber(subject_sum)
+                    subject_sum = utility.LN(subject_sum)
                 
             iter = self.treestore.append(None, (code, a[1], type, subject_sum))
             if (a[5] != 0 and ledgers_only == False) :
@@ -480,7 +480,7 @@ class Subjects(gobject.GObject):
                 
                 if config.digittype == 1:
                     lastcode = utility.convertToPersian(lastcode)
-                child = self.treestore.append(iter, (lastcode, name, _(self.subjecttypes[type]), utility.showNumber("0")))
+                child = self.treestore.append(iter, (lastcode, name, _(self.subjecttypes[type]), utility.LN("0")))
                 
                 self.temppath = self.treestore.get_path(child)
                 self.treeview.scroll_to_cell(self.temppath, None, False, 0, 0)
@@ -514,12 +514,12 @@ class Subjects(gobject.GObject):
                     subject_sum = subject_sum.filter(and_(Subject.lft >= row[4], Subject.lft <= row[5])).first()
                     subject_sum = subject_sum[0]
                     if(subject_sum == None):
-                        subject_sum = utility.showNumber("0")
+                        subject_sum = utility.LN("0")
                     else :
                         if(subject_sum < 0):
-                            subject_sum = "(-" + utility.showNumber(-subject_sum) + ")"
+                            subject_sum = "(-" + utility.LN(-subject_sum) + ")"
                         else :
-                            subject_sum = utility.showNumber(subject_sum)
+                            subject_sum = utility.LN(subject_sum)
                             
                     chiter = self.treestore.append(iter, (code, row[1], type, subject_sum))
                     if row[3] != 0 :

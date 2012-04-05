@@ -80,4 +80,9 @@ class dbConfig:
             return None
         return val
 
+try:
+    dbconf
+except NameError:
+    dbconf = dbConfig()
+    
 ## @}

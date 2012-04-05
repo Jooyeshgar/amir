@@ -132,12 +132,12 @@ class SellProducts:
 	def appendPrice(self,  price):
 		oldPrice    = utility.getFloatNumber(self.totalEntry.get_text())
 		totalPrce   = oldPrice + price
-		self.totalEntry.set_text(utility.showNumber(totalPrce))
+		self.totalEntry.set_text(utility.LN(totalPrce))
 
 	def appendDiscount(self, discount):
 		oldDiscount = utility.getFloatNumber(self.totalDiscsEntry.get_text())
 		oldDiscount = oldDiscount + float(discount) 
-		self.totalDiscsEntry.set_text(utility.showNumber(oldDiscount))
+		self.totalDiscsEntry.set_text(utility.LN(oldDiscount))
 		
 	def editSell(self,sender):
 		iter    = self.sellsTreeView.get_selection().get_selected()[1]
@@ -189,12 +189,12 @@ class SellProducts:
 	def reducePrice(self,  price):
 		oldPrice    = utility.getFloatNumber(self.totalEntry.get_text())
 		totalPrce   = oldPrice - price
-		self.totalEntry.set_text(utility.showNumber(totalPrce))
+		self.totalEntry.set_text(utility.LN(totalPrce))
 
 	def reduceDiscount(self, discount):
 		oldDiscount = utility.getFloatNumber(self.totalDiscsEntry.get_text())
 		oldDiscount = oldDiscount - discount
-		self.totalDiscsEntry.set_text(utility.showNumber(oldDiscount))
+		self.totalDiscsEntry.set_text(utility.LN(oldDiscount))
 
 	def addSell(self,sender=0,edit=None):
 		self.addSellDlg = self.builder.get_object("addASellDlg")
@@ -248,16 +248,16 @@ class SellProducts:
 			self.descVal.set_text(desc)
 			
 			self.proNameLbl.set_text(pName)
-			self.avQntyVal.set_text(utility.showNumber(pro.quantity))
-			self.stndrdPVal.set_text(utility.showNumber(pro.sellingPrice))
+			self.avQntyVal.set_text(utility.LN(pro.quantity))
+			self.stndrdPVal.set_text(utility.LN(pro.sellingPrice))
 			
 			self.ttlAmntVal.set_text(ttlPrc)
 			self.discTtlVal.set_text(ttlDisc)
 			total_payable = utility.getFloatNumber(ttlPrc) - utility.getFloatNumber(ttlDisc)
 			discval = self.calcDiscount(pro.discountFormula, utility.getFloatNumber(qnty), 
 										pro.sellingPrice)
-			self.ttlPyblVal.set_text(utility.showNumber(total_payable))
-			self.stnrdDisc.set_text(utility.showNumber(discval))
+			self.ttlPyblVal.set_text(utility.LN(total_payable))
+			self.stnrdDisc.set_text(utility.LN(discval))
 			self.product = pro
 			
 		else:
@@ -374,9 +374,9 @@ class SellProducts:
 			total_str = str(total)
 			if config.digittype == 1:
 				No_str = utility.convertToPersian(No_str)
-				qnty_str = utility.showNumber(qnty_str)
-				slPrc_str = utility.showNumber(slPrc_str)
-				total_str = utility.showNumber(total_str)
+				qnty_str = utility.LN(qnty_str)
+				slPrc_str = utility.LN(slPrc_str)
+				total_str = utility.LN(total_str)
 				untDisc = utility.convertToPersian(untDisc)
 				
 			sellList = (No_str, productName, qnty_str, slPrc_str, total_str, untDisc, discnt, descp)
@@ -438,13 +438,13 @@ class SellProducts:
 
 		if not err:
 			amnt = subtotal + additions + tax - subtracts - ttlDiscs
-			self.payableAmntEntry.set_text(utility.showNumber(amnt))
+			self.payableAmntEntry.set_text(utility.LN(amnt))
 
 	def calculateBalance(self):
 		payableAmnt = utility.getFloatNumber(self.payableAmntEntry.get_text())
 		ttlPayment = utility.getFloatNumber(self.totalPaymentsEntry.get_text())
 		blnc = payableAmnt - ttlPayment
-		self.remainedAmountEntry.set_text(utility.showNumber(blnc))
+		self.remainedAmountEntry.set_text(utility.LN(blnc))
 		
 	
 	def valsChanged(self,sender=0,ev=0):
@@ -477,7 +477,7 @@ class SellProducts:
 			severe = False
 			
 			if self.qntyEntry.get_text() == "":
-				self.qntyEntry.set_text(utility.showNumber(0.0))
+				self.qntyEntry.set_text(utility.LN(0.0))
 				qnty = 0
 			else:
 				qnty = self.qntyEntry.get_float()
@@ -513,7 +513,7 @@ class SellProducts:
 					if self.product.discountFormula:
 						print "formula exists!"
 						discval = self.calcDiscount(self.product.discountFormula, qnty, sellPrc)
-						discstr = utility.showNumber(discval)
+						discstr = utility.LN(discval)
 						self.discountEntry.set_text(discstr)
 						self.stnrdDisc.set_text(discstr)
 						self.calcTotalDiscount(discval)
@@ -537,7 +537,7 @@ class SellProducts:
 			
 			if self.unitPriceEntry.get_text() == "":
 				untPrc = self.product.sellingPrice
-				self.unitPriceEntry.set_text(utility.showNumber(untPrc, comma=False))
+				self.unitPriceEntry.set_text(utility.LN(untPrc, comma=False))
 			else:
 				untPrc  = self.unitPriceEntry.get_float()            
 			
@@ -641,12 +641,12 @@ class SellProducts:
 		qnty = self.qntyEntry.get_float()
 		discnt = self.calcDiscount(formula, qnty, sellPrc)
 		
-		self.avQntyVal.set_text(utility.showNumber(av_qnty))
-		self.stnrdDisc.set_text(utility.showNumber(discnt))
-		self.unitPriceEntry.set_text(utility.showNumber(sellPrc, comma=False))
-		self.discountEntry.set_text(utility.showNumber(discnt, comma=False))
+		self.avQntyVal.set_text(utility.LN(av_qnty))
+		self.stnrdDisc.set_text(utility.LN(discnt))
+		self.unitPriceEntry.set_text(utility.LN(sellPrc, comma=False))
+		self.discountEntry.set_text(utility.LN(discnt, comma=False))
 
-		self.stndrdPVal.set_text(utility.showNumber(sellPrc))
+		self.stndrdPVal.set_text(utility.LN(sellPrc))
 
 		self.proNameLbl.show()
 		
@@ -689,19 +689,19 @@ class SellProducts:
 		unitPrice   = self.unitPriceEntry.get_float()
 		qnty        = self.qntyEntry.get_float()
 		total       = unitPrice * qnty
-		self.ttlAmntVal.set_text(utility.showNumber(total))
+		self.ttlAmntVal.set_text(utility.LN(total))
 		self.calcTotalPayable()
 
 	def calcTotalDiscount(self, discount):
 		qnty        = self.qntyEntry.get_float()
 		totalDisc   = discount * qnty
-		self.discTtlVal.set_text(utility.showNumber(totalDisc))
+		self.discTtlVal.set_text(utility.LN(totalDisc))
 		self.calcTotalPayable()
 
 	def calcTotalPayable(self):
 		ttlAmnt = utility.getFloatNumber(self.ttlAmntVal.get_text())
 		ttldiscount = utility.getFloatNumber(self.discTtlVal.get_text())
-		self.ttlPyblVal.set_text(utility.showNumber(ttlAmnt - ttldiscount))
+		self.ttlPyblVal.set_text(utility.LN(ttlAmnt - ttldiscount))
 
 	def selectProduct(self,sender=0):
 		obj = product.Product()
@@ -875,7 +875,7 @@ class SellProducts:
 		
 		# Create document rows
 		doc_rows = []
-		trans_code = utility.showNumber(self.subCode, False)
+		trans_code = utility.LN(self.subCode, False)
 		
 		row = Notebook(self.custSubj, bill_id, -(self.payableAmnt), 
 		               _("Debit for invoice number %s") % trans_code)
@@ -930,7 +930,7 @@ class SellProducts:
 		ttlNonCash  = utility.getFloatNumber(self.nonCashPymntsEntry.get_text())
 		ttlPayments = ttlCash + ttlNonCash
 		
-		self.totalPaymentsEntry.set_text(utility.showNumber(ttlPayments))
+		self.totalPaymentsEntry.set_text(utility.LN(ttlPayments))
 		self.calculateBalance()
 		
 

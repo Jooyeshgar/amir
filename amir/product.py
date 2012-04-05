@@ -113,8 +113,8 @@ class Product(productgroup.ProductGroup):
 				last_gid = g.id
 				
 			if p != None:
-				self.treestore.append(grouprow, (p.code, p.name, utility.showNumber(p.quantity), 
-										utility.showNumber(p.purchacePrice), utility.showNumber(p.sellingPrice)))
+				self.treestore.append(grouprow, (p.code, p.name, utility.LN(p.quantity), 
+										utility.LN(p.purchacePrice), utility.LN(p.sellingPrice)))
 		
 		self.window.show_all()    
 
@@ -349,8 +349,8 @@ class Product(productgroup.ProductGroup):
 				self.treeview.set_cursor(path, None, False)
 				self.treeview.grab_focus()
 			
-			self.saveRow(edititer, (code, name, utility.showNumber(quantity), 
-									utility.showNumber(purchase_price), utility.showNumber(sell_price) ) )
+			self.saveRow(edititer, (code, name, utility.LN(quantity), 
+									utility.LN(purchase_price), utility.LN(sell_price) ) )
 				
 		return True
 

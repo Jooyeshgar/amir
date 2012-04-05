@@ -133,12 +133,12 @@ class AddEditDoc:
             self.numrows += 1
             if n.value < 0:
                 value = -(n.value)
-                debt = utility.showNumber(value)
-                credit = utility.showNumber(0)
+                debt = utility.LN(value)
+                credit = utility.LN(0)
                 self.debt_sum += value
             else:
-                credit = utility.showNumber(n.value)
-                debt = utility.showNumber(0)
+                credit = utility.LN(n.value)
+                debt = utility.LN(0)
                 self.credit_sum += n.value
                 
             code = s.code
@@ -150,13 +150,13 @@ class AddEditDoc:
             
         docnum = utility.LN(self.cl_document.number)
         self.builder.get_object("docnumber").set_text (docnum)
-        self.builder.get_object("debtsum").set_text (utility.showNumber(self.debt_sum))
-        self.builder.get_object("creditsum").set_text (utility.showNumber(self.credit_sum))
+        self.builder.get_object("debtsum").set_text (utility.LN(self.debt_sum))
+        self.builder.get_object("creditsum").set_text (utility.LN(self.credit_sum))
         if self.debt_sum > self.credit_sum:
             diff = self.debt_sum - self.credit_sum
         else:
             diff = self.credit_sum - self.debt_sum
-        self.builder.get_object("difference").set_text (utility.showNumber(diff))
+        self.builder.get_object("difference").set_text (utility.LN(diff))
     
     ##Show add_row dialog and call saveRow() to save row to list store'   
     def addRow(self, sender):
@@ -248,10 +248,10 @@ class AddEditDoc:
             code   = utility.convertToPersian(code)
         
         if type == 0:
-            debt = utility.showNumber(amount)
+            debt = utility.LN(amount)
             self.debt_sum += amount
         elif type == 1:
-            credit = utility.showNumber(amount)
+            credit = utility.LN(amount)
             self.credit_sum += amount
                  
         if iter != None:
@@ -263,13 +263,13 @@ class AddEditDoc:
                 numrows = utility.convertToPersian(numrows)
             self.liststore.append ((numrows, code, sub.name, debt, credit, desc, None))
             
-        self.builder.get_object("debtsum").set_text (utility.showNumber(self.debt_sum))
-        self.builder.get_object("creditsum").set_text (utility.showNumber(self.credit_sum))
+        self.builder.get_object("debtsum").set_text (utility.LN(self.debt_sum))
+        self.builder.get_object("creditsum").set_text (utility.LN(self.credit_sum))
         if self.debt_sum > self.credit_sum:
             diff = self.debt_sum - self.credit_sum
         else:
             diff = self.credit_sum - self.debt_sum
-        self.builder.get_object("difference").set_text (utility.showNumber(diff))
+        self.builder.get_object("difference").set_text (utility.LN(diff))
     
     ## Delte the selected row from liststore and update sum and diff
     def deleteRow(self, sender):
@@ -301,13 +301,13 @@ class AddEditDoc:
                 
                 self.debt_sum -= debt
                 self.credit_sum -= credit
-                self.builder.get_object("debtsum").set_text (utility.showNumber(self.debt_sum))
-                self.builder.get_object("creditsum").set_text (utility.showNumber(self.credit_sum))
+                self.builder.get_object("debtsum").set_text (utility.LN(self.debt_sum))
+                self.builder.get_object("creditsum").set_text (utility.LN(self.credit_sum))
                 if self.debt_sum > self.credit_sum:
                     diff = self.debt_sum - self.credit_sum
                 else:
                     diff = self.credit_sum - self.debt_sum
-                self.builder.get_object("difference").set_text (utility.showNumber(diff))
+                self.builder.get_object("difference").set_text (utility.LN(diff))
             msgbox.destroy()
     
     ##Save liststore change to database

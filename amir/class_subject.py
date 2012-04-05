@@ -9,7 +9,12 @@ class Subjects():
 
     def __init__(self):
         pass
-                
+    
+    ## add a new subject
+    # @param parentid: id of parrent subject, 0 for main
+    # @param name: name of customer
+    # @param code: customer code that can be none for auto increment
+    # @param type: 0 for Debtor, 1 for Creditor, 2 for both            
     def add(self, parentid, name, code=None, type=2):
 
         parent = config.db.session.query(Subject.code, Subject.lft).select_from(Subject).filter(Subject.id == parentid).first()
@@ -81,5 +86,16 @@ class Subjects():
         query = config.db.session.query(Subject.id).select_from(Subject)
         query = query.filter(Subject.name == name)
         return query.first().id
+    
+    ## chek customer code is valid and exist.
+    # @return: -1 for invalid, 1 for valid, 2 for exist
+    def chek_code(self, code):
+        if len(code)%2 == 1:
+            return -1
+        query = config.db.session.query(Subject.id).select_from(Subject).filter(Subject.code == code).all()
+        if len(query)==0:
+            return 1
+        else:
+            return 2
 
 ## @}

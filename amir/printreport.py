@@ -214,10 +214,10 @@ class PrintReport:
         fdesc.set_size(fontsize * pango.SCALE)
         self.pangolayout.set_font_description(fdesc)
         if page_nr == 0:
-            self.pangolayout.set_text(utility.showNumber(0))
+            self.pangolayout.set_text(utility.LN(0))
             self.debt_sum = 0
         else:
-            self.pangolayout.set_text(utility.showNumber(self.debt_sum))
+            self.pangolayout.set_text(utility.LN(self.debt_sum))
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
         cr.move_to (right_txt -(width / pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / pango.SCALE))/2)
@@ -228,10 +228,10 @@ class PrintReport:
         
         right_txt -= MARGIN + LINE
         if page_nr == 0:
-            self.pangolayout.set_text(utility.showNumber(0))
+            self.pangolayout.set_text(utility.LN(0))
             self.credit_sum = 0
         else:
-            self.pangolayout.set_text(utility.showNumber(self.credit_sum))
+            self.pangolayout.set_text(utility.LN(self.credit_sum))
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
         cr.move_to (right_txt -(width / pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / pango.SCALE))/2)
@@ -318,7 +318,7 @@ class PrintReport:
         fontsize = config.contentfont
         fdesc.set_size(fontsize * pango.SCALE)
         self.pangolayout.set_font_description(fdesc)
-        self.pangolayout.set_text(utility.showNumber(self.debt_sum))
+        self.pangolayout.set_text(utility.LN(self.debt_sum))
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
         cr.move_to (right_txt -(width / pango.SCALE), addh + (ROW_HEIGHT-(height / pango.SCALE))/2)
@@ -328,7 +328,7 @@ class PrintReport:
         cr.line_to(right_txt, addh + ROW_HEIGHT)
         
         right_txt -= MARGIN + LINE
-        self.pangolayout.set_text(utility.showNumber(self.credit_sum))
+        self.pangolayout.set_text(utility.LN(self.credit_sum))
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
         cr.move_to (right_txt -(width / pango.SCALE), addh + (ROW_HEIGHT-(height / pango.SCALE))/2)
@@ -409,10 +409,10 @@ class PrintReport:
         fdesc.set_size(fontsize * pango.SCALE)
         self.pangolayout.set_font_description(fdesc)
         if page_nr == 0:
-            self.pangolayout.set_text(utility.showNumber(0))
+            self.pangolayout.set_text(utility.LN(0))
             self.debt_sum = 0
         else:
-            self.pangolayout.set_text(utility.showNumber(self.debt_sum))
+            self.pangolayout.set_text(utility.LN(self.debt_sum))
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
         cr.move_to (right_txt -(width / pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / pango.SCALE))/2)
@@ -423,10 +423,10 @@ class PrintReport:
         
         right_txt -= MARGIN + LINE
         if page_nr == 0:
-            self.pangolayout.set_text(utility.showNumber(0))
+            self.pangolayout.set_text(utility.LN(0))
             self.credit_sum = 0
         else:
-            self.pangolayout.set_text(utility.showNumber(self.credit_sum))
+            self.pangolayout.set_text(utility.LN(self.credit_sum))
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
         cr.move_to (right_txt -(width / pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / pango.SCALE))/2)
@@ -443,13 +443,13 @@ class PrintReport:
                 remaining += int(self.content[0][6].replace(",", ""))
             if remaining < 0:
                 self.diagnose = _("deb")
-                self.remaining = utility.showNumber(-(remaining))
+                self.remaining = utility.LN(-(remaining))
             else:
                 if remaining == 0:
                     self.diagnose = _("equ")
                 else:
                     self.diagnose = _("cre")
-                self.remaining = utility.showNumber(remaining)
+                self.remaining = utility.LN(remaining)
         
         right_txt -= MARGIN + LINE
         self.pangolayout.set_text(self.diagnose)
@@ -552,7 +552,7 @@ class PrintReport:
         fontsize = config.contentfont
         fdesc.set_size(fontsize * pango.SCALE)
         self.pangolayout.set_font_description(fdesc)
-        self.pangolayout.set_text(utility.showNumber(self.debt_sum))
+        self.pangolayout.set_text(utility.LN(self.debt_sum))
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
         cr.move_to (right_txt -(width / pango.SCALE), addh + (ROW_HEIGHT-(height / pango.SCALE))/2)
@@ -562,7 +562,7 @@ class PrintReport:
         cr.line_to(right_txt, addh + ROW_HEIGHT)
         
         right_txt -= MARGIN + LINE
-        self.pangolayout.set_text(utility.showNumber(self.credit_sum))
+        self.pangolayout.set_text(utility.LN(self.credit_sum))
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
         cr.move_to (right_txt -(width / pango.SCALE), addh + (ROW_HEIGHT-(height / pango.SCALE))/2)
@@ -694,7 +694,7 @@ class PrintReport:
         cr.line_to(right_txt, addh)
         
         right_txt -= MARGIN + LINE
-        self.pangolayout.set_text(utility.showNumber(self.debt_sum))
+        self.pangolayout.set_text(utility.LN(self.debt_sum))
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
         cr.move_to (right_txt -(width / pango.SCALE), addh + (ROW_HEIGHT-(height / pango.SCALE))/2)
@@ -704,7 +704,7 @@ class PrintReport:
         cr.line_to(right_txt, addh + ROW_HEIGHT)
         
         right_txt -= MARGIN + LINE
-        self.pangolayout.set_text(utility.showNumber(self.credit_sum))
+        self.pangolayout.set_text(utility.LN(self.credit_sum))
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(pango.ALIGN_RIGHT)
         cr.move_to (right_txt -(width / pango.SCALE), addh + (ROW_HEIGHT-(height / pango.SCALE))/2)

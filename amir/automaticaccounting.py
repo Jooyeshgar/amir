@@ -329,8 +329,8 @@ class AutomaticAccounting:
 
         dbconf = dbconfig.dbConfig()
 
-        if self.liststore == None:
         #Save data in data base for single use
+        if self.liststore == None:
             document = class_document.Document()
             document.add_notebook(result['from'],  result['total_value'], result['desc'])
             document.add_notebook(result['to']  , -result['cash_payment'], result['desc'])

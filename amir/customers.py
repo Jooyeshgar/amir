@@ -1,18 +1,16 @@
-import  sys
-import  os
 import  gobject
 import  pygtk
 import  gtk
 
 #import  warehousing
-import class_subject
-import dbconfig
+import  class_subject
 import  decimalentry
 import  numberentry
 import  dateentry
 import  subjects
 import  customergroup
-import  utility
+from    utility                     import  LN,readNumber
+from    dbconfig                    import dbconf
 
 from    sqlalchemy.orm              import  sessionmaker, join
 from    sqlalchemy.orm.util         import  outerjoin
@@ -23,12 +21,14 @@ from    helpers                     import  get_builder
 from    amirconfig                  import  config
 from    datetime                    import  date
 from    database                    import  *
+from amir.dbconfig import dbconf
 
 pygtk.require('2.0')
 
 ## \defgroup UserInterface
 ## @{
 
+## Register or edit a customer and create a subject row
 class Customer(customergroup.Group):
 
     def __init__(self):
@@ -57,7 +57,8 @@ class Customer(customergroup.Group):
         self.boxCreditEntry = decimalentry.DecimalEntry(10)
         self.builder.get_object("boxCreditEntry").add(self.boxCreditEntry)
         self.boxCreditEntry.show()
-                
+    
+    ## show list of customer            
     def viewCustomers(self, readonly=False):
         self.window = self.builder.get_object("viewCustomersWindow")
         if readonly :
@@ -114,18 +115,23 @@ class Customer(customergroup.Group):
         
         self.window.show()    
 
-#    ############################################################################
-#    #  Add Customers Window
-#    ############################################################################
+    ## Show add customers window
     def addNewCustomer(self, sender, pcode = ""):
         self.editCustomer = False
         
         self.customerForm = self.builder.get_object("customersWindow")
         self.customerForm.set_title(_("Add New Customer"))
         self.builder.get_object("addCustSubmitBtn").set_label(_("Add Customer"))
-        
-        self.builder.get_object("custCodeEntry").set_text("")
-        self.custgrpentry.set_text("")
+
+        query = config.db.session.query(Subject.code).select_from(Subject).order_by(Subject.id.desc())
+        code = query.filter(Subject.parent_id == dbconf.get_int('custSubject')).first()
+        if code == None :
+            lastcode = "01"
+        else :
+            lastcode = "%02d" % (int(code[0][-2:]) + 1)
+            
+        self.builder.get_object("custCodeEntry").set_text(LN(lastcode))
+        #self.custgrpentry.set_text("")
         self.builder.get_object("custNameEntry").set_text("")
         self.builder.get_object("custEcnmcsCodeEntry").set_text("")
         self.builder.get_object("custPrsnalCodeEntry").set_text("")
@@ -180,6 +186,7 @@ class Customer(customergroup.Group):
 #    def submitEditCust(self):
 #        print "SUBMIT  EDIT"
 #    
+    ## save customer to database
     #@return: -1 on error, 0 for success
     def saveCustomer(self):
         custCode			= unicode(self.builder.get_object("custCodeEntry").get_text())
@@ -260,11 +267,8 @@ class Customer(customergroup.Group):
 
         if not self.editCustomer:
             #New Customer
-            # TODO: Check to see if a subject with the customer name exists already.
-            # check revision #118 by ha_60
-            dbconf = dbconfig.dbConfig()
             sub = class_subject.Subjects()
-            custSubj = sub.add(dbconf.get_int('custSubject'), custName, custCode)
+            custSubj = sub.add(dbconf.get_int('custSubject'), custName)
             customer = Customers(custCode, custName, custSubj, custPhone, custCell, custFax, custAddress,
                                 custEmail, custEcnmcsCode, custWebPage, callResponsible, custConnector,
                                 groupid, custPostalCode, custPersonalCode, custDesc, custBalance, custCredit,
@@ -274,7 +278,8 @@ class Customer(customergroup.Group):
         else:
             query = config.db.session.query(Customers).select_from(Customers)
             customer = query.filter(Customers.custId == self.customerId).first()
-            customer.custCode = custCode
+            #customer code not need to change
+            #customer.custCode = custCode
             customer.custName = custName
             customer.custPhone = custPhone
             customer.custCell = custCell
@@ -321,8 +326,7 @@ class Customer(customergroup.Group):
                     break
                 parent_iter = self.treestore.iter_next(parent_iter)
                 
-            if config.digittype == 1:
-                custCode = utility.convertToPersian(custCode)
+            custCode = LN(custCode)
             
             if not self.editCustomer:
                 self.treestore.append(parent_iter, (custCode, custName, "0.0", "0.0"))
@@ -340,19 +344,19 @@ class Customer(customergroup.Group):
             self.editCustomerGroup(sender)
         else:            
             code = self.treestore.get_value(iter, 0)
-            code = utility.convertToLatin(code)
+            code = readNumber(code)
             query = config.db.session.query(Customers, CustGroups.custGrpCode)
             query = query.select_from(outerjoin(CustGroups, Customers, CustGroups.custGrpId == Customers.custGroup))
             result = query.filter(Customers.custCode == code).first()
             customer = result[0]
             groupcode = result[1]
             
-            custCode = utility.showNumber(customer.custCode, False)
-            custGrp = utility.showNumber(groupcode, False)
-            custPhone = utility.showNumber(customer.custPhone, False)
-            custCell = utility.showNumber(customer.custCell, False)
-            custFax = utility.showNumber(customer.custFax, False)
-            custPostalCode = utility.showNumber(customer.custPostalCode, False)
+            custCode = LN(customer.custCode, False)
+            custGrp = LN(groupcode, False)
+            custPhone = LN(customer.custPhone, False)
+            custCell = LN(customer.custCell, False)
+            custFax = LN(customer.custFax, False)
+            custPostalCode = LN(customer.custPostalCode, False)
             
             self.customerForm = self.builder.get_object("customersWindow")
             self.customerForm.set_title(_("Edit Customer"))
@@ -384,8 +388,8 @@ class Customer(customergroup.Group):
             self.builder.get_object("markedChk").set_active(customer.custMarked)
             self.builder.get_object("markedReasonEntry").set_text(customer.custReason)
             #----------------------------------
-            self.boxBalanceEntry.set_text(utility.showNumber(customer.custBalance, False))
-            self.boxCreditEntry.set_text(utility.showNumber(customer.custCredit, False))
+            self.boxBalanceEntry.set_text(LN(customer.custBalance, False))
+            self.boxCreditEntry.set_text(LN(customer.custCredit, False))
             self.builder.get_object("custAccName1Entry").set_text(customer.custAccName1)
             self.builder.get_object("custAccNo1Entry").set_text(customer.custAccNo1)
             self.builder.get_object("custAccBank1Entry").set_text(customer.custAccBank1)
@@ -393,7 +397,7 @@ class Customer(customergroup.Group):
             self.builder.get_object("custAccNo2Entry").set_text(customer.custAccNo2)
             self.builder.get_object("custAccBank2Entry").set_text(customer.custAccBank2)
             
-            self.builder.get_object("cusPostalCodeEntry").set_text(utility.showNumber(customer.custPostalCode, False))
+            self.builder.get_object("cusPostalCodeEntry").set_text(LN(customer.custPostalCode, False))
             self.builder.get_object("markedReasonEntry").set_sensitive(self.builder.get_object("markedChk").get_active())
             
             self.customerForm.show_all()

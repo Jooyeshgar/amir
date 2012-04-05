@@ -180,11 +180,11 @@ class NotebookReport:
             for n, code, b in res:
                 desc = n.desc
                 if n.value < 0:
-                    credit = utility.showNumber("0")
-                    debt = utility.showNumber(-(n.value))
+                    credit = utility.LN("0")
+                    debt = utility.LN(-(n.value))
                 else:
-                    credit = utility.showNumber(n.value)
-                    debt = utility.showNumber("0")
+                    credit = utility.LN(n.value)
+                    debt = utility.LN("0")
                     desc = "   " + desc
                 
                 billnumber = str(b.number)   
@@ -203,11 +203,11 @@ class NotebookReport:
             col_width = [10, 10, 37, 13, 13, 4, 13]
             for n, code, b in res:
                 if n.value < 0:
-                    credit = utility.showNumber("0")
-                    debt = utility.showNumber(-(n.value))
+                    credit = utility.LN("0")
+                    debt = utility.LN(-(n.value))
                 else:
-                    credit = utility.showNumber(n.value)
-                    debt = utility.showNumber("0")
+                    credit = utility.LN(n.value)
+                    debt = utility.LN("0")
                     
                 remaining += n.value
                 billnumber = str(b.number)
@@ -215,13 +215,13 @@ class NotebookReport:
                     billnumber = utility.convertToPersian(billnumber)
                 if remaining < 0:
                     diagnose = _("deb")
-                    report_data.append((billnumber, dateToString(b.date), n.desc, debt, credit, diagnose, utility.showNumber(-(remaining))))
+                    report_data.append((billnumber, dateToString(b.date), n.desc, debt, credit, diagnose, utility.LN(-(remaining))))
                 else:
                     if remaining == 0:
                         diagnose = _("equ")
                     else:
                         diagnose = _("cre")
-                    report_data.append((billnumber, dateToString(b.date), n.desc, debt, credit, diagnose, utility.showNumber(remaining)))
+                    report_data.append((billnumber, dateToString(b.date), n.desc, debt, credit, diagnose, utility.LN(remaining)))
     
 #            else:
 #                if self.type == self.__class__.SUBLEDGER:

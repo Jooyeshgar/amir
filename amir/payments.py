@@ -111,8 +111,8 @@ class Payments(gobject.GObject):
 		for pay, cname in paylist:
 			self.numrecpts += 1
 			total += pay.paymntAmount
-			order = utility.showNumber(self.numrecpts, False)
-			amount = utility.showNumber(pay.paymntAmount)
+			order = utility.LN(self.numrecpts, False)
+			amount = utility.LN(pay.paymntAmount)
 			wrtDate = dateentry.dateToString(pay.paymntWrtDate)
 			dueDate = dateentry.dateToString(pay.paymntDueDate)
 			
@@ -132,8 +132,8 @@ class Payments(gobject.GObject):
 		for cheq, cname in cheqlist:
 			self.numcheqs += 1
 			total += cheq.chqAmount
-			order = utility.showNumber(self.numcheqs, False)
-			amount = utility.showNumber(cheq.chqAmount)
+			order = utility.LN(self.numcheqs, False)
+			amount = utility.LN(cheq.chqAmount)
 			wrtDate = dateentry.dateToString(cheq.chqWrtDate)
 			dueDate = dateentry.dateToString(cheq.chqDueDate)
 			status = self.chequeStatus[cheq.chqStatus]
@@ -203,7 +203,7 @@ class Payments(gobject.GObject):
 		pymntDesc = unicode(self.pymntDescEntry.get_text())
 		iter = None
 		
-		pymnt_str = utility.showNumber(pymntAmnt)
+		pymnt_str = utility.LN(pymntAmnt)
 		wrtDate_str = dateentry.dateToString(wrtDate)
 		dueDte_str = dateentry.dateToString(dueDte)
 		
@@ -226,7 +226,7 @@ class Payments(gobject.GObject):
 				                      self.chequeStatus[status], 8, pymntDesc)
 			else:
 				self.numcheqs += 1
-				order = utility.showNumber(self.numcheqs)
+				order = utility.LN(self.numcheqs)
 				cheque = Cheque(pymntAmnt, wrtDate, dueDte, serial, status, self.payer.custId,
 				                self.transId, self.billId, pymntDesc, self.numcheqs)
 				iter = self.cheqListStore.append((order, self.payer.custName, pymnt_str, wrtDate_str, 
@@ -258,7 +258,7 @@ class Payments(gobject.GObject):
 				                      7, trackCode, 8, pymntDesc)
 			else:
 				self.numrecpts += 1
-				order = utility.showNumber(self.numrecpts)
+				order = utility.LN(self.numrecpts)
 				payment = Payment(dueDte, bank, serial, pymntAmnt, self.payer.custId, wrtDate,
 				                 pymntDesc, self.transId, self.billId, trackCode, self.numrecpts)
 				iter = self.paysListStore.append((order, self.payer.custName, pymnt_str, wrtDate_str, 
@@ -353,7 +353,7 @@ class Payments(gobject.GObject):
 				
 				self.editid = cheque.chqId
 				payer_id   = cheque.chqCust
-				amount = utility.showNumber(cheque.chqAmount, False)
+				amount = utility.LN(cheque.chqAmount, False)
 				serial = cheque.chqSerial
 				wrtDate = cheque.chqWrtDate
 				dueDate = cheque.chqDueDate
@@ -374,7 +374,7 @@ class Payments(gobject.GObject):
 			
 			self.editid = payment.paymntId
 			payer_id   = payment.paymntPayer
-			amount = utility.showNumber(payment.paymntAmount, False)
+			amount = utility.LN(payment.paymntAmount, False)
 			serial = payment.paymntSerial
 			wrtDate = payment.paymntWrtDate
 			dueDate = payment.paymntDueDate
@@ -472,7 +472,7 @@ class Payments(gobject.GObject):
 		if hasrow:
 			# Decrease the order-number in next rows
 			while iter != None:
-				number_str = utility.showNumber(number, False)
+				number_str = utility.LN(number, False)
 				liststore.set_value (iter, 0, number_str)
 				number += 1
 				iter = liststore.iter_next(iter)
@@ -517,7 +517,7 @@ class Payments(gobject.GObject):
 		self.totalAmount += amount
 		ttlNonCashLabel = self.builder.get_object("ttlNonCashLabel")
 		#lastAmnt = utility.getFloatNumber(ttlNonCashLabel.get_text())
-		total_str  = utility.showNumber(self.totalAmount)
+		total_str  = utility.LN(self.totalAmount)
 		ttlNonCashLabel.set_text(total_str)
 		self.emit("payments-changed", total_str)
 		

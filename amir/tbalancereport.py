@@ -94,11 +94,11 @@ class TBalanceReport:
             
             remain = credit_sum + debt_sum
             if remain < 0:
-                remain = "( " + utility.showNumber(-remain) + " )"
+                remain = "( " + utility.LN(-remain) + " )"
             else:
-                remain = utility.showNumber(remain)
+                remain = utility.LN(remain)
                 
-            report_data.append((s.name, utility.showNumber(-debt_sum), utility.showNumber(credit_sum), remain))
+            report_data.append((s.name, utility.LN(-debt_sum), utility.LN(credit_sum), remain))
             
         return {"data":report_data, "col-width":col_width ,"heading":report_header}
             

@@ -77,11 +77,11 @@ class DocumentReport:
         for b, n, s in res:
             desc = n.desc
             if n.value < 0:
-                credit = utility.showNumber(0)
-                debt = utility.showNumber(-(n.value))
+                credit = utility.LN(0)
+                debt = utility.LN(-(n.value))
             else:
-                credit = utility.showNumber(n.value)
-                debt = utility.showNumber(0)
+                credit = utility.LN(n.value)
+                debt = utility.LN(0)
                 desc = "   " + desc
                 
             code = utility.LN(s.code)
