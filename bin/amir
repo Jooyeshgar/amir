@@ -57,6 +57,7 @@ pygtk.require('2.0')
 import gtk,gtk.glade
 import gettext,locale
 import gobject
+import glib
 
 
 # Check if we are working in the source tree or from the installed 
@@ -70,8 +71,11 @@ else:
     fullPath = os.getcwd()
 sys.path.insert(0, os.path.dirname(fullPath))
 
-from amir.amirconfig import config
-from amir.database   import  *
+from amir.share import share
+from amir.amirconfig import AmirConfig
+
+config = AmirConfig()
+share.config = config
 
 logging.debug('LANG=%s' % (config.locale))
 os.environ['LANGUAGE'] = config.locale
@@ -108,7 +112,7 @@ from amir import bankaccountsui
 class MainWindow(gobject.GObject):
 
     def manualDocument(self, sender):
-        dialog = addeditdoc.AddEditDoc()
+        dialog = addeditdoc.AddEditDoc(0,self.background)
         self.connect("database-changed", dialog.dbChanged)
 
     def quitMainWindow(self, sender):
@@ -335,14 +339,24 @@ class MainWindow(gobject.GObject):
         obj = bankaccountsui.BankAccountsUI(self.background)
         obj.add_account()
         
+    def silent_daialog(self, text):
+        infobar = gtk.InfoBar()
+        infobar.get_content_area().add(gtk.Label(text))
+        width , height = self.background.window.get_size()
+        infobar.set_size_request(width, -1)
+        self.background.put(infobar ,0 , 0)
+        infobar.show_all()
+
+        glib.timeout_add_seconds(3, lambda w: w.destroy(), infobar)
+        
     def main(self):
         gtk.main()
 
 if __name__ == "__main__":
-     gobject.type_register(MainWindow)
-     gobject.signal_new("database-changed", MainWindow, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (gobject.TYPE_STRING,))
-
-     mainwin = MainWindow()
-     mainwin.main()
+    gobject.type_register(MainWindow)
+    gobject.signal_new("database-changed", MainWindow, gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_STRING,))
+    
+    mainwin = MainWindow()
+    share.mainwin = mainwin
+    mainwin.main()
 

@@ -3,8 +3,10 @@ import gtk
 import math
 
 import utility
-from amirconfig import config
+from share import share
 from helpers import get_builder
+
+config = share.config
 
 class PreviewReport:
     def __init__(self, content, heading=None):

@@ -5,9 +5,11 @@ import dateentry
 import subjects
 import utility
 import automaticaccounting
-from amirconfig import config
+from share import share
 from database import Subject
 from helpers import get_builder
+
+config = share.config
 
 ## \defgroup UserInterface
 # @{
@@ -17,7 +19,8 @@ class AddEditDoc:
     
     ##Create a new window and initialize it.
     # \param number Document number for edit or zero for new document
-    def __init__(self, number=0):
+    def __init__(self, number=0, background=None):
+        self.main_window_background = background
         self.new_items = []
         self.deleted_items = []
         self.edit_items = []
@@ -413,7 +416,7 @@ class AddEditDoc:
 
     ##Call automaticaccounting::AutomaticAccounting to show automaticacconting window
     def auto_Document(self, sender):
-        auto_win = automaticaccounting.AutomaticAccounting()
+        auto_win = automaticaccounting.AutomaticAccounting(self.main_window_background)
         #auto_win.connect("auto-saved", self.auto_Saved)
         auto_win.run(self.window, self.liststore)
     

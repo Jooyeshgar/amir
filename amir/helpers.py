@@ -22,9 +22,7 @@ __all__ = [
 
 import os
 import gtk,logging
-
-#from amir.amirconfig import get_data_file
-from amirconfig import config
+from share import share
 
 ## \defgroup Utility
 ## @{
@@ -38,7 +36,7 @@ def get_builder(builder_file_name):
     """
     # Look for the ui file that describes the user interface.
     #ui_filename = get_data_file('ui', '%s.ui' % (builder_file_name,))
-    ui_filename = os.path.join(config.data_path, 'ui', '%s.glade' % (builder_file_name,))
+    ui_filename = os.path.join(share.config.data_path, 'ui', '%s.glade' % (builder_file_name,))
 
     if not os.path.exists(ui_filename):
 		logging.error("UI file \"%s\" not found." % ui_filename)

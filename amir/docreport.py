@@ -15,8 +15,10 @@ import printreport
 import previewreport
 from database import *
 from dateentry import *
-from amirconfig import config
+from share import share
 from helpers import get_builder
+
+config = share.config
 
 class DocumentReport:
     

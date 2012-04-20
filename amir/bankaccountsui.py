@@ -2,12 +2,14 @@
 import class_bankaccounts
 import customers
 import helpers
-from amirconfig import config
+from share import share
 from database import BankAccounts
 from database import Customers
 
 import glib
 import gtk
+
+config = share.config
 
 ## \defgroup UserInterface
 ## @{

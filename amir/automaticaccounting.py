@@ -6,15 +6,13 @@ import dateentry
 import dbconfig
 import decimalentry
 import helpers
-import numberentry
 import subjects
-from amirconfig import config
+from share import share
 from database import Subject
 from database import Customers
 from class_subject import Subjects
 from utility import LN
 
-import glib
 import gtk
 
 ## \defgroup UserInterface
@@ -56,7 +54,6 @@ class AutomaticAccounting:
         self.mode = None
         self.liststore = None
         
-        #self.main_window_background = background
         # Chosen Type
         self.type_index = None
         self.from_id = self.to_id = -1
@@ -156,7 +153,7 @@ class AutomaticAccounting:
 
         if self.type_index == 5:
             self.builder.get_object('to-button').set_sensitive(False)
-            query = config.db.session.query(Subject).select_from(Subject)
+            query = share.config.db.session.query(Subject).select_from(Subject)
             query = query.filter(Subject.id == dbconf.get_int('bank-wage'))
             query = query.first()
             self.to_id =  query.id
@@ -267,8 +264,8 @@ class AutomaticAccounting:
         subject.window.destroy()
 
     def on_customer_selected(self, customer, id, code, entry, to):
-        cust = config.db.session.query(Customers.custSubj, Customers.custName).select_from(Customers).filter(Customers.custId==id).first()
-        subj = config.db.session.query(Subject.code).select_from(Subject).filter(Subject.id==cust.custSubj).first()
+        cust = share.config.db.session.query(Customers.custSubj, Customers.custName).select_from(Customers).filter(Customers.custId==id).first()
+        subj = share.config.db.session.query(Subject.code).select_from(Subject).filter(Subject.id==cust.custSubj).first()
         if to:
             self.to_id   = cust.custSubj
             self.to_code = subj.code
@@ -331,9 +328,10 @@ class AutomaticAccounting:
 
         #Save data in data base for single use
         if self.liststore == None:
+            type(result['from'])
             document = class_document.Document()
-            document.add_notebook(result['from'],  result['total_value'], result['desc'])
-            document.add_notebook(result['to']  , -result['cash_payment'], result['desc'])
+            document.add_notebook(result['from'],  result['total_value'], unicode(result['desc']))
+            document.add_notebook(result['to']  , -result['cash_payment'], unicode(result['desc']))
             if result['discount'] :
                 document.add_notebook(dbconf.get_int('sell-discount'), -result['discount'], result['desc'])
             cl_cheque = class_cheque.ClassCheque()
@@ -358,7 +356,7 @@ class AutomaticAccounting:
             if self.type_configs[self.type_index][3] == True: # from is subject
                 customer_id = 0
             else: # from is customer
-                customer_id = config.db.session.query(Customers).select_from(Customers).filter(Customers.custSubj==self.from_id).first().custId
+                customer_id = share.config.db.session.query(Customers).select_from(Customers).filter(Customers.custSubj==self.from_id).first().custId
 
             for cheque in self.chequeui.new_cheques:
                 notebook_id =document.cheques_result[cheque['serial']]
@@ -369,16 +367,17 @@ class AutomaticAccounting:
             cl_cheque.save()
             cl_cheque.save_cheque_history(self.current_time)
             self.on_destroy(self.builder.get_object('general'))
-
-            infobar = gtk.InfoBar()
-            label = gtk.Label(_('successfully added. Document number : %d') % document.number)
-            infobar.get_content_area().add(label)
-            width , height = self.main_window_background.window.get_size()
-            infobar.set_size_request(width, -1)
-            self.main_window_background.put(infobar ,0 , 0)
-            infobar.show_all()
-
-            glib.timeout_add_seconds(3, lambda w: w.destroy(), infobar)
+            
+            share.mainwin.silent_daialog("silent-daialog", _('successfully added. Document number : %d') % document.number)
+#            infobar = gtk.InfoBar()
+#            label = gtk.Label(_('successfully added. Document number : %d') % document.number)
+#            infobar.get_content_area().add(label)
+#            width , height = self.main_window_background.window.get_size()
+#            infobar.set_size_request(width, -1)
+#            self.main_window_background.put(infobar ,0 , 0)
+#            infobar.show_all()
+#
+#            glib.timeout_add_seconds(3, lambda w: w.destroy(), infobar)
 
         #Store result in list store for showing in addeditdoc
         else:
@@ -436,6 +435,7 @@ class AutomaticAccounting:
         #win.set_position(gtk.WIN_POS_CENTER)
         self.win.set_destroy_with_parent(True)
         self.win.show_all()
+        
 
 
 ## @}

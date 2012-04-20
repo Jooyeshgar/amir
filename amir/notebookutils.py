@@ -6,7 +6,9 @@ from sqlalchemy import or_, and_
 from sqlalchemy.orm.util import outerjoin
 
 from database import *
-from amirconfig import config
+from share import share
+
+config = share.config
 
 def arrangeDocuments(parentWin):
     msg = _("This operation may change numbers of permanent documents too.\n\nAre you sure to continue?")

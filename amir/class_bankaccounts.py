@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import class_subject
 import dbconfig
-from amirconfig import config
+from share import share
 from database import BankAccounts
 from database import BankNames
 
@@ -9,6 +9,7 @@ from sqlalchemy.orm.util import outerjoin
 from sqlalchemy.orm.query import aliased
 from sqlalchemy.sql.functions import *
 
+config = share.config
 ## \defgroup Controller
 ## @{
 

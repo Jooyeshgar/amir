@@ -16,8 +16,10 @@ import subjects
 import utility
 
 from database import *
-from amirconfig import config
+from share import share
 from helpers import get_builder, comboInsertItems
+
+config = share.config
 
 class Payments(gobject.GObject):
 	
@@ -413,7 +415,7 @@ class Payments(gobject.GObject):
 			if iter == None:
 				return
 			else:
-				number = utility.getIntegerNumber(self.cheqListStore.get(iter, 0)[0])
+				number = utility.getInt(self.cheqListStore.get(iter, 0)[0])
 				msg = _("Are you sure to delete the cheque number %d?") % number
 				msgBox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, 
 				                           gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK_CANCEL, msg)
@@ -439,7 +441,7 @@ class Payments(gobject.GObject):
 				liststore = self.cheqListStore
 				
 		else:
-			number = utility.getIntegerNumber(self.paysListStore.get(iter, 0)[0])
+			number = utility.getInt(self.paysListStore.get(iter, 0)[0])
 			msg = _("Are you sure to delete the receipt number %d?") % number
 			msgBox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, 
 										gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK_CANCEL, msg)

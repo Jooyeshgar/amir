@@ -3,9 +3,11 @@ import class_cheque
 import dateentry
 import decimalentry
 import helpers
-from amirconfig import config
+from share import share
 from database import Cheque
 import gtk
+
+config = share.config
 
 ## \defgroup UserInterface
 ## @{

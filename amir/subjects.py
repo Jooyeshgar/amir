@@ -9,10 +9,12 @@ from sqlalchemy.sql import and_
 from sqlalchemy.orm import sessionmaker, join
 
 import numberentry
-import utility
+from utility import LN,getInt
 from database import *
-from amirconfig import config
+from share import share
 from helpers import get_builder
+
+config = share.config
 
 class Subjects(gobject.GObject):
     subjecttypes = ["Debtor", "Creditor", "Both"]
@@ -60,7 +62,7 @@ class Subjects(gobject.GObject):
         box.add(self.code)
         self.code.show()
         
-        config.db.session = config.db.session
+        #config.db.session = config.db.session
         
         Subject1 = aliased(Subject, name="s1")
         Subject2 = aliased(Subject, name="s2")
@@ -80,21 +82,19 @@ class Subjects(gobject.GObject):
 
         for a in result :
             type = _(self.subjecttypes[a[2]])
-            code = a[0]
-            if config.digittype == 1:
-                code = utility.convertToPersian(code)
+            code = LN(a[0])
             #--------
             subject_sum = config.db.session.query(sum(Notebook.value)).select_from(outerjoin(Subject, Notebook, Subject.id == Notebook.subject_id))
             subject_sum = subject_sum.filter(and_(Subject.lft >= a.lft, Subject.lft <= a.rgt)).first()
             subject_sum = subject_sum[0]
             
             if(subject_sum == None):
-                subject_sum = utility.LN("0")
+                subject_sum = LN("0")
             else :
                 if(subject_sum < 0):
-                    subject_sum = "( -" + utility.LN(-subject_sum) + " )"
+                    subject_sum = "( -" + LN(-subject_sum) + " )"
                 else :
-                    subject_sum = utility.LN(subject_sum)
+                    subject_sum = LN(subject_sum)
                 
             iter = self.treestore.append(None, (code, a[1], type, subject_sum))
             if (a[5] != 0 and ledgers_only == False) :
@@ -133,8 +133,7 @@ class Subjects(gobject.GObject):
         else:
             lastcode = "%02d" % (int(code[0][-2:]) + 1)
             
-        if config.digittype == 1:
-                lastcode = utility.convertToPersian(lastcode)
+        lastcode = LN(lastcode)
         self.code.set_text(lastcode)
         self.builder.get_object("parentcode").set_text("")
         
@@ -163,7 +162,7 @@ class Subjects(gobject.GObject):
         if parent != None :
             pcode = self.treestore.get(parent, 0)[0]
             self.builder.get_object("parentcode").set_text(pcode)
-            pcode = utility.convertToLatin(pcode)
+            pcode = getInt(pcode)
             
             query = config.db.session.query(Subject).select_from(Subject)
             query = query.filter(Subject.code == pcode)
@@ -182,8 +181,7 @@ class Subjects(gobject.GObject):
             else :
                 lastcode = "%02d" % (int(code[0][-2:]) + 1)
                 
-            if config.digittype == 1:
-                lastcode = utility.convertToPersian(lastcode) 
+            lastcode = LN(lastcode) 
             self.code.set_text(lastcode)
             
             result = dialog.run()
@@ -212,14 +210,11 @@ class Subjects(gobject.GObject):
         iter = selection.get_selected()[1]
         
         if iter != None :
-            if config.digittype == 1:
-                code = utility.convertToLatin(self.treestore.get(iter, 0)[0])
-                pcode = utility.convertToPersian(code[0:-2])
-                ccode = utility.convertToPersian(code[-2:])
-            else:
-                code = self.treestore.get(iter, 0)[0]
-                pcode = code[0:-2]
-                ccode = code[-2:]
+
+            code = getInt(self.treestore.get(iter, 0)[0])
+            pcode = LN(code[0:-2])
+            ccode = LN(code[-2:])
+
             self.builder.get_object("parentcode").set_text(pcode)
             self.code.set_text(ccode)
             
@@ -263,7 +258,7 @@ class Subjects(gobject.GObject):
             Subject1 = aliased(Subject, name="s1")
             Subject2 = aliased(Subject, name="s2")
             
-            code = utility.convertToLatin(self.treestore.get(iter, 0)[0])
+            code = getInt(self.treestore.get(iter, 0)[0])
             #Check to see if there is any subledger for this ledger.
             query = config.db.session.query(Subject1.id, count(Subject2.id))
             query = query.select_from(outerjoin(Subject1, Subject2, Subject1.id == Subject2.parent_id))
@@ -320,7 +315,7 @@ class Subjects(gobject.GObject):
                 parent_right = 0
                 parent_left = 0
             else :
-                iter_code = utility.convertToLatin(self.treestore.get(iter, 0)[0])
+                iter_code = getInt(self.treestore.get(iter, 0)[0])
                 query = config.db.session.query(Subject).select_from(Subject)
                 query = query.filter(Subject.code == iter_code)
                 sub = query.first()
@@ -351,7 +346,7 @@ class Subjects(gobject.GObject):
                 return
             
             #TODO pass code through function parameters
-            lastcode = utility.convertToLatin(self.code.get_text())[0:2]
+            lastcode = getInt(self.code.get_text())[0:2]
             if lastcode == '':
                 msgbox = gtk.MessageDialog(widget, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
                                         _("Ledger Code field is empty"))
@@ -414,10 +409,7 @@ class Subjects(gobject.GObject):
                 config.db.session.commit()
                 
                 #TODO show updated children on screen
-                if config.digittype == 1:
-                    basecode = utility.convertToPersian(lastcode)
-                else:
-                    basecode = lastcode
+                basecode = LN(lastcode)
                     
                 if temp_code != lastcode:
 #                    chiter = self.treestore.iter_children(iter)
@@ -478,9 +470,8 @@ class Subjects(gobject.GObject):
                 
                 config.db.session.commit()
                 
-                if config.digittype == 1:
-                    lastcode = utility.convertToPersian(lastcode)
-                child = self.treestore.append(iter, (lastcode, name, _(self.subjecttypes[type]), utility.LN("0")))
+                lastcode = LN(lastcode)
+                child = self.treestore.append(iter, (lastcode, name, _(self.subjecttypes[type]), LN("0")))
                 
                 self.temppath = self.treestore.get_path(child)
                 self.treeview.scroll_to_cell(self.temppath, None, False, 0, 0)
@@ -490,9 +481,9 @@ class Subjects(gobject.GObject):
         chiter = self.treestore.iter_children(iter)
         if chiter != None :
             #Checks name field(second) because code field(first) may have changed during parent code edition.
-            value = utility.convertToLatin(self.treestore.get(chiter, 1)[0])
+            value = getInt(self.treestore.get(chiter, 1)[0])
             if value == "" :
-                value =  utility.convertToLatin(self.treestore.get(iter, 0)[0])
+                value =  getInt(self.treestore.get(iter, 0)[0])
                 #remove empty subledger to add real children instead
                 self.treestore.remove(chiter)
                 
@@ -505,8 +496,7 @@ class Subjects(gobject.GObject):
                 result = query.filter(Parent.code == value).group_by(Sub.id).all()
                 for row in result :
                     code = row[0]
-                    if config.digittype == 1:
-                        code = utility.convertToPersian(code)
+                    code = LN(code)
                     type = _(self.subjecttypes[row[2]])
                     
                     #--------
@@ -514,12 +504,12 @@ class Subjects(gobject.GObject):
                     subject_sum = subject_sum.filter(and_(Subject.lft >= row[4], Subject.lft <= row[5])).first()
                     subject_sum = subject_sum[0]
                     if(subject_sum == None):
-                        subject_sum = utility.LN("0")
+                        subject_sum = LN("0")
                     else :
                         if(subject_sum < 0):
-                            subject_sum = "(-" + utility.LN(-subject_sum) + ")"
+                            subject_sum = "(-" + LN(-subject_sum) + ")"
                         else :
-                            subject_sum = utility.LN(subject_sum)
+                            subject_sum = LN(subject_sum)
                             
                     chiter = self.treestore.append(iter, (code, row[1], type, subject_sum))
                     if row[3] != 0 :
@@ -531,9 +521,8 @@ class Subjects(gobject.GObject):
         basecode = data[0]
         length = data[1]
         chcode = model.get(iter, 0)[0]
-        chcode = utility.convertToLatin(chcode)[length:]
-        if config.digittype == 1:
-            chcode = utility.convertToPersian(chcode)
+        chcode = getInt(chcode)[length:]
+        chcode = LN(chcode)
         self.treestore.set(model.convert_iter_to_child_iter(iter), 0, basecode + chcode )
         
     def match_func(self, iter, data):
@@ -627,7 +616,7 @@ class Subjects(gobject.GObject):
             return
 
         iter = self.treestore.get_iter(path)
-        code = utility.convertToLatin(self.treestore.get(iter, 0)[0])
+        code = getInt(self.treestore.get(iter, 0)[0])
         name = self.treestore.get(iter, 1)[0]
         
         query = config.db.session.query(Subject).select_from(Subject)
@@ -644,7 +633,7 @@ class Subjects(gobject.GObject):
         model, pathes = selection.get_selected_rows()
         for path in pathes:
             iter = self.treestore.get_iter(path)
-            code = utility.convertToLatin(self.treestore.get(iter, 0)[0])
+            code = getInt(self.treestore.get(iter, 0)[0])
             name = self.treestore.get(iter, 1)[0]
 
             query = config.db.session.query(Subject).select_from(Subject)

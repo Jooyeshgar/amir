@@ -18,9 +18,11 @@ from    sqlalchemy.sql              import  and_, or_
 from    sqlalchemy.sql.functions    import  *
 
 from    helpers                     import  get_builder
-from    amirconfig                  import  config
+from    share                       import  share
 from    datetime                    import  date
 from    database                    import  *
+
+config = share.config
 
 pygtk.require('2.0')
 

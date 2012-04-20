@@ -7,8 +7,10 @@ import logging
 import math
 
 import utility
-from amirconfig import config
+from share import share
 from amir.dateentry import dateToString
+
+config = share.config
 
 class PrintReport:
     def __init__(self, content, cols_width, heading=None):

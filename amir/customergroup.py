@@ -14,11 +14,12 @@ from    sqlalchemy.sql              import  and_, or_
 from    sqlalchemy.sql.functions    import  *
 
 from    helpers                     import  get_builder
-from    amirconfig                  import  config
+from    share                       import  share
 from    datetime                    import  date
 from    database                    import  *
 
 pygtk.require('2.0')
+config  = share.config
 
 class Group(gobject.GObject):
     

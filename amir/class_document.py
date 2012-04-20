@@ -1,4 +1,4 @@
-from amirconfig import config
+from share import share
 from database import Bill
 from database import Notebook
 from database import Subject
@@ -27,7 +27,7 @@ class Document:
         self.cheques_result = {}
 
     def set_bill(self, number):
-        query = config.db.session.query(Bill)
+        query = share.config.db.session.query(Bill)
         query = query.select_from(Bill)
         query = query.filter(Bill.number == number)
         bill  = query.first()
@@ -43,7 +43,7 @@ class Document:
         return False
     
     def get_notebook_rows(self):
-        query = config.db.session.query(Notebook, Subject)
+        query = share.config.db.session.query(Notebook, Subject)
         query = query.select_from(outerjoin(Notebook, Subject, Notebook.subject_id == Subject.id))
         query = query.filter(Notebook.bill_id == self.id)
         return query.all()
@@ -53,14 +53,14 @@ class Document:
             raise Exception('You should save the document before make it permanent')
         
         self.permanent = permanent
-        query = config.db.session.query(Bill).select_from(Bill).filter(Bill.id == self.id)
+        query = share.config.db.session.query(Bill).select_from(Bill).filter(Bill.id == self.id)
         query.update({Bill.permanent:self.permanent})
-        config.db.session.commit()
+        share.config.db.session.commit()
 
     def delete(self):
-        config.db.session.query(Notebook).filter(Notebook.bill_id == self.id).delete()
-        config.db.session.query(Bill).filter(Bill.id == self.id).delete()
-        config.db.session.commit()
+        share.config.db.session.query(Notebook).filter(Notebook.bill_id == self.id).delete()
+        share.config.db.session.query(Bill).filter(Bill.id == self.id).delete()
+        share.config.db.session.commit()
         
     def add_notebook(self, subject_id, value, desctxt, id=None):
         self.notebooks.append((subject_id, value, desctxt ,id))
@@ -90,15 +90,15 @@ class Document:
             return -2
         
         if self.number > 0:
-            bill = config.db.session.query(Bill).select_from(Bill)
-            notebooks = config.db.session.query(Notebook).select_from(Notebook)
+            bill = share.config.db.session.query(Bill).select_from(Bill)
+            notebooks = share.config.db.session.query(Notebook).select_from(Notebook)
             bill = bill.filter(Bill.number == self.number).first()
             bill.lastedit_date = date.today()
             notebook_ides = []
             for notbook in self.notebooks:
                 
                 if notbook[3] == 0:
-                    config.db.session.add(Notebook(notbook[0], self.id, notbook[1], notbook[2]))
+                    share.config.db.session.add(Notebook(notbook[0], self.id, notbook[1], notbook[2]))
                 else:
                     temp = None
                     temp = notebooks.filter(Notebook.id == notbook[3]).first()
@@ -106,17 +106,17 @@ class Document:
                     temp.desc = notbook[2]
                     temp.value = notbook[1]
                     temp_2 = None
-                    temp_2 = config.db.session.query(Cheque).select_from(Cheque).filter(Cheque.chqNoteBookId == notbook[3]).first()
+                    temp_2 = share.config.db.session.query(Cheque).select_from(Cheque).filter(Cheque.chqNoteBookId == notbook[3]).first()
                     if temp_2 != None:
                         temp_2.chqAmount = abs(notbook[1])
                         temp_2.chqDesc = notbook[2]
                         cheque_his = ChequeHistory(temp_2.chqId,temp_2.chqAmount,temp_2.chqWrtDate,temp_2.chqDueDate,temp_2.chqSerial,temp_2.chqStatus
                                                             , temp_2.chqCust, temp_2.chqAccount, temp_2.chqTransId, temp_2.chqDesc , date.today())
-                        config.db.session.add(cheque_his)
+                        share.config.db.session.add(cheque_his)
             for deletes in delete_items:
-                config.db.session.query(Notebook).filter(Notebook.id == deletes).delete()
+                share.config.db.session.query(Notebook).filter(Notebook.id == deletes).delete()
         else:
-            query = config.db.session.query(Bill.number).select_from(Bill)
+            query = share.config.db.session.query(Bill.number).select_from(Bill)
             last = query.order_by(Bill.number.desc()).first()
             if last != None:
                 self.number = last[0] + 1
@@ -124,26 +124,26 @@ class Document:
                 self.number = 1
 
             bill = Bill(self.number, self.creation_date, date.today(), self.new_date, False)
-            config.db.session.add(bill)
-            config.db.session.commit()
+            share.config.db.session.add(bill)
+            share.config.db.session.commit()
         
-            query = config.db.session.query(Bill).select_from(Bill)
+            query = share.config.db.session.query(Bill).select_from(Bill)
             query = query.filter(Bill.number == self.number)
             self.id = query.first().id
         
             for notebook in self.notebooks:
-                config.db.session.add(Notebook(notebook[0], self.id, notebook[1], notebook[2]))
+                share.config.db.session.add(Notebook(notebook[0], self.id, notebook[1], notebook[2]))
 
-            config.db.session.commit()
+            share.config.db.session.commit()
 
             for cheque in self.cheques:
                 n = Notebook(cheque[0], self.id, cheque[1], cheque[2])
-                config.db.session.add(n)
-                config.db.session.commit()
+                share.config.db.session.add(n)
+                share.config.db.session.commit()
                 self.cheques_result[cheque[3]] = n.id
 
         self.notebooks = []
-        config.db.session.commit()
+        share.config.db.session.commit()
         return self.id
 
     def get_error_message(self, code):

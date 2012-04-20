@@ -1,6 +1,7 @@
 #-*- encoding: utf-8 -*-
 
-from amirconfig import config
+from share import share
+
 
 ## \defgroup Utility
 ## @{
@@ -31,7 +32,7 @@ def LN (num, comma=False):
         if dot_pos != -1:
             num = l + num[dot_pos:]
         
-    if config.digittype == 1:
+    if share.config.digittype == 1:
         num = convertToPersian(num)
     return num
 
@@ -47,7 +48,7 @@ def getFloatNumber (number_string):
     number_string = convertToLatin(number_string)
     return float(number_string)
         
-def getIntegerNumber (number_string):
+def getInt (number_string):
     """
         Reverses LN() procedure. Gets a string representing a number,
         (Maybe containing commas) And returns the value as integer

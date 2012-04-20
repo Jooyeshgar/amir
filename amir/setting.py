@@ -7,8 +7,10 @@ import upgrade
 import database
 import dbconfig
 import subjects
-from amirconfig import config
+from share import share
 from helpers import get_builder, comboInsertItems
+
+config = share.config
 
 class Setting(gobject.GObject):    
     def __init__(self):

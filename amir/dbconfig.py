@@ -1,5 +1,7 @@
 import database
-from amirconfig import config
+from share import share
+
+config = share.config
 
 ## \defgroup Controller
 ## @{

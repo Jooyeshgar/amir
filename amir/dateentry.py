@@ -4,33 +4,32 @@ import gobject
 import string
 from datetime import date
 
-import utility
-from amirconfig import config
+from utility import LN,getInt
+from share import share
 from calverter import calverter
 
 ## \defgroup Utility
 ## @{
 
 def dateToString(date):
-    if config.datetypes[config.datetype] == "jalali":
+    if share.config.datetypes[share.config.datetype] == "jalali":
         jd = DateEntry.cal.gregorian_to_jd(date.year, date.month, date.day)
         (year, month, day) = DateEntry.cal.jd_to_jalali(jd)
     else:
         (year, month, day) = (date.year, date.month, date.day)
         
     datelist = ["", "", ""]
-    datelist[config.datefields["year"]] = year
-    datelist[config.datefields["month"]] = month
-    datelist[config.datefields["day"]] = day
+    datelist[share.config.datefields["year"]] = year
+    datelist[share.config.datefields["month"]] = month
+    datelist[share.config.datefields["day"]] = day
         
-    delim = config.datedelims[config.datedelim]
+    delim = share.config.datedelims[share.config.datedelim]
     datestring = str(datelist[0]) + delim + str(datelist[1]) + delim + str(datelist[2])
-    if config.digittype == 1:
-        datestring = utility.convertToPersian(datestring)
+    datestring = LN(datestring)
     return datestring
 
 def stringToDate(dateString):
-    delim = config.datedelims[config.datedelim]
+    delim = share.config.datedelims[share.config.datedelim]
     dateList = dateString.split(delim)
     if len(dateList) != 3:
         print "Error in the date string format!"
@@ -66,7 +65,7 @@ class DateEntry(gtk.Entry):
             (self.year, self.month, self.day) = init_date
         else:
             today = date.today()
-            if config.datetypes[config.datetype] == "jalali":
+            if share.config.datetypes[share.config.datetype] == "jalali":
                 jd = self.cal.gregorian_to_jd (today.year, today.month, today.day)
                 jalali = self.cal.jd_to_jalali(jd)
                 (self.year, self.month, self.day) = jalali
@@ -79,14 +78,13 @@ class DateEntry(gtk.Entry):
         
     def showDate(self, year, month, day):
         datelist = ["", "", ""]
-        datelist[config.datefields["year"]] = year
-        datelist[config.datefields["month"]] = month
-        datelist[config.datefields["day"]] = day
+        datelist[share.config.datefields["year"]] = year
+        datelist[share.config.datefields["month"]] = month
+        datelist[share.config.datefields["day"]] = day
         
-        delim = config.datedelims[config.datedelim]
+        delim = share.config.datedelims[share.config.datedelim]
         datestring = str(datelist[0]) + delim + str(datelist[1]) + delim + str(datelist[2])
-        if config.digittype == 1:
-            datestring = utility.convertToPersian(datestring)
+        datestring = LN(datestring)
         self.set_text(datestring)
         self.year = year
         self.month = month
@@ -94,7 +92,7 @@ class DateEntry(gtk.Entry):
         
     #Assuming that date objects show gregorian date.
     def showDateObject(self, date):
-        if config.datetypes[config.datetype] == "jalali":
+        if share.config.datetypes[share.config.datetype] == "jalali":
             jd = self.cal.gregorian_to_jd(date.year, date.month, date.day)
             (jyear, jmonth, jday) = self.cal.jd_to_jalali(jd)
             self.showDate(jyear, jmonth, jday)
@@ -102,7 +100,7 @@ class DateEntry(gtk.Entry):
             self.showDate(date.year, date.month, date.day)
         
     def getDateObject(self):
-        if config.datetypes[config.datetype] == "jalali":
+        if share.config.datetypes[share.config.datetype] == "jalali":
             jd = self.cal.jalali_to_jd(self.year, self.month, self.day)
             (gyear, gmonth, gday) = self.cal.jd_to_gregorian(jd)
             return date(gyear, gmonth, gday)
@@ -111,20 +109,20 @@ class DateEntry(gtk.Entry):
         
     def correctDate(self, sender, event):
         text = self.get_text()
-        datelist = string.split(text, config.datedelims[config.datedelim]) 
+        datelist = string.split(text, share.config.datedelims[share.config.datedelim]) 
         try:
-            tyear = datelist[config.datefields["year"]]
-            tyear = utility.convertToLatin(tyear)
+            tyear = datelist[share.config.datefields["year"]]
+            tyear = getInt(tyear)
         except IndexError:
             tyear = ""
         try:
-            tmonth = datelist[config.datefields["month"]]
-            tmonth = utility.convertToLatin(tmonth)
+            tmonth = datelist[share.config.datefields["month"]]
+            tmonth = getInt(tmonth)
         except IndexError:
             tmonth = ""
         try:
-            tday = datelist[config.datefields["day"]]
-            tday = utility.convertToLatin(tday)
+            tday = datelist[share.config.datefields["day"]]
+            tday = getInt(tday)
         except IndexError:
             tday = ""
         

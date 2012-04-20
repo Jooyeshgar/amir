@@ -52,7 +52,7 @@ class IndentedHelpFormatterWithNL(IndentedHelpFormatter):
         result.append(opts)
         if option.help:
             #help_text = option.help
-            help_text = self.expand_default(option)
+            help_text  = self.expand_default(option)
             help_lines = []
             #help_text = "\n".join([x.strip() for x in help_text.split("\n")])
             for para in help_text.split("\n\n"):
@@ -313,8 +313,5 @@ class AmirConfig:
         self.footerfont = int(self.defaultConfig["footer_font"])
 
 ## @}
-try:
-    config
-except NameError:
-    config = AmirConfig()
+
 

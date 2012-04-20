@@ -1,4 +1,4 @@
-from amirconfig import config
+from share import share
 from database import Cheque
 from database import ChequeHistory
 from database import BankAccounts
@@ -6,6 +6,9 @@ import dbconfig
 import class_subject
 import dateentry
 from sqlalchemy.orm.util import outerjoin
+
+config = share.config
+
 ## \defgroup Controller
 ## @{
 

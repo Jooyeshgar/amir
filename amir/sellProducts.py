@@ -16,11 +16,13 @@ import  gtk
 from    sqlalchemy.orm              import  sessionmaker, join
 from    helpers                     import  get_builder
 from    sqlalchemy.orm.util         import  outerjoin
-from    amirconfig                  import  config
+from    share                       import  share
 from    datetime                    import  date
 from    sqlalchemy.sql              import  and_
 from    sqlalchemy.sql.functions    import  *
 from    database                    import  *
+
+config = share.config
 
 class SellProducts:
 	def __init__(self,transId=None):
@@ -758,7 +760,7 @@ class SellProducts:
 			for exch in self.sellListStore:
 				query = self.session.query(Products).select_from(Products)
 				pid = query.filter(Products.name == unicode(exch[1])).first().id
-				exchange = Exchanges(utility.getIntegerNumber(exch[0]), pid, utility.getFloatNumber(exch[2]),
+				exchange = Exchanges(utility.getInt(exch[0]), pid, utility.getFloatNumber(exch[2]),
 									 utility.getFloatNumber(exch[3]), utility.convertToLatin(exch[5]),
 									 self.transId, unicode(exch[7]))
 				self.session.add( exchange )

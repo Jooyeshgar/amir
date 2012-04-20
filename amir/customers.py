@@ -18,12 +18,13 @@ from    sqlalchemy.sql              import  and_, or_
 from    sqlalchemy.sql.functions    import  *
 
 from    helpers                     import  get_builder
-from    amirconfig                  import  config
+from    share                       import  share
 from    datetime                    import  date
 from    database                    import  *
 from amir.dbconfig import dbconf
 
 pygtk.require('2.0')
+config = share.config
 
 ## \defgroup UserInterface
 ## @{
@@ -113,7 +114,7 @@ class Customer(customergroup.Group):
             if c != None:
                 self.treestore.append(grouprow, (c.custCode, c.custName, str(c.custBalance), str(c.custCredit)))
         
-        self.window.show()    
+        self.window.show_all()    
 
     ## Show add customers window
     def addNewCustomer(self, sender, pcode = ""):
