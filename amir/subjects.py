@@ -9,10 +9,11 @@ from sqlalchemy.sql import and_
 from sqlalchemy.orm import sessionmaker, join
 
 import numberentry
-from utility import LN,getInt
+from utility import LN,convertToLatin
 from database import *
 from share import share
 from helpers import get_builder
+from amir.share import Share
 
 config = share.config
 
@@ -162,7 +163,7 @@ class Subjects(gobject.GObject):
         if parent != None :
             pcode = self.treestore.get(parent, 0)[0]
             self.builder.get_object("parentcode").set_text(pcode)
-            pcode = getInt(pcode)
+            pcode = convertToLatin(pcode)
             
             query = config.db.session.query(Subject).select_from(Subject)
             query = query.filter(Subject.code == pcode)
@@ -211,7 +212,7 @@ class Subjects(gobject.GObject):
         
         if iter != None :
 
-            code = getInt(self.treestore.get(iter, 0)[0])
+            code = convertToLatin(self.treestore.get(iter, 0)[0])
             pcode = LN(code[0:-2])
             ccode = LN(code[-2:])
 
@@ -258,7 +259,7 @@ class Subjects(gobject.GObject):
             Subject1 = aliased(Subject, name="s1")
             Subject2 = aliased(Subject, name="s2")
             
-            code = getInt(self.treestore.get(iter, 0)[0])
+            code = convertToLatin(self.treestore.get(iter, 0)[0])
             #Check to see if there is any subledger for this ledger.
             query = config.db.session.query(Subject1.id, count(Subject2.id))
             query = query.select_from(outerjoin(Subject1, Subject2, Subject1.id == Subject2.parent_id))
@@ -315,7 +316,7 @@ class Subjects(gobject.GObject):
                 parent_right = 0
                 parent_left = 0
             else :
-                iter_code = getInt(self.treestore.get(iter, 0)[0])
+                iter_code = convertToLatin(self.treestore.get(iter, 0)[0])
                 query = config.db.session.query(Subject).select_from(Subject)
                 query = query.filter(Subject.code == iter_code)
                 sub = query.first()
@@ -346,7 +347,7 @@ class Subjects(gobject.GObject):
                 return
             
             #TODO pass code through function parameters
-            lastcode = getInt(self.code.get_text())[0:2]
+            lastcode = convertToLatin(self.code.get_text())[0:2]
             if lastcode == '':
                 msgbox = gtk.MessageDialog(widget, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
                                         _("Ledger Code field is empty"))
@@ -481,19 +482,20 @@ class Subjects(gobject.GObject):
         chiter = self.treestore.iter_children(iter)
         if chiter != None :
             #Checks name field(second) because code field(first) may have changed during parent code edition.
-            value = getInt(self.treestore.get(chiter, 1)[0])
+            value = self.treestore.get(chiter, 1)[0]
             if value == "" :
-                value =  getInt(self.treestore.get(iter, 0)[0])
+                value =  convertToLatin(self.treestore.get(iter, 0)[0])
                 #remove empty subledger to add real children instead
                 self.treestore.remove(chiter)
+
+                parent_id = share.session.query(Subject.id).select_from(Subject).filter(Subject.code == value).all()
                 
                 Sub = aliased(Subject, name="s")
                 Child = aliased(Subject, name="c")
-                Parent = aliased(Subject, name="p")
                 
                 query = config.db.session.query(Sub.code, Sub.name, Sub.type, count(Child.id), Sub.lft, Sub.rgt)
-                query = query.select_from(outerjoin(outerjoin(Parent, Sub, Sub.parent_id == Parent.id), Child, Sub.id == Child.parent_id))
-                result = query.filter(Parent.code == value).group_by(Sub.id).all()
+                query = query.select_from(outerjoin(Sub, Child, Sub.id == Child.parent_id))
+                result = query.filter(Sub.parent_id == parent_id[0][0]).group_by(Sub.id).all()
                 for row in result :
                     code = row[0]
                     code = LN(code)
@@ -521,7 +523,7 @@ class Subjects(gobject.GObject):
         basecode = data[0]
         length = data[1]
         chcode = model.get(iter, 0)[0]
-        chcode = getInt(chcode)[length:]
+        chcode = convertToLatin(chcode)[length:]
         chcode = LN(chcode)
         self.treestore.set(model.convert_iter_to_child_iter(iter), 0, basecode + chcode )
         
@@ -616,7 +618,7 @@ class Subjects(gobject.GObject):
             return
 
         iter = self.treestore.get_iter(path)
-        code = getInt(self.treestore.get(iter, 0)[0])
+        code = convertToLatin(self.treestore.get(iter, 0)[0])
         name = self.treestore.get(iter, 1)[0]
         
         query = config.db.session.query(Subject).select_from(Subject)
@@ -633,7 +635,7 @@ class Subjects(gobject.GObject):
         model, pathes = selection.get_selected_rows()
         for path in pathes:
             iter = self.treestore.get_iter(path)
-            code = getInt(self.treestore.get(iter, 0)[0])
+            code = convertToLatin(self.treestore.get(iter, 0)[0])
             name = self.treestore.get(iter, 1)[0]
 
             query = config.db.session.query(Subject).select_from(Subject)

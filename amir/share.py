@@ -5,6 +5,7 @@
 class Share:
     mainwin = None
     config  = None
+    session = None
 
     ##Get global object for sharing.
     # \param mainwin Amir main window object

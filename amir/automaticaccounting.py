@@ -368,7 +368,7 @@ class AutomaticAccounting:
             cl_cheque.save_cheque_history(self.current_time)
             self.on_destroy(self.builder.get_object('general'))
             
-            share.mainwin.silent_daialog("silent-daialog", _('successfully added. Document number : %d') % document.number)
+            share.mainwin.silent_daialog(_('successfully added. Document number : %d') % document.number)
 #            infobar = gtk.InfoBar()
 #            label = gtk.Label(_('successfully added. Document number : %d') % document.number)
 #            infobar.get_content_area().add(label)

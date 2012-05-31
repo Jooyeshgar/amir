@@ -4,7 +4,7 @@ import gobject
 import string
 from datetime import date
 
-from utility import LN,getInt
+from utility import LN,getInt,convertToLatin
 from share import share
 from calverter import calverter
 
@@ -112,21 +112,21 @@ class DateEntry(gtk.Entry):
         datelist = string.split(text, share.config.datedelims[share.config.datedelim]) 
         try:
             tyear = datelist[share.config.datefields["year"]]
-            tyear = getInt(tyear)
+            tyear = convertToLatin(tyear)
         except IndexError:
             tyear = ""
         try:
             tmonth = datelist[share.config.datefields["month"]]
-            tmonth = getInt(tmonth)
+            tmonth = convertToLatin(tmonth)
         except IndexError:
             tmonth = ""
         try:
             tday = datelist[share.config.datefields["day"]]
-            tday = getInt(tday)
+            tday = convertToLatin(tday)
         except IndexError:
             tday = ""
         
-        if config.datetypes[config.datetype] == "jalali":
+        if share.config.datetypes[share.config.datetype] == "jalali":
             minyear = 1349
             baseyear = "1300"
         else:
@@ -164,7 +164,7 @@ class DateEntry(gtk.Entry):
         except ValueError:
             day = 1
                 
-        if config.datetypes[config.datetype] == "jalali":
+        if share.config.datetypes[share.config.datetype] == "jalali":
             jd = self.cal.jalali_to_jd(year, month, day)
             (gyear, gmonth, gday) = self.cal.jd_to_gregorian(jd)
         else:

@@ -102,17 +102,15 @@ cheque = Table('Cheque', meta,
     Column('chqWrtDate',     Date,         nullable = False                        ),
     Column('chqDueDate',     Date,         nullable = False                        ),
     Column('chqSerial',      Unicode(50),  nullable = False                        ),
-    #Column('chqBank',        Unicode(50),  nullable = True                         ),
     Column('chqStatus',      Integer,      ColumnDefault(0),   nullable = False    ),
     Column('chqCust',        Integer,      ForeignKey('customers.custId')          ),
     Column('chqAccount',     Integer,      ForeignKey('bankAccounts.accId'),  nullable = True  ),
-    #Column('chqPaid',        Boolean,      ColumnDefault(0),   nullable = False    ),
-    #Column('chqSpent',       Boolean,      ColumnDefault(0),   nullable = False    ),
     Column('chqTransId',     Integer,      ColumnDefault(0)                        ),
     Column('chqNoteBookId', Integer, ColumnDefault(0), ForeignKey('notebook.id')),
     Column('chqDesc',        Unicode(200), nullable = True                         ),
+    Column('chqHistoryId',   Integer,      nullable = True                         )
 )
-
+    
 custGroups = Table('custGroups', meta,
     Column('custGrpId',      Integer,      primary_key = True  ),
     Column('custGrpCode',    String,       nullable = False    ),

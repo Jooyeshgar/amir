@@ -129,8 +129,11 @@ class AddEditDoc:
         
     ##Add the document row to liststore to show in list view    
     def showRows(self):
-        self.date.showDateObject(self.cl_document.date)
+        self.debt_sum   = 0
+        self.credit_sum = 0
+        self.numrows    = 0
         
+        self.date.showDateObject(self.cl_document.date)
         rows = self.cl_document.get_notebook_rows()
         for n, s in rows:
             self.numrows += 1
@@ -317,7 +320,7 @@ class AddEditDoc:
     def saveDocument(self, sender):
         sender.grab_focus()
                 
-        self.cl_document.new_date = self.date.getDateObject()
+        self.cl_document.date = self.date.getDateObject()
         
         #TODO if number is not equal to the maximum BigInteger value, prevent bill registration.
         iter = self.liststore.get_iter_first()
@@ -367,12 +370,8 @@ class AddEditDoc:
         docnum = utility.LN(self.cl_document.number)
         self.builder.get_object("docnumber").set_text (docnum)
         
-        msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 
-                                   _("Document saved with number %s.") % docnum)
-        msgbox.set_title(_("Successfully saved"))
-        msgbox.run()
-        msgbox.destroy()
-    
+        share.mainwin.silent_daialog(_("Document saved with number %s.") % docnum)
+
     ##Mark document as permanent    
     def makePermanent(self, sender):
         if self.cl_document.id > 0 :

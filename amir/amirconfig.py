@@ -27,6 +27,7 @@ __license__ = 'GPL-3'
 
 import os, optparse, logging, sys
 from optparse import IndentedHelpFormatter
+from share import share
 import textwrap
 import tempfile
 import shutil
@@ -188,6 +189,7 @@ class AmirConfig:
         #try:
         self.db_repository = os.path.join(abs_data_path, 'amir_migrate')
         self.db = database.Database(dbfile, self.db_repository, self.echodbresult)
+        share.session = self.db.session
         #except:
         #    sys.exit("Cannot open database.")
         

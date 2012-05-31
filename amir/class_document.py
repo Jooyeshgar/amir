@@ -20,7 +20,7 @@ class Document:
         self.date          = date.today()
         self.permanent     = False
 
-        self.new_date = date.today()
+        #self.new_date = date.today() #duplicate of self.date?
         self.notebooks = []
         self.cheques = []
         self.spend_cheques = []
@@ -123,7 +123,7 @@ class Document:
             else:
                 self.number = 1
 
-            bill = Bill(self.number, self.creation_date, date.today(), self.new_date, False)
+            bill = Bill(self.number, self.creation_date, date.today(), self.date, False)
             share.config.db.session.add(bill)
             share.config.db.session.commit()
         

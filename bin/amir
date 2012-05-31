@@ -299,11 +299,7 @@ class MainWindow(gobject.GObject):
                 config.currentdb = active_index + 1
                 
                 self.emit("database-changed", config.dblist[active_index])
-                msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 
-                                   _("Database changed successfully.") )
-                msgbox.set_title(_("Successfully changed"))
-                msgbox.run()
-                msgbox.destroy()
+                self.silent_daialog(_("Database changed successfully."))
             else:
                 combo.set_active(config.currentdb - 1)
                 
