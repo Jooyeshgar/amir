@@ -321,7 +321,7 @@ class AddEditDoc:
         sender.grab_focus()
                 
         self.cl_document.date = self.date.getDateObject()
-        
+
         #TODO if number is not equal to the maximum BigInteger value, prevent bill registration.
         iter = self.liststore.get_iter_first()
         while iter != None :

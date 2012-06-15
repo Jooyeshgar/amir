@@ -94,6 +94,7 @@ class Document:
             notebooks = share.config.db.session.query(Notebook).select_from(Notebook)
             bill = bill.filter(Bill.number == self.number).first()
             bill.lastedit_date = date.today()
+            bill.date = self.date
             notebook_ides = []
             for notbook in self.notebooks:
                 
