@@ -47,7 +47,7 @@ class AutomaticAccounting:
         6:  (False, False, False, False, True , None       , 'bank'),
         7:  (True , False, True , True , True , 'partners' , 'cash,bank'),
         8:  (True , False, True , True , True , 'cash'     , 'cost'),
-        9: (True , False, False, True , True , None       , 'cash,bank'),
+        9:  (False, False, False, False, True , None       , 'income'),
         10: (True , False, True , True , True , 'cash,bank', 'partner'),
     }
     def __init__(self):
@@ -261,6 +261,7 @@ class AutomaticAccounting:
             self.from_name = name
 
         entry.set_text(name)
+        self.check_save_button()
         subject.window.destroy()
 
     def on_customer_selected(self, customer, id, code, entry, to):
@@ -275,6 +276,7 @@ class AutomaticAccounting:
             self.from_code = subj.code
             self.from_name = cust.custName
         entry.set_text(cust.custName)
+        self.check_save_button()
         customer.window.destroy()
 
     def check_save_button(self):
