@@ -153,16 +153,11 @@ class Setting(gobject.GObject):
             dbfile = self.filename.get_text()
             if dbfile != "":
                 msg = ""
-                check = os.path.exists(dbfile)
-            
-                if check == True:
-                    result = upgrade.checkInputDb(dbfile)
-                    if result == -2:
-                        msg = _("Can not connect to the database. The selected database file may not be a sqlite database or be corrupt.")
-                    elif result == 0:
-                        msg = _("The selected file is compatible with older versions of Amir. First convert it to the new version.")
-                else:
-                    msg = _("The requested database file doesn' exist.")
+                result = upgrade.checkInputDb(dbfile)
+                if result == -2:
+                    msg = _("Can not connect to the database. The selected database file may not be a sqlite database or be corrupt.")
+                elif result == 0:
+                    msg = _("The selected file is compatible with older versions of Amir. First convert it to the new version.")
             
                 if msg != "":  
                     msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK, msg)

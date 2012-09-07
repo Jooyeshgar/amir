@@ -15,7 +15,8 @@ subject = Table('subject', meta,
     Column('parent_id', Integer, ColumnDefault(0), ForeignKey('subject.id'), nullable=False),
     Column('lft', Integer, nullable=False),
     Column('rgt', Integer, nullable=False),
-    Column('type', Integer)
+    Column('type', Integer),
+	mysql_charset='utf8'
 )
 
 #New tables (version 2):
@@ -31,7 +32,8 @@ products = Table('products', meta,
     Column('purchacePrice',   Float,          ColumnDefault(0),   nullable    = False     ),
     Column('sellingPrice',    Float,          ColumnDefault(0),   nullable    = False     ),
     Column('discountFormula', Unicode(100),                       nullable    = True      ),
-    Column('productDesc',     Unicode(200),                       nullable    = True      )
+    Column('productDesc',     Unicode(200),                       nullable    = True      ),
+	mysql_charset='utf8'
 )
 
 productGroups = Table('productGroups', meta,
@@ -39,12 +41,13 @@ productGroups = Table('productGroups', meta,
     Column('code',         String(20),     nullable    = False     ),
     Column('name',         Unicode(60),    nullable    = False     ),
     Column('buyId',        Integer,        ForeignKey('subject.id')),
-    Column('sellId',       Integer,        ForeignKey('subject.id'))
+    Column('sellId',       Integer,        ForeignKey('subject.id')),
+	mysql_charset='utf8'
 )
     
 transactions = Table('transactions', meta,
     Column('transId',            Integer,      primary_key = True                      ),
-    Column('transCode',          String,       nullable = False                        ),
+    Column('transCode',          Unicode(50),       nullable = False                        ),
     Column('transDate',          Date,         nullable = False                        ),
     Column('transBill',          Integer,      ColumnDefault(0)                        ),
     Column('transCust',          Integer,      ForeignKey('customers.custId')          ),
@@ -57,8 +60,9 @@ transactions = Table('transactions', meta,
     Column('transShipVia',       Unicode(100), nullable = True                         ),
     Column('transPermanent',     Boolean,      ColumnDefault(0)                        ),
     Column('transDesc',          Unicode(200), nullable = True                         ),
-    Column('transSell',          Boolean,      ColumnDefault(0)                        )
+    Column('transSell',          Boolean,      ColumnDefault(0)                        ),
 #    Column('transLastEdit',      Date,         nullable = True                         )
+	mysql_charset='utf8'
 )
 
 exchanges = Table('exchanges', meta,
@@ -69,7 +73,8 @@ exchanges = Table('exchanges', meta,
     Column('exchngUntPrc',      Float,          ColumnDefault(0),   nullable = False    ),
     Column('exchngUntDisc',     Unicode(30),    ColumnDefault("0"), nullable = False    ),
     Column('exchngTransId',     Integer,        ForeignKey('transactions.transId')      ),
-    Column('exchngDesc',        Unicode(200),   nullable = True                         )
+    Column('exchngDesc',        Unicode(200),   nullable = True                         ),
+	mysql_charset='utf8'
 )
 
 payments = Table('payment', meta,
@@ -84,9 +89,10 @@ payments = Table('payment', meta,
     Column('paymntDesc',        Unicode(200), nullable = True                         ),
     Column('paymntTransId',     Integer,      ColumnDefault(0)                        ),
     Column('paymntBillId',      Integer,      ColumnDefault(0)                        ),
-    Column('paymntTrckCode',    Unicode,      nullable = True                         ),
-    Column('paymntOrder',       Integer,      ColumnDefault(0),   nullable = False    )
+    Column('paymntTrckCode',    Unicode(50),  nullable = True                         ),
+    Column('paymntOrder',       Integer,      ColumnDefault(0),   nullable = False    ),
 #    Column('paymntChq',         Unicode,      nullable = True                         )
+	mysql_charset='utf8'
 )
 
 notebook = Table("notebook", meta,
@@ -95,6 +101,7 @@ notebook = Table("notebook", meta,
     Column('bill_id', Integer, ForeignKey('bill.id')),
     Column('desc', Unicode, ColumnDefault("")),
     Column('value', Integer, ColumnDefault(0), nullable = False),
+	mysql_charset='utf8'
 )
 cheque = Table('Cheque', meta,
     Column('chqId',          Integer,      primary_key = True                      ),
@@ -108,30 +115,32 @@ cheque = Table('Cheque', meta,
     Column('chqTransId',     Integer,      ColumnDefault(0)                        ),
     Column('chqNoteBookId', Integer, ColumnDefault(0), ForeignKey('notebook.id')),
     Column('chqDesc',        Unicode(200), nullable = True                         ),
-    Column('chqHistoryId',   Integer,      nullable = True                         )
+    Column('chqHistoryId',   Integer,      nullable = True                         ),
+	mysql_charset='utf8'
 )
     
 custGroups = Table('custGroups', meta,
     Column('custGrpId',      Integer,      primary_key = True  ),
-    Column('custGrpCode',    String,       nullable = False    ),
+    Column('custGrpCode',    Unicode(50),  nullable = False    ),
     Column('custGrpName',    Unicode(50),  nullable = False    ),
-    Column('custGrpDesc',    Unicode(200), nullable = True     )
+    Column('custGrpDesc',    Unicode(200), nullable = True     ),
+	mysql_charset='utf8'
 )
 
 customers = Table('customers', meta,
     Column('custId',           Integer,      primary_key = True  ),
-    Column('custCode',         String,       nullable = False    ),
+    Column('custCode',         Unicode(15),  nullable = False    ),
     Column('custName',         Unicode(100), nullable = False    ),
     Column('custSubj',         Integer      ,ForeignKey('subject.id')),
-    Column('custPhone',        String,       nullable = True     ),
-    Column('custCell',         String,       nullable = True     ),
-    Column('custFax',          String,       nullable = True     ),
+    Column('custPhone',        Unicode(15),  nullable = True     ),
+    Column('custCell',         Unicode(15),  nullable = True     ),
+    Column('custFax',          Unicode(15),  nullable = True     ),
     Column('custAddress',      Unicode(100), nullable = True     ),
     Column('custPostalCode',   String(15),   nullable = True     ),
-    Column('custEmail',        String,       nullable = True     ),
-    Column('custEcnmcsCode',   String,       nullable = True     ),
+    Column('custEmail',        Unicode(15),  nullable = True     ),
+    Column('custEcnmcsCode',   Unicode(20),  nullable = True     ),
     Column('custPersonalCode', String(15),   nullable = True     ),
-    Column('custWebPage',      String,       nullable = True     ),
+    Column('custWebPage',      Unicode(50),  nullable = True     ),
     Column('custResposible',   Unicode(50),  nullable = True     ),
     Column('custConnector',    Unicode(50),  nullable = True     ),
     Column('custGroup',        Integer,      ForeignKey('custGroups.custGrpId')),
@@ -140,20 +149,21 @@ customers = Table('customers', meta,
     Column('custCredit',       Float,        ColumnDefault(0),      nullable = False  ),
     Column('custRepViaEmail',  Boolean,      ColumnDefault(False),  nullable = False  ),
     Column('custAccName1',     Unicode(50),  nullable = True     ),
-    Column('custAccNo1',       String,       nullable = True     ),
+    Column('custAccNo1',       Unicode(50),  nullable = True     ),
     Column('custAccBank1',     Unicode(50),  nullable = True     ),
     Column('custAccName2',     Unicode(50),  nullable = True     ),
-    Column('custAccNo2',       String,       nullable = True     ),
+    Column('custAccNo2',       Unicode(50),  nullable = True     ),
     Column('custAccBank2',     Unicode(50),  nullable = True     ),
     Column('custTypeBuyer',    Boolean,      ColumnDefault(True),   nullable = False  ),
     Column('custTypeSeller',   Boolean,      ColumnDefault(True),   nullable = False  ),
     Column('custTypeMate',     Boolean,      ColumnDefault(False),  nullable = False  ),
     Column('custTypeAgent',    Boolean,      ColumnDefault(False),  nullable = False  ),
     Column('custIntroducer',   Unicode(50),  nullable = True     ),
-    Column('custCommission',   String,       nullable = True     ),
+    Column('custCommission',   Unicode(15),  nullable = True     ),
     Column('custMarked',       Boolean,      ColumnDefault(False),  nullable = False  ),
     Column('custReason',       Unicode(200), nullable = True     ),
-    Column('custDiscRate',     String,       nullable = True     )
+    Column('custDiscRate',     Unicode(14),  nullable = True     ),
+	mysql_charset='utf8'
 )
 
 config = Table("config", meta,
@@ -162,12 +172,14 @@ config = Table("config", meta,
     Column('cfgValue', Unicode(100), nullable = False),
     Column('cfgDesc' , Unicode(100), nullable = True),
     Column('cfgType' , Integer     , nullable = True),
-    Column('cfgCat'  , Integer     , nullable = True)
+    Column('cfgCat'  , Integer     , nullable = True),
+	mysql_charset='utf8'
 )
 
 banknames = Table("BankNames", meta,
     Column('Id'  , Integer    , primary_key=True),
-    Column('Name', Unicode(50), nullable=False)
+    Column('Name', Unicode(50), nullable=False),
+	mysql_charset='utf8'
 )
 
 bankAccounts = Table('bankAccounts', meta,
@@ -181,7 +193,34 @@ bankAccounts = Table('bankAccounts', meta,
     Column('accBankAddress',  Unicode(100), nullable = True     ),
     Column('accBankPhone',    Unicode(40),       nullable = True     ),
     Column('accBankWebPage',  Unicode(100),       nullable = True     ), #TODO change to unicode
-    Column('accDesc',         Unicode(200), nullable = True     )
+    Column('accDesc',         Unicode(200), nullable = True     ),
+	mysql_charset='utf8'
+)
+
+chequehistory = Table('ChequeHistory', meta,
+    Column('Id',		Integer, 	primary_key = True),
+    Column('ChequeId',	Integer,	ForeignKey('Cheque.chqId')),
+    Column('Amount',	Float,		ColumnDefault(0), nullable = False),
+    Column('WrtDate',	Date,       nullable = False),
+    Column('DueDate',	Date,       nullable = False),
+    Column('Serial',	Unicode(50),nullable = False),
+    Column('Status',	Integer,    ColumnDefault(0), nullable = False),
+    Column('Cust',		Integer,    ForeignKey('customers.custId')),
+    Column('Account',	Integer,    ForeignKey('bankAccounts.accId'), nullable = True),
+    Column('TransId',	Integer,    ColumnDefault(0)), #Transaction id is zero for non-invoice cheques.
+    Column('Desc',		Unicode(200),nullable = True),
+    Column('Date',		Date, 		nullable=False),
+	mysql_charset='utf8'
+)
+user = Table('users', meta,
+    Column('id',		Integer, primary_key=True),
+    Column('code',		String(20), unique=True),
+    Column('name',		Unicode(60), nullable=False),
+    Column('parent_id',		Integer, ColumnDefault(0), ForeignKey('users.id'), nullable=False),
+    Column('lft',		Integer, nullable=False),
+    Column('rgt',		Integer, nullable=False),
+    Column('type',		Integer),      # 0 for Debtor, 1 for Creditor, 2 for both
+	mysql_charset='utf8'
 )
 
 def upgrade(migrate_engine):
@@ -189,18 +228,20 @@ def upgrade(migrate_engine):
     # to your metadata
     meta.bind = migrate_engine
 
-    products.create(      checkfirst=True)
-    productGroups.create(        checkfirst=True)
-    transactions.create(  checkfirst=True)
-    exchanges.create(     checkfirst=True)
-    payments.create(      checkfirst=True)
-    cheque.create(       checkfirst=True)
-    custGroups.create(    checkfirst=True)
-    customers.create(     checkfirst=True)
-    bankAccounts.create(  checkfirst=True)
+    products.create(checkfirst=True)
+    productGroups.create(checkfirst=True)
+    transactions.create(checkfirst=True)
+    exchanges.create(checkfirst=True)
+    payments.create(checkfirst=True)
+    cheque.create(checkfirst=True)
+    custGroups.create(checkfirst=True)
+    customers.create(checkfirst=True)
+    bankAccounts.create(checkfirst=True)
     config.create(checkfirst=True)
     banknames.create(checkfirst=True)
     notebook.create(checkfirst=True)
+    chequehistory.create(checkfirst=True)
+    user.create(checkfirst=True)
     logging.debug("upgrade to 2")
 
     op = config.insert()

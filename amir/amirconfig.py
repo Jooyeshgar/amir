@@ -91,7 +91,7 @@ class AmirConfig:
         parser = optparse.OptionParser(version="%prog %ver",formatter=IndentedHelpFormatterWithNL() )
         parser.add_option("-v", "--verbose", action="store_const", const=1, dest="verbose", help="Show debug messages")
         parser.add_option("-n", "--noisy", action="store_const", const=2, dest="verbose", help="Show all debug messages")
-        parser.add_option("-d", "--database", metavar="URL", action="store", dest="database", help="Set custom url for database (RFC-1738)\n\nExamples:\n\n-d sqlite:////absolute/path/to/foo.db\n\n-d sqlite:///:memory:\n\n-d mysql://user:pass@localhost/foo")
+        parser.add_option("-d", "--database", metavar="URL", action="store", dest="database", help="Set custom url for database (RFC-1738)\n\nExamples:\n\n-d sqlite:////absolute/path/to/foo.db\n\n-d sqlite:///:memory:\n\n-d mysql://user:pass@localhost/foo?charset=utf8")
         parser.add_option("-p", "--path", action="store", dest="pathname", help="Set data path")
         (self.options, self.args) = parser.parse_args()
 
@@ -164,20 +164,19 @@ class AmirConfig:
         #NOTE: Current Db indice starts from 1 to be more readable for users
         #To access dblist and dbnames arrays, it should be subtracted by 1.
         self.currentdb = 1
+        try:
+            dblist = self.sconfig.get('General', 'databases')
+            self.dblist = dblist.split(',')
+            dbnames = self.sconfig.get('General', 'database_names')
+            self.dbnames = dbnames.split(',')
+            self.currentdb = self.sconfig.getint('General', 'current_database')
+            dbfile = self.dblist[self.currentdb - 1]
+        except ConfigParser.NoOptionError:
+            dbfile = ''
         if self.options.database != None:
             dbfile = self.options.database
             self.dblist.append(dbfile)
             self.dbnames.append(os.path.basename(dbfile))
-        else:
-            try:
-                dblist = self.sconfig.get('General', 'databases')
-                self.dblist = dblist.split(',')
-                dbnames = self.sconfig.get('General', 'database_names')
-                self.dbnames = dbnames.split(',')
-                self.currentdb = self.sconfig.getint('General', 'current_database')
-                dbfile = self.dblist[self.currentdb - 1]
-            except ConfigParser.NoOptionError:
-                dbfile = ''
             
         if dbfile == '':
             dbfile = 'sqlite:///'+os.path.join(confdir, 'amir.sqlite')

@@ -13,7 +13,7 @@ Base = get_declarative_base()
 class CustGroups(Base):
     __tablename__ = "custGroups"
     custGrpId   = Column( Integer,      primary_key = True  )
-    custGrpCode = Column( String(20),       nullable = False    )
+    custGrpCode = Column( String(50),   nullable = False    )
     custGrpName = Column( Unicode(50),  nullable = False    )
     custGrpDesc = Column( Unicode(200), nullable = True     )
 

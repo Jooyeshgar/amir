@@ -415,9 +415,9 @@ class AddEditDoc:
 
     ##Call automaticaccounting::AutomaticAccounting to show automaticacconting window
     def auto_Document(self, sender):
-        auto_win = automaticaccounting.AutomaticAccounting(self.main_window_background)
-        #auto_win.connect("auto-saved", self.auto_Saved)
+        auto_win = automaticaccounting.AutomaticAccounting()
         auto_win.run(self.window, self.liststore)
+        auto_win.win.connect('destroy', self.updateSum)
     
     #Call  to show automaticacconting window
     #def auto_Saved(self, sender):
@@ -440,5 +440,18 @@ class AddEditDoc:
     ##Call when Databese changed from main window      
     def dbChanged(self, sender, active_dbpath):
         self.window.destroy()
+
+    ##Call for update sum after autodocument
+    def updateSum(self, window):
+        iter = self.liststore.get_iter_first()
+        self.debt_sum = 0
+        self.credit_sum = 0
+        while iter != None :
+            self.debt_sum += int(unicode(self.liststore.get(iter, 3)[0].replace(",", "")))
+            self.credit_sum += int(unicode(self.liststore.get(iter, 4)[0].replace(",", "")))
+            iter = self.liststore.iter_next(iter)
+        self.builder.get_object("debtsum").set_text (utility.LN(self.debt_sum))
+        self.builder.get_object("creditsum").set_text (utility.LN(self.credit_sum))
+        self.builder.get_object("difference").set_text (utility.LN(abs(self.credit_sum - self.debt_sum)))
 
 ## @}

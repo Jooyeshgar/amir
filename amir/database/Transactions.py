@@ -13,7 +13,7 @@ Base = get_declarative_base()
 class Transactions(Base):
     __tablename__ = "transactions"
     transId         = Column( Integer,      primary_key = True                      )
-    transCode       = Column( String,       nullable = False                        )
+    transCode       = Column( Unicode(50),  nullable = False                        )
     transDate       = Column( Date,         nullable = False                        ) 
     transBill       = Column( Integer,      ColumnDefault(0)                        ) #Bill id is zero for temporary transactions
     transCust       = Column( Integer,      ForeignKey('customers.custId')          )

@@ -390,8 +390,8 @@ class AutomaticAccounting:
             numrows += 1
             self.liststore.append ((LN(numrows), LN(self.to_code), self.to_name, LN(result['cash_payment']), LN(0), result['desc'], None))
             if result['discount'] :
-                #document.add_notebook(dbconf.get_int('sell-discount'), -result['discount'], result['desc'])
-                self.liststore.append ((LN(numrows), LN(dbconf.get_int('sell-discount')), mysubject.get_name(dbconf.get_int('sell-discount')), LN(result['discount']), 0, result['desc'], None))
+                numrows += 1
+                self.liststore.append ((LN(numrows), LN(mysubject.get_code(dbconf.get_int('sell-discount'))), mysubject.get_name(dbconf.get_int('sell-discount')), LN(result['discount']), LN(0), result['desc'], None))
 
             #cl_cheque = class_cheque.ClassCheque()
             #or cheque in self.chequeui.new_cheques:

@@ -27,7 +27,8 @@ subject = Table('subject', meta,
     Column('parent_id', Integer, ColumnDefault(0), ForeignKey('subject.id'), nullable=False),
     Column('lft', Integer, nullable=False),
     Column('rgt', Integer, nullable=False),
-    Column('type', Integer)
+    Column('type', Integer),
+	mysql_charset='utf8'
 )
 
 bill = Table('bill', meta,
@@ -36,15 +37,17 @@ bill = Table('bill', meta,
     Column('creation_date', Date, nullable = False),
     Column('lastedit_date', Date, nullable = False),
     Column('date', Date, nullable = False),
-    Column('permanent', Boolean, ColumnDefault(False), nullable = False)
+    Column('permanent', Boolean, ColumnDefault(False), nullable = False),
+	mysql_charset='utf8'
 )
 
 notebook = Table('notebook', meta,
     Column('id', Integer, primary_key=True),
     Column('subject_id', Integer, ForeignKey('subject.id')),
     Column('bill_id', Integer, ForeignKey('bill.id')),
-    Column('desc', Unicode, ColumnDefault("")),
-    Column('value', Integer, ColumnDefault(0), nullable = False)
+    Column('desc', UnicodeText, ColumnDefault("")),
+    Column('value', Integer, ColumnDefault(0), nullable = False),
+	mysql_charset='utf8'
 )
 
 def upgrade(migrate_engine):

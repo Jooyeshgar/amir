@@ -22,7 +22,7 @@ class Payment(Base):
     paymntDesc      = Column( Unicode(200), nullable = True                   )
     paymntTransId   = Column( Integer,      ColumnDefault(0)                  ) #Transaction id is zero for non-invoice payments.
     paymntBillId    = Column( Integer,      ColumnDefault(0)                  ) #Bill id is zero for temporary transactions.
-    paymntTrckCode  = Column( Unicode,      nullable = True                   )
+    paymntTrckCode  = Column( Unicode(50),  nullable = True                   )
     paymntOrder     = Column( Integer,      ColumnDefault(0), nullable = False)
 #    paymntChq       = Column( Integer,      ForeignKey('cheques.chqId')             )
 
