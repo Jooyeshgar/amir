@@ -47,7 +47,7 @@ class AutomaticAccounting:
         6:  (False, False, False, False, True , None       , 'bank'),
         7:  (True , False, True , True , True , 'partners' , 'cash,bank'),
         8:  (True , False, True , True , True , 'cash'     , 'cost'),
-        9:  (False, False, False, False, True , None       , 'income'),
+        9:  (False, True , False, True , False,  'income'  , None),
         10: (True , False, True , True , True , 'cash,bank', 'partner'),
     }
     def __init__(self):
