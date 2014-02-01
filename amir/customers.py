@@ -418,7 +418,7 @@ class Customer(customergroup.Group):
             #Iter points to a customer
             code = self.treestore.get_value(iter, 0)
             query = config.db.session.query(Customers).select_from(Customers)
-            customer = query.filter(Customers.custCode == code).first()
+            customer = query.filter(Customers.custCode ==unicode(code) ).first()
             
             #TODO check if this customer is used somewhere else
             
