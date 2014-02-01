@@ -865,6 +865,7 @@ class SellProducts:
 		# Assign document to the current transaction
 		query = self.session.query(Transactions).select_from(Transactions)
 		query = query.filter(Transactions.transId == self.transId)
+
 		query.update( {Transactions.transBill : bill_id } )
 		
 		query = self.session.query(Cheque).select_from(Cheque)
