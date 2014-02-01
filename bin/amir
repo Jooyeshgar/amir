@@ -355,4 +355,3 @@ if __name__ == "__main__":
     mainwin = MainWindow()
     share.mainwin = mainwin
     mainwin.main()
-
