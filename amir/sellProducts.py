@@ -43,6 +43,8 @@ class SellProducts:
 			lastId  = lastId.transId
 		self.transId = lastId + 1
 		
+		
+		
 		self.mainDlg = self.builder.get_object("sellFormWindow")
 		self.transCode = self.builder.get_object("transCode")
 		if config.digittype == 1:
@@ -118,6 +120,7 @@ class SellProducts:
 		self.paymentManager.connect("payments-changed", self.setNonCashPayments)
 		self.paymentManager.fillPaymentTables()
 		
+		print transId
 		if transId:
 			sellsQuery  = self.session.query(Exchanges).select_from(Exchanges)
 			sellsQuery  = sellsQuery.filter(Exchanges.exchngTransId==transId).order_by(Exchanges.exchngNo.asc()).all()
@@ -130,73 +133,38 @@ class SellProducts:
 		
 		self.builder.connect_signals(self)
 		self.mainDlg.show_all()
-
-	def appendPrice(self,  price):
-		oldPrice    = utility.getFloatNumber(self.totalEntry.get_text())
-		totalPrce   = oldPrice + price
-		self.totalEntry.set_text(utility.LN(totalPrce))
-
-	def appendDiscount(self, discount):
-		oldDiscount = utility.getFloatNumber(self.totalDiscsEntry.get_text())
-		oldDiscount = oldDiscount + float(discount) 
-		self.totalDiscsEntry.set_text(utility.LN(oldDiscount))
 		
-	def editSell(self,sender):
-		iter    = self.sellsTreeView.get_selection().get_selected()[1]
-		if iter != None :
-			self.editingSell    = iter
-			No      = self.sellListStore.get(iter, 0)[0]
-			pName   = self.sellListStore.get(iter, 1)[0]
-			qnty    = self.sellListStore.get(iter, 2)[0]
-			untPrc  = self.sellListStore.get(iter, 3)[0]
-			ttlPrc  = self.sellListStore.get(iter, 4)[0]
-			untDisc = self.sellListStore.get(iter, 5)[0]
-			ttlDisc = self.sellListStore.get(iter, 6)[0]
-			desc    = self.sellListStore.get(iter, 7)[0]
-			edtTpl  = (No,pName,qnty,untPrc,ttlPrc,untDisc,ttlDisc,desc)
-			self.addSell(edit=edtTpl)
+	def selectSeller(self,sender=0):
+		customer_win = customers.Customer()
+		customer_win.viewCustomers()
+		code = self.customerEntry.get_text()
+		if code != '':
+			customer_win.highlightCust(code)
+		customer_win.connect("customer-selected",self.sellerSelected)
 		
-	def removeSell(self,sender):
-		delIter = self.sellsTreeView.get_selection().get_selected()[1]
-		if delIter:
-			No  = int(self.sellListStore.get(delIter, 0)[0])
-			msg = _("Are You sure you want to delete the sell row number %s?") %No
-			msgBox  = gtk.MessageDialog( self.mainDlg, gtk.DIALOG_MODAL,
-											gtk.MESSAGE_QUESTION,
-											gtk.BUTTONS_OK_CANCEL, msg         )
-			msgBox.set_title(            _("Confirm Deletion")              )
-			answer  = msgBox.run(                                           )
-			msgBox.destroy(                                                 )
-			if answer != gtk.RESPONSE_OK:
-				return
-			ttlPrc  = float(self.sellListStore.get(delIter,4)[0])
-			ttlDisc = float(self.sellListStore.get(delIter,6)[0])
-			self.reducePrice(ttlPrc)
-			self.reduceDiscount(ttlDisc)
-			self.sellListStore.remove(delIter)
-			self.valsChanged()
-			length  = len(self.sellsItersDict) -1
-			if len(self.sellsItersDict) > 1:
-				while No < length:
-					print No
-					nextIter    = self.sellsItersDict[No+1]
-					self.sellListStore.set_value(nextIter,0,str(No))
-					self.sellsItersDict[No] = nextIter
-					del self.sellsItersDict[No+1]
-					No  += 1
-				print "--------------",length
-			else:
-				self.sellsItersDict = {}
+	def sellerSelected(self, sender, id, code):
+		self.customerEntry.set_text(code)
+		sender.window.destroy()
+		
+		query = self.session.query(Customers).select_from(Customers)
+		customer = query.filter(Customers.custId == id).first()
+		self.buyerNameEntry.set_text(customer.custName)
 				
-	def reducePrice(self,  price):
-		oldPrice    = utility.getFloatNumber(self.totalEntry.get_text())
-		totalPrce   = oldPrice - price
-		self.totalEntry.set_text(utility.LN(totalPrce))
+	def setSellerName(self,sender=0,ev=0):
+		payer   = self.customerEntry.get_text()
+		query   = self.session.query(Subject).select_from(Subject)
+		query   = query.filter(Subject.code==payer).first()
+		if not query:
+			self.buyerNameEntry.set_text("")
+		else:
+			self.buyerNameEntry.set_text(query.name)
 
-	def reduceDiscount(self, discount):
-		oldDiscount = utility.getFloatNumber(self.totalDiscsEntry.get_text())
-		oldDiscount = oldDiscount - discount
-		self.totalDiscsEntry.set_text(utility.LN(oldDiscount))
+	def selectProduct(self,sender=0):
+		obj = product.Product()
+		obj.viewProducts()
+		obj.connect("product-selected",self.proSelected)
+		code = self.proVal.get_text()
+		obj.highlightProduct(unicode(code))
 
 	def addSell(self,sender=0,edit=None):
 		self.addSellDlg = self.builder.get_object("addASellDlg")
@@ -269,29 +237,89 @@ class SellProducts:
 			
 		self.addSellDlg.show_all()
 				
+	def editSell(self,sender):
+		iter    = self.sellsTreeView.get_selection().get_selected()[1]
+		if iter != None :
+			self.editingSell    = iter
+			No      = self.sellListStore.get(iter, 0)[0]
+			pName   = self.sellListStore.get(iter, 1)[0]
+			qnty    = self.sellListStore.get(iter, 2)[0]
+			untPrc  = self.sellListStore.get(iter, 3)[0]
+			ttlPrc  = self.sellListStore.get(iter, 4)[0]
+			untDisc = self.sellListStore.get(iter, 5)[0]
+			ttlDisc = self.sellListStore.get(iter, 6)[0]
+			desc    = self.sellListStore.get(iter, 7)[0]
+			edtTpl  = (No,pName,qnty,untPrc,ttlPrc,untDisc,ttlDisc,desc)
+			self.addSell(edit=edtTpl)
+		
+	def removeSell(self,sender):
+		delIter = self.sellsTreeView.get_selection().get_selected()[1]
+		if delIter:
+			No  = int(self.sellListStore.get(delIter, 0)[0])
+			msg = _("Are You sure you want to delete the sell row number %s?") %No
+			msgBox  = gtk.MessageDialog( self.mainDlg, gtk.DIALOG_MODAL,
+											gtk.MESSAGE_QUESTION,
+											gtk.BUTTONS_OK_CANCEL, msg         )
+			msgBox.set_title(            _("Confirm Deletion")              )
+			answer  = msgBox.run(                                           )
+			msgBox.destroy(                                                 )
+			if answer != gtk.RESPONSE_OK:
+				return
+			ttlPrc  = float(self.sellListStore.get(delIter,4)[0])
+			ttlDisc = float(self.sellListStore.get(delIter,6)[0])
+			self.reducePrice(ttlPrc)
+			self.reduceDiscount(ttlDisc)
+			self.sellListStore.remove(delIter)
+			self.valsChanged()
+			length  = len(self.sellsItersDict) -1
+			if len(self.sellsItersDict) > 1:
+				while No < length:
+					print No
+					nextIter    = self.sellsItersDict[No+1]
+					self.sellListStore.set_value(nextIter,0,str(No))
+					self.sellsItersDict[No] = nextIter
+					del self.sellsItersDict[No+1]
+					No  += 1
+				print "--------------",length
+			else:
+				self.sellsItersDict = {}
+				
+	def upSellInList(self,sender):
+		if len(self.sellsItersDict) == 1:
+			return
+		iter    = self.sellsTreeView.get_selection().get_selected()[1]
+		if iter:
+			No   = int(self.sellListStore.get(iter, 0)[0])
+			abvNo   = No - 1
+			if abvNo > 0:
+				aboveIter   = self.sellsItersDict[abvNo]
+				self.sellListStore.move_before(iter,aboveIter)
+				self.sellsItersDict[abvNo]  = iter
+				self.sellsItersDict[No]     = aboveIter
+				self.sellListStore.set_value(iter,0,str(abvNo))
+				self.sellListStore.set_value(aboveIter,0,str(No))
+
+	def downSellInList(self,sender):
+		if len(self.sellsItersDict) == 1:
+			return
+		iter    = self.sellsTreeView.get_selection().get_selected()[1]
+		if iter:
+			No   = int(self.sellListStore.get(iter, 0)[0])
+			blwNo   = No + 1
+			if No < len(self.sellsItersDict):
+				belowIter   = self.sellsItersDict[blwNo]
+				self.sellListStore.move_after(iter,belowIter)
+				self.sellsItersDict[blwNo]  = iter
+				self.sellsItersDict[No]     = belowIter
+				self.sellListStore.set_value(iter,0,str(blwNo))
+				self.sellListStore.set_value(belowIter,0,str(No))
+				
+				
 	def cancelSell(self,sender=0,ev=0):
 		self.clearSellFields()
 		self.addSellDlg.hide_all()
 		return True
-
-	def clearSellFields(self):
-		zerostr = "0.0"
-		if config.digittype == 1:
-			zerostr = utility.convertToPersian(zerostr)
 			
-		self.proVal.set_text("")
-		self.qntyEntry.set_text(zerostr)
-		self.unitPriceEntry.set_text(zerostr)
-		self.discountEntry.set_text("")
-		self.proNameLbl.set_text("")
-		self.avQntyVal.set_text("")
-		self.stnrdDisc.set_text("")
-		self.stndrdPVal.set_text("")
-		self.ttlAmntVal.set_text(zerostr)
-		self.discTtlVal.set_text(zerostr)
-		self.ttlPyblVal.set_text(zerostr)
-		self.descVal.set_text("")
-		
 	def addSellToList(self,sender=0):
 		proCd   = self.proVal.get_text()
 		product   = self.session.query(Products).select_from(Products).filter(Products.code==proCd).first()
@@ -389,36 +417,49 @@ class SellProducts:
 			self.sellsItersDict[No]   = iter
 			self.addSellDlg.hide()
 
-	def upSellInList(self,sender):
-		if len(self.sellsItersDict) == 1:
-			return
-		iter    = self.sellsTreeView.get_selection().get_selected()[1]
-		if iter:
-			No   = int(self.sellListStore.get(iter, 0)[0])
-			abvNo   = No - 1
-			if abvNo > 0:
-				aboveIter   = self.sellsItersDict[abvNo]
-				self.sellListStore.move_before(iter,aboveIter)
-				self.sellsItersDict[abvNo]  = iter
-				self.sellsItersDict[No]     = aboveIter
-				self.sellListStore.set_value(iter,0,str(abvNo))
-				self.sellListStore.set_value(aboveIter,0,str(No))
+	def appendPrice(self,  price):
+		oldPrice    = utility.getFloatNumber(self.totalEntry.get_text())
+		totalPrce   = oldPrice + price
+		self.totalEntry.set_text(utility.LN(totalPrce))
 
-	def downSellInList(self,sender):
-		if len(self.sellsItersDict) == 1:
-			return
-		iter    = self.sellsTreeView.get_selection().get_selected()[1]
-		if iter:
-			No   = int(self.sellListStore.get(iter, 0)[0])
-			blwNo   = No + 1
-			if No < len(self.sellsItersDict):
-				belowIter   = self.sellsItersDict[blwNo]
-				self.sellListStore.move_after(iter,belowIter)
-				self.sellsItersDict[blwNo]  = iter
-				self.sellsItersDict[No]     = belowIter
-				self.sellListStore.set_value(iter,0,str(blwNo))
-				self.sellListStore.set_value(belowIter,0,str(No))
+	def appendDiscount(self, discount):
+		oldDiscount = utility.getFloatNumber(self.totalDiscsEntry.get_text())
+		oldDiscount = oldDiscount + float(discount) 
+		self.totalDiscsEntry.set_text(utility.LN(oldDiscount))
+								
+				
+	def reducePrice(self,  price):
+		oldPrice    = utility.getFloatNumber(self.totalEntry.get_text())
+		totalPrce   = oldPrice - price
+		self.totalEntry.set_text(utility.LN(totalPrce))
+
+	def reduceDiscount(self, discount):
+		oldDiscount = utility.getFloatNumber(self.totalDiscsEntry.get_text())
+		oldDiscount = oldDiscount - discount
+		self.totalDiscsEntry.set_text(utility.LN(oldDiscount))
+
+	
+				
+
+	def clearSellFields(self):
+		zerostr = "0.0"
+		if config.digittype == 1:
+			zerostr = utility.convertToPersian(zerostr)
+			
+		self.proVal.set_text("")
+		self.qntyEntry.set_text(zerostr)
+		self.unitPriceEntry.set_text(zerostr)
+		self.discountEntry.set_text("")
+		self.proNameLbl.set_text("")
+		self.avQntyVal.set_text("")
+		self.stnrdDisc.set_text("")
+		self.stndrdPVal.set_text("")
+		self.ttlAmntVal.set_text(zerostr)
+		self.discTtlVal.set_text(zerostr)
+		self.ttlPyblVal.set_text(zerostr)
+		self.descVal.set_text("")
 		
+
 	def calculatePayable(self):
 		subtotal    = utility.getFloatNumber(
 							self.builder.get_object("subtotalEntry").get_text())
@@ -705,40 +746,12 @@ class SellProducts:
 		ttldiscount = utility.getFloatNumber(self.discTtlVal.get_text())
 		self.ttlPyblVal.set_text(utility.LN(ttlAmnt - ttldiscount))
 
-	def selectProduct(self,sender=0):
-		obj = product.Product()
-		obj.viewProducts()
-		obj.connect("product-selected",self.proSelected)
-		code = self.proVal.get_text()
-		obj.highlightProduct(unicode(code))
 
 	def close(self, sender=0):
 		self.mainDlg.destroy()
 
-	def selectSeller(self,sender=0):
-		customer_win = customers.Customer()
-		customer_win.viewCustomers()
-		code = self.customerEntry.get_text()
-		if code != '':
-			customer_win.highlightCust(code)
-		customer_win.connect("customer-selected",self.sellerSelected)
-		
-	def sellerSelected(self, sender, id, code):
-		self.customerEntry.set_text(code)
-		sender.window.destroy()
-		
-		query = self.session.query(Customers).select_from(Customers)
-		customer = query.filter(Customers.custId == id).first()
-		self.buyerNameEntry.set_text(customer.custName)
 
-	def setSellerName(self,sender=0,ev=0):
-		payer   = self.customerEntry.get_text()
-		query   = self.session.query(Subject).select_from(Subject)
-		query   = query.filter(Subject.code==payer).first()
-		if not query:
-			self.buyerNameEntry.set_text("")
-		else:
-			self.buyerNameEntry.set_text(query.name)
+
 
 	def submitFactorPressed(self,sender):
 		permit  = self.checkFullFactor()
@@ -780,6 +793,7 @@ class SellProducts:
 				self.registerDocument()
 
 	def checkFullFactor(self):
+						
 		if len(self.sellListStore)<1:
 			self.statusBar.push(1, "There is no product selected for the invoice.")
 			return False
@@ -863,19 +877,28 @@ class SellProducts:
 		print "bill id is %d" % bill_id
 		
 		# Assign document to the current transaction
-		query = self.session.query(Transactions).select_from(Transactions)
+		query = self.session.query(Transactions)#.select_from(Transactions)
 		query = query.filter(Transactions.transId == self.transId)
-
-		query.update( {Transactions.transBill : bill_id } )
-		
-		query = self.session.query(Cheque).select_from(Cheque)
+		print query
+		print bill_id
+		query.update( {Transactions.transBill : bill_id } )	
+		self.session.commit()	
+	#TA INIA	
+	
+	
+		query = self.session.query(Cheque)#.select_from(Cheque)
 		query = query.filter(Cheque.chqTransId == self.transId)
-		query.update( {Cheque.chqBillId : bill_id } )
+		query.update( {Cheque.chqTransId : bill_id } )
 		
-		query = self.session.query(Payment).select_from(Payment)
+		
+		
+		query = self.session.query(Payment)#.select_from(Payment)
 		query = query.filter(Payment.paymntTransId == self.transId)
-		query.update( {Payment.paymntBillId : bill_id } )
+		query =query.update( {Payment.paymntTransId : bill_id } )
+		print query
 		
+		# add by hassan
+		self.close(self)
 		# Create document rows
 		doc_rows = []
 		trans_code = utility.LN(self.subCode, False)
