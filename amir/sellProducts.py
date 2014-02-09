@@ -750,6 +750,12 @@ class SellProducts:
 		self.totalPaymentsEntry.set_text(utility.LN(ttlPayments))
 		self.calculateBalance()
 
+		
+	def showPayments(self,sender):
+		self.paymentManager.showPayments()
+		self.ttlNonCashEntry = self.builder.get_object("ttlNonCashEntry")
+
+
 	def submitFactorPressed(self,sender):
 		permit  = self.checkFullFactor()
 		self.sell_factor = True
@@ -760,7 +766,8 @@ class SellProducts:
 			if not self.subPreInv:
 				print "\nSaving the Document -----------"
 				self.registerDocument()
-
+		self.close(self)
+		
 	def checkFullFactor(self):
 						
 		if len(self.sellListStore)<1:
@@ -876,8 +883,10 @@ class SellProducts:
 			doc_number = 1
 		
 		# Create new document
+		print 'save new  bill'
 		bill = Bill(doc_number, self.subDate, self.subDate, self.subDate, False)
 		self.session.add(bill)
+		print 'save new  bill done!'
 		#print "bill id is %d" % bill_id
 		
 		# Assign document to the current transaction
@@ -904,36 +913,49 @@ class SellProducts:
 		# add by hassan
 		
 		# Create document rows
-# 		doc_rows = []
-# 		trans_code = utility.LN(self.subCode, False)
-# 		
-# 		row = Notebook(self.custSubj, bill_id, -(self.payableAmnt), 
-# 		               _("Debit for invoice number %s") % trans_code)
-# 		doc_rows.append(row)
-# 		row = Notebook(dbconf.get_int("sell-discount"), bill_id, -(self.totalDisc + self.subSub), 
-# 		               _("Discount for invoice number %s") % trans_code)
-# 		doc_rows.append(row)
-# 		row = Notebook(dbconf.get_int("sell-adds"), bill_id, self.subAdd, 
-# 		               _("Additions for invoice number %s") % trans_code)
-# 		doc_rows.append(row)
+ 		doc_rows = []
+ 		trans_code = utility.LN(self.subCode, False)
+   		#print self.custSubj
+		row = Notebook(self.custSubj, bill_id, -(self.payableAmnt),
+					 _("Debit for invoice number %s") % trans_code)
+		self.session.add(row)
+		self.session.commit()
+		
+		
+ 		doc_rows.append(row)
+ 		row = Notebook(dbconf.get_int("sell-discount"), bill_id, -(self.totalDisc + self.subSub), 
+ 		               _("Discount for invoice number %s") % trans_code)
+ 		self.session.add(row)
+		self.session.commit()
+		
+ 		doc_rows.append(row)
+ 		
+ 		
+#  		row = Notebook(dbconf.get_int("sell-adds"),
+# 						 bill_id, self.subAdd, 
+#  		               _("Additions for invoice number %s") % trans_code)
+#  		self.session.add(row)
+# 		self.session.commit()
+#  		
+ 		doc_rows.append(row)
 # 		row = Notebook(dbconf.get_int("tax"), bill_id, self.subTax, 
 # 		               _("Taxes for invoice number %s") % trans_code)
 # 		doc_rows.append(row)
-# 		
+#   		
 # 		# Create a row for each sold product
 # 		for exch in self.sellListStore:
 # 			query = self.session.query(ProductGroups.sellId)
 # 			query = query.select_from(outerjoin(Products, ProductGroups, Products.accGroup == ProductGroups.id))
 # 			result = query.filter(Products.name == unicode(exch[1])).first()
 # 			sellid = result[0]
-# 			
+#   			
 # 			exch_totalAmnt = utility.getFloatNumber(exch[2]) * utility.getFloatNumber(exch[3])
 # 			#TODO Use unit name specified for each product
 # 			row = Notebook(sellid, bill_id, exch_totalAmnt, 
 # 			               _("Selling %s units, invoice number %s") 
 # 			               % (exch[2], trans_code) )
 # 			doc_rows.append(row)
-# 			
+#   			
 # 		# Create rows for payments
 # 		row = Notebook(self.custSubj, bill_id, self.totalPayment, 
 # 		               _("Payment for invoice number %s") % trans_code)
@@ -945,12 +967,12 @@ class SellProducts:
 # 		               -(self.totalPayment - self.cashPayment), 
 # 		               _("Non-cash Payment for invoice number %s") % trans_code)
 # 		doc_rows.append(row)
-# 		
+#   		
 # 		#TODO Add rows for customer introducer's commision
-# 		
+#   		
 # 		self.session.add_all(doc_rows)
 		self.session.commit()
-		self.close(self)
+
 	
 # 	def RegisterBill(self):
 # 		print'test'
@@ -958,10 +980,6 @@ class SellProducts:
 	def printTransaction(self,sender=0):
 		print "main page \"PRINT button\" is pressed!", sender
 	
-		
-	def showPayments(self,sender):
-		self.paymentManager.showPayments()
-		self.ttlNonCashEntry = self.builder.get_object("ttlNonCashEntry")
 
 	def setNonCashPayments(self, sender, str_value):
 		self.nonCashPymntsEntry.set_text(str_value)

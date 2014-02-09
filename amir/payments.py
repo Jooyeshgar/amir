@@ -15,6 +15,8 @@ import dateentry
 import subjects
 import utility
 
+import bankaccountsui
+
 from database import *
 from share import share
 from helpers import get_builder, comboInsertItems
@@ -26,6 +28,21 @@ class Payments(gobject.GObject):
 	chequeStatus = [_("Pending"), _("In Account"), _("Refused"), _("Paid"), _("Spent")]
 	
 	def __init__(self, transId=0, billId=0):
+		
+		#temp for vackground
+		
+		
+		self.background = gtk.Fixed()
+		self.background.put(gtk.image_new_from_file(os.path.join(config.data_path, "media", "background.png")), 0, 0)
+		self.background.show_all()
+		
+		
+		
+		
+		
+		
+		
+		
 		gobject.GObject.__init__(self)
 		
 		self.session = config.db.session
@@ -58,7 +75,7 @@ class Payments(gobject.GObject):
 		self.isCheque = self.builder.get_object("chequeRadioButton")
 		self.isRecpt = self.builder.get_object("recieptRadioButton")
 		self.pymntDescEntry = self.builder.get_object("pymntDescEntry")
-		self.bankEntry = self.builder.get_object("bankEntry")
+		self.bankEntry = self.builder.get_object("bankEntry")		
 		self.serialNoEntry = self.builder.get_object("serialNoEntry")
 		self.payerEntry = self.builder.get_object("payerCodeEntry")
 		self.trackingCodeEntry = self.builder.get_object("trackingCodeEntry")
@@ -483,6 +500,7 @@ class Payments(gobject.GObject):
 	def cancelPayment(self, sender=0, ev=0):
 		self.addPymntDlg.hide_all()
 		return True
+	
 		
 	#def upPayInList(self,sender):
 		#if len(self.paysItersDict) == 1:
@@ -557,6 +575,48 @@ class Payments(gobject.GObject):
 			else:
 				self.addPayment(sender, True)
 
+	def selectBank(self , sender=0):
+		print 'hello'
+		bank_win = bankaccountsui.BankAccountsUI(self.background)
+		bank_win.show_accounts()	
+		
+		code = self.bankEntry.get_text()
+		if code != '':
+			print 'empty'
+			#bank_win.highlightCust(code)
+		bank_win.connect("customer-selected",self.sellerSelected)
+		
+		
+# 	temp for show and select bank	
+
+# 	def selectSeller(self,sender=0):
+# 		customer_win = customers.Customer()
+# 		customer_win.viewCustomers()
+# 		code = self.customerEntry.get_text()
+# 		if code != '':
+# 			customer_win.highlightCust(code)
+# 		customer_win.connect("customer-selected",self.sellerSelected)
+# 		
+# 	def sellerSelected(self, sender, id, code):
+# 		self.customerEntry.set_text(code)
+# 		sender.window.destroy()
+# 		
+# 		query = self.session.query(Customers).select_from(Customers)
+# 		customer = query.filter(Customers.custId == id).first()
+# 		self.buyerNameEntry.set_text(customer.custName)
+# 				
+# 	def setSellerName(self,sender=0,ev=0):
+# 		payer   = self.customerEntry.get_text()
+# 		query   = self.session.query(Subject).select_from(Subject)
+# 		query   = query.filter(Subject.code==payer).first()
+# 		if not query:
+# 			self.buyerNameEntry.set_text("")
+# 		else:
+# 			self.buyerNameEntry.set_text(query.name)
+# 		
+		
+			
+		
 gobject.type_register(Payments)
 gobject.signal_new("payments-changed", Payments, gobject.SIGNAL_RUN_LAST,
                    gobject.TYPE_NONE, (gobject.TYPE_STRING,))

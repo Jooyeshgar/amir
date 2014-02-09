@@ -727,7 +727,7 @@
                     <property name="right_attach">5</property>
                     <property name="top_attach">3</property>
                     <property name="bottom_attach">4</property>
-                    <property name="y_options"></property>
+                    <property name="y_options"/>
                   </packing>
                 </child>
                 <child>
@@ -949,6 +949,7 @@
                         <property name="receives_default">True</property>
                         <property name="use_action_appearance">False</property>
                         <property name="focus_on_click">False</property>
+                        <signal name="clicked" handler="selectBank" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">True</property>

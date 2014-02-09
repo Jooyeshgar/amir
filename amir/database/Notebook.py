@@ -12,11 +12,11 @@ Base = get_declarative_base()
 #Version 0.1 tables
 class Notebook(Base):
     __tablename__ = "notebook"
-    id = Column(Integer, primary_key=True)
-    subject_id = Column(Integer, ForeignKey('subject.id'))
-    bill_id = Column(Integer, ForeignKey('bill.id'))
-    desc = Column(UnicodeText, ColumnDefault(""))
-    value = Column(Integer, ColumnDefault(0), nullable = False)
+    id            = Column(Integer, primary_key=True)
+    subject_id    = Column(Integer, ForeignKey('subject.id'))
+    bill_id       = Column(Integer, ForeignKey('bill.id'))
+    desc          = Column(UnicodeText, ColumnDefault(""))
+    value         = Column(Integer, ColumnDefault(0), nullable = False)
     
     def __init__(self, subject_id, bill_id, value, desc):
         self.subject_id = subject_id

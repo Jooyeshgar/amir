@@ -8,8 +8,8 @@ config = share.config
 
 class dbConfig:
     data = {
-        'co-name':'Enter Company name',
-        'co-logo':'',
+        'co-name'       :'Enter Company name',
+        'co-logo'       :'',
         'custSubject'   : '4',
         'bank'          : '1',
         'cash'          :'14',
@@ -20,7 +20,7 @@ class dbConfig:
         'partners'      : '8',
         'cost'          : '2',
         'bank-wage'     : '31',
-        #"sell-adds": '7',
+        'sell-adds'     : '7',
         #"fund": '9', 
         #"acc-receivable": '10', 
         #"commission": '11',
