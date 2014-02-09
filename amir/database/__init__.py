@@ -59,7 +59,7 @@ class Database:
         elif  dbversion > self.version:
             api.downgrade(file, self.repository, self.version)
         
-        engine = create_engine(file , echo=True)#edit by hassan : echoresults to True
+        engine = create_engine(file , echo=False)#edit by hassan : echoresults to True
         
         metadata = Base.metadata
         metadata.create_all(engine)

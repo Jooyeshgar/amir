@@ -101,7 +101,7 @@ class Payments(gobject.GObject):
 	# even after the tables being filled.
 	def fillPaymentTables(self):
 		self.fillRecptTable()
-		self.fillChequeTable()
+		#self.fillChequeTable()
 	
 	def fillRecptTable(self):
 		total = 0

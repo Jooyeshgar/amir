@@ -166,6 +166,36 @@ class SellProducts:
 		code = self.proVal.get_text()
 		obj.highlightProduct(unicode(code))
 
+	def proSelected(self,sender=0, id=0, code=0):
+		print "pro selected"
+		selectedPro = self.session.query(Products).select_from(Products).filter(Products.code==code).first()
+		id      = selectedPro.id
+		code    = selectedPro.code
+		name    = selectedPro.name
+		av_qnty    = selectedPro.quantity
+		sellPrc = selectedPro.sellingPrice
+		formula  = selectedPro.discountFormula
+		
+		qnty = self.qntyEntry.get_float()
+		discnt = self.calcDiscount(formula, qnty, sellPrc)
+		
+		self.avQntyVal.set_text(utility.LN(av_qnty))
+		self.stnrdDisc.set_text(utility.LN(discnt))
+		self.unitPriceEntry.set_text(utility.LN(sellPrc, comma=False))
+		self.discountEntry.set_text(utility.LN(discnt, comma=False))
+
+		self.stndrdPVal.set_text(utility.LN(sellPrc))
+
+		self.proNameLbl.show()
+		
+		self.avQntyVal.show()
+		self.stnrdDisc.show()
+		self.stndrdPVal.show()
+		
+		if sender:
+			self.proVal.set_text(code)
+			sender.window.destroy()
+
 	def addSell(self,sender=0,edit=None):
 		self.addSellDlg = self.builder.get_object("addASellDlg")
 		if edit:
@@ -313,8 +343,7 @@ class SellProducts:
 				self.sellsItersDict[No]     = belowIter
 				self.sellListStore.set_value(iter,0,str(blwNo))
 				self.sellListStore.set_value(belowIter,0,str(No))
-				
-				
+								
 	def cancelSell(self,sender=0,ev=0):
 		self.clearSellFields()
 		self.addSellDlg.hide_all()
@@ -426,8 +455,7 @@ class SellProducts:
 		oldDiscount = utility.getFloatNumber(self.totalDiscsEntry.get_text())
 		oldDiscount = oldDiscount + float(discount) 
 		self.totalDiscsEntry.set_text(utility.LN(oldDiscount))
-								
-				
+												
 	def reducePrice(self,  price):
 		oldPrice    = utility.getFloatNumber(self.totalEntry.get_text())
 		totalPrce   = oldPrice - price
@@ -438,9 +466,7 @@ class SellProducts:
 		oldDiscount = oldDiscount - discount
 		self.totalDiscsEntry.set_text(utility.LN(oldDiscount))
 
-	
-				
-
+					
 	def clearSellFields(self):
 		zerostr = "0.0"
 		if config.digittype == 1:
@@ -571,8 +597,6 @@ class SellProducts:
 					
 				self.quantity = qnty
 				
-				
-	
 	def validatePrice(self, sender, event):
 		if self.product:
 			stMsg = ""
@@ -671,35 +695,6 @@ class SellProducts:
 						
 				self.calcTotalDiscount(discval)
 
-	def proSelected(self,sender=0, id=0, code=0):
-		print "pro selected"
-		selectedPro = self.session.query(Products).select_from(Products).filter(Products.code==code).first()
-		id      = selectedPro.id
-		code    = selectedPro.code
-		name    = selectedPro.name
-		av_qnty    = selectedPro.quantity
-		sellPrc = selectedPro.sellingPrice
-		formula  = selectedPro.discountFormula
-		
-		qnty = self.qntyEntry.get_float()
-		discnt = self.calcDiscount(formula, qnty, sellPrc)
-		
-		self.avQntyVal.set_text(utility.LN(av_qnty))
-		self.stnrdDisc.set_text(utility.LN(discnt))
-		self.unitPriceEntry.set_text(utility.LN(sellPrc, comma=False))
-		self.discountEntry.set_text(utility.LN(discnt, comma=False))
-
-		self.stndrdPVal.set_text(utility.LN(sellPrc))
-
-		self.proNameLbl.show()
-		
-		self.avQntyVal.show()
-		self.stnrdDisc.show()
-		self.stndrdPVal.show()
-		
-		if sender:
-			self.proVal.set_text(code)
-			sender.window.destroy()
 
 	def calcDiscount(self, formula, qnty, sell_price):
 		discnt = 0
@@ -746,48 +741,22 @@ class SellProducts:
 		ttldiscount = utility.getFloatNumber(self.discTtlVal.get_text())
 		self.ttlPyblVal.set_text(utility.LN(ttlAmnt - ttldiscount))
 
-
-	def close(self, sender=0):
-		self.mainDlg.destroy()
-
-
-
+	def paymentsChanged(self, sender=0, ev=0):
+		ttlCash = self.cashPymntsEntry.get_float()
+		self.cashPayment = ttlCash
+		ttlNonCash  = utility.getFloatNumber(self.nonCashPymntsEntry.get_text())
+		ttlPayments = ttlCash + ttlNonCash
+		
+		self.totalPaymentsEntry.set_text(utility.LN(ttlPayments))
+		self.calculateBalance()
 
 	def submitFactorPressed(self,sender):
 		permit  = self.checkFullFactor()
-		sell_factor = True
+		self.sell_factor = True
 		if permit:
-			print "--------- Starting... ------------"
-			print "\nSaving the Transaction ----------"
-			sell = Transactions( self.subCode, self.subDate, 0, self.custId, self.subAdd,
-								self.subSub, self.subTax, self.cashPayment, 
-								self.subShpDate, self.subFOB, self.subShipVia,
-								self.subPreInv, self.subDesc, sell_factor)
-			self.session.add( sell )
-			self.session.commit()
-			print "------ Saving the Transaction:\tDONE! "
-			
-			# Exchanges( self, exchngNo, exchngProduct, exchngQnty,
-			#            exchngUntPrc, exchngUntDisc, exchngTransId, exchngDesc):
-			print "\nSaving the Exchanges -----------"
-			for exch in self.sellListStore:
-				query = self.session.query(Products).select_from(Products)
-				pid = query.filter(Products.name == unicode(exch[1])).first().id
-				exchange = Exchanges(utility.getInt(exch[0]), pid, utility.getFloatNumber(exch[2]),
-									 utility.getFloatNumber(exch[3]), utility.convertToLatin(exch[5]),
-									 self.transId, unicode(exch[7]))
-				self.session.add( exchange )
-				self.session.commit()
-				
-				#---- Updating the products quantity
-				#TODO product quantity shouldbe updated while adding products to factor
-				if not self.subPreInv:
-					query   = self.session.query(Products).select_from(Products).filter(Products.id == pid)
-					pro = query.first()
-					pro.quantity -= utility.getFloatNumber(exch[2])
-					self.session.commit()
-			print "------ Saving the Exchanges:\tDONE! "
-			
+			self.registerTransaction()
+			self.registerExchanges()
+
 			if not self.subPreInv:
 				print "\nSaving the Document -----------"
 				self.registerDocument()
@@ -859,6 +828,41 @@ class SellProducts:
 		self.statusBar.push(1,"")
 		return True
 
+	def registerTransaction(self):
+				
+		print "--------- Starting... ------------"
+		print "\nSaving the Transaction ----------"
+		sell = Transactions( self.subCode, self.subDate, 0, self.custId, self.subAdd,
+							self.subSub, self.subTax, self.cashPayment, 
+							self.subShpDate, self.subFOB, self.subShipVia,
+							self.subPreInv, self.subDesc, self.sell_factor)
+		self.session.add( sell )
+		self.session.commit()
+		print "------ Saving the Transaction:\tDONE! "
+		
+	def registerExchanges(self):	
+				
+		# Exchanges( self, exchngNo, exchngProduct, exchngQnty,
+		#            exchngUntPrc, exchngUntDisc, exchngTransId, exchngDesc):
+		print "\nSaving the Exchanges -----------"
+		for exch in self.sellListStore:
+			query = self.session.query(Products).select_from(Products)
+			pid = query.filter(Products.name == unicode(exch[1])).first().id
+			exchange = Exchanges(utility.getInt(exch[0]), pid, utility.getFloatNumber(exch[2]),
+								 utility.getFloatNumber(exch[3]), utility.convertToLatin(exch[5]),
+								 self.transId, unicode(exch[7]))
+			self.session.add( exchange )
+			self.session.commit()
+			
+			#---- Updating the products quantity
+			#TODO product quantity should be updated while adding products to factor
+			if not self.subPreInv:
+				query   = self.session.query(Products).select_from(Products).filter(Products.id == pid)
+				pro = query.first()
+				pro.quantity -= utility.getFloatNumber(exch[2])
+				self.session.commit()
+		print "------ Saving the Exchanges:\tDONE! "
+		
 	def registerDocument(self):
 		dbconf = dbconfig.dbConfig()	
 		# Find last document number
@@ -874,16 +878,16 @@ class SellProducts:
 		# Create new document
 		bill = Bill(doc_number, self.subDate, self.subDate, self.subDate, False)
 		self.session.add(bill)
-		print "bill id is %d" % bill_id
+		#print "bill id is %d" % bill_id
 		
 		# Assign document to the current transaction
 		query = self.session.query(Transactions)#.select_from(Transactions)
 		query = query.filter(Transactions.transId == self.transId)
-		print query
-		print bill_id
+		#print query
+		#print bill_id
 		query.update( {Transactions.transBill : bill_id } )	
 		self.session.commit()	
-	#TA INIA	
+		#TA INIA	
 	
 	
 		query = self.session.query(Cheque)#.select_from(Cheque)
@@ -898,68 +902,63 @@ class SellProducts:
 		print query
 		
 		# add by hassan
-		self.close(self)
+		
 		# Create document rows
-		doc_rows = []
-		trans_code = utility.LN(self.subCode, False)
-		
-		row = Notebook(self.custSubj, bill_id, -(self.payableAmnt), 
-		               _("Debit for invoice number %s") % trans_code)
-		doc_rows.append(row)
-		row = Notebook(dbconf.get_int("sell-discount"), bill_id, -(self.totalDisc + self.subSub), 
-		               _("Discount for invoice number %s") % trans_code)
-		doc_rows.append(row)
-		row = Notebook(dbconf.get_int("sell-adds"), bill_id, self.subAdd, 
-		               _("Additions for invoice number %s") % trans_code)
-		doc_rows.append(row)
-		row = Notebook(dbconf.get_int("tax"), bill_id, self.subTax, 
-		               _("Taxes for invoice number %s") % trans_code)
-		doc_rows.append(row)
-		
-		# Create a row for each sold product
-		for exch in self.sellListStore:
-			query = self.session.query(ProductGroups.sellId)
-			query = query.select_from(outerjoin(Products, ProductGroups, Products.accGroup == ProductGroups.id))
-			result = query.filter(Products.name == unicode(exch[1])).first()
-			sellid = result[0]
-			
-			exch_totalAmnt = utility.getFloatNumber(exch[2]) * utility.getFloatNumber(exch[3])
-			#TODO Use unit name specified for each product
-			row = Notebook(sellid, bill_id, exch_totalAmnt, 
-			               _("Selling %s units, invoice number %s") 
-			               % (exch[2], trans_code) )
-			doc_rows.append(row)
-			
-		# Create rows for payments
-		row = Notebook(self.custSubj, bill_id, self.totalPayment, 
-		               _("Payment for invoice number %s") % trans_code)
-		doc_rows.append(row)
-		row = Notebook(dbconf.get_int("fund"), bill_id, -(self.cashPayment), 
-		               _("Cash Payment for invoice number %s") % trans_code)
-		doc_rows.append(row)
-		row = Notebook(dbconf.get_int("acc-receivable"), bill_id, 
-		               -(self.totalPayment - self.cashPayment), 
-		               _("Non-cash Payment for invoice number %s") % trans_code)
-		doc_rows.append(row)
-		
-		#TODO Add rows for customer introducer's commision
-		
-		self.session.add_all(doc_rows)
+# 		doc_rows = []
+# 		trans_code = utility.LN(self.subCode, False)
+# 		
+# 		row = Notebook(self.custSubj, bill_id, -(self.payableAmnt), 
+# 		               _("Debit for invoice number %s") % trans_code)
+# 		doc_rows.append(row)
+# 		row = Notebook(dbconf.get_int("sell-discount"), bill_id, -(self.totalDisc + self.subSub), 
+# 		               _("Discount for invoice number %s") % trans_code)
+# 		doc_rows.append(row)
+# 		row = Notebook(dbconf.get_int("sell-adds"), bill_id, self.subAdd, 
+# 		               _("Additions for invoice number %s") % trans_code)
+# 		doc_rows.append(row)
+# 		row = Notebook(dbconf.get_int("tax"), bill_id, self.subTax, 
+# 		               _("Taxes for invoice number %s") % trans_code)
+# 		doc_rows.append(row)
+# 		
+# 		# Create a row for each sold product
+# 		for exch in self.sellListStore:
+# 			query = self.session.query(ProductGroups.sellId)
+# 			query = query.select_from(outerjoin(Products, ProductGroups, Products.accGroup == ProductGroups.id))
+# 			result = query.filter(Products.name == unicode(exch[1])).first()
+# 			sellid = result[0]
+# 			
+# 			exch_totalAmnt = utility.getFloatNumber(exch[2]) * utility.getFloatNumber(exch[3])
+# 			#TODO Use unit name specified for each product
+# 			row = Notebook(sellid, bill_id, exch_totalAmnt, 
+# 			               _("Selling %s units, invoice number %s") 
+# 			               % (exch[2], trans_code) )
+# 			doc_rows.append(row)
+# 			
+# 		# Create rows for payments
+# 		row = Notebook(self.custSubj, bill_id, self.totalPayment, 
+# 		               _("Payment for invoice number %s") % trans_code)
+# 		doc_rows.append(row)
+# 		row = Notebook(dbconf.get_int("fund"), bill_id, -(self.cashPayment), 
+# 		               _("Cash Payment for invoice number %s") % trans_code)
+# 		doc_rows.append(row)
+# 		row = Notebook(dbconf.get_int("acc-receivable"), bill_id, 
+# 		               -(self.totalPayment - self.cashPayment), 
+# 		               _("Non-cash Payment for invoice number %s") % trans_code)
+# 		doc_rows.append(row)
+# 		
+# 		#TODO Add rows for customer introducer's commision
+# 		
+# 		self.session.add_all(doc_rows)
 		self.session.commit()
+		self.close(self)
+	
+# 	def RegisterBill(self):
+# 		print'test'
 
 	def printTransaction(self,sender=0):
 		print "main page \"PRINT button\" is pressed!", sender
-
-	def paymentsChanged(self, sender=0, ev=0):
-		ttlCash = self.cashPymntsEntry.get_float()
-		self.cashPayment = ttlCash
-		ttlNonCash  = utility.getFloatNumber(self.nonCashPymntsEntry.get_text())
-		ttlPayments = ttlCash + ttlNonCash
+	
 		
-		self.totalPaymentsEntry.set_text(utility.LN(ttlPayments))
-		self.calculateBalance()
-		
-
 	def showPayments(self,sender):
 		self.paymentManager.showPayments()
 		self.ttlNonCashEntry = self.builder.get_object("ttlNonCashEntry")
@@ -967,3 +966,5 @@ class SellProducts:
 	def setNonCashPayments(self, sender, str_value):
 		self.nonCashPymntsEntry.set_text(str_value)
 
+	def close(self, sender=0):
+		self.mainDlg.destroy()

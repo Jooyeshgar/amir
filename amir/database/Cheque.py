@@ -25,16 +25,17 @@ class Cheque(Base):
     # 3 Daryafti, Vosol shode
     # 4 Daryafti, Vosol nashode
     # 5 Kharj shode
-    chqStatus   = Column(Integer,      ColumnDefault(0), nullable = False)
-    chqCust     = Column(Integer,      ForeignKey('customers.custId'))
-    chqAccount  = Column(Integer,      ForeignKey('bankAccounts.accId'), nullable = True)
-    chqTransId  = Column(Integer,      ColumnDefault(0)) #Transaction id is zero for non-invoice cheques.
-    chqNoteBookId = Column(Integer, ColumnDefault(0), ForeignKey('notebook.id'))
-    chqDesc     = Column(Unicode(200), nullable = True)
-    chqHistoryId = Column(Integer)
+    chqStatus     = Column(Integer,      ColumnDefault(0), nullable = False)
+    chqCust       = Column(Integer,      ForeignKey('customers.custId'))
+    chqAccount    = Column(Integer,      ForeignKey('bankAccounts.accId'), nullable = True)
+    chqTransId    = Column(Integer,      ColumnDefault(0)) #Transaction id is zero for non-invoice cheques.
+    chqNoteBookId = Column(Integer,      ColumnDefault(0), ForeignKey('notebook.id'))
+    chqDesc       = Column(Unicode(200), nullable = True)
+    chqHistoryId  = Column(Integer)
+    chqBillId     = Column(Integer,      ColumnDefault(0)) #Bill id is zero for temporary transactions.
 
     def __init__( self, chqAmount, chqWrtDate, chqDueDate, chqSerial,
-                  chqStatus, chqCust, chqAccount, chqTransId, chqNoteBookId, chqDesc,chqHistoryId):
+                  chqStatus, chqCust, chqAccount, chqTransId, chqNoteBookId, chqDesc,chqHistoryId,chqBillId):
         self.chqAmount   = chqAmount
         self.chqWrtDate  = chqWrtDate
         self.chqDueDate  = chqDueDate
@@ -46,5 +47,6 @@ class Cheque(Base):
         self.chqNoteBookId = chqNoteBookId
         self.chqDesc     = chqDesc
         self.chqHistoryId = chqHistoryId
+        self.chqBillId   = chqBillId
 ## @}
 
