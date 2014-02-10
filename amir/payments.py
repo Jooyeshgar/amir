@@ -584,7 +584,7 @@ class Payments(gobject.GObject):
 		if code != '':
 			print 'empty'
 			#bank_win.highlightCust(code)
-		bank_win.connect("bank-selected",self.bankSelected)
+		#bank_win.connect("bank-selected",self.bankSelected)
 		
 		
 # 	temp for show and select bank	
@@ -597,7 +597,7 @@ class Payments(gobject.GObject):
 # 			customer_win.highlightCust(code)
 # 		customer_win.connect("customer-selected",self.sellerSelected)
 # 		
-# 	def sellerSelected(self, sender, id, code):
+# 	def bankSelected(self, sender, id, code):
 # 		self.customerEntry.set_text(code)
 # 		sender.window.destroy()
 # 		

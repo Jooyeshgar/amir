@@ -134,6 +134,9 @@ class SellProducts:
 		self.builder.connect_signals(self)
 		self.mainDlg.show_all()
 		
+		
+		
+		
 	def selectSeller(self,sender=0):
 		customer_win = customers.Customer()
 		customer_win.viewCustomers()
