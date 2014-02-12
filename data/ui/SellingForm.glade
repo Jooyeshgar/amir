@@ -926,19 +926,18 @@
                     <property name="can_focus">False</property>
                     <property name="spacing">4</property>
                     <child>
-                      <object class="GtkEntry" id="bankEntry">
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <object class="GtkComboBox" id="bank_names_combo">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="invisible_char">●</property>
-                        <property name="primary_icon_activatable">False</property>
-                        <property name="secondary_icon_activatable">False</property>
-                        <property name="primary_icon_sensitive">True</property>
-                        <property name="secondary_icon_sensitive">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="row_span_column">0</property>
                       </object>
                       <packing>
                         <property name="expand">True</property>
                         <property name="fill">True</property>
-                        <property name="position">0</property>
+                        <property name="position">2</property>
                       </packing>
                     </child>
                     <child>
@@ -949,12 +948,12 @@
                         <property name="receives_default">True</property>
                         <property name="use_action_appearance">False</property>
                         <property name="focus_on_click">False</property>
-                        <signal name="clicked" handler="selectBank" swapped="no"/>
+                        <signal name="clicked" handler="on_add_bank_clicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">True</property>
                         <property name="fill">True</property>
-                        <property name="position">1</property>
+                        <property name="position">2</property>
                       </packing>
                     </child>
                   </object>
@@ -977,7 +976,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry" id="payerCodeEntry">
+                  <object class="GtkEntry" id="payerNameEntry">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="invisible_char">●</property>
@@ -1187,6 +1186,7 @@
       <action-widget response="0">cancelBtn</action-widget>
     </action-widgets>
   </object>
+  <object class="GtkListStore" id="liststore1"/>
   <object class="GtkWindow" id="sellFormWindow">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Amir Warehousing Sell Form</property>
@@ -1201,7 +1201,7 @@
           <object class="GtkTable" id="table1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="n_rows">14</property>
+            <property name="n_rows">13</property>
             <property name="n_columns">5</property>
             <property name="column_spacing">4</property>
             <property name="row_spacing">4</property>
@@ -1302,8 +1302,8 @@
               </object>
               <packing>
                 <property name="right_attach">5</property>
-                <property name="top_attach">2</property>
-                <property name="bottom_attach">3</property>
+                <property name="top_attach">1</property>
+                <property name="bottom_attach">2</property>
                 <property name="y_options">GTK_FILL</property>
                 <property name="x_padding">6</property>
               </packing>
@@ -1326,23 +1326,11 @@
               </object>
               <packing>
                 <property name="right_attach">5</property>
-                <property name="top_attach">3</property>
-                <property name="bottom_attach">8</property>
+                <property name="top_attach">2</property>
+                <property name="bottom_attach">7</property>
                 <property name="y_options">GTK_FILL</property>
                 <property name="x_padding">6</property>
                 <property name="y_padding">5</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkHSeparator" id="hseparator7">
-                <property name="height_request">20</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-              </object>
-              <packing>
-                <property name="right_attach">5</property>
-                <property name="top_attach">1</property>
-                <property name="bottom_attach">2</property>
               </packing>
             </child>
             <child>
@@ -1535,8 +1523,8 @@
               </object>
               <packing>
                 <property name="right_attach">5</property>
-                <property name="top_attach">11</property>
-                <property name="bottom_attach">13</property>
+                <property name="top_attach">10</property>
+                <property name="bottom_attach">12</property>
                 <property name="x_padding">6</property>
                 <property name="y_padding">5</property>
               </packing>
@@ -1747,8 +1735,8 @@
               </object>
               <packing>
                 <property name="right_attach">5</property>
-                <property name="top_attach">13</property>
-                <property name="bottom_attach">14</property>
+                <property name="top_attach">12</property>
+                <property name="bottom_attach">13</property>
                 <property name="x_padding">6</property>
                 <property name="y_padding">5</property>
               </packing>
@@ -2063,8 +2051,8 @@
               </object>
               <packing>
                 <property name="right_attach">5</property>
-                <property name="top_attach">8</property>
-                <property name="bottom_attach">11</property>
+                <property name="top_attach">7</property>
+                <property name="bottom_attach">10</property>
                 <property name="x_padding">6</property>
                 <property name="y_padding">5</property>
               </packing>
@@ -2147,6 +2135,29 @@
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
+                                <child>
+                                  <object class="GtkLabel" id="buyerNameEntry">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="xalign">0.10000000149011612</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkVSeparator" id="vseparator6">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">3</property>
+                                  </packing>
+                                </child>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -2166,13 +2177,12 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child>
-                              <object class="GtkLabel" id="buyerNameEntry">
+                              <object class="GtkVSeparator" id="vseparator7">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0.10000000149011612</property>
                               </object>
                               <packing>
-                                <property name="expand">True</property>
+                                <property name="expand">False</property>
                                 <property name="fill">True</property>
                                 <property name="position">0</property>
                               </packing>
@@ -2188,56 +2198,26 @@
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkVSeparator" id="vseparator5">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                              </object>
+                              <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
-                                <property name="padding">15</property>
-                                <property name="position">1</property>
+                                <property name="position">2</property>
                               </packing>
                             </child>
                           </object>
                           <packing>
                             <property name="left_attach">2</property>
                             <property name="right_attach">3</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkHBox" id="hbox6">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="spacing">3</property>
-                            <child>
-                              <object class="GtkLabel" id="dateLbl">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
-                                <property name="xpad">10</property>
-                                <property name="label" translatable="yes">Date:</property>
-                              </object>
-                              <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkHBox" id="datebox">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">1</property>
-                              </packing>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="left_attach">1</property>
-                            <property name="right_attach">2</property>
-                            <property name="x_padding">15</property>
                           </packing>
                         </child>
                         <child>
@@ -2278,6 +2258,45 @@
                             <property name="left_attach">3</property>
                             <property name="right_attach">4</property>
                             <property name="x_options">GTK_FILL</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkHBox" id="hbox6">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="spacing">3</property>
+                            <child>
+                              <object class="GtkLabel" id="dateLbl">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="xalign">1</property>
+                                <property name="xpad">10</property>
+                                <property name="label" translatable="yes">Date:</property>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkHBox" id="datebox">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="right_attach">2</property>
                           </packing>
                         </child>
                       </object>

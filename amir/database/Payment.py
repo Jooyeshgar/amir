@@ -17,7 +17,8 @@ class Payment(Base):
     paymntBank      = Column( Unicode(100), nullable = True                   )
     paymntSerial    = Column( Unicode(50),  nullable = True                   )
     paymntAmount    = Column( Float,        ColumnDefault(0), nullable = False)
-    paymntPayer     = Column( Integer,      ForeignKey('customers.custId')    )
+#   paymntPayer     = Column( Integer,      ForeignKey('customers.custId')    )
+    paymntNamePayer = Column(Unicode(50),   nullable=True)
     paymntWrtDate   = Column( Date,         nullable = True                   )
     paymntDesc      = Column( Unicode(200), nullable = True                   )
     paymntTransId   = Column( Integer,      ColumnDefault(0)                  ) #Transaction id is zero for non-invoice payments.
@@ -27,7 +28,7 @@ class Payment(Base):
 #    paymntChq       = Column( Integer,      ForeignKey('cheques.chqId')             )
 
     def __init__( self, paymntDueDate, paymntBank, paymntSerial, paymntAmount,
-                  paymntPayer, paymntWrtDate, paymntDesc, paymntTransId, paymntBillId, 
+                  paymntNamePayer, paymntWrtDate, paymntDesc, paymntTransId, paymntBillId, 
                   paymntTrckCode, paymntOrder):
 
         #self.paymntNo        = paymntNo
@@ -35,7 +36,7 @@ class Payment(Base):
         self.paymntBank      = paymntBank
         self.paymntSerial    = paymntSerial
         self.paymntAmount    = paymntAmount
-        self.paymntPayer     = paymntPayer
+        self.paymntNamePayer     = paymntNamePayer
         self.paymntWrtDate   = paymntWrtDate
         self.paymntDesc      = paymntDesc
         self.paymntTransId   = paymntTransId

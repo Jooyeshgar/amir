@@ -14,35 +14,31 @@ import decimalentry
 import dateentry
 import subjects
 import utility
-
 import bankaccountsui
+import customers
+import class_bankaccounts
 
 from database import *
 from share import share
 from helpers import get_builder, comboInsertItems
+
+
 
 config = share.config
 
 class Payments(gobject.GObject):
 	
 	chequeStatus = [_("Pending"), _("In Account"), _("Refused"), _("Paid"), _("Spent")]
-	
+	buyerNameEntry=""
 	def __init__(self, transId=0, billId=0):
 		
 		#temp for vackground
-		
+		self.bank_names_count = 0
 		
 		self.background = gtk.Fixed()
 		self.background.put(gtk.image_new_from_file(os.path.join(config.data_path, "media", "background.png")), 0, 0)
 		self.background.show_all()
-		
-		
-		
-		
-		
-		
-		
-		
+					
 		gobject.GObject.__init__(self)
 		
 		self.session = config.db.session
@@ -75,9 +71,28 @@ class Payments(gobject.GObject):
 		self.isCheque = self.builder.get_object("chequeRadioButton")
 		self.isRecpt = self.builder.get_object("recieptRadioButton")
 		self.pymntDescEntry = self.builder.get_object("pymntDescEntry")
-		self.bankEntry = self.builder.get_object("bankEntry")		
+		self.bankEntry = self.builder.get_object("bankEntry")	
+		
+		
+		# add for bankcombo 23/11/92
+		
+		self.bankaccounts_class = class_bankaccounts.BankAccountsClass()
+	 	self.bankCombo = self.builder.get_object('bank_names_combo')
+		model = gtk.ListStore(str)
+		self.bankCombo.set_model(model)
+
+		cell = gtk.CellRendererText()
+		self.bankCombo.pack_start(cell)
+		self.bankCombo.add_attribute(cell, 'text', 0)
+		
+		for item in self.bankaccounts_class.get_bank_names():
+			iter = model.append()
+			model.set(iter, 0, item.Name)
+			self.bank_names_count+=1
+	
+				
 		self.serialNoEntry = self.builder.get_object("serialNoEntry")
-		self.payerEntry = self.builder.get_object("payerCodeEntry")
+		self.payerEntry = self.builder.get_object("payerNameEntry")
 		self.trackingCodeEntry = self.builder.get_object("trackingCodeEntry")
 		self.bankAccountEntry = self.builder.get_object("bankAccountEntry")
 		
@@ -117,7 +132,8 @@ class Payments(gobject.GObject):
 	# signal hasn't connected to factor forms yet, So payment-sum can not be shown there
 	# even after the tables being filled.
 	def fillPaymentTables(self):
-		self.fillRecptTable()
+		print 'fortest'
+		#self.fillRecptTable()
 		#self.fillChequeTable()
 	
 	def fillRecptTable(self):
@@ -182,7 +198,8 @@ class Payments(gobject.GObject):
 		btnVal  = _("Add payment to list")
 		
 		self.pymntAmntEntry.set_text("")
-		self.bankEntry.set_text("")
+		#self.bankEntry.set_text("")
+		#self.bankCombo.set_text("")
 		self.serialNoEntry.set_text("")
 		self.payerEntry.set_text("")
 		self.builder.get_object("chqPayerLbl").set_text("")
@@ -212,12 +229,12 @@ class Payments(gobject.GObject):
 	def submitPayment(self, sender=0):
 		if self.validatePayment() == False:
 			return
-
+		print 'validate paymanet is true'
 		pre_amnt = 0
 		pymntAmnt = self.pymntAmntEntry.get_float()
 		wrtDate = self.writeDateEntry.getDateObject()
 		dueDte = self.dueDateEntry.getDateObject()
-		bank = unicode(self.bankEntry.get_text())
+		bank = unicode(self.bankCombo.get_active_text())
 		serial = unicode(self.serialNoEntry.get_text())
 		pymntDesc = unicode(self.pymntDescEntry.get_text())
 		iter = None
@@ -246,9 +263,9 @@ class Payments(gobject.GObject):
 			else:
 				self.numcheqs += 1
 				order = utility.LN(self.numcheqs)
-				cheque = Cheque(pymntAmnt, wrtDate, dueDte, serial, status, self.payer.custId,
+				cheque = Cheque(pymntAmnt, wrtDate, dueDte, serial, 0,self.payerEntry.get_text() ,
 				                self.transId, self.billId, pymntDesc, self.numcheqs)
-				iter = self.cheqListStore.append((order, self.payer.custName, pymnt_str, wrtDate_str, 
+				iter = self.cheqListStore.append((order, self.payerEntry.get_text(), pymnt_str, wrtDate_str, 
 		                      dueDte_str, bank, serial, self.chequeStatus[status], pymntDesc))
 			
 			self.session.add(cheque)
@@ -267,20 +284,21 @@ class Payments(gobject.GObject):
 				payment.paymntBank = bank
 				payment.paymntSerial = serial
 				payment.paymntAmount = pymntAmnt
-				payment.paymntPayer = self.payer.custId
+				payment.paymntNamePayer=self.payerEntry.get_text()
+				payment.paymntPayer = self.payerEntry.get_text()
 				payment.paymntWrtDate = wrtDate
 				payment.paymntDesc = pymntDesc
 				payment.paymntTrckCode = trackCode
 				iter = self.edititer
-				self.paysListStore.set(self.edititer, 1, self.payer.custName, 2, pymnt_str,
+				self.paysListStore.set(self.edititer, 1, self.payerEntry.get_text(), 2, pymnt_str,
 				                      3, wrtDate_str, 4, dueDte_str, 5, bank, 6, serial,
 				                      7, trackCode, 8, pymntDesc)
 			else:
 				self.numrecpts += 1
 				order = utility.LN(self.numrecpts)
-				payment = Payment(dueDte, bank, serial, pymntAmnt, self.payer.custId, wrtDate,
+				payment = Payment(dueDte, bank, serial, pymntAmnt, self.payerEntry.get_text(), wrtDate,
 				                 pymntDesc, self.transId, self.billId, trackCode, self.numrecpts)
-				iter = self.paysListStore.append((order, self.payer.custName, pymnt_str, wrtDate_str, 
+				iter = self.paysListStore.append((order, self.payerEntry.get_text() , pymnt_str, wrtDate_str, 
 		                      dueDte_str, bank, serial, trackCode, pymntDesc))
 		                      
 			self.session.add(payment)
@@ -307,10 +325,10 @@ class Payments(gobject.GObject):
 		#payer_code = self.payerEntry.get_text()
 		#query = self.session.query(Customers).select_from(Customers)
 		#query = query.filter(Customers.custCode == payer_code).first()
-		if not self.payer:
-			msg = _("The payer code you entered is not a valid customer code.\n")
-			errFlg  = True
-			
+# 		if not self.payer:
+# 			msg = _("The payer code you entered is not a valid customer code.\n")
+# 			errFlg  = True
+# 			
 		if self.isCheque.get_active():
 			wrtDate = self.writeDateEntry.get_text()
 			if wrtDate == "":
@@ -322,7 +340,7 @@ class Payments(gobject.GObject):
 				msg += _("You must enter the serial number for the non-cash payment.\n")
 				errFlg  = True
 		else:
-			bank = self.bankEntry.get_text()
+			bank = self.bankCombo.get_active_text()
 			if bank == "":
 				msg += _("You must enter the bank for the non-cash payment.\n")
 				errFlg  = True
@@ -345,17 +363,17 @@ class Payments(gobject.GObject):
 		query = self.session.query(Customers).select_from(Customers)
 		self.payer = query.filter(Customers.custCode == payer_code).first()
 		
-		if not self.payer:
-			msg = _("The payer code you entered is not a valid customer code.")
-			self.payerEntry.set_tooltip_text(msg)
-			self.builder.get_object("chqPayerLbl").set_text("")
-			self.builder.get_object("paymentsStatusBar").push(1,msg)
-		else:
-			self.payerEntry.set_tooltip_text("")
-			self.builder.get_object("paymentsStatusBar").push(1,"")
-			self.builder.get_object("chqPayerLbl").set_text(self.payer.custName)
-
-		
+# 		#if not self.payer:
+# 			msg = _("The payer code you entered is not a valid customer code.")
+# 			self.payerEntry.set_tooltip_text(msg)
+# 			self.builder.get_object("chqPayerLbl").set_text("")
+# 			self.builder.get_object("paymentsStatusBar").push(1,msg)
+# 	#	else:
+# 			self.payerEntry.set_tooltip_text("")
+# 			self.builder.get_object("paymentsStatusBar").push(1,"")
+# 			self.builder.get_object("chqPayerLbl").set_text(self.payer.custName)
+# 
+# 		
 
 	def editPay(self, sender=0):
 		iter = self.paysTreeView.get_selection().get_selected()[1]
@@ -383,7 +401,7 @@ class Payments(gobject.GObject):
 				self.isRecpt.set_sensitive(False)
 				self.cheqStatusList.set_active(cheque.chqStatus)
 				self.trackingCodeEntry.set_text("")
-				self.bankEntry.set_text("")
+				self.bankCombo.set_text("")
 		else:
 			number = utility.convertToLatin(self.paysListStore.get(iter, 0)[0])
 			query = self.session.query(Payment).select_from(Payment)
@@ -392,7 +410,7 @@ class Payments(gobject.GObject):
 			payment = query.first()
 			
 			self.editid = payment.paymntId
-			payer_id   = payment.paymntPayer
+			payer_id   = payment.paymntNamePayer
 			amount = utility.LN(payment.paymntAmount, False)
 			serial = payment.paymntSerial
 			wrtDate = payment.paymntWrtDate
@@ -403,7 +421,8 @@ class Payments(gobject.GObject):
 			self.isRecpt.set_sensitive(True)
 			self.isCheque.set_sensitive(False)
 			self.trackingCodeEntry.set_text(payment.paymntTrckCode)
-			self.bankEntry.set_text(payment.paymntBank)
+			#self.bankEntry.set_text(payment.paymntBank)
+			#self.bankCombo.set_text(payment.paymntBank)
 		
 		self.edtPymntFlg = True
 		self.edititer = iter
@@ -414,8 +433,8 @@ class Payments(gobject.GObject):
 		
 		query = self.session.query(Customers).select_from(Customers)
 		self.payer = query.filter(Customers.custId == payer_id).first()
-		self.payerEntry.set_text(self.payer.custCode)
-		self.builder.get_object("chqPayerLbl").set_text(self.payer.custName)
+		#self.payerEntry.set_text(self.payer.custCode)
+		#self.builder.get_object("chqPayerLbl").set_text(self.payer.custName)
 		
 		self.pymntAmntEntry.set_text(amount)
 		self.serialNoEntry.set_text(serial)
@@ -542,9 +561,9 @@ class Payments(gobject.GObject):
 		self.emit("payments-changed", total_str)
 		
 	def activate_Cheque(self, sender=0):
-		self.builder.get_object("chequeInfoBox").set_sensitive(True)
-		self.builder.get_object("bankBox").set_sensitive(False)
-		self.builder.get_object("trackingCodeEntry").set_sensitive(False)
+		self.builder.get_object("chequeInfoBox").set_sensitive(False)
+		self.builder.get_object("bankBox").set_sensitive(True)
+		self.builder.get_object("trackingCodeEntry").set_sensitive(True)
 	
 	def activate_BankReciept(self, sender=0):
 		self.builder.get_object("chequeInfoBox").set_sensitive(False)
@@ -575,48 +594,57 @@ class Payments(gobject.GObject):
 			else:
 				self.addPayment(sender, True)
 
-	def selectBank(self , sender=0):
-		print 'hello'
-		bank_win = bankaccountsui.BankAccountsUI(self.background)
-		bank_win.show_accounts()	
-		
-		code = self.bankEntry.get_text()
-		if code != '':
-			print 'empty'
-			#bank_win.highlightCust(code)
-		#bank_win.connect("bank-selected",self.bankSelected)
-		
-		
-# 	temp for show and select bank	
+	def on_add_bank_clicked(self, sender):
+		dialog = gtk.Dialog(None, None,
+					 gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+					 (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+					  gtk.STOCK_OK, gtk.RESPONSE_OK))
+		label = gtk.Label('Bank Name:')
+		entry = gtk.Entry()
+		dialog.vbox.pack_start(label, False, False)
+		dialog.vbox.pack_start(entry, False, False)
+		dialog.show_all()
+		result = dialog.run()
+		bank_name = entry.get_text()
+		if result == gtk.RESPONSE_OK and len(bank_name) != 0:
+				combo = self.builder.get_object('bank_names_combo')
+				model = combo.get_model()
+ 
+				iter = model.append()
+				model.set(iter, 0, bank_name)
+				self.bank_names_count+=1
+				combo.set_active(self.bank_names_count-1)
+ 
+				self.bankaccounts_class.add_bank(bank_name)
+ 
+		dialog.destroy()
 
-# 	def selectSeller(self,sender=0):
-# 		customer_win = customers.Customer()
-# 		customer_win.viewCustomers()
-# 		code = self.customerEntry.get_text()
-# 		if code != '':
-# 			customer_win.highlightCust(code)
-# 		customer_win.connect("customer-selected",self.sellerSelected)
-# 		
-# 	def bankSelected(self, sender, id, code):
-# 		self.customerEntry.set_text(code)
-# 		sender.window.destroy()
-# 		
-# 		query = self.session.query(Customers).select_from(Customers)
-# 		customer = query.filter(Customers.custId == id).first()
-# 		self.buyerNameEntry.set_text(customer.custName)
-# 				
-# 	def setSellerName(self,sender=0,ev=0):
-# 		payer   = self.customerEntry.get_text()
-# 		query   = self.session.query(Subject).select_from(Subject)
-# 		query   = query.filter(Subject.code==payer).first()
-# 		if not query:
-# 			self.buyerNameEntry.set_text("")
-# 		else:
-# 			self.buyerNameEntry.set_text(query.name)
-# 		
+	def selectSeller(self,sender=0):
+		customer_win = customers.Customer()
+		customer_win.viewCustomers()
+		code = self.payerEntry.get_text()
+		if code != '':
+			customer_win.highlightCust(code)
+		customer_win.connect("customer-selected",self.sellerSelected)
+		print code
+	def sellerSelected(self, sender, id, code):
+		self.payerEntry.set_text(code)
+		sender.window.destroy()
 		
-			
-		
+		query = self.session.query(Customers).select_from(Customers)
+		customer = query.filter(Customers.custId == id).first()
+		self.payerEntry.set_text(customer.custCode)
+				
+	def setSellerName(self,sender=0,ev=0):
+		payer   = self.payerEntry.get_text()
+		query   = self.session.query(Subject).select_from(Subject)
+		query   = query.filter(Subject.code==payer).first()
+		if not query:
+			self.buyerNameEntry.set_text("")
+		else:
+			self.buyerNameEntry.set_text(query.name)
+	
+							
 gobject.type_register(Payments)
 gobject.signal_new("payments-changed", Payments, gobject.SIGNAL_RUN_LAST,
                    gobject.TYPE_NONE, (gobject.TYPE_STRING,))

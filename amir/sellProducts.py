@@ -754,7 +754,7 @@ class SellProducts:
 		self.calculateBalance()
 
 		
-	def showPayments(self,sender):
+	def showPayments(self,sender):		
 		self.paymentManager.showPayments()
 		self.ttlNonCashEntry = self.builder.get_object("ttlNonCashEntry")
 
@@ -905,42 +905,48 @@ class SellProducts:
 		query = self.session.query(Cheque)#.select_from(Cheque)
 		query = query.filter(Cheque.chqTransId == self.transId)
 		query.update( {Cheque.chqTransId : bill_id } )
-		
-		
-		
-		query = self.session.query(Payment)#.select_from(Payment)
-		query = query.filter(Payment.paymntTransId == self.transId)
-		query =query.update( {Payment.paymntTransId : bill_id } )
-		print query
-		
-		# add by hassan
-		
-		# Create document rows
- 		doc_rows = []
- 		trans_code = utility.LN(self.subCode, False)
-   		#print self.custSubj
-		row = Notebook(self.custSubj, bill_id, -(self.payableAmnt),
-					 _("Debit for invoice number %s") % trans_code)
-		self.session.add(row)
-		self.session.commit()
-		
-		
- 		doc_rows.append(row)
- 		row = Notebook(dbconf.get_int("sell-discount"), bill_id, -(self.totalDisc + self.subSub), 
- 		               _("Discount for invoice number %s") % trans_code)
- 		self.session.add(row)
-		self.session.commit()
-		
- 		doc_rows.append(row)
  		
  		
+ 		
+# 		query = self.session.query(Payment)#.select_from(Payment)
+# 		query = query.filter(Payment.paymntTransId == self.transId)
+# 		query =query.update( {Payment.paymntTransId : bill_id } )
+# 		print query
+ 		
+ 			
+# 		# Create document rows
+#  		doc_rows = []
+#  		
+#  		#write 
+#  		
+#  		trans_code = utility.LN(self.subCode, False)
+#    		#print self.custSubj
+# 		row = Notebook(self.custSubj, bill_id, (self.payableAmnt),
+# 					 _("credit for invoice number %s") % trans_code)
+#  		 		
+# 		row1 = Notebook(dbconf.get_int("cash"), bill_id, -(self.payableAmnt),
+# 					 _("Credit for invoice number %s") % trans_code)
+#  		
+# 		self.session.add(row)
+# 		self.session.add(row1)
+# 		self.session.commit()
+#  		
+# 		
+# 		doc_rows.append(row)
+# 		
+# 		row = Notebook(dbconf.get_int("sell-discount"), bill_id, -(self.totalDisc + self.subSub), 
+# 		               _("Discount for invoice number %s") % trans_code)
+# 
+# 		doc_rows.append(row)
+# #   		
+#  		
 #  		row = Notebook(dbconf.get_int("sell-adds"),
 # 						 bill_id, self.subAdd, 
 #  		               _("Additions for invoice number %s") % trans_code)
 #  		self.session.add(row)
 # 		self.session.commit()
 #  		
- 		doc_rows.append(row)
+ 		#doc_rows.append(row)
 # 		row = Notebook(dbconf.get_int("tax"), bill_id, self.subTax, 
 # 		               _("Taxes for invoice number %s") % trans_code)
 # 		doc_rows.append(row)
@@ -974,7 +980,7 @@ class SellProducts:
 # 		#TODO Add rows for customer introducer's commision
 #   		
 # 		self.session.add_all(doc_rows)
-		self.session.commit()
+		#self.session.commit()
 
 	
 # 	def RegisterBill(self):
