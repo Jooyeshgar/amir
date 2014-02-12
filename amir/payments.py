@@ -30,6 +30,8 @@ class Payments(gobject.GObject):
 	
 	chequeStatus = [_("Pending"), _("In Account"), _("Refused"), _("Paid"), _("Spent")]
 	buyerNameEntry=""
+	cheque_clicked=False
+	
 	def __init__(self, transId=0, billId=0):
 		
 		#temp for vackground
@@ -226,154 +228,6 @@ class Payments(gobject.GObject):
 		self.addPymntDlg.show_all()
 
 
-	def submitPayment(self, sender=0):
-		if self.validatePayment() == False:
-			return
-		print 'validate paymanet is true'
-		pre_amnt = 0
-		pymntAmnt = self.pymntAmntEntry.get_float()
-		wrtDate = self.writeDateEntry.getDateObject()
-		dueDte = self.dueDateEntry.getDateObject()
-		bank = unicode(self.bankCombo.get_active_text())
-		serial = unicode(self.serialNoEntry.get_text())
-		pymntDesc = unicode(self.pymntDescEntry.get_text())
-		iter = None
-		
-		pymnt_str = utility.LN(pymntAmnt)
-		wrtDate_str = dateentry.dateToString(wrtDate)
-		dueDte_str = dateentry.dateToString(dueDte)
-		
-		if self.isCheque.get_active():
-			status = self.cheqStatusList.get_active()
-			if self.edtPymntFlg:
-				query = self.session.query(Cheque).select_from(Cheque)
-				cheque = query.filter(Cheque.chqId == self.editid).first()
-				pre_amnt = cheque.chqAmount
-				cheque.chqAmount = pymntAmnt
-				cheque.chqWrtDate = wrtDate
-				cheque.chqDueDate = dueDte
-				cheque.chqSerial = serial
-				cheque.chqStatus = status
-				cheque.chqCust = self.payer.custId
-				cheque.chqDesc = pymntDesc
-				iter = self.edititer
-				self.cheqListStore.set(self.edititer, 1, self.payer.custName, 2, pymnt_str,
-				                      3, wrtDate_str, 4, dueDte_str, 6, serial, 7, 
-				                      self.chequeStatus[status], 8, pymntDesc)
-			else:
-				self.numcheqs += 1
-				order = utility.LN(self.numcheqs)
-				cheque = Cheque(pymntAmnt, wrtDate, dueDte, serial, 0,self.payerEntry.get_text() ,
-				                self.transId, self.billId, pymntDesc, self.numcheqs)
-				iter = self.cheqListStore.append((order, self.payerEntry.get_text(), pymnt_str, wrtDate_str, 
-		                      dueDte_str, bank, serial, self.chequeStatus[status], pymntDesc))
-			
-			self.session.add(cheque)
-			self.session.commit()
-			path = self.cheqListStore.get_path(iter)
-			self.cheqTreeView.scroll_to_cell(path, None, False, 0, 0)
-			self.cheqTreeView.set_cursor(path, None, False)
-			
-		else:
-			trackCode = unicode(self.trackingCodeEntry.get_text())
-			if self.edtPymntFlg:
-				query = self.session.query(Payment).select_from(Payment)
-				payment = query.filter(Payment.paymntId == self.editid).first()
-				pre_amnt = payment.paymntAmount
-				payment.paymntDueDate = dueDte
-				payment.paymntBank = bank
-				payment.paymntSerial = serial
-				payment.paymntAmount = pymntAmnt
-				payment.paymntNamePayer=self.payerEntry.get_text()
-				payment.paymntPayer = self.payerEntry.get_text()
-				payment.paymntWrtDate = wrtDate
-				payment.paymntDesc = pymntDesc
-				payment.paymntTrckCode = trackCode
-				iter = self.edititer
-				self.paysListStore.set(self.edititer, 1, self.payerEntry.get_text(), 2, pymnt_str,
-				                      3, wrtDate_str, 4, dueDte_str, 5, bank, 6, serial,
-				                      7, trackCode, 8, pymntDesc)
-			else:
-				self.numrecpts += 1
-				order = utility.LN(self.numrecpts)
-				payment = Payment(dueDte, bank, serial, pymntAmnt, self.payerEntry.get_text(), wrtDate,
-				                 pymntDesc, self.transId, self.billId, trackCode, self.numrecpts)
-				iter = self.paysListStore.append((order, self.payerEntry.get_text() , pymnt_str, wrtDate_str, 
-		                      dueDte_str, bank, serial, trackCode, pymntDesc))
-		                      
-			self.session.add(payment)
-			self.session.commit()
-			path = self.paysListStore.get_path(iter)
-			self.paysTreeView.scroll_to_cell(path, None, False, 0, 0)
-			self.paysTreeView.set_cursor(path, None, False)
-		
-		self.addToTotalAmount(pymntAmnt - pre_amnt)
-		self.addPymntDlg.hide()
-
-
-	def validatePayment(self):
-		errFlg  = False
-		msg = ""
-		
-		dueDte = self.dueDateEntry.get_text()
-		if dueDte == "":
-			msg += _("You must enter the due date for the non-cash payment.\n")
-			errFlg  = True
-		
-		payment = self.pymntAmntEntry.get_float()
-		
-		#payer_code = self.payerEntry.get_text()
-		#query = self.session.query(Customers).select_from(Customers)
-		#query = query.filter(Customers.custCode == payer_code).first()
-# 		if not self.payer:
-# 			msg = _("The payer code you entered is not a valid customer code.\n")
-# 			errFlg  = True
-# 			
-		if self.isCheque.get_active():
-			wrtDate = self.writeDateEntry.get_text()
-			if wrtDate == "":
-				msg = _("You must enter a writing date for the cheque.\n")
-				errFlg  = True
-				
-			serialNo = self.serialNoEntry.get_text()
-			if serialNo == "":
-				msg += _("You must enter the serial number for the non-cash payment.\n")
-				errFlg  = True
-		else:
-			bank = self.bankCombo.get_active_text()
-			if bank == "":
-				msg += _("You must enter the bank for the non-cash payment.\n")
-				errFlg  = True
-		
-		#payHeaders = ("No.","Paid by","Amount","Writing date","Due Date","Bank","Serial No.","Track Code","Description")
-		#----values:
-		if errFlg:
-			msg = _("The payment cannot be saved.\n\n%s") % msg
-			msgbox = gtk.MessageDialog( self.addPymntDlg, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, 
-										gtk.BUTTONS_OK, msg )
-			msgbox.set_title(_("Invalid data"))
-			msgbox.run()
-			msgbox.destroy()
-			return False
-		else:
-			return True
-			
-	def validatePayer(self, sender=0, ev=0):
-		payer_code = unicode(self.payerEntry.get_text())
-		query = self.session.query(Customers).select_from(Customers)
-		self.payer = query.filter(Customers.custCode == payer_code).first()
-		
-# 		#if not self.payer:
-# 			msg = _("The payer code you entered is not a valid customer code.")
-# 			self.payerEntry.set_tooltip_text(msg)
-# 			self.builder.get_object("chqPayerLbl").set_text("")
-# 			self.builder.get_object("paymentsStatusBar").push(1,msg)
-# 	#	else:
-# 			self.payerEntry.set_tooltip_text("")
-# 			self.builder.get_object("paymentsStatusBar").push(1,"")
-# 			self.builder.get_object("chqPayerLbl").set_text(self.payer.custName)
-# 
-# 		
 
 	def editPay(self, sender=0):
 		iter = self.paysTreeView.get_selection().get_selected()[1]
@@ -514,6 +368,165 @@ class Payments(gobject.GObject):
 				liststore.set_value (iter, 0, number_str)
 				number += 1
 				iter = liststore.iter_next(iter)
+
+
+	def submitPayment(self, sender=0):
+		if self.validatePayment() == False:
+			return
+		print 'validate paymanet is true'
+		pre_amnt = 0
+		pymntAmnt = self.pymntAmntEntry.get_float()
+		wrtDate = self.writeDateEntry.getDateObject()
+		dueDte = self.dueDateEntry.getDateObject()
+		bank = unicode(self.bankCombo.get_active_text())
+		serial = unicode(self.serialNoEntry.get_text())
+		pymntDesc = unicode(self.pymntDescEntry.get_text())
+		iter = None
+		
+		pymnt_str = utility.LN(pymntAmnt)
+		wrtDate_str = dateentry.dateToString(wrtDate)
+		dueDte_str = dateentry.dateToString(dueDte)
+		
+		if self.isCheque.get_active():
+			status = self.cheqStatusList.get_active()
+			if self.edtPymntFlg:
+				query = self.session.query(Cheque).select_from(Cheque)
+				cheque = query.filter(Cheque.chqId == self.editid).first()
+				pre_amnt = cheque.chqAmount
+				cheque.chqAmount = pymntAmnt
+				cheque.chqWrtDate = wrtDate
+				cheque.chqDueDate = dueDte
+				cheque.chqSerial = serial
+				cheque.chqStatus = status
+				cheque.chqCust = self.payer.custId
+				cheque.chqDesc = pymntDesc
+				iter = self.edititer
+				self.cheqListStore.set(self.edititer, 1, self.payer.custName, 2, pymnt_str,
+				                      3, wrtDate_str, 4, dueDte_str, 6, serial, 7, 
+				                      self.chequeStatus[status], 8, pymntDesc)
+			else:
+				self.numcheqs += 1
+				order = utility.LN(self.numcheqs)
+				cheque = Cheque(pymntAmnt, wrtDate, dueDte, serial, 0,self.payerEntry.get_text() ,
+				                None,self.transId, self.billId, pymntDesc, self.numcheqs)
+				iter = self.cheqListStore.append((order, self.payerEntry.get_text(), pymnt_str, wrtDate_str, 
+		                      dueDte_str, bank, serial, self.chequeStatus[status], pymntDesc))
+			
+			self.session.add(cheque)
+			self.session.commit()
+			path = self.cheqListStore.get_path(iter)
+			self.cheqTreeView.scroll_to_cell(path, None, False, 0, 0)
+			self.cheqTreeView.set_cursor(path, None, False)
+			
+		else:
+			trackCode = unicode(self.trackingCodeEntry.get_text())
+			if self.edtPymntFlg:
+				query = self.session.query(Payment).select_from(Payment)
+				payment = query.filter(Payment.paymntId == self.editid).first()
+				pre_amnt = payment.paymntAmount
+				payment.paymntDueDate = dueDte
+				payment.paymntBank = bank
+				payment.paymntSerial = serial
+				payment.paymntAmount = pymntAmnt
+				payment.paymntNamePayer=self.payerEntry.get_text()
+				payment.paymntPayer = self.payerEntry.get_text()
+				payment.paymntWrtDate = wrtDate
+				payment.paymntDesc = pymntDesc
+				payment.paymntTrckCode = trackCode
+				iter = self.edititer
+				self.paysListStore.set(self.edititer, 1, self.payerEntry.get_text(), 2, pymnt_str,
+				                      3, wrtDate_str, 4, dueDte_str, 5, bank, 6, serial,
+				                      7, trackCode, 8, pymntDesc)
+			else:
+				self.numrecpts += 1
+				order = utility.LN(self.numrecpts)
+				payment = Payment(dueDte, bank, serial, pymntAmnt, self.payerEntry.get_text(), wrtDate,
+				                 pymntDesc, self.transId, self.billId, trackCode, self.numrecpts)
+				iter = self.paysListStore.append((order, self.payerEntry.get_text() , pymnt_str, wrtDate_str, 
+		                      dueDte_str, bank, serial, trackCode, pymntDesc))
+		                      
+			self.session.add(payment)
+			self.session.commit()
+			path = self.paysListStore.get_path(iter)
+			self.paysTreeView.scroll_to_cell(path, None, False, 0, 0)
+			self.paysTreeView.set_cursor(path, None, False)
+		
+		self.addToTotalAmount(pymntAmnt - pre_amnt)
+		self.addPymntDlg.hide()
+
+
+
+	def validatePayment(self):
+		
+		
+		errFlg  = False
+		msg = ""
+		
+		dueDte = self.dueDateEntry.get_text()
+		if dueDte == "":
+			msg += _("You must enter the due date for the non-cash payment.\n")
+			errFlg  = True
+		
+		payment = self.pymntAmntEntry.get_text()	
+		if payment =="":
+			 msg+=_("You must enter the Amount cheaue or reciep")
+			 errFlg =True
+		
+		#payer_code = self.payerEntry.get_text()
+		#query = self.session.query(Customers).select_from(Customers)
+		#query = query.filter(Customers.custCode == payer_code).first()
+# 		if not self.payer:
+# 			msg = _("The payer code you entered is not a valid customer code.\n")
+# 			errFlg  = True
+# 			
+		if self.isCheque.get_active():
+			wrtDate = self.writeDateEntry.get_text()
+			if wrtDate == "":
+				msg = _("You must enter a writing date for the cheque.\n")
+				errFlg  = True
+				
+			serialNo = self.serialNoEntry.get_text()
+			if serialNo == "":
+				msg += _("You must enter the serial number for the non-cash payment.\n")
+				errFlg  = True
+			
+
+		else:
+			bank = self.bankCombo.get_active_text()
+			if bank == "":
+				msg += _("You must enter the bank for the non-cash payment.\n")
+				errFlg  = True
+		
+		#payHeaders = ("No.","Paid by","Amount","Writing date","Due Date","Bank","Serial No.","Track Code","Description")
+		#----values:
+		if errFlg:
+			msg = _("The payment cannot be saved.\n\n%s") % msg
+			msgbox = gtk.MessageDialog( self.addPymntDlg, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, 
+										gtk.BUTTONS_OK, msg )
+			msgbox.set_title(_("Invalid data"))
+			msgbox.run()
+			msgbox.destroy()
+			return False
+		else:
+			return True
+			
+	def validatePayer(self, sender=0, ev=0):
+		payer_code = unicode(self.payerEntry.get_text())
+		query = self.session.query(Customers).select_from(Customers)
+		self.payer = query.filter(Customers.custCode == payer_code).first()
+		
+# 		#if not self.payer:
+# 			msg = _("The payer code you entered is not a valid customer code.")
+# 			self.payerEntry.set_tooltip_text(msg)
+# 			self.builder.get_object("chqPayerLbl").set_text("")
+# 			self.builder.get_object("paymentsStatusBar").push(1,msg)
+# 	#	else:
+# 			self.payerEntry.set_tooltip_text("")
+# 			self.builder.get_object("paymentsStatusBar").push(1,"")
+# 			self.builder.get_object("chqPayerLbl").set_text(self.payer.custName)
+# 
+# 		
+
 				
 
 	def cancelPayment(self, sender=0, ev=0):
@@ -561,15 +574,19 @@ class Payments(gobject.GObject):
 		self.emit("payments-changed", total_str)
 		
 	def activate_Cheque(self, sender=0):
+		self.cheque_clicked=True
+		print self.isCheque.get_active()
 		self.builder.get_object("chequeInfoBox").set_sensitive(False)
 		self.builder.get_object("bankBox").set_sensitive(True)
-		self.builder.get_object("trackingCodeEntry").set_sensitive(True)
+		self.builder.get_object("trackingCodeEntry").set_sensitive(False)
+		self.builder.get_object("payerNameEntry").set_sensitive(False)
 	
 	def activate_BankReciept(self, sender=0):
+		self.cheque_clicked=False
 		self.builder.get_object("chequeInfoBox").set_sensitive(False)
 		self.builder.get_object("bankBox").set_sensitive(True)
 		self.builder.get_object("trackingCodeEntry").set_sensitive(True)
-		
+		self.builder.get_object("payerNameEntry").set_sensitive(True)
 	def chequeListActivated(self, treeview):
 		self.paysTreeView.get_selection().unselect_all()
 		
@@ -622,6 +639,8 @@ class Payments(gobject.GObject):
 	def selectSeller(self,sender=0):
 		customer_win = customers.Customer()
 		customer_win.viewCustomers()
+		
+	
 		code = self.payerEntry.get_text()
 		if code != '':
 			customer_win.highlightCust(code)
@@ -633,7 +652,12 @@ class Payments(gobject.GObject):
 		
 		query = self.session.query(Customers).select_from(Customers)
 		customer = query.filter(Customers.custId == id).first()
-		self.payerEntry.set_text(customer.custCode)
+		if self.cheque_clicked:
+			self.payerEntry.set_text(customer.custId)
+			print 'hello2' 		
+		else:
+			self.payerEntry.set_text(customer.custName)
+			print 'hello'
 				
 	def setSellerName(self,sender=0,ev=0):
 		payer   = self.payerEntry.get_text()

@@ -895,24 +895,19 @@ class SellProducts:
 		# Assign document to the current transaction
 		query = self.session.query(Transactions)#.select_from(Transactions)
 		query = query.filter(Transactions.transId == self.transId)
-		#print query
-		#print bill_id
 		query.update( {Transactions.transBill : bill_id } )	
 		self.session.commit()	
-		#TA INIA	
-	
 	
 		query = self.session.query(Cheque)#.select_from(Cheque)
 		query = query.filter(Cheque.chqTransId == self.transId)
 		query.update( {Cheque.chqTransId : bill_id } )
+ 		self.session.commit()
  		
  		
- 		
-# 		query = self.session.query(Payment)#.select_from(Payment)
-# 		query = query.filter(Payment.paymntTransId == self.transId)
-# 		query =query.update( {Payment.paymntTransId : bill_id } )
-# 		print query
- 		
+		query = self.session.query(Payment)#.select_from(Payment)
+		query = query.filter(Payment.paymntTransId == self.transId)
+		query =query.update( {Payment.paymntBillId : bill_id } )		
+ 		self.session.commit()
  			
 # 		# Create document rows
 #  		doc_rows = []
