@@ -769,10 +769,23 @@ class SellProducts:
 			if not self.subPreInv:
 				print "\nSaving the Document -----------"
 				self.registerDocument()
-		self.close(self)
+			self.close(self)
+		
 		
 	def checkFullFactor(self):
 						
+		#self.subCust    = self.customerEntry.get_text()
+		cust_code = unicode(self.customerEntry.get_text())
+		query = self.session.query(Customers).select_from(Customers)
+		cust = query.filter(Customers.custCode == cust_code).first()
+		if not cust:
+			msg = _("The customer code you entered is not valid.")
+			self.statusBar.push(1, msg)
+			return False
+		else:
+			self.custId  = cust.custId
+			self.custSubj = cust.custSubj
+								
 		if len(self.sellListStore)<1:
 			self.statusBar.push(1, "There is no product selected for the invoice.")
 			return False
@@ -781,6 +794,7 @@ class SellProducts:
 		
 		self.subDate    = self.factorDate.getDateObject()
 		self.subPreInv  = self.builder.get_object("preChkBx").get_active()
+		
 		if not self.subPreInv:
 			print "full invoice!"
 			pro_dic = {}
@@ -804,26 +818,13 @@ class SellProducts:
 					
 			pro_str.strip()
 			print pro_str
+			
 			if pro_str:
 				msg = _("The available quantity of %s is not enough for the invoice. You can save it as pre-invoice.") \
 						% pro_str
 				self.statusBar.push(1, msg)
 				return False
-				
-					
-		#self.subCust    = self.customerEntry.get_text()
-		cust_code = unicode(self.customerEntry.get_text())
-		query = self.session.query(Customers).select_from(Customers)
-		cust = query.filter(Customers.custCode == cust_code).first()
-		
-		if not cust:
-			msg = _("The customer code you entered is not valid.")
-			self.statusBar.push(1, msg)
-			return False
-		else:
-			self.custId  = cust.custId
-			self.custSubj = cust.custSubj
-		
+									
 		self.subAdd     = self.additionsEntry.get_float()
 		self.subSub     = self.subsEntry.get_float()
 		self.subTax     = utility.getFloatNumber(self.taxEntry.get_text())

@@ -29,8 +29,8 @@ config = share.config
 class Payments(gobject.GObject):
 	
 	chequeStatus = [_("Pending"), _("In Account"), _("Refused"), _("Paid"), _("Spent")]
-	buyerNameEntry=""
-	cheque_clicked=False
+	chequePayment=[]
+	recieptPayment=[]	
 	
 	def __init__(self, transId=0, billId=0):
 		
@@ -192,6 +192,7 @@ class Payments(gobject.GObject):
 		#self.emit("payments-changed", value)
         
 	def addPayment(self, sender=0, is_cheque=False):
+		
 		self.addPymntDlg = self.builder.get_object("addPaymentDlg")
 		
 		self.editingPay = None
@@ -199,20 +200,21 @@ class Payments(gobject.GObject):
 		self.edtPymntFlg = False
 		btnVal  = _("Add payment to list")
 		
-		self.pymntAmntEntry.set_text("")
-		#self.bankEntry.set_text("")
-		#self.bankCombo.set_text("")
-		self.serialNoEntry.set_text("")
-		self.payerEntry.set_text("")
-		self.builder.get_object("chqPayerLbl").set_text("")
-		self.pymntDescEntry.set_text("")
-		self.trackingCodeEntry.set_text("")
-		self.cheqStatusList.set_active(0)
-		self.bankAccountEntry.set_text("")
-		
 		today   = date.today()
 		self.dueDateEntry.showDateObject(today)
+		self.bankCombo.set_active(0)
+		self.serialNoEntry.set_text("")
+		self.pymntAmntEntry.set_text("")
+		self.payerEntry.set_text("")
+		self.builder.get_object("chqPayerLbl").set_text("")
 		self.writeDateEntry.showDateObject(today)
+		self.pymntDescEntry.set_text("")
+		self.trackingCodeEntry.set_text("")
+		#self.cheqStatusList.set_active()
+		self.bankAccountEntry.set_text("")
+		
+
+		
 			
 		self.btn    = self.builder.get_object("submitBtn")
 		self.btn.set_label(btnVal)
@@ -374,13 +376,14 @@ class Payments(gobject.GObject):
 		if self.validatePayment() == False:
 			return
 		print 'validate paymanet is true'
-		pre_amnt = 0
-		pymntAmnt = self.pymntAmntEntry.get_float()
-		wrtDate = self.writeDateEntry.getDateObject()
-		dueDte = self.dueDateEntry.getDateObject()
-		bank = unicode(self.bankCombo.get_active_text())
-		serial = unicode(self.serialNoEntry.get_text())
-		pymntDesc = unicode(self.pymntDescEntry.get_text())
+		pre_amnt 	= 0
+		pymntAmnt 	= self.pymntAmntEntry.get_float()
+		wrtDate 	= self.writeDateEntry.getDateObject()
+		dueDte 		= self.dueDateEntry.getDateObject()
+		bank 		= unicode(self.bankCombo.get_active_text())
+		serial 		= unicode(self.serialNoEntry.get_text())
+		pymntDesc 	= unicode(self.pymntDescEntry.get_text())
+		payer		= unicode(self.payerEntry.get_text())
 		iter = None
 		
 		pymnt_str = utility.LN(pymntAmnt)
@@ -407,13 +410,87 @@ class Payments(gobject.GObject):
 			else:
 				self.numcheqs += 1
 				order = utility.LN(self.numcheqs)
-				cheque = Cheque(pymntAmnt, wrtDate, dueDte, serial, 0,self.payerEntry.get_text() ,
-				                None,self.transId, self.billId, pymntDesc, self.numcheqs)
+				
+				
+				
+				##add cheque history
+				self.chequeHistoryChequeId 	= 	0
+				self.chequeHistoryAmount   	=	pymntAmnt
+				self.chequeHistoryWrtDate  	=	wrtDate
+				self.chequeHistoryDueDate	=	dueDte
+				self.chequeHistorySerial	=	serial
+				self.chequeHistoryStatus	=	status
+				self.chequeHistoryCust		=	payer
+				self.chequeHistoryAccount	=	None
+				self.chequeHistoryDesc		=	pymntDesc
+				self.chequeHistoryDate		=	wrtDate
+				self.chequeHistoryTransId	=	self.transId
+				
+				
+				chequeHistory= ChequeHistory(			
+						self.chequeHistoryChequeId 	,
+						self.chequeHistoryAmount   	,
+						self.chequeHistoryWrtDate  	,
+						self.chequeHistoryDueDate	,
+						self.chequeHistorySerial	,
+						self.chequeHistoryStatus	,
+						self.chequeHistoryCust		,
+						self.chequeHistoryAccount	,
+						self.chequeHistoryTransId	,
+						self.chequeHistoryDesc		,
+						self.chequeHistoryDate			)
+
+				
+				cheque = Cheque(
+							pymntAmnt						,
+							wrtDate							, 
+							dueDte							, 
+							serial							, 
+							0								,
+							self.payerEntry.get_text() 		,
+				            None							,
+				            self.transId					, 
+				            self.billId						, 
+				            pymntDesc						, 
+				            self.numcheqs					)
+				
+				
+				self.chequePayment.append(cheque)
+				
+				
 				iter = self.cheqListStore.append((order, self.payerEntry.get_text(), pymnt_str, wrtDate_str, 
 		                      dueDte_str, bank, serial, self.chequeStatus[status], pymntDesc))
-			
+				
+			self.session.add(chequeHistory)
 			self.session.add(cheque)
 			self.session.commit()
+			
+			
+		## updat chequehistory id	
+# 			query=self.session.query(ChequeHistory).select_from(ChequeHistory)
+# 			from sqlalchemy.sql.expression import desc
+# 			
+# 			chequeHistory=query.filter(ChequeHistory.TransId == self.transId).order_by(desc(ChequeHistory.Id)).first()
+# 			print chequeHistory.Id
+# 								
+# 			query = self.session.query(Cheque).select_from(Cheque)
+# 			tempCheque = query.filter(Cheque.chqTransId == self.transId).order_by(desc(Cheque.chqId)).first()
+# 			
+# 			tempCheque.chqHistoryId=chequeHistory.Id
+# 			chequeHistory.ChequeId=tempCheque.chqId
+# 			
+# 			self.session.commit()					
+#   		
+#  		
+ 			
+#  			
+# 			self.session.commit()
+# 			
+# 			
+# 			
+# 			
+# 			
+			
 			path = self.cheqListStore.get_path(iter)
 			self.cheqTreeView.scroll_to_cell(path, None, False, 0, 0)
 			self.cheqTreeView.set_cursor(path, None, False)
@@ -458,7 +535,6 @@ class Payments(gobject.GObject):
 
 	def validatePayment(self):
 		
-		
 		errFlg  = False
 		msg = ""
 		
@@ -488,9 +564,7 @@ class Payments(gobject.GObject):
 			serialNo = self.serialNoEntry.get_text()
 			if serialNo == "":
 				msg += _("You must enter the serial number for the non-cash payment.\n")
-				errFlg  = True
-			
-
+				errFlg  = True			
 		else:
 			bank = self.bankCombo.get_active_text()
 			if bank == "":
