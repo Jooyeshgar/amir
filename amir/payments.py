@@ -95,6 +95,13 @@ class Payments(gobject.GObject):
 				
 		self.serialNoEntry = self.builder.get_object("serialNoEntry")
 		self.payerEntry = self.builder.get_object("payerNameEntry")
+		
+		
+		
+		self.payerEntry.set_sensitive(False)
+		self.builder.get_object("choose Payer").set_sensitive(False)
+		
+		
 		self.trackingCodeEntry = self.builder.get_object("trackingCodeEntry")
 		self.bankAccountEntry = self.builder.get_object("bankAccountEntry")
 		
@@ -198,6 +205,7 @@ class Payments(gobject.GObject):
 		self.editingPay = None
 		self.addPymntDlg.set_title(_("Add Non-Cash Payment"))
 		self.edtPymntFlg = False
+		self.removeFlg=False
 		btnVal  = _("Add payment to list")
 		
 		today   = date.today()
@@ -257,7 +265,7 @@ class Payments(gobject.GObject):
 				self.isRecpt.set_sensitive(False)
 				self.cheqStatusList.set_active(cheque.chqStatus)
 				self.trackingCodeEntry.set_text("")
-				self.bankCombo.set_text("")
+				
 		else:
 			number = utility.convertToLatin(self.paysListStore.get(iter, 0)[0])
 			query = self.session.query(Payment).select_from(Payment)
@@ -308,6 +316,7 @@ class Payments(gobject.GObject):
 				return
 			else:
 				number = utility.getInt(self.cheqListStore.get(iter, 0)[0])
+				print number
 				msg = _("Are you sure to delete the cheque number %d?") % number
 				msgBox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, 
 				                           gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK_CANCEL, msg)
@@ -324,7 +333,7 @@ class Payments(gobject.GObject):
 				
 				self.session.delete(cheque)
 				# Decrease the order-number in next rows
-				query = self.session.query(Cheque).select_from(Cheque)
+				query = self.session.query(Cheque)#.select_from(Cheque)
 				query = query.filter(and_(Cheque.chqTransId == self.transId, 
 				                    Cheque.chqBillId == self.billId, Cheque.chqOrder > number))
 				query.update( {Cheque.chqOrder: Cheque.chqOrder - 1 } )
@@ -350,7 +359,7 @@ class Payments(gobject.GObject):
 			
 			self.session.delete(payment)
 			# Decrease the order-number in next rows
-			query = self.session.query(Payment).select_from(Payment)
+			query = self.session.query(Payment)#.select_from(Payment)
 			query = query.filter(and_(Payment.paymntTransId == self.transId, 
 				                Payment.paymntBillId == self.billId, Payment.paymntOrder > number))
 			query.update( {Payment.paymntOrder: Payment.paymntOrder - 1 } )
@@ -401,10 +410,11 @@ class Payments(gobject.GObject):
 				cheque.chqDueDate = dueDte
 				cheque.chqSerial = serial
 				cheque.chqStatus = status
-				cheque.chqCust = self.payer.custId
+				#cheque.chqCust = self.payerEntry.get_text()
+				cheque.chqOwnerName	= self.payerEntry.get_text()
 				cheque.chqDesc = pymntDesc
 				iter = self.edititer
-				self.cheqListStore.set(self.edititer, 1, self.payer.custName, 2, pymnt_str,
+				self.cheqListStore.set(self.edititer, 1, cheque.chqCust, 2, pymnt_str,
 				                      3, wrtDate_str, 4, dueDte_str, 6, serial, 7, 
 				                      self.chequeStatus[status], 8, pymntDesc)
 			else:
@@ -427,18 +437,19 @@ class Payments(gobject.GObject):
 				self.chequeHistoryTransId	=	self.transId
 				
 				
-				chequeHistory= ChequeHistory(			
-						self.chequeHistoryChequeId 	,
-						self.chequeHistoryAmount   	,
-						self.chequeHistoryWrtDate  	,
-						self.chequeHistoryDueDate	,
-						self.chequeHistorySerial	,
-						self.chequeHistoryStatus	,
-						self.chequeHistoryCust		,
-						self.chequeHistoryAccount	,
-						self.chequeHistoryTransId	,
-						self.chequeHistoryDesc		,
-						self.chequeHistoryDate			)
+				
+# 				chequeHistory= ChequeHistory(			
+# 						self.chequeHistoryChequeId 	,
+# 						self.chequeHistoryAmount   	,
+# 						self.chequeHistoryWrtDate  	,
+# 						self.chequeHistoryDueDate	,
+# 						self.chequeHistorySerial	,
+# 						self.chequeHistoryStatus	,
+# 						self.chequeHistoryCust		,
+# 						self.chequeHistoryAccount	,
+# 						self.chequeHistoryTransId	,
+# 						self.chequeHistoryDesc		,
+# 						self.chequeHistoryDate			)
 
 				
 				cheque = Cheque(
@@ -447,21 +458,21 @@ class Payments(gobject.GObject):
 							dueDte							, 
 							serial							, 
 							0								,
-							self.payerEntry.get_text() 		,
+							#self.payerEntry.get_text()		,
+							#self.payerEntry.get_text() 		,
+							None							,
 				            None							,
 				            self.transId					, 
 				            self.billId						, 
 				            pymntDesc						, 
-				            self.numcheqs					)
-				
-				
-				self.chequePayment.append(cheque)
-				
-				
+				            self.numcheqs					,
+				            self.billId						,
+				           	self.numcheqs					)				            				
+
 				iter = self.cheqListStore.append((order, self.payerEntry.get_text(), pymnt_str, wrtDate_str, 
 		                      dueDte_str, bank, serial, self.chequeStatus[status], pymntDesc))
 				
-			self.session.add(chequeHistory)
+			#self.session.add(chequeHistory)
 			self.session.add(cheque)
 			self.session.commit()
 			
@@ -654,13 +665,15 @@ class Payments(gobject.GObject):
 		self.builder.get_object("bankBox").set_sensitive(True)
 		self.builder.get_object("trackingCodeEntry").set_sensitive(False)
 		self.builder.get_object("payerNameEntry").set_sensitive(False)
+		self.builder.get_object("choose Payer").set_sensitive(False)
 	
 	def activate_BankReciept(self, sender=0):
 		self.cheque_clicked=False
 		self.builder.get_object("chequeInfoBox").set_sensitive(False)
 		self.builder.get_object("bankBox").set_sensitive(True)
 		self.builder.get_object("trackingCodeEntry").set_sensitive(True)
-		self.builder.get_object("payerNameEntry").set_sensitive(True)
+		self.builder.get_object("payerNameEntry").set_sensitive(False)
+		self.builder.get_object("choose Payer").set_sensitive(False)
 	def chequeListActivated(self, treeview):
 		self.paysTreeView.get_selection().unselect_all()
 		

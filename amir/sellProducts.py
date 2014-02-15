@@ -76,6 +76,7 @@ class SellProducts:
 		self.builder.get_object("cashbox").add(self.cashPymntsEntry)
 		self.cashPymntsEntry.set_alignment(0.95)
 		self.cashPymntsEntry.show()
+		self.cashPymntsEntry.set_text("0")
 		self.cashPymntsEntry.connect("changed", self.paymentsChanged)
 		
 		self.qntyEntry = decimalentry.DecimalEntry()
@@ -765,11 +766,14 @@ class SellProducts:
 		if permit:
 			self.registerTransaction()
 			self.registerExchanges()
-
+			
 			if not self.subPreInv:
 				print "\nSaving the Document -----------"
 				self.registerDocument()
-			self.close(self)
+			self.mainDlg.destroy()
+			
+			
+			
 		
 		
 	def checkFullFactor(self):
@@ -875,7 +879,38 @@ class SellProducts:
 		print "------ Saving the Exchanges:\tDONE! "
 		
 	def registerDocument(self):
-		dbconf = dbconfig.dbConfig()	
+		dbconf = dbconfig.dbConfig()
+		
+		
+		query = self.session.query(Cheque).select_from(Cheque)
+		cheques = query.filter(Cheque.chqTransId == self.transId).all()
+
+		
+		cust_code = unicode(self.customerEntry.get_text())
+		query = self.session.query(Customers).select_from(Customers)
+		cust = query.filter(Customers.custCode == cust_code).first()
+			
+		for pay in cheques:	
+			print pay.chqId
+			print pay.chqCust
+			pay.chqCust=cust.custId
+			print cust.custId
+			self.session.add(pay)
+			self.session.commit()
+		
+			
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+			
 		# Find last document number
 		query = config.db.session.query(Bill.id, Bill.number).select_from(Bill)
 		lastnumber = query.order_by(Bill.number.desc()).first()
@@ -901,7 +936,7 @@ class SellProducts:
 	
 		query = self.session.query(Cheque)#.select_from(Cheque)
 		query = query.filter(Cheque.chqTransId == self.transId)
-		query.update( {Cheque.chqTransId : bill_id } )
+		query.update( {Cheque.chqBillId : bill_id } )
  		self.session.commit()
  		
  		
@@ -990,4 +1025,27 @@ class SellProducts:
 		self.nonCashPymntsEntry.set_text(str_value)
 
 	def close(self, sender=0):
+		
+		
+		print 't'
+		print self.transId
+		### delete cheque and payment from cheque and payment table beacause the transaction canceled
+		query = self.session.query(Payment).select_from(Payment)
+		query = query.filter(Payment.paymntTransId == self.transId)
+		
+		payment = query.all()
+				
+		for pay in payment:	
+			self.session.delete(pay)
+		self.session.commit()
+		
+		query = self.session.query(Cheque).select_from(Cheque)
+		query = query.filter(Cheque.chqTransId == self.transId)
+		
+		cheque = query.all()
+				
+		for pay in cheque:	
+			self.session.delete(pay)
+		self.session.commit()
+			
 		self.mainDlg.destroy()

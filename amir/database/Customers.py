@@ -4,6 +4,7 @@ from sqlalchemy import Integer, String, Date, Boolean, Unicode, Float
 from sqlalchemy.ext.declarative import declarative_base
 
 from amir.database import get_declarative_base
+from reportlab.lib.set_ops import unique
 Base = get_declarative_base()
 
 ## \defgroup DataBase
@@ -13,7 +14,7 @@ Base = get_declarative_base()
 class Customers(Base):
     __tablename__ = "customers"
     custId          = Column( Integer,      primary_key = True  )
-    custCode        = Column( Unicode(15),  nullable = False    )
+    custCode        = Column( Unicode(15),  unique=True,  nullable = False   )
     custName        = Column( Unicode(100), nullable = False    )
     custSubj        = Column( Integer,      ForeignKey('subject.id'))
     custPhone       = Column( Unicode(15),  nullable = True     )

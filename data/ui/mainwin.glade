@@ -125,6 +125,11 @@ Hadi Aminzadeh &lt;hadi60@gmail.com&gt;</property>
       <action-widget response="0">button2</action-widget>
     </action-widgets>
   </object>
+  <object class="GtkImage" id="image1">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-edit</property>
+  </object>
   <object class="GtkImage" id="image10">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -637,6 +642,23 @@ Hadi Aminzadeh &lt;hadi60@gmail.com&gt;</property>
                         <property name="image">image6</property>
                         <property name="use_stock">False</property>
                         <signal name="activate" handler="addNewProduct" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem" id="separatormenuitem4">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="editSellsMenuItem">
+                        <property name="label" translatable="yes">View All Sells</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="image">image1</property>
+                        <property name="use_stock">False</property>
                       </object>
                     </child>
                   </object>
