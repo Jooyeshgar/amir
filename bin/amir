@@ -187,10 +187,16 @@ class MainWindow(gobject.GObject):
     def addNewCustomer(  self,   sender  ):
         obj = customers.Customer()
         obj.addNewCustomer(sender)
-        
-    def sellingForm(     self,   sender  ):
+    
+    
+    def addNewSell(     self,   sender  ):
         obj = sellProducts.SellProducts()
+        obj.addNewSell()
         
+        
+    def ViewSelling(self , sender   ):  
+        obj = sellProducts.SellProducts() 
+        obj.viewSells()
     
     def delete_event(self, widget, event, data=None):
 #         msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, _("Are you sure to close the app?"))

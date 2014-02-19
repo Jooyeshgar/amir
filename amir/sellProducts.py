@@ -26,6 +26,7 @@ config = share.config
 
 class SellProducts:
 	def __init__(self,transId=None):
+		self.transId=transId
 		self.builder    = get_builder("SellingForm")
 		self.session    = config.db.session
 		
@@ -34,7 +35,71 @@ class SellProducts:
 
 		self.redClr = gtk.gdk.color_parse("#FFCCCC")
 		self.whiteClr = gtk.gdk.color_parse("#FFFFFF")
+		self.builder.connect_signals(self)
 		
+	
+	def viewSells(self,sender=0):
+		print "View:for test"
+		self.window = self.builder.get_object("viewSellsWindow")
+		
+		self.treeview = self.builder.get_object("sellTreeView")
+		self.treestore = gtk.TreeStore(str, str, str, str)
+		self.treestore.clear()
+		self.treeview.set_model(self.treestore)
+		
+		column = gtk.TreeViewColumn(_("Number Of Factor"), gtk.CellRendererText(), text = 0)
+		column.set_spacing(5)
+		column.set_resizable(True)
+		column.set_sort_column_id(0)
+		column.set_sort_indicator(True)
+		self.treeview.append_column(column)
+		
+		column = gtk.TreeViewColumn(_("Date"), gtk.CellRendererText(), text = 1)
+		column.set_spacing(5)
+		column.set_resizable(True)
+# 		column.set_sort_column_id(1)
+# 		column.set_sort_indicator(True)
+		self.treeview.append_column(column)		
+		
+		column = gtk.TreeViewColumn(_("Customer"), gtk.CellRendererText(), text = 2)
+		column.set_spacing(5)
+		column.set_resizable(True)
+		self.treeview.append_column(column)	
+		
+		column = gtk.TreeViewColumn(_("Total"), gtk.CellRendererText(), text = 3)
+		column.set_spacing(5)
+		column.set_resizable(True)
+		self.treeview.append_column(column)		
+
+		column = gtk.TreeViewColumn(_("Permanent"), gtk.CellRendererText(), text = 4)
+		column.set_spacing(5)
+		column.set_resizable(True)
+		self.treeview.append_column(column)	
+		
+		self.treeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
+		#self.treestore.set_sort_func(0, self.sortGroupIds)
+		self.treestore.set_sort_column_id(0, gtk.SORT_ASCENDING)
+		
+		#fill sell tree view
+		
+		query = config.db.session.query(Transactions,Customers)
+		query = query.select_from(outerjoin(Transactions,Customers, Transactions.transCust == Customers.custId))
+		query = query.order_by(Transactions.transId.asc())
+		result = query.all()
+		from __builtin__ import len
+		print len(result)
+		for t ,c in result:
+			print c
+  			grouprow = self.treestore.append(None,(int(t.transId), t.transDate, c.custName,t.transPayableAmnt))
+
+
+		self.window.show_all()	
+		
+		
+	def on_addSelltn_clicked(self,sender):
+		self.addNewSell()
+							
+	def addNewSell(self,transId=None):
 		query   = self.session.query(Transactions.transId).select_from(Transactions)
 		lastId  = query.order_by(Transactions.transId.desc()).first()
 		if not lastId:
@@ -132,12 +197,163 @@ class SellProducts:
 				self.sellListStore.append(None,list)
 				print "---------------------------------"
 		
-		self.builder.connect_signals(self)
-		self.mainDlg.show_all()
+		
+		self.mainDlg.show_all()				
 		
 		
 		
 		
+		
+		
+		
+		
+		
+		
+		
+		
+	def editSelling(self,transId=None):
+		print "test:edit sell" 
+		
+		selection = self.treeview.get_selection()
+		iter = selection.get_selected()[1]		
+		code = self.treestore.get_value(iter, 0)
+		
+		query = config.db.session.query(Transactions, Customers)
+		query = query.select_from(outerjoin(Transactions, Customers, Transactions.transCust== Customers.custId))
+		result,result2 = query.filter(Transactions.transId == code).first()
+				
+	#	print result,result2
+		transId 		  = result.transId		
+		transCode		  = result.transCode 
+		transDate		  = result.transDate 
+		transBill		  = result.transBill 
+		transCust		  = result.transCust 
+		transAddition	  = result.transAddition 
+		transSubtraction  = result.transSubtraction 
+		transTax		  = result.transTax 
+		transPayableAmnt  = result.transPayableAmnt 
+		transCashPayment  = result.transCashPayment 
+		transShipDate	  = result.transShipDate 
+		transFOB		  = result.transFOB 
+		transShipVia	  = result.transShipVia 
+		transPermanent	  = result.transPermanent 
+		transDesc		  = result.transDesc 
+		transSell		  = result.transSell 
+		
+		print transDate		
+		print
+				
+		self.mainDlg = self.builder.get_object("sellFormWindow")
+		self.customerEntry = self.builder.get_object("sellerCodeEntry")
+		from _ast import Str
+		self.customerEntry.set_text(str(transCust))
+		
+		self.factorDate = DateEntry()
+		self.builder.get_object("datebox").add(self.factorDate) 		
+		self.factorDate.show()
+		
+		if transPermanent:
+			self.builder.get_object("preChkBx").set_active()
+		
+		
+		self.transCode = self.builder.get_object("transCode")
+		if config.digittype == 1:
+			self.transCode.set_text(utility.convertToPersian(str(transId)))
+		else:
+			self.transCode.set_text(str(transId))
+ 		
+
+# # 		
+# 		self.shippedDate = DateEntry()
+# 		self.builder.get_object("shippedDateBox").add(self.shippedDate)
+# 		self.shippedDate.show()
+# 		
+# 		self.additionsEntry = decimalentry.DecimalEntry()
+# 		self.builder.get_object("additionsbox").add(self.additionsEntry)
+# 		self.additionsEntry.set_alignment(0.95)
+# 		self.additionsEntry.show()
+# 		self.additionsEntry.connect("changed", self.valsChanged)
+# 		
+# 		self.subsEntry = decimalentry.DecimalEntry()
+# 		self.builder.get_object("subsbox").add(self.subsEntry)
+# 		self.subsEntry.set_alignment(0.95)
+# 		self.subsEntry.show()
+# 		self.subsEntry.connect("changed", self.valsChanged)
+# 		
+# 		self.cashPymntsEntry = decimalentry.DecimalEntry()
+# 		self.builder.get_object("cashbox").add(self.cashPymntsEntry)
+# 		self.cashPymntsEntry.set_alignment(0.95)
+# 		self.cashPymntsEntry.show()
+# 		self.cashPymntsEntry.set_text("0")
+# 		self.cashPymntsEntry.connect("changed", self.paymentsChanged)
+# 		
+# 		self.qntyEntry = decimalentry.DecimalEntry()
+# 		self.builder.get_object("qntyBox").add(self.qntyEntry)
+# 		self.qntyEntry.show()
+# 		self.qntyEntry.connect("focus-out-event", self.validateQnty)
+# 		
+# 		self.unitPriceEntry = decimalentry.DecimalEntry()
+# 		self.builder.get_object("unitPriceBox").add(self.unitPriceEntry)
+# 		self.unitPriceEntry.show()
+# 		self.unitPriceEntry.connect("focus-out-event", self.validatePrice)
+# 		
+
+# 		self.totalEntry         = self.builder.get_object("subtotalEntry")
+# 		self.totalDiscsEntry    = self.builder.get_object("totalDiscsEntry")
+# 		self.payableAmntEntry   = self.builder.get_object("payableAmntEntry")
+# 		self.totalPaymentsEntry = self.builder.get_object("totalPaymentsEntry")
+# 		self.remainedAmountEntry= self.builder.get_object("remainedAmountEntry")
+# 		self.nonCashPymntsEntry = self.builder.get_object("nonCashPymntsEntry")
+# 		self.buyerNameEntry     = self.builder.get_object("buyerNameEntry")
+# 		self.taxEntry           = self.builder.get_object("taxEntry")
+# 
+# 		self.statusBar  = self.builder.get_object("sellFormStatusBar")
+# 		
+# 		self.sellsTreeView = self.builder.get_object("sellsTreeView")
+# 		self.sellListStore = gtk.TreeStore(str,str,str,str,str,str,str,str)
+# 		self.sellListStore.clear()
+# 		self.sellsTreeView.set_model(self.sellListStore)
+# 		
+# 		headers = (_("No."), _("Product Name"), _("Quantity"), _("Unit Price"), 
+# 				   _("Total Price"), _("Unit Disc."), _("Disc."), _("Description"))
+# 		txt = 0
+# 		for header in headers:
+# 			column = gtk.TreeViewColumn(header,gtk.CellRendererText(),text = txt)
+# 			column.set_spacing(5)
+# 			column.set_resizable(True)
+# 			self.sellsTreeView.append_column(column)
+# 			txt += 1
+# 		self.sellsTreeView.get_selection().set_mode(  gtk.SELECTION_SINGLE    )
+# 		
+# 		self.paymentManager = payments.Payments(transId=self.transId)
+# 		self.paymentManager.connect("payments-changed", self.setNonCashPayments)
+# 		self.paymentManager.fillPaymentTables()
+# 		
+# 		print transId
+# 		if transId:
+# 			sellsQuery  = self.session.query(Exchanges).select_from(Exchanges)
+# 			sellsQuery  = sellsQuery.filter(Exchanges.exchngTransId==transId).order_by(Exchanges.exchngNo.asc()).all()
+# 			for sell in sellsQuery:
+# 				ttl     = sell.exchngUntPrc * sell.exchngQnty
+# 				disc    = sell.exchngUntDisc * sell.exchngQnty
+# 				list    = (sell.exchngNo,sell.exchngProduct,sell.exchngQnty,sell.exchngUntPrc,str(ttl),sell.exchngUntDisc,str(disc),sell.exchngDesc)
+# 				self.sellListStore.append(None,list)
+# 				print "---------------------------------"
+# 		
+# 		
+		self.mainDlg.show_all()				
+																					
+	
+	def removeSelling(self, sender):
+		iter = self.treeview.get_selection().get_selected()[1]
+						
+		code = self.treestore.get_value(iter, 0)
+		query = config.db.session.query(Transactions).select_from(Transactions)
+		Transaction = query.filter(Transactions.transId ==unicode(code) ).first()
+		config.db.session.delete(Transaction)
+		config.db.session.commit()
+		self.treeview.remove(self.treeview.get_selection().get_selected()[1])	
+	
 	def selectSeller(self,sender=0):
 		customer_win = customers.Customer()
 		customer_win.viewCustomers()
@@ -848,7 +1064,7 @@ class SellProducts:
 		print "--------- Starting... ------------"
 		print "\nSaving the Transaction ----------"
 		sell = Transactions( self.subCode, self.subDate, 0, self.custId, self.subAdd,
-							self.subSub, self.subTax, self.cashPayment, 
+							self.subSub, self.subTax,self.payableAmnt ,self.cashPayment, 
 							self.subShpDate, self.subFOB, self.subShipVia,
 							self.subPreInv, self.subDesc, self.sell_factor)
 		self.session.add( sell )

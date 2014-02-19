@@ -20,6 +20,7 @@ class Transactions(Base):
     transAddition   = Column( Float,        ColumnDefault(0),   nullable = False    )
     transSubtraction= Column( Float,        ColumnDefault(0),   nullable = False    )
     transTax        = Column( Float,        ColumnDefault(0),   nullable = False    )
+    transPayableAmnt= Column( Float,        ColumnDefault(0),   nullable = False    )
     transCashPayment= Column( Float,        ColumnDefault(0),   nullable = False    )
     transShipDate   = Column( Date,         nullable = True                         )
     transFOB        = Column( Unicode(50),  nullable = True                         )
@@ -30,7 +31,7 @@ class Transactions(Base):
 #    transLastEdit   = Column( Date,         nullable = True                         )
 
     def __init__( self, transCode, transDate, transBill, transCust, transAdd, transSub, 
-                  transTax, transCash, transShpDate, transFOB, transShipVia, transPrmnt, 
+                  transTax,transPayableAmnt, transCash, transShpDate, transFOB, transShipVia, transPrmnt, 
                   transDesc, transSell ):#, transSell, transLastEdit ):
 
         self.transCode          = transCode
@@ -40,6 +41,7 @@ class Transactions(Base):
         self.transAddition      = transAdd
         self.transSubtraction   = transSub
         self.transTax           = transTax
+        self.transPayableAmnt   = transPayableAmnt
         self.transCashPayment   = transCash
         self.transShipDate      = transShpDate
         self.transFOB           = transFOB

@@ -2194,6 +2194,7 @@
                                 <property name="label" translatable="yes">Pre-Invoice</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="can_default">True</property>
                                 <property name="receives_default">False</property>
                                 <property name="use_action_appearance">False</property>
                                 <property name="focus_on_click">False</property>
@@ -2713,12 +2714,12 @@
     </action-widgets>
   </object>
   <object class="GtkWindow" id="viewSellsWindow">
-    <property name="width_request">400</property>
-    <property name="height_request">200</property>
+    <property name="width_request">600</property>
+    <property name="height_request">400</property>
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">Customer Groups</property>
+    <property name="title" translatable="yes">Selling</property>
     <property name="window_position">center-always</property>
-    <property name="type_hint">dialog</property>
+    <property name="destroy_with_parent">True</property>
     <child>
       <object class="GtkVBox" id="vbox4">
         <property name="visible">True</property>
@@ -2737,7 +2738,7 @@
                 <property name="label" translatable="yes">Add Sell</property>
                 <property name="stock_id">gtk-new</property>
                 <accelerator key="Insert" signal="clicked"/>
-                <signal name="clicked" handler="addSell" swapped="no"/>
+                <signal name="clicked" handler="on_addSelltn_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -2761,6 +2762,7 @@
                 <property name="label" translatable="yes">Edit</property>
                 <property name="stock_id">gtk-edit</property>
                 <accelerator key="e" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
+                <signal name="clicked" handler="editSelling" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -2775,6 +2777,7 @@
                 <property name="label" translatable="yes">Delete</property>
                 <property name="stock_id">gtk-delete</property>
                 <accelerator key="Delete" signal="clicked"/>
+                <signal name="clicked" handler="removeSelling" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>

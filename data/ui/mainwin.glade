@@ -340,7 +340,7 @@ Hadi Aminzadeh &lt;hadi60@gmail.com&gt;</property>
                         <property name="image">image11</property>
                         <property name="use_stock">False</property>
                         <accelerator key="F5" signal="activate"/>
-                        <signal name="activate" handler="sellingForm" swapped="no"/>
+                        <signal name="activate" handler="addNewSell" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -659,6 +659,7 @@ Hadi Aminzadeh &lt;hadi60@gmail.com&gt;</property>
                         <property name="use_action_appearance">False</property>
                         <property name="image">image1</property>
                         <property name="use_stock">False</property>
+                        <signal name="activate" handler="ViewSelling" swapped="no"/>
                       </object>
                     </child>
                   </object>
