@@ -136,23 +136,24 @@ class Payments(gobject.GObject):
 			txt += 1
 			
 		self.builder.connect_signals(self)
+		#self.fillPaymentTables()
 	
 	#NOTE: Don't call this in __init__(), Because at initialize time, "payments-changed"
 	# signal hasn't connected to factor forms yet, So payment-sum can not be shown there
 	# even after the tables being filled.
 	def fillPaymentTables(self):
-		print 'fortest'
-		#self.fillRecptTable()
-		#self.fillChequeTable()
+		print 'fortest filpYMENT'
+		self.fillRecptTable()
+		self.fillChequeTable()
 	
 	def fillRecptTable(self):
 		total = 0
-		query = self.session.query(Payment, Customers.custName)
-		query = query.select_from(outerjoin(Payment, Customers, Payment.paymntPayer == Customers.custId))
-		query = query.filter(and_(Payment.paymntTransId == self.transId, 
-		                          Payment.paymntBillId == self.billId))
+		print self.transId
+		query = self.session.query(Payment).select_from(Payment)
+		query = query.filter(and_(Payment.paymntTransId == self.transId))
 		paylist = query.order_by(Payment.paymntOrder.asc()).all()
-		for pay, cname in paylist:
+		print paylist
+		for pay in paylist:
 			self.numrecpts += 1
 			total += pay.paymntAmount
 			order = utility.LN(self.numrecpts, False)
@@ -160,20 +161,27 @@ class Payments(gobject.GObject):
 			wrtDate = dateentry.dateToString(pay.paymntWrtDate)
 			dueDate = dateentry.dateToString(pay.paymntDueDate)
 			
-			self.paysListStore.append((order, cname, amount, wrtDate, dueDate, pay.paymntBank,
+			self.paysListStore.append((order, "in testing", amount, wrtDate, dueDate, pay.paymntBank,
 			                         pay.paymntSerial, pay.paymntTrckCode, pay.paymntDesc))
 		self.addToTotalAmount(total)
 		
 	def fillChequeTable(self):
 		total = 0
-		query = self.session.query(Cheque, Customers.custName)
-		query = query.select_from(outerjoin(Cheque, Customers, Cheque.chqCust == Customers.custId))
+		
+# 		# comment for test
+# 		query = self.session.query(Cheque, Customers.custName)
+# 		query = query.select_from(outerjoin(Cheque, Customers, Cheque.chqCust == Customers.custId))
+
+
+		query = self.session.query(Cheque).select_from(Cheque)
+
+
 		#TODO find why chqBillId  and chqOrder has been removed and what must be do!
 		#query = query.filter(and_(Cheque.chqTransId == self.transId, Cheque.chqBillId == self.billId))
 		query = query.filter(Cheque.chqTransId == self.transId)
-		#cheqlist = query.order_by(Cheque.chqOrder.asc()).all()
-		cheqlist = query.all()
-		for cheq, cname in cheqlist:
+		cheqlist = query.order_by(Cheque.chqOrder.asc()).all()
+		#cheqlist = query.all()
+		for cheq in cheqlist:
 			self.numcheqs += 1
 			total += cheq.chqAmount
 			order = utility.LN(self.numcheqs, False)
@@ -182,7 +190,7 @@ class Payments(gobject.GObject):
 			dueDate = dateentry.dateToString(cheq.chqDueDate)
 			status = self.chequeStatus[cheq.chqStatus]
 			
-			self.cheqListStore.append((order, cname, amount, wrtDate, dueDate, "", 
+			self.cheqListStore.append((order, "in testing", amount, wrtDate, dueDate, "", 
 			                         cheq.chqSerial, status, cheq.chqDesc))
 		self.addToTotalAmount(total)
 	

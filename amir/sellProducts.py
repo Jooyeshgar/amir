@@ -26,8 +26,22 @@ config = share.config
 
 class SellProducts:
 	def __init__(self,transId=None):
+		
+		self.editFalg=False
+		self.editTransaction=None
+		
+		
 		self.transId=transId
 		self.builder    = get_builder("SellingForm")
+		self.window = self.builder.get_object("viewSellsWindow")		
+		self.treeview = self.builder.get_object("sellTreeView")
+		self.treestore = gtk.TreeStore(str, str, str, str)
+		self.treestore.clear()
+		self.treeview.set_model(self.treestore)
+		
+		
+		
+		
 		self.session    = config.db.session
 		
 		self.sellsItersDict  = {}
@@ -40,8 +54,7 @@ class SellProducts:
 	
 	def viewSells(self,sender=0):
 		print "View:for test"
-		self.window = self.builder.get_object("viewSellsWindow")
-		
+		self.window = self.builder.get_object("viewSellsWindow")		
 		self.treeview = self.builder.get_object("sellTreeView")
 		self.treestore = gtk.TreeStore(str, str, str, str)
 		self.treestore.clear()
@@ -87,7 +100,7 @@ class SellProducts:
 		query = query.order_by(Transactions.transId.asc())
 		result = query.all()
 		from __builtin__ import len
-		print len(result)
+		#print len(result)
 		for t ,c in result:
 			print c
   			grouprow = self.treestore.append(None,(int(t.transId), t.transDate, c.custName,t.transPayableAmnt))
@@ -107,6 +120,9 @@ class SellProducts:
 		else:
 			lastId  = lastId.transId
 		self.transId = lastId + 1
+		
+		if self.editFalg:
+			self.transId=self.editTransaction.transId
 		
 		
 		
@@ -135,6 +151,7 @@ class SellProducts:
 		self.builder.get_object("subsbox").add(self.subsEntry)
 		self.subsEntry.set_alignment(0.95)
 		self.subsEntry.show()
+		self.subsEntry.set_sensitive(False)
 		self.subsEntry.connect("changed", self.valsChanged)
 		
 		self.cashPymntsEntry = decimalentry.DecimalEntry()
@@ -180,7 +197,7 @@ class SellProducts:
 			column.set_resizable(True)
 			self.sellsTreeView.append_column(column)
 			txt += 1
-		self.sellsTreeView.get_selection().set_mode(  gtk.SELECTION_SINGLE    )
+		#self.sellsTreeView.get_selection().set_mode(  gtk.SELECTION_SINGLE    )
 		
 		self.paymentManager = payments.Payments(transId=self.transId)
 		self.paymentManager.connect("payments-changed", self.setNonCashPayments)
@@ -198,122 +215,167 @@ class SellProducts:
 				print "---------------------------------"
 		
 		
-		self.mainDlg.show_all()				
+		if self.editFalg:
+			self.transId=self.editTransaction.transId
+			self.builder.get_object("fullFactorSellBtn").set_label("Save Changes ...")
+			
+			self.transCode = self.builder.get_object("transCode")
+			if config.digittype == 1:
+				self.transCode.set_text(utility.convertToPersian(str(self.editTransaction.transId)))
+				
+			else:
+				self.transCode.set_text(str(self.editTransaction.transId))			
+						
+			self.additionsEntry.set_text(str(self.editTransaction.transAddition))	
+			query = self.session.query(Customers).select_from(Customers)
+			customer = query.filter(Customers.custId == self.editTransaction.transCust).first()	
+					
+			self.sellerSelected(self, self.editTransaction.transCust,customer.custCode)	
+					
+			query=self.session.query(Exchanges).select_from(Exchanges)
+			exchanges = query.filter(Exchanges.exchngTransId==self.editTransaction.transId).all()			
+			number=1
+			for exchange in exchanges:							
+				query=self.session.query(Products).select_from(Products)
+				product = query.filter(Products.id==exchange.exchngProduct).first()
+				sellList = (str(number), product.name,
+						 exchange.exchngQnty, exchange.exchngUntPrc, 
+						 exchange.exchngQnty*exchange.exchngUntPrc,
+						  exchange.exchngUntDisc, float(exchange.exchngQnty)*float(exchange.exchngUntDisc),
+						   exchange.exchngDesc)
+				self.sellListStore.append(None,sellList)
+				number+=1
+										
+			self.taxEntry.set_text(str(self.editTransaction.transTax))
+			self.additionsEntry.set_text(str(self.editTransaction.transAddition))
+			self.cashPymntsEntry.set_text(str(self.editTransaction.transCashPayment))
+			self.builder.get_object("FOBEntry").set_text(str(self.editTransaction.transFOB))
+			self.builder.get_object("shipViaEntry").set_text(str(self.editTransaction.transShipVia))
+			self.builder.get_object("transDescEntry").set_text(str(self.editTransaction.transDesc))
+			
+			
+			
+			
+																				
+		self.mainDlg.show_all()
+			
 		
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+				
+						
 	def editSelling(self,transId=None):
 		print "test:edit sell" 
+		
+ 		
+		self.editFalg=True
 		
 		selection = self.treeview.get_selection()
 		iter = selection.get_selected()[1]		
 		code = self.treestore.get_value(iter, 0)
-		
+ 		
 		query = config.db.session.query(Transactions, Customers)
 		query = query.select_from(outerjoin(Transactions, Customers, Transactions.transCust== Customers.custId))
 		result,result2 = query.filter(Transactions.transId == code).first()
-				
-	#	print result,result2
-		transId 		  = result.transId		
-		transCode		  = result.transCode 
-		transDate		  = result.transDate 
-		transBill		  = result.transBill 
-		transCust		  = result.transCust 
-		transAddition	  = result.transAddition 
-		transSubtraction  = result.transSubtraction 
-		transTax		  = result.transTax 
-		transPayableAmnt  = result.transPayableAmnt 
-		transCashPayment  = result.transCashPayment 
-		transShipDate	  = result.transShipDate 
-		transFOB		  = result.transFOB 
-		transShipVia	  = result.transShipVia 
-		transPermanent	  = result.transPermanent 
-		transDesc		  = result.transDesc 
-		transSell		  = result.transSell 
-		
-		print transDate		
-		print
-				
-		self.mainDlg = self.builder.get_object("sellFormWindow")
-		self.customerEntry = self.builder.get_object("sellerCodeEntry")
-		from _ast import Str
-		self.customerEntry.set_text(str(transCust))
-		
-		self.factorDate = DateEntry()
-		self.builder.get_object("datebox").add(self.factorDate) 		
-		self.factorDate.show()
-		
-		if transPermanent:
-			self.builder.get_object("preChkBx").set_active()
-		
-		
-		self.transCode = self.builder.get_object("transCode")
-		if config.digittype == 1:
-			self.transCode.set_text(utility.convertToPersian(str(transId)))
-		else:
-			self.transCode.set_text(str(transId))
+ 				
+ 		self.editTransaction=result
  		
-
-# # 		
+ 		self.addNewSell()
+# 	#	print result,result2
+# 		transId 		  = result.transId		
+# 		transCode		  = result.transCode 
+# 		transDate		  = result.transDate 
+# 		transBill		  = result.transBill 
+# 		transCust		  = result.transCust 
+# 		transAddition	  = result.transAddition 
+# 		transSubtraction  = result.transSubtraction 
+# 		transTax		  = result.transTax 
+# 		transPayableAmnt  = result.transPayableAmnt 
+# 		transCashPayment  = result.transCashPayment 
+# 		transShipDate	  = result.transShipDate 
+# 		transFOB		  = result.transFOB 
+# 		transShipVia	  = result.transShipVia 
+# 		transPermanent	  = result.transPermanent 
+# 		transDesc		  = result.transDesc 
+# 		transSell		  = result.transSell 
+# 		
+# 				
+# 		self.mainDlg = self.builder.get_object("sellFormWindow")
+# 		self.customerEntry = self.builder.get_object("sellerCodeEntry")		
+# 		self.customerEntry.set_text(str(transCust))
+# 		
+# 		self.builder.get_object("fullFactorSellBtn").set_label("Save Changes ...")
+# 		
+# 		self.factorDate = DateEntry()
+# 		self.builder.get_object("datebox").add(self.factorDate) 		
+# 		self.factorDate.show()
+# 		
+# 		if transPermanent:
+# 			self.builder.get_object("preChkBx").set_active()
+# 		
+# 		
+# 		self.transCode = self.builder.get_object("transCode")
+# 		if config.digittype == 1:
+# 			self.transCode.set_text(utility.convertToPersian(str(transId)))
+# 		else:
+# 			self.transCode.set_text(str(transId))
+#  		
+# 
+#  		
 # 		self.shippedDate = DateEntry()
 # 		self.builder.get_object("shippedDateBox").add(self.shippedDate)
 # 		self.shippedDate.show()
+# 		
+# 		self.taxEntry           = self.builder.get_object("taxEntry")
+# 		self.taxEntry.set_text(str(result.transTax))
 # 		
 # 		self.additionsEntry = decimalentry.DecimalEntry()
 # 		self.builder.get_object("additionsbox").add(self.additionsEntry)
 # 		self.additionsEntry.set_alignment(0.95)
 # 		self.additionsEntry.show()
+# 		self.additionsEntry.set_text(str(result.transAddition ))
 # 		self.additionsEntry.connect("changed", self.valsChanged)
-# 		
+#  		
 # 		self.subsEntry = decimalentry.DecimalEntry()
 # 		self.builder.get_object("subsbox").add(self.subsEntry)
 # 		self.subsEntry.set_alignment(0.95)
 # 		self.subsEntry.show()
+# 		self.subsEntry.set_text(str(result.transSubtraction ))
 # 		self.subsEntry.connect("changed", self.valsChanged)
-# 		
+#  		
 # 		self.cashPymntsEntry = decimalentry.DecimalEntry()
 # 		self.builder.get_object("cashbox").add(self.cashPymntsEntry)
 # 		self.cashPymntsEntry.set_alignment(0.95)
 # 		self.cashPymntsEntry.show()
-# 		self.cashPymntsEntry.set_text("0")
+# 		self.cashPymntsEntry.set_text(str(result.transCashPayment))
 # 		self.cashPymntsEntry.connect("changed", self.paymentsChanged)
-# 		
+#  		
 # 		self.qntyEntry = decimalentry.DecimalEntry()
 # 		self.builder.get_object("qntyBox").add(self.qntyEntry)
 # 		self.qntyEntry.show()
 # 		self.qntyEntry.connect("focus-out-event", self.validateQnty)
-# 		
+#  		
 # 		self.unitPriceEntry = decimalentry.DecimalEntry()
 # 		self.builder.get_object("unitPriceBox").add(self.unitPriceEntry)
 # 		self.unitPriceEntry.show()
 # 		self.unitPriceEntry.connect("focus-out-event", self.validatePrice)
-# 		
-
-# 		self.totalEntry         = self.builder.get_object("subtotalEntry")
-# 		self.totalDiscsEntry    = self.builder.get_object("totalDiscsEntry")
-# 		self.payableAmntEntry   = self.builder.get_object("payableAmntEntry")
-# 		self.totalPaymentsEntry = self.builder.get_object("totalPaymentsEntry")
-# 		self.remainedAmountEntry= self.builder.get_object("remainedAmountEntry")
-# 		self.nonCashPymntsEntry = self.builder.get_object("nonCashPymntsEntry")
-# 		self.buyerNameEntry     = self.builder.get_object("buyerNameEntry")
-# 		self.taxEntry           = self.builder.get_object("taxEntry")
+#  		
 # 
+# # 		self.totalEntry         = self.builder.get_object("subtotalEntry")
+# # 		self.totalDiscsEntry    = self.builder.get_object("totalDiscsEntry")
+# # 		self.payableAmntEntry   = self.builder.get_object("payableAmntEntry")
+# # 		self.totalPaymentsEntry = self.builder.get_object("totalPaymentsEntry")
+# # 		self.remainedAmountEntry= self.builder.get_object("remainedAmountEntry")
+# # 		self.nonCashPymntsEntry = self.builder.get_object("nonCashPymntsEntry")
+# # 		self.buyerNameEntry     = self.builder.get_object("buyerNameEntry")
+# 
+# # 
 # 		self.statusBar  = self.builder.get_object("sellFormStatusBar")
-# 		
+#  		
 # 		self.sellsTreeView = self.builder.get_object("sellsTreeView")
 # 		self.sellListStore = gtk.TreeStore(str,str,str,str,str,str,str,str)
 # 		self.sellListStore.clear()
 # 		self.sellsTreeView.set_model(self.sellListStore)
-# 		
+#  		
 # 		headers = (_("No."), _("Product Name"), _("Quantity"), _("Unit Price"), 
 # 				   _("Total Price"), _("Unit Disc."), _("Disc."), _("Description"))
 # 		txt = 0
@@ -324,26 +386,25 @@ class SellProducts:
 # 			self.sellsTreeView.append_column(column)
 # 			txt += 1
 # 		self.sellsTreeView.get_selection().set_mode(  gtk.SELECTION_SINGLE    )
-# 		
-# 		self.paymentManager = payments.Payments(transId=self.transId)
-# 		self.paymentManager.connect("payments-changed", self.setNonCashPayments)
-# 		self.paymentManager.fillPaymentTables()
-# 		
-# 		print transId
-# 		if transId:
-# 			sellsQuery  = self.session.query(Exchanges).select_from(Exchanges)
-# 			sellsQuery  = sellsQuery.filter(Exchanges.exchngTransId==transId).order_by(Exchanges.exchngNo.asc()).all()
-# 			for sell in sellsQuery:
-# 				ttl     = sell.exchngUntPrc * sell.exchngQnty
-# 				disc    = sell.exchngUntDisc * sell.exchngQnty
-# 				list    = (sell.exchngNo,sell.exchngProduct,sell.exchngQnty,sell.exchngUntPrc,str(ttl),sell.exchngUntDisc,str(disc),sell.exchngDesc)
-# 				self.sellListStore.append(None,list)
-# 				print "---------------------------------"
-# 		
-# 		
-		self.mainDlg.show_all()				
-																					
-	
+# #  		
+# # 		self.paymentManager = payments.Payments(transId=self.transId)
+# # 		self.paymentManager.connect("payments-changed", self.setNonCashPayments)
+# # 		self.paymentManager.fillPaymentTables()
+# #  		
+# # 		print transId
+# # 		if transId:
+# # 			sellsQuery  = self.session.query(Exchanges).select_from(Exchanges)
+# # 			sellsQuery  = sellsQuery.filter(Exchanges.exchngTransId==transId).order_by(Exchanges.exchngNo.asc()).all()
+# # 			for sell in sellsQuery:
+# # 				ttl     = sell.exchngUntPrc * sell.exchngQnty
+# # 				disc    = sell.exchngUntDisc * sell.exchngQnty
+# # 				list    = (sell.exchngNo,sell.exchngProduct,sell.exchngQnty,sell.exchngUntPrc,str(ttl),sell.exchngUntDisc,str(disc),sell.exchngDesc)
+# # 				self.sellListStore.append(None,list)
+# # 				print "---------------------------------"
+# #  		
+#  		
+# 		self.mainDlg.show_all()				
+																						
 	def removeSelling(self, sender):
 		iter = self.treeview.get_selection().get_selected()[1]
 						
@@ -364,8 +425,7 @@ class SellProducts:
 		
 	def sellerSelected(self, sender, id, code):
 		self.customerEntry.set_text(code)
-		sender.window.destroy()
-		
+		sender.window.destroy()		
 		query = self.session.query(Customers).select_from(Customers)
 		customer = query.filter(Customers.custId == id).first()
 		self.buyerNameEntry.set_text(customer.custName)
@@ -416,7 +476,7 @@ class SellProducts:
 			self.proVal.set_text(code)
 			sender.window.destroy()
 
-	def addSell(self,sender=0,edit=None):
+	def addProduct(self,sender=0,edit=None):
 		self.addSellDlg = self.builder.get_object("addASellDlg")
 		if edit:
 			self.editCde    = edit[0]
@@ -500,7 +560,7 @@ class SellProducts:
 			ttlDisc = self.sellListStore.get(iter, 6)[0]
 			desc    = self.sellListStore.get(iter, 7)[0]
 			edtTpl  = (No,pName,qnty,untPrc,ttlPrc,untDisc,ttlDisc,desc)
-			self.addSell(edit=edtTpl)
+			self.addProduct(edit=edtTpl)
 		
 	def removeSell(self,sender):
 		delIter = self.sellsTreeView.get_selection().get_selected()[1]
@@ -986,8 +1046,13 @@ class SellProducts:
 			if not self.subPreInv:
 				print "\nSaving the Document -----------"
 				self.registerDocument()
-			self.mainDlg.destroy()
-			
+			#del self.mainDlg
+			self.mainDlg.hide()
+		
+				#Show new customer in table
+		
+		
+	
 			
 			
 		
@@ -1070,6 +1135,10 @@ class SellProducts:
 		self.session.add( sell )
 		self.session.commit()
 		print "------ Saving the Transaction:\tDONE! "
+		print "------ show to list"
+		#"test"
+		self.treestore.append(None,(int(self.subCode), self.subDate, "test",self.payableAmnt))
+		print "------ showing to list Done"		
 		
 	def registerExchanges(self):	
 				
