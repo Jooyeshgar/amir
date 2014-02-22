@@ -22,28 +22,37 @@ from    sqlalchemy.sql              import  and_
 from    sqlalchemy.sql.functions    import  *
 from    database                    import  *
 
+
 config = share.config
 
 class SellProducts:
 	def __init__(self,transId=None):
-		
+		self.addFalg=True
 		self.editFalg=False
 		self.editTransaction=None
+		self.removeFlag=False
 		
+		
+		
+		self.session    = config.db.session	
 		
 		self.transId=transId
+# 		
+# 		query=self.session.query(Transactions.transCode).select_from(Transactions)
+# 		query=query.order_by(Transactions.transId.desc()).first()
+# 		self.transCode=query.transCode
+# 		
+# 		print self.transCode
+# 		
+# 		
+
 		self.builder    = get_builder("SellingForm")
 		self.window = self.builder.get_object("viewSellsWindow")		
 		self.treeview = self.builder.get_object("sellTreeView")
-		self.treestore = gtk.TreeStore(str, str, str, str)
+		self.treestore = gtk.TreeStore(int,str, str, str, str)
 		self.treestore.clear()
-		self.treeview.set_model(self.treestore)
-		
-		
-		
-		
-		self.session    = config.db.session
-		
+		self.treeview.set_model(self.treestore)					
+	
 		self.sellsItersDict  = {}
 		self.paysItersDict   = {}
 
@@ -56,35 +65,43 @@ class SellProducts:
 		print "View:for test"
 		self.window = self.builder.get_object("viewSellsWindow")		
 		self.treeview = self.builder.get_object("sellTreeView")
-		self.treestore = gtk.TreeStore(str, str, str, str)
+		self.treestore = gtk.TreeStore(int, str, str, str,str)
 		self.treestore.clear()
 		self.treeview.set_model(self.treestore)
 		
-		column = gtk.TreeViewColumn(_("Number Of Factor"), gtk.CellRendererText(), text = 0)
+		column = gtk.TreeViewColumn(_("Id"), gtk.CellRendererText(), text = 0)
 		column.set_spacing(5)
 		column.set_resizable(True)
 		column.set_sort_column_id(0)
 		column.set_sort_indicator(True)
 		self.treeview.append_column(column)
 		
-		column = gtk.TreeViewColumn(_("Date"), gtk.CellRendererText(), text = 1)
+		
+		column = gtk.TreeViewColumn(_("factor"), gtk.CellRendererText(), text = 1)
+		column.set_spacing(5)
+		column.set_resizable(True)
+# 		column.set_sort_column_id(0)
+# 		column.set_sort_indicator(True)
+		self.treeview.append_column(column)
+		
+		column = gtk.TreeViewColumn(_("Date"), gtk.CellRendererText(), text = 2)
 		column.set_spacing(5)
 		column.set_resizable(True)
 # 		column.set_sort_column_id(1)
 # 		column.set_sort_indicator(True)
 		self.treeview.append_column(column)		
 		
-		column = gtk.TreeViewColumn(_("Customer"), gtk.CellRendererText(), text = 2)
+		column = gtk.TreeViewColumn(_("Customer"), gtk.CellRendererText(), text = 3)
 		column.set_spacing(5)
 		column.set_resizable(True)
 		self.treeview.append_column(column)	
 		
-		column = gtk.TreeViewColumn(_("Total"), gtk.CellRendererText(), text = 3)
+		column = gtk.TreeViewColumn(_("Total"), gtk.CellRendererText(), text = 4)
 		column.set_spacing(5)
 		column.set_resizable(True)
 		self.treeview.append_column(column)		
 
-		column = gtk.TreeViewColumn(_("Permanent"), gtk.CellRendererText(), text = 4)
+		column = gtk.TreeViewColumn(_("Permanent"), gtk.CellRendererText(), text = 5)
 		column.set_spacing(5)
 		column.set_resizable(True)
 		self.treeview.append_column(column)	
@@ -103,9 +120,8 @@ class SellProducts:
 		#print len(result)
 		for t ,c in result:
 			print c
-  			grouprow = self.treestore.append(None,(int(t.transId), t.transDate, c.custName,t.transPayableAmnt))
-
-
+  			grouprow = self.treestore.append(None,(int(t.transId),int(t.transCode),
+													t.transDate, c.custName,t.transPayableAmnt))
 		self.window.show_all()	
 		
 		
@@ -113,6 +129,8 @@ class SellProducts:
 		self.addNewSell()
 							
 	def addNewSell(self,transId=None):
+		
+		print "add:for test"
 		query   = self.session.query(Transactions.transId).select_from(Transactions)
 		lastId  = query.order_by(Transactions.transId.desc()).first()
 		if not lastId:
@@ -120,18 +138,29 @@ class SellProducts:
 		else:
 			lastId  = lastId.transId
 		self.transId = lastId + 1
+
+		query   = self.session.query(Transactions.transCode).select_from(Transactions)
+		lastCode  = query.order_by(Transactions.transCode.desc()).first()
+		if not lastCode:
+			lastCode  = 0
+		else:
+			lastCode  = lastCode.transCode
+		self.transCode = lastCode + 1
+	
+
+					
+		print self.transId,self.transCode
 		
-		if self.editFalg:
-			self.transId=self.editTransaction.transId
 		
 		
+
 		
 		self.mainDlg = self.builder.get_object("sellFormWindow")
-		self.transCode = self.builder.get_object("transCode")
+		self.transCodeentry = self.builder.get_object("transCode")
 		if config.digittype == 1:
-			self.transCode.set_text(utility.convertToPersian(str(self.transId)))
+			self.transCodeentry.set_text(utility.convertToPersian(str(self.transCode)))
 		else:
-			self.transCode.set_text(str(self.transId))
+			self.transCodeentry.set_text(str(self.transCode))
 		
 		self.factorDate = DateEntry()
 		self.builder.get_object("datebox").add(self.factorDate)
@@ -140,6 +169,13 @@ class SellProducts:
 		self.shippedDate = DateEntry()
 		self.builder.get_object("shippedDateBox").add(self.shippedDate)
 		self.shippedDate.show()
+		
+		
+		#edit date
+		self.transeditDate = DateEntry().getDateObject()
+		print 'edit date %s'
+		print (self.transeditDate)		
+		##edit date
 		
 		self.additionsEntry = decimalentry.DecimalEntry()
 		self.builder.get_object("additionsbox").add(self.additionsEntry)
@@ -216,15 +252,17 @@ class SellProducts:
 		
 		
 		if self.editFalg:
-			self.transId=self.editTransaction.transId
+			self.transId	= self.editTransaction.transId
+			self.transCode 	= self.editTransaction.transCode
+		
 			self.builder.get_object("fullFactorSellBtn").set_label("Save Changes ...")
 			
-			self.transCode = self.builder.get_object("transCode")
+			self.transCodeentry = self.builder.get_object("transCode")
 			if config.digittype == 1:
-				self.transCode.set_text(utility.convertToPersian(str(self.editTransaction.transId)))
+				self.transCodeentry.set_text(utility.convertToPersian(str(self.editTransaction.transCode)))
 				
 			else:
-				self.transCode.set_text(str(self.editTransaction.transId))			
+				self.transCodeentry.set_text(str(self.editTransaction.transCode))			
 						
 			self.additionsEntry.set_text(str(self.editTransaction.transAddition))	
 			query = self.session.query(Customers).select_from(Customers)
@@ -244,8 +282,10 @@ class SellProducts:
 						  exchange.exchngUntDisc, float(exchange.exchngQnty)*float(exchange.exchngUntDisc),
 						   exchange.exchngDesc)
 				self.sellListStore.append(None,sellList)
-				number+=1
-										
+				self.appendPrice(exchange.exchngQnty*exchange.exchngUntPrc)
+				self.appendDiscount(float(exchange.exchngQnty)*float(exchange.exchngUntDisc))
+				self.valsChanged()
+				number+=1										
 			self.taxEntry.set_text(str(self.editTransaction.transTax))
 			self.additionsEntry.set_text(str(self.editTransaction.transAddition))
 			self.cashPymntsEntry.set_text(str(self.editTransaction.transCashPayment))
@@ -254,31 +294,25 @@ class SellProducts:
 			self.builder.get_object("transDescEntry").set_text(str(self.editTransaction.transDesc))
 			
 			
+			#from dateentry import stringToDate as std			
+			eddate =stringToDate(self.editTransaction.transDesc)
+			print eddate
 			
 			
-																				
+			self.factorDate.set_text(str(self.editTransaction.transLastEdit))			
+			self.factorDate.showDateObject(self.editTransaction.transLastEdit)																											
 		self.mainDlg.show_all()
-			
-		
-		
-				
-						
+																	
 	def editSelling(self,transId=None):
-		print "test:edit sell" 
-		
- 		
-		self.editFalg=True
-		
+		print "test:edit sell" 		 	
+		self.editFalg=True		
 		selection = self.treeview.get_selection()
 		iter = selection.get_selected()[1]		
-		code = self.treestore.get_value(iter, 0)
- 		
+		code = self.treestore.get_value(iter, 0) 		
 		query = config.db.session.query(Transactions, Customers)
 		query = query.select_from(outerjoin(Transactions, Customers, Transactions.transCust== Customers.custId))
-		result,result2 = query.filter(Transactions.transId == code).first()
- 				
- 		self.editTransaction=result
- 		
+		result,result2 = query.filter(Transactions.transId == code).first() 		
+ 		self.editTransaction=result 		
  		self.addNewSell()
 # 	#	print result,result2
 # 		transId 		  = result.transId		
@@ -630,6 +664,8 @@ class SellProducts:
 		return True
 			
 	def addSellToList(self,sender=0):
+		
+		
 		proCd   = self.proVal.get_text()
 		product   = self.session.query(Products).select_from(Products).filter(Products.code==proCd).first()
 		if not product:
@@ -1051,11 +1087,7 @@ class SellProducts:
 		
 				#Show new customer in table
 		
-		
-	
-			
-			
-		
+
 		
 	def checkFullFactor(self):
 						
@@ -1075,7 +1107,7 @@ class SellProducts:
 			self.statusBar.push(1, "There is no product selected for the invoice.")
 			return False
 						
-		self.subCode    = self.transId
+		self.subCode    = self.transCode
 		
 		self.subDate    = self.factorDate.getDateObject()
 		self.subPreInv  = self.builder.get_object("preChkBx").get_active()
@@ -1110,17 +1142,17 @@ class SellProducts:
 				self.statusBar.push(1, msg)
 				return False
 									
-		self.subAdd     = self.additionsEntry.get_float()
-		self.subSub     = self.subsEntry.get_float()
-		self.subTax     = utility.getFloatNumber(self.taxEntry.get_text())
-		self.subShpDate = self.shippedDate.getDateObject()
-		self.subFOB     = unicode(self.builder.get_object("FOBEntry").get_text())
-		self.subShipVia = unicode(self.builder.get_object("shipViaEntry").get_text())
-		self.subDesc    = unicode(self.builder.get_object("transDescEntry").get_text())
-		
-		self.payableAmnt = utility.getFloatNumber(self.payableAmntEntry.get_text())
-		self.totalDisc = utility.getFloatNumber(self.totalDiscsEntry.get_text())
-		self.totalPayment = utility.getFloatNumber(self.totalPaymentsEntry.get_text())
+		self.subAdd     	= self.additionsEntry.get_float()
+		self.subSub     	= self.subsEntry.get_float()
+		self.subTax     	= utility.getFloatNumber(self.taxEntry.get_text())
+		self.subShpDate 	= self.shippedDate.getDateObject()
+		self.subFOB     	= unicode(self.builder.get_object("FOBEntry").get_text())
+		self.subShipVia 	= unicode(self.builder.get_object("shipViaEntry").get_text())
+		self.subDesc    	= unicode(self.builder.get_object("transDescEntry").get_text())
+	#	self.editdate		=self.
+		self.payableAmnt 	= utility.getFloatNumber(self.payableAmntEntry.get_text())
+		self.totalDisc 		= utility.getFloatNumber(self.totalDiscsEntry.get_text())
+		self.totalPayment 	= utility.getFloatNumber(self.totalPaymentsEntry.get_text())
 		self.statusBar.push(1,"")
 		return True
 
@@ -1128,16 +1160,24 @@ class SellProducts:
 				
 		print "--------- Starting... ------------"
 		print "\nSaving the Transaction ----------"
-		sell = Transactions( self.subCode, self.subDate, 0, self.custId, self.subAdd,
-							self.subSub, self.subTax,self.payableAmnt ,self.cashPayment, 
-							self.subShpDate, self.subFOB, self.subShipVia,
-							self.subPreInv, self.subDesc, self.sell_factor)
-		self.session.add( sell )
-		self.session.commit()
+		if self.editFalg:
+			sell = Transactions( self.subCode, self.subDate, 0, self.custId, self.subAdd,
+								self.subSub, self.subTax,self.payableAmnt ,self.cashPayment, 
+								self.subShpDate, self.subFOB, self.subShipVia,
+								self.subPreInv, self.subDesc, self.sell_factor,self.transeditDate)
+			self.session.add( sell )
+			self.session.commit()
+		else:
+			sell = Transactions( self.subCode, self.subDate, 0, self.custId, self.subAdd,
+								self.subSub, self.subTax,self.payableAmnt ,self.cashPayment, 
+								self.subShpDate, self.subFOB, self.subShipVia,
+								self.subPreInv, self.subDesc, self.sell_factor,self.subDate)#editdate=subdate
+			self.session.add( sell )
+			self.session.commit()
 		print "------ Saving the Transaction:\tDONE! "
 		print "------ show to list"
 		#"test"
-		self.treestore.append(None,(int(self.subCode), self.subDate, "test",self.payableAmnt))
+		self.treestore.append(None,(int(self.transId),int(self.subCode), self.subDate, "test",self.payableAmnt))
 		print "------ showing to list Done"		
 		
 	def registerExchanges(self):	
@@ -1148,19 +1188,78 @@ class SellProducts:
 		for exch in self.sellListStore:
 			query = self.session.query(Products).select_from(Products)
 			pid = query.filter(Products.name == unicode(exch[1])).first().id
-			exchange = Exchanges(utility.getInt(exch[0]), pid, utility.getFloatNumber(exch[2]),
-								 utility.getFloatNumber(exch[3]), utility.convertToLatin(exch[5]),
-								 self.transId, unicode(exch[7]))
-			self.session.add( exchange )
-			self.session.commit()
 			
+			self.lastexchangequantity=0
+			self.nowexchangequantity=exch[2]
+			if self.editFalg:
+				
+				
+				#get last trans id beacause in the save transaction we save this transaction
+				lasttransId=self.session.query(Transactions).select_from(Transactions)
+				lasttransId=lasttransId.order_by(Transactions.transId.desc())				
+				lasttransId=lasttransId.filter(Transactions.transCode==self.transCode)
+				lasttransId=lasttransId.filter(Transactions.transId!=self.transId).first()
+				lasttransId1=lasttransId.transId
+				
+				lasttransId=self.session.query(Transactions).select_from(Transactions)
+				lasttransId=lasttransId.order_by(Transactions.transId.desc())				
+				lasttransId=lasttransId.filter(Transactions.transCode==self.transCode)
+				lasttransId=lasttransId.filter(Transactions.transId!=lasttransId1).first()
+				lasttransId=lasttransId.transId
+				
+				
+				
+				
+				print lasttransId
+				print self.transId																												
+				
+				exchange1 =self.session.query(Exchanges).select_from(Exchanges)
+				exchange1=exchange1.order_by(Exchanges.exchngTransId.desc())
+				exchange1=exchange1.filter(Exchanges.exchngProduct==pid)
+				exchange1=exchange1.filter(Exchanges.exchngTransId==lasttransId).first()
+				
+				if not exchange1:
+					print 'yes'
+					exchange = Exchanges(utility.getInt(exch[0]), pid, utility.getFloatNumber(exch[2]),
+										 utility.getFloatNumber(exch[3]), utility.convertToLatin(exch[5]),
+										 lasttransId1, unicode(exch[7]))
+					self.session.add( exchange )
+					self.session.commit()										
+				else:
+					self.lastexchangequantity=exchange1.exchngQnty
+					self.nowexchangequantity=utility.getFloatNumber(exch[2])
+										
+					exchange = Exchanges(utility.getInt(exch[0]), pid, utility.getFloatNumber(exch[2]),
+										 utility.getFloatNumber(exch[3]), utility.convertToLatin(exch[5]),
+										 lasttransId1, unicode(exch[7]))
+					self.session.add( exchange )
+					self.session.commit()
+					
+			# in add mode transaction																						
+			else:	
+				exchange = Exchanges(utility.getInt(exch[0]), pid, utility.getFloatNumber(exch[2]),
+									 utility.getFloatNumber(exch[3]), utility.convertToLatin(exch[5]),
+									 self.transId, unicode(exch[7]))
+				self.session.add( exchange )									
+
+				
 			#---- Updating the products quantity
 			#TODO product quantity should be updated while adding products to factor
-			if not self.subPreInv:
-				query   = self.session.query(Products).select_from(Products).filter(Products.id == pid)
-				pro = query.first()
-				pro.quantity -= utility.getFloatNumber(exch[2])
-				self.session.commit()
+				if not self.subPreInv:
+					query   = self.session.query(Products).select_from(Products).filter(Products.id == pid)
+					pro = query.first()
+					
+					
+					if self.lastexchangequantity<self.nowexchangequantity:					
+						pro.quantity -= utility.getFloatNumber(self.nowexchangequantity-self.lastexchangequantity)
+					elif self.lastexchangequantity>self.nowexchangequantity :
+						pro.quantity += utility.getFloatNumber(self.lastexchangequantity-self.nowexchangequantity)
+					else:
+						pro.quantity += utility.getFloatNumber(0)
+					
+					self.lastexchangequantity=0
+					self.nowexchangequantity=0
+					self.session.commit()
 		print "------ Saving the Exchanges:\tDONE! "
 		
 	def registerDocument(self):
@@ -1312,25 +1411,27 @@ class SellProducts:
 	def close(self, sender=0):
 		
 		
-		print 't'
+		print 'closing selling form'
 		print self.transId
-		### delete cheque and payment from cheque and payment table beacause the transaction canceled
-		query = self.session.query(Payment).select_from(Payment)
-		query = query.filter(Payment.paymntTransId == self.transId)
-		
-		payment = query.all()
-				
-		for pay in payment:	
-			self.session.delete(pay)
-		self.session.commit()
-		
-		query = self.session.query(Cheque).select_from(Cheque)
-		query = query.filter(Cheque.chqTransId == self.transId)
-		
-		cheque = query.all()
-				
-		for pay in cheque:	
-			self.session.delete(pay)
-		self.session.commit()
+		if self.editFalg==False:
+			### delete cheque and payment from cheque and payment table beacause the transaction canceled
+			query = self.session.query(Payment).select_from(Payment)
+			query = query.filter(Payment.paymntTransId == self.transId)
 			
+			payment = query.all()
+					
+			for pay in payment:	
+				self.session.delete(pay)
+			self.session.commit()
+			
+			query = self.session.query(Cheque).select_from(Cheque)
+			query = query.filter(Cheque.chqTransId == self.transId)
+			
+			cheque = query.all()
+					
+			for pay in cheque:	
+				self.session.delete(pay)
+			self.session.commit()
+				
 		self.mainDlg.destroy()
+		self.mainDlg.close()

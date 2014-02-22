@@ -13,7 +13,7 @@ Base = get_declarative_base()
 class Transactions(Base):
     __tablename__ = "transactions"
     transId         = Column( Integer,      primary_key = True                      )
-    transCode       = Column( Unicode(50),  nullable = False                        )
+    transCode       = Column( Integer,  nullable = False                        )
     transDate       = Column( Date,         nullable = False                        ) 
     transBill       = Column( Integer,      ColumnDefault(0)                        ) #Bill id is zero for temporary transactions
     transCust       = Column( Integer,      ForeignKey('customers.custId')          )
@@ -28,11 +28,11 @@ class Transactions(Base):
     transPermanent  = Column( Boolean,      ColumnDefault(0)                        )
     transDesc       = Column( Unicode(200), nullable = True                         )
     transSell       = Column( Boolean,      ColumnDefault(0),   nullable = False    )
-#    transLastEdit   = Column( Date,         nullable = True                         )
+    transLastEdit   = Column( Date,         nullable = True                         )
 
     def __init__( self, transCode, transDate, transBill, transCust, transAdd, transSub, 
                   transTax,transPayableAmnt, transCash, transShpDate, transFOB, transShipVia, transPrmnt, 
-                  transDesc, transSell ):#, transSell, transLastEdit ):
+                  transDesc, transSell,transLastEdit ):#, transSell,  ):
 
         self.transCode          = transCode
         self.transDate          = transDate
@@ -49,6 +49,6 @@ class Transactions(Base):
         self.transPermanent     = transPrmnt
         self.transDesc          = transDesc
         self.transSell          = transSell
-#        self.transLastEdit      = transLastEdit
+        self.transLastEdit      = transLastEdit
 
 ## @}
