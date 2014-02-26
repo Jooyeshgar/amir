@@ -23,6 +23,7 @@ from    sqlalchemy.sql.functions    import  *
 from    database                    import  *
 
 
+
 config = share.config
 
 class SellProducts:
@@ -312,7 +313,7 @@ class SellProducts:
 		query = config.db.session.query(Transactions, Customers)
 		query = query.select_from(outerjoin(Transactions, Customers, Transactions.transCust== Customers.custId))
 		result,result2 = query.filter(Transactions.transId == code).first() 		
- 		self.editTransaction=result 		
+ 		self.editTransaction=result 	
  		self.addNewSell()
 # 	#	print result,result2
 # 		transId 		  = result.transId		
@@ -1189,8 +1190,8 @@ class SellProducts:
 			query = self.session.query(Products).select_from(Products)
 			pid = query.filter(Products.name == unicode(exch[1])).first().id
 			
-			self.lastexchangequantity=0
-			self.nowexchangequantity=exch[2]
+			self.lastexchangequantity=utility.getFloatNumber(0)
+			self.nowexchangequantity=utility.getFloatNumber(exch[2])
 			if self.editFalg:
 				
 				
@@ -1247,19 +1248,39 @@ class SellProducts:
 			#TODO product quantity should be updated while adding products to factor
 				if not self.subPreInv:
 					query   = self.session.query(Products).select_from(Products).filter(Products.id == pid)
-					pro = query.first()
-					
-					
+					pro = query.first()									
 					if self.lastexchangequantity<self.nowexchangequantity:					
-						pro.quantity -= utility.getFloatNumber(self.nowexchangequantity-self.lastexchangequantity)
+						pro.quantity -= utility.getFloatNumber(str(self.nowexchangequantity-self.lastexchangequantity))
 					elif self.lastexchangequantity>self.nowexchangequantity :
-						pro.quantity += utility.getFloatNumber(self.lastexchangequantity-self.nowexchangequantity)
+						pro.quantity += utility.getFloatNumber(str(self.lastexchangequantity-self.nowexchangequantity))
 					else:
 						pro.quantity += utility.getFloatNumber(0)
 					
-					self.lastexchangequantity=0
-					self.nowexchangequantity=0
+					self.lastexchangequantity=utility.getFloatNumber(0)
+					self.nowexchangequantity=utility.getFloatNumber(0)
 					self.session.commit()
+			if self.editFalg:		
+				lasttransId=self.session.query(Transactions).select_from(Transactions)
+				lasttransId=lasttransId.order_by(Transactions.transId.desc())				
+				lasttransId=lasttransId.filter(Transactions.transCode==self.transCode)
+				lasttransId=lasttransId.filter(Transactions.transId!=self.transId).first()
+				lasttransId1=lasttransId.transId
+				
+				lasttransId=self.session.query(Transactions).select_from(Transactions)
+				lasttransId=lasttransId.order_by(Transactions.transId.desc())				
+				lasttransId=lasttransId.filter(Transactions.transCode==self.transCode)
+				lasttransId=lasttransId.filter(Transactions.transId!=lasttransId1).first()
+				lasttransId=lasttransId.transId
+				
+				exchange1 =self.session.query(Exchanges).select_from(Exchanges)
+				exchange1=exchange1.order_by(Exchanges.exchngTransId.desc())
+				exchange1=exchange1.filter(Exchanges.exchngTransId==lasttransId)
+				
+				for exchange in exchange1:
+					query   = self.session.query(Products).select_from(Products).filter(Products.id == exchange.exchngProduct)
+					pro = query.first()
+					pro.quantity+=exchange.exchngQnty
+				self.session.commit()
 		print "------ Saving the Exchanges:\tDONE! "
 		
 	def registerDocument(self):
@@ -1434,4 +1455,4 @@ class SellProducts:
 			self.session.commit()
 				
 		self.mainDlg.destroy()
-		self.mainDlg.close()
+		
