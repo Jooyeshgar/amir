@@ -29,10 +29,11 @@ class Transactions(Base):
     transDesc       = Column( Unicode(200), nullable = True                         )
     transSell       = Column( Boolean,      ColumnDefault(0),   nullable = False    )
     transLastEdit   = Column( Date,         nullable = True                         )
+    transAcivated   = Column( Boolean,      ColumnDefault(0),   nullable = False    )
 
     def __init__( self, transCode, transDate, transBill, transCust, transAdd, transSub, 
                   transTax,transPayableAmnt, transCash, transShpDate, transFOB, transShipVia, transPrmnt, 
-                  transDesc, transSell,transLastEdit ):#, transSell,  ):
+                  transDesc, transSell,transLastEdit,transAcivated ):
 
         self.transCode          = transCode
         self.transDate          = transDate
@@ -50,5 +51,6 @@ class Transactions(Base):
         self.transDesc          = transDesc
         self.transSell          = transSell
         self.transLastEdit      = transLastEdit
+        self.transAcivated      = transAcivated
 
 ## @}

@@ -32,7 +32,7 @@ class Payments(gobject.GObject):
 	chequePayment=[]
 	recieptPayment=[]	
 	
-	def __init__(self, transId=0, billId=0):
+	def __init__(self, transId=0, billId=0,transCode=0):
 		
 		#temp for vackground
 		self.bank_names_count = 0
@@ -52,6 +52,7 @@ class Payments(gobject.GObject):
 		self.numcheqs = 0
 		self.transId = transId
 		self.billId = billId
+		self.transCode=transCode
 		self.payer = None
 		
 		self.pymntAmntEntry = decimalentry.DecimalEntry()
@@ -148,9 +149,8 @@ class Payments(gobject.GObject):
 	
 	def fillRecptTable(self):
 		total = 0
-		print self.transId
 		query = self.session.query(Payment).select_from(Payment)
-		query = query.filter(and_(Payment.paymntTransId == self.transId))
+		query = query.filter(and_(Payment.paymntTransId== self.transCode))
 		paylist = query.order_by(Payment.paymntOrder.asc()).all()
 		print paylist
 		for pay in paylist:
@@ -171,14 +171,14 @@ class Payments(gobject.GObject):
 # 		# comment for test
 # 		query = self.session.query(Cheque, Customers.custName)
 # 		query = query.select_from(outerjoin(Cheque, Customers, Cheque.chqCust == Customers.custId))
-
+		print self.transId 
 
 		query = self.session.query(Cheque).select_from(Cheque)
 
 
 		#TODO find why chqBillId  and chqOrder has been removed and what must be do!
 		#query = query.filter(and_(Cheque.chqTransId == self.transId, Cheque.chqBillId == self.billId))
-		query = query.filter(Cheque.chqTransId == self.transId)
+		query = query.filter(Cheque.chqTransId == self.transCode)
 		cheqlist = query.order_by(Cheque.chqOrder.asc()).all()
 		#cheqlist = query.all()
 		for cheq in cheqlist:
@@ -470,7 +470,7 @@ class Payments(gobject.GObject):
 							#self.payerEntry.get_text() 		,
 							None							,
 				            None							,
-				            self.transId					, 
+				            self.transCode					, 
 				            self.billId						, 
 				            pymntDesc						, 
 				            self.numcheqs					,
@@ -537,7 +537,7 @@ class Payments(gobject.GObject):
 				self.numrecpts += 1
 				order = utility.LN(self.numrecpts)
 				payment = Payment(dueDte, bank, serial, pymntAmnt, self.payerEntry.get_text(), wrtDate,
-				                 pymntDesc, self.transId, self.billId, trackCode, self.numrecpts)
+				                 pymntDesc, self.transCode, self.billId, trackCode, self.numrecpts)
 				iter = self.paysListStore.append((order, self.payerEntry.get_text() , pymnt_str, wrtDate_str, 
 		                      dueDte_str, bank, serial, trackCode, pymntDesc))
 		                      
