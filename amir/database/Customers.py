@@ -4,7 +4,7 @@ from sqlalchemy import Integer, String, Date, Boolean, Unicode, Float
 from sqlalchemy.ext.declarative import declarative_base
 
 from amir.database import get_declarative_base
-from reportlab.lib.set_ops import unique
+
 Base = get_declarative_base()
 
 ## \defgroup DataBase

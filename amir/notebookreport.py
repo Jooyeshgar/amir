@@ -8,7 +8,7 @@ from sqlalchemy import or_
 from sqlalchemy.orm.util import outerjoin
 from sqlalchemy.sql import between
 from sqlalchemy.sql.functions import sum
-from sqlalchemy.sql.expression import ColumnOperators
+
 
 import numberentry
 import subjects
