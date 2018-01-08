@@ -1,2 +1,6 @@
 sqlalchemy >= 1.0.0
 sqlalchemy-migrate >= 0.9.0
+
+# install from apt-get or yum
+# python-glade2
+

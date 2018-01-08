@@ -20,6 +20,7 @@ Depends: ${misc:Depends},
  python-cairo,
  python-gobject,
  python-gtk2,
+ python-glade2,
  python-sqlalchemy (>=0.6.0),
  python-mysqldb
 Description: Amir accounting software
