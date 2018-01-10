@@ -8,6 +8,7 @@ class factor:
     facotr_type = "sell" 
     def __init__(self, number):
         if(number):
+            print ' '
             #get bill_id and trans_id and type from database
 
     ## set current factor deatils

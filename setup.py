@@ -80,7 +80,7 @@ class InstallAndUpdateDataDirectory(DistUtilsExtra.auto.install_auto):
             print "WARNING: You don't use a standard --prefix installation, take care that you eventually " \
             "need to update quickly/quicklyconfig.py file to adjust __quickly_data_directory__. You can " \
             "ignore this warning if you are packaging and uses --prefix."
-        previous_value = update_data_path(self.prefix + '/share/amir/')
+        previous_value = update_data_path(self.prefix + '/local/share/amir/')
         update_desktop_file(self.prefix + '/share/amir/')
         DistUtilsExtra.auto.install_auto.run(self)
         update_data_path(self.prefix, previous_value)
