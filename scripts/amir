@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-## \mainpage Amir accounting software 
+## \mainpage Amir accounting software
 #
 # \section intro_sec Introduction
 # Just another accounting software for persian users that written in python and licenses under GNU GPL v3.
 #
-# You can find other information about this program on https://launchpad.net/amir and http://www.freeamir.com 
+# You can find other information about this program on https://launchpad.net/amir and http://www.freeamir.com
 #
 # \section install_sec Installation
 # \subsection ppa Adding PPA to your system:
-#  
+#
 # If you use the Ubuntu 9.10 or higher. You can add the following PPA to your repositories and install it using Pakage Manager.
 # sudo add-apt-repository ppa:hadi60/jooyeshgar
 # OR
@@ -23,21 +23,21 @@
 # Go to the download page "https://launchpad.net/amir/+download" and get the latest version taht compatible with your OS
 #
 # \subsection sourec Installing from source:
-# You can simple run amir from source code. befor that you must install python-migrate with dependency and then run this command 
+# You can simple run amir from source code. befor that you must install python-migrate with dependency and then run this command
 #
 # bin/amir
 #
 # \section lisense_sec Licenses:
-# This program is free software: you can redistribute it and/or modify it 
-# under the terms of the GNU General Public License version 3, as published 
+# This program is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License version 3, as published
 # by the Free Software Foundation.
 #
-# This program is distributed in the hope that it will be useful, but 
-# WITHOUT ANY WARRANTY; without even the implied warranties of 
-# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR 
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranties of
+# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR
 # PURPOSE.  See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License along 
+# You should have received a copy of the GNU General Public License along
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 # \section copyright_sec Copyright:
@@ -46,9 +46,9 @@
 import sys
 
 if sys.platform == 'win32':
-    fsock = open('error.log', 'w')               
-    sys.stderr = fsock 
-    fsock = open('stdout.log', 'w')               
+    fsock = open('error.log', 'w')
+    sys.stderr = fsock
+    fsock = open('stdout.log', 'w')
     sys.stdout = fsock
 
 import os, logging
@@ -60,7 +60,7 @@ import gobject
 import glib
 
 
-# Check if we are working in the source tree or from the installed 
+# Check if we are working in the source tree or from the installed
 # package and mangle the python path accordingly
 if os.path.dirname(sys.argv[0]) != ".":
     if sys.argv[0][0] == "/":
@@ -92,7 +92,7 @@ if sys.platform == 'win32':
     from ctypes import cdll
     msvcrt = cdll.msvcrt
     result = msvcrt._putenv('LANG=%s' % (config.locale))
-    del msvcrt 
+    del msvcrt
 
 try:
     locale.setlocale(locale.LC_ALL, '')
@@ -108,7 +108,7 @@ from amir import subjects, addeditdoc, database, numberentry, notebookreport, do
 setting, helpers, sellProducts, customers, customergroup, product, productgroup
 from amir import automaticaccounting
 from amir import bankaccountsui
-     
+
 class MainWindow(gobject.GObject):
 
     def manualDocument(self, sender):
@@ -117,50 +117,50 @@ class MainWindow(gobject.GObject):
 
     def quitMainWindow(self, sender):
         pass
-    
+
     def dailyNotebookReport(self, sender):
         reportwin = notebookreport.NotebookReport()
-    
+
     def ledgerNotebookReport(self, sender):
         reportwin = notebookreport.NotebookReport(notebookreport.NotebookReport.LEDGER)
-    
+
     def subledgerNotebookReport(self, sender):
         reportwin = notebookreport.NotebookReport(notebookreport.NotebookReport.SUBLEDGER)
-            
+
     def documentReport(self, sender):
         reportwin = docreport.DocumentReport()
-    
+
     def trialReport(self, sender):
         reportwin = tbalancereport.TBalanceReport()
-          
+
     def aboutAmir(self, sender):
     	aboutwin = self.builder.get_object("aboutdialog")
     	aboutwin.run()
     	aboutwin.hide()
-        
+
     def manageSubjects(self, sender):
         dialog = subjects.Subjects()
         self.connect("database-changed", dialog.dbChanged)
-        
+
     def editDocument(self, sender):
         dialog = self.builder.get_object("selectdoc")
-        self.numentry.set_activates_default(True)        
+        self.numentry.set_activates_default(True)
         res = dialog.run()
         dialog.hide()
         if res == gtk.RESPONSE_OK:
             if self.numentry.get_text() != "":
                 dialog = addeditdoc.AddEditDoc(self.numentry.get_int())
                 self.connect("database-changed", dialog.dbChanged)
-            
+
     def arrangeDocments(self, sender):
-        notebookutils.arrangeDocuments(self.window)   
-    
+        notebookutils.arrangeDocuments(self.window)
+
     def settingsDialog(self, sender):
         window = setting.Setting()
         window.connect("dblist-changed", self.reloadDatabases)
         window.connect("database-changed", self.databaseChanged)
         window.connect("locale-changed", self.localeChanged)
-    
+
     def quitMainWindow(self, sender):
         msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, "Are you sure to close the app?")
         msgbox.set_title("Are you sure?")
@@ -173,7 +173,7 @@ class MainWindow(gobject.GObject):
     def addNewProduct(   self,   sender  ):
         obj = product.Product()
         obj.addProduct(sender)
-        
+
     def viewProducts(    self,   sender  ):
         obj = product.Product()
         obj.viewProducts()
@@ -183,21 +183,21 @@ class MainWindow(gobject.GObject):
     def viewCustomers(   self,   sender  ):
         obj = customers.Customer()
         obj.viewCustomers()
-    
+
     def addNewCustomer(  self,   sender  ):
         obj = customers.Customer()
         obj.addNewCustomer(sender)
-    
-    
+
+
     def addNewSell(     self,   sender  ):
         obj = sellProducts.SellProducts()
         obj.addNewSell()
-        
-        
-    def ViewSelling(self , sender   ):  
-        obj = sellProducts.SellProducts() 
+
+
+    def ViewSelling(self , sender   ):
+        obj = sellProducts.SellProducts()
         obj.viewSells()
-    
+
     def delete_event(self, widget, event, data=None):
 #         msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, _("Are you sure to close the app?"))
 #         msgbox.set_title(_("Are you sure?"))
@@ -216,14 +216,14 @@ class MainWindow(gobject.GObject):
 
     def __init__(self):
         gobject.GObject.__init__(self)
-        
+
         if config.directionlist[config.localelist.index(config.locale)] == "rtl" :
             gtk.widget_set_default_direction(gtk.TEXT_DIR_RTL)
         else:
             gtk.widget_set_default_direction(gtk.TEXT_DIR_LTR)
 
         icondir = os.path.join(config.data_path, "media", "icon")
-        
+
         try:
         	icon16 = gtk.gdk.pixbuf_new_from_file(os.path.join(icondir, "16.png"))
         	icon22 = gtk.gdk.pixbuf_new_from_file(os.path.join(icondir, "22.png"))
@@ -234,14 +234,14 @@ class MainWindow(gobject.GObject):
         	gtk.window_set_default_icon_list(icon16, icon22, icon32, icon48, icon64, icon128)
         except gobject.GError:
         	pass
-        
+
         self.builder = helpers.get_builder("mainwin")
         self.window = self.builder.get_object("window1")
         self.numentry = numberentry.NumberEntry()
         box = self.builder.get_object("numbox")
         box.add(self.numentry)
         self.numentry.show()
-        
+
         self.dblist = self.builder.get_object("dblist")
         helpers.comboInsertItems(self.dblist, config.dbnames)
         self.dblist.set_active(config.currentdb - 1)
@@ -251,10 +251,10 @@ class MainWindow(gobject.GObject):
         main_box.add(self.background)
         self.background.put(gtk.image_new_from_file(os.path.join(config.data_path, "media", "background.png")), 0, 0)
         self.background.show_all()
-        
+
         #NOTE: Bad idea, because until initial menu is shown, user can not register any bill;
         #so the below query always returns zero.
-        
+
         #if config.db.session.query(Bill.id).count()==0 :
             #initial = self.builder.get_object("menubar1")
             #initial.hide()
@@ -262,21 +262,21 @@ class MainWindow(gobject.GObject):
             #initial = self.builder.get_object("menubar2")
             #initial.hide()
         initial = self.builder.get_object("menubar2")
-        initial.hide() 
-        
+        initial.hide()
+
         self.builder.connect_signals(self)
-        
+
         self.window.connect("delete_event", self.delete_event)
         self.window.connect("destroy", self.destroy)
         #self.window.set_border_width(10)
         self.window.show()
-        
+
         if config.repair_atstart == True:
         	msg = _("Repairing database, Please wait...")
         	self.msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_NONE, msg)
         	self.msgbox.set_title(_("Repairing database"))
         	self.msgbox.show_all()
-        
+
         	while gtk.events_pending():
         		gtk.main_iteration_do(False)
 
@@ -284,17 +284,17 @@ class MainWindow(gobject.GObject):
 
     def repairDbFunc(self):
         config.db.rebuild_nested_set(0, 0)
-                    
+
         self.msgbox.set_markup(_("Repair Operation Completed!"))
         self.msgbox.add_button(gtk.STOCK_OK, -5)
         self.msgbox.run()
         self.msgbox.destroy()
         return False
-    
+
     def dbSelected(self, combo):
         active_index = combo.get_active()
         if active_index != config.currentdb - 1:
-            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, 
+            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL,
                                        _("You have changed the current database, any unsaved data will be lost.\nAre you sure to continue?"))
             msgbox.set_title(_("Are you sure?"))
             result = msgbox.run()
@@ -303,24 +303,24 @@ class MainWindow(gobject.GObject):
                 config.db.session.close()
                 config.db = database.Database(config.dblist[active_index], config.db_repository, config.echodbresult)
                 config.currentdb = active_index + 1
-                
+
                 self.emit("database-changed", config.dblist[active_index])
                 self.silent_daialog(_("Database changed successfully."))
             else:
                 combo.set_active(config.currentdb - 1)
-                
+
 #    def showNewDatabase(self, sender, active_dbpath):
 #        active_index = config.dblist.index(active_dbpath)
 #        self.dblist.set_active(active_index)
-        
+
     def reloadDatabases(self, sender, active_dbpath):
         helpers.comboInsertItems(self.dblist, config.dbnames)
         active_index = config.dblist.index(active_dbpath)
         self.dblist.set_active(active_index)
-        
+
     def databaseChanged(self, sender, active_path):
         self.emit("database-changed", active_path)
-        
+
     def localeChanged(self, sender, new_locale):
         os.environ['LANG'] = new_locale
         locale.setlocale(locale.LC_ALL, '')
@@ -340,7 +340,7 @@ class MainWindow(gobject.GObject):
     def addBankAccount(self, sender):
         obj = bankaccountsui.BankAccountsUI(self.background)
         obj.add_account()
-        
+
     def silent_daialog(self, text):
         infobar = gtk.InfoBar()
         infobar.get_content_area().add(gtk.Label(text))
@@ -350,14 +350,14 @@ class MainWindow(gobject.GObject):
         infobar.show_all()
 
         glib.timeout_add_seconds(3, lambda w: w.destroy(), infobar)
-        
+
     def main(self):
         gtk.main()
 
 if __name__ == "__main__":
     gobject.type_register(MainWindow)
     gobject.signal_new("database-changed", MainWindow, gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_STRING,))
-    
+
     mainwin = MainWindow()
     share.mainwin = mainwin
     mainwin.main()
