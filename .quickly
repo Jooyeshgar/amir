@@ -1,5 +1,0 @@
-project = amir
-template = ubuntu-application
-version = 0.4.3
-dependencies = SQLAlchemy (>=0.6.0)
-ppa = amir
