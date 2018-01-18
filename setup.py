@@ -48,6 +48,13 @@ setup(
         url='https://launchpad.net/amir',
         install_requires=['migrate', 'tempita', 'sqlalchemy'],
         py_modules = ['amir'],
+        classifiers=[
+            'Intended Audience :: End Users/Desktop',
+            'License :: GNU General Public License v3.0 (GPL-3)',
+            'Programming Language :: Python',
+            ],
+        packages = ['amir', 'amir/database'],
+        keywords='amir accounting',
         scripts = ['scripts/amir'],
         data_files=[
             ('share/locale/fa/LC_MESSAGES', ['data/locale/fa/LC_MESSAGES/amir.mo']),
