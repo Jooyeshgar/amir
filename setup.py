@@ -1,105 +1,107 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-### BEGIN LICENSE
-# Copyright (C) 2010 <jooyeshgar> <info@jooyeshgar.com>
-# This program is free software: you can redistribute it and/or modify it 
-# under the terms of the GNU General Public License version 3, as published 
-# by the Free Software Foundation.
-# 
-# This program is distributed in the hope that it will be useful, but 
-# WITHOUT ANY WARRANTY; without even the implied warranties of 
-# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR 
-# PURPOSE.  See the GNU General Public License for more details.
-# 
-# You should have received a copy of the GNU General Public License along 
-# with this program.  If not, see <http://www.gnu.org/licenses/>.
-### END LICENSE
 
-###################### DO NOT TOUCH THIS (HEAD TO THE SECOND PART) ######################
-
-try:
-    import DistUtilsExtra.auto
-except ImportError:
-    import sys
-    print >> sys.stderr, 'To build amir you need https://launchpad.net/python-distutils-extra'
-    sys.exit(1)
-
-assert DistUtilsExtra.auto.__version__ >= '2.10', 'needs DistUtilsExtra.auto >= 2.10'
 import os
+from distutils.core import setup, Extension
 
+def removeall(path):
+    if not os.path.isdir(path):
+        return
 
-def update_data_path(prefix, oldvalue=None):
+    files=os.listdir(path)
 
+    for x in files:
+        fullpath=os.path.join(path, x)
+        if os.path.isfile(fullpath):
+            f=os.remove
+            rmgeneric(fullpath, f)
+        elif os.path.isdir(fullpath):
+            removeall(fullpath)
+            f=os.rmdir
+            rmgeneric(fullpath, f)
+
+def rmgeneric(path, __func__):
     try:
-        fin = file('amir/amirconfig.py', 'r')
-        fout = file(fin.name + '.new', 'w')
+        __func__(path)
+    except OSError, (errno, strerror):
+        pass
 
-        for line in fin:            
-            fields = line.split(' = ') # Separate variable from value
-            if fields[0] == '__amir_data_directory__':
-                # update to prefix, store oldvalue
-                if not oldvalue:
-                    oldvalue = fields[1]
-                    line = "%s = '%s'\n" % (fields[0], prefix)
-                else: # restore oldvalue
-                    line = "%s = %s" % (fields[0], oldvalue)
-            fout.write(line)
-
-        fout.flush()
-        fout.close()
-        fin.close()
-        os.rename(fout.name, fin.name)
-    except (OSError, IOError), e:
-        print ("ERROR: Can't find amir/amirconfig.py")
-        sys.exit(1)
-    return oldvalue
+# Create mo files:
+if not os.path.exists("mo/"):
+    os.mkdir("mo/")
+for lang in ('fa', 'fr', 'he', 'tr'):
+    pofile = "po/" + lang + ".po"
+    mofile = "mo/" + lang + "/amir.mo"
+    if not os.path.exists("mo/" + lang + "/"):
+        os.mkdir("mo/" + lang + "/")
+    print "generating", mofile
+    os.system("msgfmt %s -o %s" % (pofile, mofile))
 
 
-def update_desktop_file(datadir):
+setup(
+        name='amir',
+        version='18.01',
+        description='Amir accounting software',
+        author='Jooyeshgar',
+        author_email='info@jooyeshgar.com',
+        maintainer= 'Jooyeshgar',
+        url='https://launchpad.net/amir',
+        install_requires=['migrate', 'tempita', 'sqlalchemy'],
+        py_modules = ['amir'],
+        scripts = ['scripts/amir'],
+        data_files=[
+            ('share/locale/fa/LC_MESSAGES', ['data/locale/fa/LC_MESSAGES/amir.mo']),
+            ('share/locale/fr/LC_MESSAGES', ['data/locale/fr/LC_MESSAGES/amir.mo']),
+            ('share/locale/he/LC_MESSAGES', ['data/locale/he/LC_MESSAGES/amir.mo']),
+            ('share/locale/tr/LC_MESSAGES', ['data/locale/tr/LC_MESSAGES/amir.mo']),
+            ('share/amir/media/icon', ['data/media/icon/16.png']),
+            ('share/amir/media/icon', ['data/media/icon/22.png']),
+            ('share/amir/media/icon', ['data/media/icon/32.png']),
+            ('share/amir/media/icon', ['data/media/icon/48.png']),
+            ('share/amir/media/icon', ['data/media/icon/64.png']),
+            ('share/amir/media/icon', ['data/media/icon/128.png']),
+            ('share/amir/ui', ['data/ui/SellingForm.glade']),
+            ('share/amir/ui', ['data/ui/PurchasingForm.glade']),
+            ('share/amir/ui', ['data/ui/cheque.glade']),
+            ('share/amir/ui', ['data/ui/mainwin.glade']),
+            ('share/amir/ui', ['data/ui/setting.glade']),
+            ('share/amir/ui', ['data/ui/document.glade']),
+            ('share/amir/ui', ['data/ui/customers.glade']),
+            ('share/amir/ui', ['data/ui/bankaccounts.glade']),
+            ('share/amir/ui', ['data/ui/notebook.glade.h']),
+            ('share/amir/ui', ['data/ui/automaticaccounting.glade']),
+            ('share/amir/ui', ['data/ui/mainwin.glade.h']),
+            ('share/amir/ui', ['data/ui/warehousing.glade']),
+            ('share/amir/ui', ['data/ui/notebook.glade']),
+            ('share/amir/amir_migrate/versions', ['data/amir_migrate/versions/001_Version_1.py']),
+            ('share/amir/amir_migrate/versions', ['data/amir_migrate/versions/002_Version_2.py']),
+            ('share/amir/amir_migrate/versions', ['data/amir_migrate/versions/__init__.py']),
+            ('share/amir/media', ['data/media/logo.png']),
+            ('share/amir/media', ['data/media/background.png']),
+            ('share/amir/media', ['data/media/icon.png']),
+            ('share/amir/amir_migrate', ['data/amir_migrate/__init__.py']),
+            ('share/amir/amir_migrate', ['data/amir_migrate/migrate.cfg']),
+            ('share/amir/amir_migrate', ['data/amir_migrate/README']),
+            ('share/amir/amir_migrate', ['data/amir_migrate/manage.py'])]
+        )
 
-    try:
-        fin = file('amir.desktop.in', 'r')
-        fout = file(fin.name + '.new', 'w')
 
-        for line in fin:            
-            if 'Icon=' in line:
-                line = "Icon=%s\n" % (datadir + 'media/icon.png')
-            fout.write(line)
-        fout.flush()
-        fout.close()
-        fin.close()
-        os.rename(fout.name, fin.name)
-    except (OSError, IOError), e:
-        print ("ERROR: Can't find amir.desktop.in")
-        sys.exit(1)
-
-
-class InstallAndUpdateDataDirectory(DistUtilsExtra.auto.install_auto):
-    def run(self):
-        if self.root or self.home:
-            print "WARNING: You don't use a standard --prefix installation, take care that you eventually " \
-            "need to update quickly/quicklyconfig.py file to adjust __quickly_data_directory__. You can " \
-            "ignore this warning if you are packaging and uses --prefix."
-        previous_value = update_data_path(self.prefix + '/local/share/amir/')
-        update_desktop_file(self.prefix + '/share/amir/')
-        DistUtilsExtra.auto.install_auto.run(self)
-        update_data_path(self.prefix, previous_value)
-
-
-        
-##################################################################################
-###################### YOU SHOULD MODIFY ONLY WHAT IS BELOW ######################
-##################################################################################
-
-DistUtilsExtra.auto.setup(
-    name='amir',
-    version='11.01',
-    license='GPL-3',
-    author='jooyeshgar',
-    author_email='info@jooyeshgar.com',
-    description='Amir accounting software',
-    long_description='Just another accounting software for persian',
-    url='https://launchpad.net/amir',
-    cmdclass={'install': InstallAndUpdateDataDirectory}
-    )
-
+# Cleanup (remove /build, /mo, and *.pyc files:
+print "Cleaning up..."
+try:
+    removeall("build/")
+    os.rmdir("build/")
+except:
+    pass
+try:
+    removeall("mo/")
+    os.rmdir("mo/")
+except:
+    pass
+try:
+    for f in os.listdir("."):
+        if os.path.isfile(f):
+            if os.path.splitext(os.path.basename(f))[1] == ".pyc":
+                os.remove(f)
+except:
+    pass
