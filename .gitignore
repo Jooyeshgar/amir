@@ -3,3 +3,9 @@
 *.sqlite
 data/amir.conf
 build/
+MANIFEST
+*.pot
+dist/
+*.egg-info
+deb_dist/
+*.tar.gz
