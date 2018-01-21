@@ -80,6 +80,7 @@ setup(
             ('share/amir/ui', ['data/ui/mainwin.glade.h']),
             ('share/amir/ui', ['data/ui/warehousing.glade']),
             ('share/amir/ui', ['data/ui/notebook.glade']),
+            ('share/amir/ui', ['data/ui/report.glade']),
             ('share/amir/amir_migrate/versions', ['data/amir_migrate/versions/001_Version_1.py']),
             ('share/amir/amir_migrate/versions', ['data/amir_migrate/versions/002_Version_2.py']),
             ('share/amir/amir_migrate/versions', ['data/amir_migrate/versions/__init__.py']),
