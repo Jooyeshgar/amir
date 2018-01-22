@@ -6,6 +6,11 @@ Version 0.1 of this program is now available for [Windows](https://launchpad.net
 
 Amir is released under the GPL v3 license.
 
+Our sites:
+http://www.freeamir.com
+https://github.com/Jooyeshgar/amir
+https://launchpad.net/amir/
+
 ![Screenshot](http://www.freeamir.com/images/thumb/c/cd/Win1.png/727px-Win1.png)
 
 
@@ -24,4 +29,13 @@ To install the latest version of the package you can [download](https://launchpa
 
 ```bash
 amir
+```
+
+## Generate Documentation
+
+To generate documentations first install [doxygen](http://www.doxygen.org/)
+
+```bash
+cd doc
+make all
 ```
