@@ -1,43 +1,73 @@
-# Amir accounting software
+# Amir Accounting Software
 
-Amir accounting program is free (as in freedom) software, and you can change it or even give it to your friends.
-
-Version 0.1 of this program is now available for [Windows](https://launchpad.net/amir/0.1/0.1/+download/Amir-0.1-win32-setup.exe) and Linux operating systems. Program is writen with Python and if you are a programmer then you can run it on other platforms.
-
-Amir is released under the GPL v3 license.
-
-Our sites:
-http://www.freeamir.com
-
-https://github.com/Jooyeshgar/amir
-
-https://launchpad.net/amir/
+Amir is an accounting software mostly focused on businesses based in Iran.
 
 ![Screenshot](http://www.freeamir.com/images/thumb/c/cd/Win1.png/727px-Win1.png)
 
+## Requirements
 
-## Installation
+* python (2.7)
+* pip
+* setuptools
+* python-glade2
+
+to install other requirements simply run below commands:
 
 ```bash
 pip install -r requirements.txt
-python setup.py install
+sudo apt-get install python-glade2
 ```
 
-## Installation Using .deb File
+## Installation
 
-To install the latest version of the package you can [download](https://launchpad.net/amir/0.1/0.1/+download/amir_0.2_all.deb) it from Lanchpad and install it.
+### From source
+
+```bash
+git clone https://github.com/Jooyeshgar/amir.git
+cd amir
+sudo python setup.py install
+```
+
+### Ubuntu
+
+Deb package for the latest version is available in [Launchpad](https://launchpad.net/amir/0.1/0.1/+download/amir_0.2_all.deb) 
+
+### Windows
+
+Windows installer for version 0.1 is now available for [Windows](https://launchpad.net/amir/0.1/0.1/+download/Amir-0.1-win32-setup.exe)
 
 ## Run
+
+Run `amir` command in terminal.
 
 ```bash
 amir
 ```
 
-## Generate Documentation
+## Development
+
+To start development and contributing install with below commands:
+
+```bash
+git clone https://github.com/Jooyeshgar/amir.git
+cd amir
+sudo python setup.py develop
+```
+
+## Documentation
 
 To generate documentations first install [doxygen](http://www.doxygen.org/)
 
 ```bash
-cd doc
+git clone https://github.com/Jooyeshgar/amir.git
+cd amir/doc
 make all
 ```
+
+## Author
+
+Amir is developed by [Jooyeshgar](https://www.jooyeshgar.com)
+
+## License
+
+Amir is licensed under the GNU Genral Public License Version 3.0

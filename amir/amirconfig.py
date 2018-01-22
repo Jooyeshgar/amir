@@ -1,16 +1,16 @@
 # -*- Mode: Python; coding: utf-8; indent-tabs-mode: nil; tab-width: 4 -*-
 ### BEGIN LICENSE
 # Copyright (C) 2010 <jooyeshgar> <info@jooyeshgar.com>
-# This program is free software: you can redistribute it and/or modify it 
-# under the terms of the GNU General Public License version 3, as published 
+# This program is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License version 3, as published
 # by the Free Software Foundation.
-# 
-# This program is distributed in the hope that it will be useful, but 
-# WITHOUT ANY WARRANTY; without even the implied warranties of 
-# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR 
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranties of
+# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR
 # PURPOSE.  See the GNU General Public License for more details.
-# 
-# You should have received a copy of the GNU General Public License along 
+#
+# You should have received a copy of the GNU General Public License along
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 ### END LICENSE
 
@@ -21,7 +21,7 @@
 
 # where your project will head for your data (for instance, images and ui files)
 # by default, this is ../data, relative your trunk layout
-__amir_data_directory__ = r'../../../../share/amir' 
+__amir_data_directory__ = r'data'
 __license__ = 'GPL-3'
 
 
@@ -35,7 +35,7 @@ import ConfigParser
 import platform
 
 import database
-    
+
 ## \defgroup Utility
 ## @{
 
@@ -65,8 +65,8 @@ class IndentedHelpFormatterWithNL(IndentedHelpFormatter):
                 for line in help_lines[1:]])
         elif opts[-1] != "\n":
             result.append("\n")
-        return "".join(result) 
-    
+        return "".join(result)
+
 class AmirConfig:
     """Retrieve amir data path
 
@@ -79,14 +79,14 @@ class AmirConfig:
     localelist = ["en_US", "fr", "he", "fa_IR", "tr"]
     langlist = ["English", "French", "Hebrew", "Persian", "Turkish"]
     directionlist = ["ltr", "ltr", "rtl", "rtl", "ltr"]
-    
+
     datetypes = ["jalali", "gregorian"]
     datedelims = [":", "/", "-"]
     datefields = {"year":0, "month":1, "day":2}
     dateorders = [('year', 'month', 'day'), ('month', 'year', 'day'),
                   ('day', 'year', 'month'), ('year', 'day', 'month'),
                   ('day', 'month', 'year'), ('month', 'day', 'year')]
-    
+
     def __init__(self):
         parser = optparse.OptionParser(version="%prog %ver",formatter=IndentedHelpFormatterWithNL() )
         parser.add_option("-v", "--verbose", action="store_const", const=1, dest="verbose", help="Show debug messages")
@@ -107,10 +107,8 @@ class AmirConfig:
         if self.options.pathname == None:
             if platform.system() == 'Windows':
                 pathname = os.path.join(os.path.dirname(sys.executable),"data")
-            elif __amir_data_directory__.startswith('..'):
-                pathname = os.path.join(os.path.dirname(__file__) , __amir_data_directory__)
             else:
-                pathname = __amir_data_directory__
+                pathname = os.path.join(os.path.dirname(__file__) , __amir_data_directory__)
             logging.debug('Project data directory. "%s"' % pathname)
         else:
             pathname = self.options.pathname
@@ -122,6 +120,7 @@ class AmirConfig:
                 self.locale_path = os.path.join(abs_data_path,"locale")
             else:
                 self.locale_path = '/usr/share/locale'
+
         else:
             logging.error('Project path not found. "%s"' % abs_data_path)
 
@@ -134,22 +133,22 @@ class AmirConfig:
             os.makedirs(confdir, 0755)
 
         confpath = os.path.join(confdir, 'amir.conf')
-            
+
         dbfile = ''
         os.system.__subclasshook__
         logging.debug('Reading configuration "%s"' % confpath)
-        
+
         #A ConfigParser is defined with default configuration values
-        self.defaultConfig = {"current_database": "1", "repair_at_start": "no", "language": "C", "dateformat": "jalali", "delimiter": ":", 
+        self.defaultConfig = {"current_database": "1", "repair_at_start": "no", "language": "C", "dateformat": "jalali", "delimiter": ":",
                               "dateorder": "0", "use_latin_numbers": "yes", "name_font": "14", "header_font": "12",
                               "content_font": "9", "footer_font": "8", "paper_ppd_name": "A4", "paper_display_name": "A4",
-                              "paper_width_points": "595", "paper_height_points": "841", "paper_orientation": "0", 
+                              "paper_width_points": "595", "paper_height_points": "841", "paper_orientation": "0",
                               "top_margin": "18", "bottom_margin": "18", "right_margin": "18", "left_margin": "18"}
         self.sconfig = ConfigParser.SafeConfigParser(self.defaultConfig)
 
         if not os.path.exists(confpath):
             open(confpath, 'w').close()
- 
+
         self.sconfig.readfp(open(confpath,'r+'))
         if not self.sconfig.has_section('General'):
             self.sconfig.add_section('General')
@@ -157,7 +156,7 @@ class AmirConfig:
             self.sconfig.add_section('Report Fonts')
         if not self.sconfig.has_section('Paper Setup'):
             self.sconfig.add_section('Paper Setup')
-        
+
 
         self.dblist = []
         self.dbnames = []
@@ -177,13 +176,13 @@ class AmirConfig:
             dbfile = self.options.database
             self.dblist.append(dbfile)
             self.dbnames.append(os.path.basename(dbfile))
-            
+
         if dbfile == '':
             dbfile = 'sqlite:///'+os.path.join(confdir, 'amir.sqlite')
             self.dblist.append(dbfile)
             self.dbnames.append('amir.sqlite')
             logging.error("No database path found. the default database %s will be opened for use." % dbfile)
-            
+
         logging.info('database path: ' + dbfile)
         #try:
         self.db_repository = os.path.join(abs_data_path, 'amir_migrate')
@@ -191,79 +190,79 @@ class AmirConfig:
         share.session = self.db.session
         #except:
         #    sys.exit("Cannot open database.")
-        
+
 #        str = self.configfile.returnStringValue("repair_at_start")
         str = self.sconfig.get('General', 'repair_at_start')
         if str.lower() == 'yes':
             self.repair_atstart = True
         else:
             self.repair_atstart = False
-            
+
 #        str = self.configfile.returnStringValue("dateformat")
         str = self.sconfig.get('General', 'language')
         if str in self.localelist:
             self.locale = str
         else:
             self.locale = "en_US"
-            
+
         str = self.sconfig.get('General', 'dateformat')
         if str == '':
             self.datetype = 0
         else:
             self.datetype = self.datetypes.index(str)
-            
+
 #        str = self.configfile.returnStringValue("delimiter")
         str = self.sconfig.get('General', 'delimiter')
         if str == '':
             self.datedelim = 0
         else:
             self.datedelim = self.datedelims.index(str)
-            
+
 #        str = self.configfile.returnStringValue("dateorder")
         str = self.sconfig.get('General', 'dateorder')
         if str == '':
             self.dateorder = 0
         else:
             self.dateorder = int(str)
-            
+
         for i in range(0,3):
             field = self.dateorders[self.dateorder][i]
             self.datefields[field] = i
-            
+
 #        uselatin = self.configfile.returnStringValue("use_latin_numbers")
         uselatin = self.sconfig.get('General', 'use_latin_numbers')
         if uselatin.lower() == "no":
-            self.digittype = 1  # 0 for latin, 1 for persian 
+            self.digittype = 1  # 0 for latin, 1 for persian
         else:
             self.digittype = 0
-            
+
         self.namefont = self.sconfig.getint('Report Fonts', "name_font")
         self.headerfont = self.sconfig.getint('Report Fonts', "header_font")
         self.contentfont = self.sconfig.getint('Report Fonts', "content_font")
         self.footerfont = self.sconfig.getint('Report Fonts', "footer_font")
-        
+
         self.paper_ppd = self.sconfig.get('Paper Setup', 'paper_ppd_name')
         self.paper_name = self.sconfig.get('Paper Setup', 'paper_display_name')
         self.paper_width = self.sconfig.getfloat('Paper Setup', 'paper_width_points')
         self.paper_height = self.sconfig.getfloat('Paper Setup', 'paper_height_points')
         self.paper_orientation = self.sconfig.getint('Paper Setup', 'paper_orientation')
-        
+
         self.topmargin = self.sconfig.getint('Paper Setup', 'top_margin')
         self.botmargin = self.sconfig.getint('Paper Setup', 'bottom_margin')
         self.rightmargin = self.sconfig.getint('Paper Setup', 'right_margin')
         self.leftmargin = self.sconfig.getint('Paper Setup', 'left_margin')
-        
+
     def updateConfigFile(self):
         if self.digittype == 1:
             uselatin = "no"
         else:
             uselatin = "yes"
-            
+
         if self.repair_atstart == True:
             repair = "yes"
         else:
             repair = "no"
-            
+
 #        keys = ['database', 'dateformat', 'delimiter', 'dateorder', 'use_latin_numbers', 'repair_at_start',
 #                'top_margin', 'bottom_margin', 'right_margin', 'left_margin',
 #                'name_font', 'header_font', 'content_font', 'footer_font']
@@ -276,28 +275,28 @@ class AmirConfig:
         self.sconfig.set('General', 'current_database', str(self.currentdb))
         self.sconfig.set('General', 'repair_at_start', repair)
         self.sconfig.set('General', 'language', self.locale)
-        
+
         self.sconfig.set('General', 'dateformat', self.datetypes[self.datetype])
         self.sconfig.set('General', 'delimiter', self.datedelims[self.datedelim])
         self.sconfig.set('General', 'dateorder', str(self.dateorder))
         self.sconfig.set('General', 'use_latin_numbers', uselatin)
-        
+
         self.sconfig.set('Report Fonts', 'name_font', str(self.namefont))
         self.sconfig.set('Report Fonts', 'header_font', str(self.headerfont))
         self.sconfig.set('Report Fonts', 'content_font', str(self.contentfont))
         self.sconfig.set('Report Fonts', 'footer_font', str(self.footerfont))
-        
+
         self.sconfig.set('Paper Setup', 'paper_ppd_name', str(self.paper_ppd))
         self.sconfig.set('Paper Setup', 'paper_display_name', str(self.paper_name))
         self.sconfig.set('Paper Setup', 'paper_width_points', str(self.paper_width))
         self.sconfig.set('Paper Setup', 'paper_height_points', str(self.paper_height))
         self.sconfig.set('Paper Setup', 'paper_orientation', str(self.paper_orientation))
-        
+
         self.sconfig.set('Paper Setup', 'top_margin', str(self.topmargin))
         self.sconfig.set('Paper Setup', 'bottom_margin', str(self.botmargin))
         self.sconfig.set('Paper Setup', 'right_margin', str(self.rightmargin))
         self.sconfig.set('Paper Setup', 'left_margin', str(self.leftmargin))
-        
+
         if platform.system() == 'Windows':
             confdir = os.path.join(os.path.expanduser('~'), 'amir')
         else:
@@ -305,7 +304,7 @@ class AmirConfig:
         confpath = os.path.join(confdir, 'amir.conf')
         logging.debug('Writing configuration "%s"' % confpath)
         self.sconfig.write(open(confpath, 'wb'))
-#        self.configfile.update(keys, values) 
+#        self.configfile.update(keys, values)
 
     def restoreDefaultFonts(self):
         self.namefont = int(self.defaultConfig["name_font"])
@@ -314,5 +313,3 @@ class AmirConfig:
         self.footerfont = int(self.defaultConfig["footer_font"])
 
 ## @}
-
-
