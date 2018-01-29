@@ -34,7 +34,7 @@ Deb package for the latest version is available in [Launchpad](https://launchpad
 
 ### Windows
 
-Windows installer for version 0.1 is now available for [Windows](https://launchpad.net/amir/0.1/0.1/+download/Amir-0.1-win32-setup.exe)
+Windows installer for the latest version is available [here](https://github.com/Jooyeshgar/amir/releases/download/v0.2.0/Amir-0.2.0-win32-setup.exe)
 
 ## Run
 
