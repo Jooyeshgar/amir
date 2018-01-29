@@ -44,6 +44,14 @@
 # Copyright (C) 2010 <jooyeshgar> <info@jooyeshgar.com>
 
 import sys
+import os, logging
+import gtk
+import pygtk
+pygtk.require('2.0')
+import gtk,gtk.glade
+import gettext,locale
+import gobject
+import glib
 
 if sys.platform == 'win32':
     fsock = open('error.log', 'w')
@@ -51,13 +59,10 @@ if sys.platform == 'win32':
     fsock = open('stdout.log', 'w')
     sys.stdout = fsock
 
-import os, logging
-import pygtk
-pygtk.require('2.0')
-import gtk,gtk.glade
-import gettext,locale
-import gobject
-import glib
+    # set windows theme
+    gtkrc = r'.\\gtkrc'
+    gtk.rc_set_default_files([gtkrc])
+    gtk.rc_reparse_all_for_settings(gtk.settings_get_default(), True)
 
 
 # Check if we are working in the source tree or from the installed

@@ -105,10 +105,7 @@ class AmirConfig:
 
 	    # get pathname absolute or relative
         if self.options.pathname == None:
-            if platform.system() == 'Windows':
-                pathname = os.path.join(os.path.dirname(sys.executable),"data")
-            else:
-                pathname = os.path.join(os.path.dirname(__file__) , __amir_data_directory__)
+            pathname = os.path.join(os.path.dirname(__file__) , __amir_data_directory__)
             logging.debug('Project data directory. "%s"' % pathname)
         else:
             pathname = self.options.pathname
@@ -117,7 +114,7 @@ class AmirConfig:
         if os.path.exists(abs_data_path):
             self.data_path = abs_data_path
             if sys.platform == 'win32':
-                self.locale_path = os.path.join(abs_data_path,"locale")
+                self.locale_path = '..\\locale'
             else:
                 self.locale_path = '/usr/share/locale'
 

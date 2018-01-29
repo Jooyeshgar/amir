@@ -4,9 +4,12 @@
 *.pot
 *.egg-info
 *.tar.gz
+*.exe
 data/amir.conf
 MANIFEST
 build/
 dist/
 deb_dist/
 locale/
+win32/build/
+win32/dist/

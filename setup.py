@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import platform
 import setuptools
 
 def removeall(path):
@@ -31,11 +32,20 @@ if not os.path.exists("locale/"):
     os.mkdir("locale/")
 for lang in ('fa', 'fr', 'he', 'tr'):
     pofile = "po/" + lang + ".po"
-    locale = "locale/" + lang + "/amir.mo"
-    if not os.path.exists("locale/" + lang + "/"):
-        os.mkdir("locale/" + lang + "/")
-    print "generating", locale
-    os.system("msgfmt %s -o %s" % (pofile, locale))
+    locale_path = "locale/" + lang + "/LC_MESSAGES/amir.mo"
+    if not os.path.exists("locale/" + lang + "/LC_MESSAGES/"):
+        os.mkdir("locale/" + lang + "/LC_MESSAGES/")
+    print "generating", locale_path
+    os.system("msgfmt %s -o %s" % (pofile, locale_path))
+
+if platform.system() != 'Windows':
+    data = [
+        ('/usr/share/locale/fa/LC_MESSAGES', ['locale/fa/LC_MESSAGES/amir.mo']),
+        ('/usr/share/locale/fr/LC_MESSAGES', ['locale/fr/LC_MESSAGES/amir.mo']),
+        ('/usr/share/locale/he/LC_MESSAGES', ['locale/he/LC_MESSAGES/amir.mo']),
+        ('/usr/share/locale/tr/LC_MESSAGES', ['locale/tr/LC_MESSAGES/amir.mo'])]
+else:
+    data = []
 
 setuptools.setup(
         name = 'amir',
@@ -52,14 +62,10 @@ setuptools.setup(
             'Programming Language :: Python',
             ],
         packages = setuptools.find_packages(),
-        package_data = {'amir': ['data/ui/*.glade', 'data/ui/*.glade.h', 'data/media/*.png', 'data/media/icon/*.png', 'data/amir_migrate/*.py', 'data/amir_migrate/*.cfg', 'data/amir_migrate/versions/*.py']},
+        package_data = {'amir': ['data/ui/*.glade', 'data/ui/*.glade.h', 'data/media/*.png', 'data/media/icon/*.png', 'data/amir_migrate/*', 'data/amir_migrate/versions/*']},
         keywords = 'amir accounting',
         scripts = ['scripts/amir'],
-        data_files = [
-            ('/usr/share/locale/fa/LC_MESSAGES', ['locale/fa/amir.mo']),
-            ('/usr/share/locale/fr/LC_MESSAGES', ['locale/fr/amir.mo']),
-            ('/usr/share/locale/he/LC_MESSAGES', ['locale/he/amir.mo']),
-            ('/usr/share/locale/tr/LC_MESSAGES', ['locale/tr/amir.mo'])]
+        data_files = data
         )
 
 
