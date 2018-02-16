@@ -152,7 +152,7 @@ class Payments(gobject.GObject):
 		query = self.session.query(Payment).select_from(Payment)
 		query = query.filter(and_(Payment.paymntTransId== self.transCode))
 		paylist = query.order_by(Payment.paymntOrder.asc()).all()
-		print paylist
+		# print paylist
 		for pay in paylist:
 			self.numrecpts += 1
 			total += pay.paymntAmount

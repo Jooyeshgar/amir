@@ -343,7 +343,7 @@ class SellProducts:
 		self.buyerNameEntry.set_text(customer.custName)
 				
 	def setSellerName(self,sender=0,ev=0):
-		payer   = self.customerEntry.get_text()
+		payer   = unicode(self.customerEntry.get_text())
 		query   = self.session.query(Subject).select_from(Subject)
 		query   = query.filter(Subject.code==payer).first()
 		if not query:
@@ -359,7 +359,7 @@ class SellProducts:
 		obj.highlightProduct(unicode(code))
 
 	def proSelected(self,sender=0, id=0, code=0):
-		print "pro selected"
+		code = unicode(code)
 		selectedPro = self.session.query(Products).select_from(Products).filter(Products.code==code).first()
 		id      = selectedPro.id
 		code    = selectedPro.code
@@ -542,9 +542,7 @@ class SellProducts:
 		return True
 			
 	def addSellToList(self,sender=0):
-		
-		
-		proCd   = self.proVal.get_text()
+		proCd   = unicode(self.proVal.get_text())
 		product   = self.session.query(Products).select_from(Products).filter(Products.code==proCd).first()
 		if not product:
 			errorstr = _("The \"Product Code\" which you selected is not a valid Code.")
@@ -715,7 +713,7 @@ class SellProducts:
 		self.calculateBalance()
 
 	def validatePCode(self, sender, event):
-		productCd   = self.proVal.get_text()
+		productCd   = unicode(self.proVal.get_text())
 		if self.product_code != productCd:
 			print "validateCode"
 			product = self.session.query(Products).select_from(Products).filter(Products.code==productCd).first()

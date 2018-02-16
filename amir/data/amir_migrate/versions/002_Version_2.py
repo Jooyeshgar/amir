@@ -54,6 +54,7 @@ transactions = Table('transactions', meta,
     Column('transAddition',      Float,        ColumnDefault(0),   nullable = False    ),
     Column('transSubtraction',   Float,        ColumnDefault(0),   nullable = False    ),
     Column('transTax',           Float,        ColumnDefault(0),   nullable = False    ),
+    Column('transPayableAmnt',   Float,        ColumnDefault(0),   nullable = False    ),
     Column('transCashPayment',   Float,        ColumnDefault(0),   nullable = False    ),
     Column('transShipDate',      Date,         nullable = True                         ),
     Column('transFOB',           Unicode(50),  nullable = True                         ),
@@ -61,7 +62,8 @@ transactions = Table('transactions', meta,
     Column('transPermanent',     Boolean,      ColumnDefault(0)                        ),
     Column('transDesc',          Unicode(200), nullable = True                         ),
     Column('transSell',          Boolean,      ColumnDefault(0)                        ),
-#    Column('transLastEdit',      Date,         nullable = True                         )
+    Column('transLastEdit',      Date,         nullable = True                         ),
+    Column('transAcivated',      Boolean,      ColumnDefault(0),   nullable = False    ),
 	mysql_charset='utf8'
 )
 
@@ -84,7 +86,8 @@ payments = Table('payment', meta,
     Column('paymntBank',        Unicode(100), nullable = True                         ),
     Column('paymntSerial',      Unicode(50),  nullable = True                         ),
     Column('paymntAmount',      Float,        ColumnDefault(0),   nullable = False    ),
-    Column('paymntPayer',       Integer,      ForeignKey('customers.custId')          ),
+    # Column('paymntPayer',       Integer,      ForeignKey('customers.custId')          ),
+    Column('paymntNamePayer',   Unicode(50),  nullable = True                         ),
     Column('paymntWrtDate',     Date,         nullable = True                         ),
     Column('paymntDesc',        Unicode(200), nullable = True                         ),
     Column('paymntTransId',     Integer,      ColumnDefault(0)                        ),
@@ -116,6 +119,8 @@ cheque = Table('Cheque', meta,
     Column('chqNoteBookId', Integer, ColumnDefault(0), ForeignKey('notebook.id')),
     Column('chqDesc',        Unicode(200), nullable = True                         ),
     Column('chqHistoryId',   Integer,      nullable = True                         ),
+    Column('chqBillId',      Integer,      ColumnDefault(0)                        ),
+    Column('chqOrder',       Integer,      nullable = False                        ),
 	mysql_charset='utf8'
 )
     

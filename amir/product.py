@@ -102,6 +102,28 @@ class Product(productgroup.ProductGroup):
 		self.treestore.set_sort_column_id(0, gtk.SORT_ASCENDING)
 		
 		#Fill groups treeview
+		self.fillTreeview()
+		# query = config.db.session.query(ProductGroups, Products)
+		# query = query.select_from(outerjoin(ProductGroups, Products, ProductGroups.id == Products.accGroup))
+		# query = query.order_by(ProductGroups.id.asc())
+		# result = query.all()
+		
+		# last_gid = 0
+		# grouprow = None
+		# for g, p in result:
+		# 	if g.id != last_gid:
+		# 		grouprow = self.treestore.append(None, (g.code, g.name, "", "", ""))
+		# 		last_gid = g.id
+				
+		# 	if p != None:
+		# 		self.treestore.append(grouprow, (p.code, p.name, utility.LN(p.quantity), 
+		# 								utility.LN(p.purchacePrice), utility.LN(p.sellingPrice)))
+		
+		self.window.show_all()    
+
+	##Fill groups treeview
+	def fillTreeview(self):
+		self.treestore.clear();
 		query = config.db.session.query(ProductGroups, Products)
 		query = query.select_from(outerjoin(ProductGroups, Products, ProductGroups.id == Products.accGroup))
 		query = query.order_by(ProductGroups.id.asc())
@@ -117,8 +139,6 @@ class Product(productgroup.ProductGroup):
 			if p != None:
 				self.treestore.append(grouprow, (p.code, p.name, utility.LN(p.quantity), 
 										utility.LN(p.purchacePrice), utility.LN(p.sellingPrice)))
-		
-		self.window.show_all()    
 
 
 	def addProduct(self, sender, pcode = ""):
@@ -331,6 +351,7 @@ class Product(productgroup.ProductGroup):
 		config.db.session.commit()
 		
 		#Show new product in table
+		self.fillTreeview()
 		try:
 			parent_iter = self.treestore.get_iter_first()
 		except AttributeError:
@@ -342,17 +363,26 @@ class Product(productgroup.ProductGroup):
 				if itercode == accgrp:
 					break
 				parent_iter = self.treestore.iter_next(parent_iter)
+				open_iter = parent_iter
 				
 			if edititer == None:
-				edititer = self.treestore.append(parent_iter)
-				path = self.treestore.get_path(edititer)
+				i = 0
+				child = 1
+				while child:
+					child = self.treestore.iter_nth_child(parent_iter, i)
+					i += 1
+					if code == self.treestore.get_value(child, 0):
+						open_iter = child
+						break
+
+				path = self.treestore.get_path(open_iter)
 				self.treeview.expand_to_path(path)
 				self.treeview.scroll_to_cell(path, None, False, 0, 0)
 				self.treeview.set_cursor(path, None, False)
 				self.treeview.grab_focus()
 			
-			self.saveRow(edititer, (code, name, utility.LN(quantity), 
-									utility.LN(purchase_price), utility.LN(sell_price) ) )
+			# self.saveRow(edititer, (code, name, utility.LN(quantity), 
+									# utility.LN(purchase_price), utility.LN(sell_price) ) )
 				
 		return True
 
@@ -367,7 +397,7 @@ class Product(productgroup.ProductGroup):
 				self.deleteProductGroup(sender)
 			else:
 				#Iter points to a product
-				code = self.treestore.get_value(iter, 0)
+				code = unicode(self.treestore.get_value(iter, 0))
 				query = config.db.session.query(Products).select_from(Products)
 				product = query.filter(Products.code == code).first()
 				
