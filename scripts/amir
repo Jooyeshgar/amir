@@ -110,7 +110,7 @@ gtk.glade.textdomain('amir')
 gettext.install('amir', config.locale_path, unicode=1)
 
 from amir import subjects, addeditdoc, database, numberentry, notebookreport, docreport, tbalancereport, notebookutils, \
-setting, helpers, sellProducts, customers, customergroup, product, productgroup
+setting, helpers, sellProducts, customers, customergroup, product, productgroup, trades
 from amir import automaticaccounting
 from amir import bankaccountsui
 
@@ -198,6 +198,9 @@ class MainWindow(gobject.GObject):
         obj = sellProducts.SellProducts()
         obj.addNewSell()
 
+    def addNewBuy(self, sender):
+        obj = trades.Trade()
+        obj.addNew(False)
 
     def ViewSelling(self , sender   ):
         obj = sellProducts.SellProducts()

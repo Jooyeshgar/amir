@@ -30,6 +30,7 @@ from ProductGroups import ProductGroups
 from Products import Products
 from Subject import Subject
 from Transactions import Transactions
+from Trades import Trades
 from User import User
 import re
 

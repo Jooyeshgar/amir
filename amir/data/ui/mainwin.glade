@@ -344,6 +344,18 @@ Hadi Aminzadeh &lt;hadi60@gmail.com&gt;</property>
                       </object>
                     </child>
                     <child>
+                      <object class="GtkImageMenuItem" id="addABuyMenuItem">
+                        <property name="label" translatable="yes">Add Buy</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="image">image7</property>
+                        <property name="use_stock">False</property>
+                        <signal name="activate" handler="addNewBuy" swapped="no"/>
+                        <accelerator key="F6" signal="activate"/>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkImageMenuItem" id="manualmenuitem">
                         <property name="label" translatable="yes">Manual Registration</property>
                         <property name="visible">True</property>
