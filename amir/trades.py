@@ -32,8 +32,8 @@ config = share.config
 class Trade:
 	"""Manage sell and buy form."""
 
-	def __init__(self,transId=None):
-		self.sell = True 	#Sell or buy
+	def __init__(self,sell = True, transId=None):
+		self.sell = sell 	#Sell or buy
 		self.addFalg = True
 		self.editFalg = False
 		self.editTransaction = None
@@ -59,9 +59,12 @@ class Trade:
 			lastCode  = int(lastCode.Code)
 		self.Code = lastCode + 1
 				
+		if sell:
+			self.builder    = get_builder("SellingForm")
+		else:
+			self.builder    = get_builder("BuyingForm")
 
-		self.builder    = get_builder("SellingForm")
-		self.window = self.builder.get_object("viewSellsWindow")
+		self.window = self.builder.get_object("viewWindow")
 		
 		
 		###editing
@@ -108,17 +111,17 @@ class Trade:
 		#self.unitPriceEntry.show()
 		self.unitPriceEntry.connect("focus-out-event", self.validatePrice)
 		
-		self.customerEntry        = self.builder.get_object("sellerCodeEntry")
+		self.customerEntry      = self.builder.get_object("customerCodeEntry")
 		self.totalEntry         = self.builder.get_object("subtotalEntry")
 		self.totalDiscsEntry    = self.builder.get_object("totalDiscsEntry")
 		self.payableAmntEntry   = self.builder.get_object("payableAmntEntry")
 		self.totalPaymentsEntry = self.builder.get_object("totalPaymentsEntry")
 		self.remainedAmountEntry= self.builder.get_object("remainedAmountEntry")
 		self.nonCashPymntsEntry = self.builder.get_object("nonCashPymntsEntry")
-		self.buyerNameEntry     = self.builder.get_object("buyerNameEntry")
+		self.customerNameEntry  = self.builder.get_object("customerNameEntry")
 		self.taxEntry           = self.builder.get_object("taxEntry")
 		
-		self.treeview = self.builder.get_object("sellTreeView")
+		self.treeview = self.builder.get_object("TreeView")
 		self.treestore = gtk.TreeStore(int, str, str, str,str)
 		self.treestore.clear()
 		self.treeview.set_model(self.treestore)
@@ -193,19 +196,16 @@ class Trade:
 		
 
 		
-	def on_addSelltn_clicked(self,sender):
+	def on_add_clicked(self,sender):
 		self.addNew()
 							
-	def addNew(self, sell=True, transId=None):
-		self.mainDlg = self.builder.get_object("sellFormWindow")
-		if not sell:
-			self.mainDlg.set_title(_("Amir Warehousing Buy Form"))
-			self.builder.get_object("sellerLbl").set_label(_("Buy Form:"))
-			
+	def addNew(self,transId=None):
+		self.mainDlg = self.builder.get_object("FormWindow")
+
 		self.Codeentry = self.builder.get_object("transCode")
 		self.Codeentry.set_text(LN(self.Code))
-		self.statusBar  = self.builder.get_object("sellFormStatusBar")	
-		self.sellsTreeView = self.builder.get_object("sellsTreeView")
+		self.statusBar  = self.builder.get_object("FormStatusBar")	
+		self.sellsTreeView = self.builder.get_object("TreeView")
 		self.sellListStore = gtk.TreeStore(str,str,str,str,str,str,str,str)
 		self.sellListStore.clear()
 		self.sellsTreeView.set_model(self.sellListStore)
@@ -332,7 +332,7 @@ class Trade:
 		
 
 
-	def selectSeller(self,sender=0):
+	def selectCustomers(self,sender=0):
 		customer_win = customers.Customer()
 		customer_win.viewCustomers()
 		code = self.customerEntry.get_text()
@@ -345,16 +345,16 @@ class Trade:
 		sender.window.destroy()		
 		query = self.session.query(Customers).select_from(Customers)
 		customer = query.filter(Customers.custId == id).first()
-		self.buyerNameEntry.set_text(customer.custName)
+		self.customerNameEntry.set_text(customer.custName)
 				
-	def setSellerName(self,sender=0,ev=0):
+	def setCustomerName(self, sender=0, ev=0):
 		payer   = unicode(self.customerEntry.get_text())
 		query   = self.session.query(Subject).select_from(Subject)
 		query   = query.filter(Subject.code==payer).first()
 		if not query:
-			self.buyerNameEntry.set_text("")
+			self.customerNameEntry.set_text("")
 		else:
-			self.buyerNameEntry.set_text(query.name)
+			self.customerNameEntry.set_text(query.name)
 
 	def selectProduct(self,sender=0):
 		obj = product.Product()

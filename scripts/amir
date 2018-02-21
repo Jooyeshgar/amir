@@ -199,8 +199,8 @@ class MainWindow(gobject.GObject):
         obj.addNewSell()
 
     def addNewBuy(self, sender):
-        obj = trades.Trade()
-        obj.addNew(False)
+        obj = trades.Trade(False)
+        obj.addNew()
 
     def ViewSelling(self , sender   ):
         obj = sellProducts.SellProducts()

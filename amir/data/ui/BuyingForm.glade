@@ -2,14 +2,14 @@
 <interface>
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy project-wide -->
-  <object class="GtkDialog" id="addASellDlg">
+  <object class="GtkDialog" id="addABuyDlg">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
     <property name="window_position">center-always</property>
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">normal</property>
     <property name="gravity">center</property>
-    <signal name="delete-event" handler="cancelSell" swapped="no"/>
+    <signal name="delete-event" handler="cancelBuy" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox1">
         <property name="visible">True</property>
@@ -183,7 +183,7 @@
                         <property name="can_focus">False</property>
                         <property name="xalign">0</property>
                         <property name="xpad">10</property>
-                        <property name="label" translatable="yes">Standard Selling Price:</property>
+                        <property name="label" translatable="yes">Standard Buying Price:</property>
                       </object>
                       <packing>
                         <property name="expand">True</property>
@@ -500,7 +500,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkStatusbar" id="addSellStatusBar">
+          <object class="GtkStatusbar" id="addStatusBar">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="spacing">10</property>
@@ -523,7 +523,7 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_action_appearance">False</property>
-                <signal name="clicked" handler="addSellToList" swapped="no"/>
+                <signal name="clicked" handler="addToList" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -538,7 +538,7 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_action_appearance">False</property>
-                <signal name="clicked" handler="cancelSell" swapped="no"/>
+                <signal name="clicked" handler="cancelBuy" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1002,7 +1002,7 @@
                     <property name="use_action_appearance">False</property>
                     <property name="relief">half</property>
                     <property name="focus_on_click">False</property>
-                    <signal name="clicked" handler="selectSeller" swapped="no"/>
+                    <signal name="clicked" handler="selectBuyert" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -1191,7 +1191,7 @@
   <object class="GtkListStore" id="liststore1"/>
   <object class="GtkWindow" id="FormWindow">
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">Amir Warehousing Sell Form</property>
+    <property name="title" translatable="yes">Amir Warehousing Buy Form</property>
     <property name="window_position">center-always</property>
     <property name="destroy_with_parent">True</property>
     <child>
@@ -1208,18 +1208,18 @@
             <property name="column_spacing">4</property>
             <property name="row_spacing">4</property>
             <child>
-              <object class="GtkToolbar" id="sellsToolBar">
+              <object class="GtkToolbar" id="buysToolBar">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="toolbar_style">both</property>
                 <property name="icon_size">1</property>
                 <property name="icon_size_set">True</property>
                 <child>
-                  <object class="GtkToolButton" id="addSellBtn">
+                  <object class="GtkToolButton" id="addBuyBtn">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="use_action_appearance">False</property>
-                    <property name="label" translatable="yes">Add Sell</property>
+                    <property name="label" translatable="yes">Add Buy</property>
                     <property name="stock_id">gtk-add</property>
                     <accelerator key="plus" signal="clicked"/>
                     <signal name="clicked" handler="addProduct" swapped="no"/>
@@ -1230,14 +1230,14 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkToolButton" id="editSellBtn">
+                  <object class="GtkToolButton" id="editBuyBtn">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Edit</property>
                     <property name="stock_id">gtk-edit</property>
                     <accelerator key="plus" signal="clicked"/>
-                    <signal name="clicked" handler="editSell" swapped="no"/>
+                    <signal name="clicked" handler="editBuy" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -1245,7 +1245,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkToolButton" id="removeSellBtn">
+                  <object class="GtkToolButton" id="removeBuyBtn">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="use_action_appearance">False</property>
@@ -1253,7 +1253,7 @@
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-delete</property>
                     <accelerator key="plus" signal="clicked"/>
-                    <signal name="clicked" handler="removeSell" swapped="no"/>
+                    <signal name="clicked" handler="removeBuy" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -1261,7 +1261,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkSeparatorToolItem" id="sellsToolbarSeparator">
+                  <object class="GtkSeparatorToolItem" id="BuysToolbarSeparator">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                   </object>
@@ -1270,7 +1270,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkToolButton" id="upSellBtn">
+                  <object class="GtkToolButton" id="upBuyBtn">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="use_action_appearance">False</property>
@@ -1278,7 +1278,7 @@
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-go-up</property>
                     <accelerator key="plus" signal="clicked"/>
-                    <signal name="clicked" handler="upSellInList" swapped="no"/>
+                    <signal name="clicked" handler="upBuyInList" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -1286,7 +1286,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkToolButton" id="downSellBtn">
+                  <object class="GtkToolButton" id="downBuyBtn">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="use_action_appearance">False</property>
@@ -1294,7 +1294,7 @@
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-go-down</property>
                     <accelerator key="plus" signal="clicked"/>
-                    <signal name="clicked" handler="downSellInList" swapped="no"/>
+                    <signal name="clicked" handler="downBuyInList" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -1317,7 +1317,7 @@
                 <property name="hscrollbar_policy">automatic</property>
                 <property name="vscrollbar_policy">automatic</property>
                 <child>
-                  <object class="GtkTreeView" id="sellsTreeView">
+                  <object class="GtkTreeView" id="BuysTreeView">
                     <property name="height_request">150</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
@@ -2083,13 +2083,13 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child>
-                              <object class="GtkLabel" id="sellerLbl">
+                              <object class="GtkLabel" id="BuyerLbl">
                                 <property name="height_request">35</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="xalign">0</property>
                                 <property name="xpad">10</property>
-                                <property name="label" translatable="yes">Sold To:</property>
+                                <property name="label" translatable="yes">Buy from:</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -2135,7 +2135,7 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="sellerSlctBtn">
+                                  <object class="GtkButton" id="BuyerSlctBtn">
                                     <property name="label" translatable="yes">Select</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -2351,8 +2351,8 @@
               <placeholder/>
             </child>
             <child>
-              <object class="GtkButton" id="fullFactorSellBtn">
-                <property name="label" translatable="yes">Sell</property>
+              <object class="GtkButton" id="fullFactorBuyBtn">
+                <property name="label" translatable="yes">Buy</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -2717,7 +2717,7 @@
     <property name="width_request">600</property>
     <property name="height_request">400</property>
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">Selling</property>
+    <property name="title" translatable="yes">Buying</property>
     <property name="window_position">center-always</property>
     <property name="destroy_with_parent">True</property>
     <child>
@@ -2725,17 +2725,17 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
-          <object class="GtkToolbar" id="sellsToolbar">
+          <object class="GtkToolbar" id="BuysToolbar">
             <property name="height_request">60</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="toolbar_style">both</property>
             <child>
-              <object class="GtkToolButton" id="addSelltn">
+              <object class="GtkToolButton" id="addBuytn">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="use_action_appearance">False</property>
-                <property name="label" translatable="yes">Add Sell</property>
+                <property name="label" translatable="yes">Add Buy</property>
                 <property name="stock_id">gtk-new</property>
                 <accelerator key="Insert" signal="clicked"/>
                 <signal name="clicked" handler="on_add_clicked" swapped="no"/>
@@ -2762,7 +2762,7 @@
                 <property name="label" translatable="yes">Edit</property>
                 <property name="stock_id">gtk-edit</property>
                 <accelerator key="e" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
-                <signal name="clicked" handler="editSelling" swapped="no"/>
+                <signal name="clicked" handler="editBuying" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -2777,7 +2777,7 @@
                 <property name="label" translatable="yes">Delete</property>
                 <property name="stock_id">gtk-delete</property>
                 <accelerator key="Delete" signal="clicked"/>
-                <signal name="clicked" handler="removeSelling" swapped="no"/>
+                <signal name="clicked" handler="removeBuying" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
