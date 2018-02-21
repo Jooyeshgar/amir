@@ -21,7 +21,7 @@ from    datetime                    import  date
 from    sqlalchemy.sql              import  and_
 from    sqlalchemy.sql.functions    import  *
 from    database                    import  *
-
+import	class_document
 
 
 config = share.config
@@ -38,9 +38,10 @@ class Trade:
 		self.editFalg = False
 		self.editTransaction = None
 		self.removeFlag = False
+		self.listTotalDiscount = 0.0
 
 		self.session = config.db.session	
-		
+		self.Document = class_document.Document()
 		
 		query   = self.session.query(Trades.Id).select_from(Trades)
 		lastId  = query.order_by(Trades.Id.desc()).first()			
@@ -205,10 +206,10 @@ class Trade:
 		self.Codeentry = self.builder.get_object("transCode")
 		self.Codeentry.set_text(LN(self.Code))
 		self.statusBar  = self.builder.get_object("FormStatusBar")	
-		self.sellsTreeView = self.builder.get_object("TreeView")
+		self.tradeTreeView = self.builder.get_object("TradeTreeView")
 		self.sellListStore = gtk.TreeStore(str,str,str,str,str,str,str,str)
 		self.sellListStore.clear()
-		self.sellsTreeView.set_model(self.sellListStore)
+		self.tradeTreeView.set_model(self.sellListStore)
 		
 		headers = (_("No."), _("Product Name"), _("Quantity"), _("Unit Price"), 
 				   _("Total Price"), _("Unit Disc."), _("Disc."), _("Description"))
@@ -217,9 +218,9 @@ class Trade:
 			column = gtk.TreeViewColumn(header,gtk.CellRendererText(),text = txt)
 			column.set_spacing(5)
 			column.set_resizable(True)
-			self.sellsTreeView.append_column(column)
+			self.tradeTreeView.append_column(column)
 			txt += 1
-		#self.sellsTreeView.get_selection().set_mode(  gtk.SELECTION_SINGLE    )
+		#self.tradeTreeView.get_selection().set_mode(  gtk.SELECTION_SINGLE    )
 		
 		self.paymentManager = payments.Payments(transId=self.Id,transCode=self.Code)
 		self.paymentManager.connect("payments-changed", self.setNonCashPayments)
@@ -338,23 +339,21 @@ class Trade:
 		code = self.customerEntry.get_text()
 		if code != '':
 			customer_win.highlightCust(code)
-		customer_win.connect("customer-selected",self.sellerSelected)
+		customer_win.connect("customer-selected", self.sellerSelected)
 		
 	def sellerSelected(self, sender, id, code):
 		self.customerEntry.set_text(code)
 		sender.window.destroy()		
-		query = self.session.query(Customers).select_from(Customers)
-		customer = query.filter(Customers.custId == id).first()
-		self.customerNameEntry.set_text(customer.custName)
+		self.setCustomerName()
 				
 	def setCustomerName(self, sender=0, ev=0):
-		payer   = unicode(self.customerEntry.get_text())
-		query   = self.session.query(Subject).select_from(Subject)
-		query   = query.filter(Subject.code==payer).first()
-		if not query:
-			self.customerNameEntry.set_text("")
+		ccode = unicode(self.customerEntry.get_text())
+		query = self.session.query(Customers).select_from(Customers)
+		customer = query.filter(Customers.custId == ccode).first()
+		if customer:
+			self.customerNameEntry.set_text(customer.custName)
 		else:
-			self.customerNameEntry.set_text(query.name)
+			self.customerNameEntry.set_text("")
 
 	def selectProduct(self,sender=0):
 		obj = product.Product()
@@ -394,18 +393,18 @@ class Trade:
 			sender.window.destroy()
 
 	def addProduct(self,sender=0,edit=None):
-		self.addSellDlg = self.builder.get_object("addASellDlg")
+		self.addDlg = self.builder.get_object("addDlg")
 		if edit:
 			self.editCde    = edit[0]
 			ttl = "Edit sell:\t%s - %s" %(self.editCde,edit[1])
-			self.addSellDlg.set_title(ttl)
+			self.addDlg.set_title(ttl)
 			self.edtSellFlg = True		#TODO find usage
-			self.oldTtl     = utility.getFloatNumber(edit[4])
-			self.oldTtlDisc = utility.getFloatNumber(edit[6])
+			self.oldTtl     = utility.getFloat(edit[4])
+			self.oldTtlDisc = utility.getFloat(edit[6])
 			btnVal  = "Save Changes..."
 		else:
 			self.editingSell    = None
-			self.addSellDlg.set_title("Choose sell information")
+			self.addDlg.set_title("Choose sell information")
 			self.edtSellFlg = False
 			btnVal  = "Add to list"
 			
@@ -422,8 +421,8 @@ class Trade:
 		
 		self.btn        = self.builder.get_object("okBtn")
 		self.btn.set_label(btnVal)
-		self.addSellStBar   = self.builder.get_object("addSellStatusBar")
-		self.addSellStBar.push(1,"")
+		self.addStBar   = self.builder.get_object("addStatusBar")
+		self.addStBar.push(1,"")
 		
 		self.proVal.modify_base(gtk.STATE_NORMAL,self.whiteClr)
 		self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
@@ -438,7 +437,7 @@ class Trade:
 			self.product_code = pro.code
 			
 			self.qntyEntry.set_text(qnty)
-			self.quantity = utility.getFloatNumber(qnty)
+			self.quantity = utility.getFloat(qnty)
 			
 			self.unitPriceEntry.set_text(untPrc.replace(',', ''))
 			self.discountEntry.set_text(untDisc.replace(',', ''))
@@ -450,8 +449,8 @@ class Trade:
 			
 			self.ttlAmntVal.set_text(ttlPrc)
 			self.discTtlVal.set_text(ttlDisc)
-			total_payable = utility.getFloatNumber(ttlPrc) - utility.getFloatNumber(ttlDisc)
-			discval = self.calcDiscount(pro.discountFormula, utility.getFloatNumber(qnty), 
+			total_payable = utility.getFloat(ttlPrc) - utility.getFloat(ttlDisc)
+			discval = self.calcDiscount(pro.discountFormula, utility.getFloat(qnty), 
 										pro.sellingPrice)
 			self.ttlPyblVal.set_text(utility.LN(total_payable))
 			self.stnrdDisc.set_text(utility.LN(discval))
@@ -462,10 +461,10 @@ class Trade:
 			self.product_code = ""
 			self.quantity = 0
 			
-		self.addSellDlg.show_all()
+		self.addDlg.show_all()
 				
-	def editSell(self,sender):
-		iter    = self.sellsTreeView.get_selection().get_selected()[1]
+	def editProduct(self,sender):
+		iter    = self.tradeTreeView.get_selection().get_selected()[1]
 		if iter != None :
 			self.editingSell    = iter
 			No      = self.sellListStore.get(iter, 0)[0]
@@ -479,21 +478,19 @@ class Trade:
 			edtTpl  = (No,pName,qnty,untPrc,ttlPrc,untDisc,ttlDisc,desc)
 			self.addProduct(edit=edtTpl)
 		
-	def removeSell(self,sender):
-		delIter = self.sellsTreeView.get_selection().get_selected()[1]
+	def removeProduct(self,sender):
+		delIter = self.tradeTreeView.get_selection().get_selected()[1]
 		if delIter:
-			No  = int(self.sellListStore.get(delIter, 0)[0])
+			No  = unicode(self.sellListStore.get(delIter, 0)[0])
 			msg = _("Are You sure you want to delete the sell row number %s?") %No
-			msgBox  = gtk.MessageDialog( self.mainDlg, gtk.DIALOG_MODAL,
-											gtk.MESSAGE_QUESTION,
-											gtk.BUTTONS_OK_CANCEL, msg         )
-			msgBox.set_title(            _("Confirm Deletion")              )
-			answer  = msgBox.run(                                           )
-			msgBox.destroy(                                                 )
+			msgBox  = gtk.MessageDialog( self.mainDlg, gtk.DIALOG_MODAL, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK_CANCEL, msg)
+			msgBox.set_title(_("Confirm Deletion"))
+			answer  = msgBox.run()
+			msgBox.destroy()
 			if answer != gtk.RESPONSE_OK:
 				return
-			ttlPrc  = float(self.sellListStore.get(delIter,4)[0])
-			ttlDisc = float(self.sellListStore.get(delIter,6)[0])
+			ttlPrc  = utility.getFloat(self.sellListStore.get(delIter,4)[0])
+			ttlDisc = utility.getFloat(self.sellListStore.get(delIter,6)[0])
 			self.reducePrice(ttlPrc)
 			self.reduceDiscount(ttlDisc)
 			self.sellListStore.remove(delIter)
@@ -511,12 +508,12 @@ class Trade:
 			else:
 				self.sellsItersDict = {}
 				
-	def upSellInList(self,sender):
+	def upProInList(self,sender):
 		if len(self.sellsItersDict) == 1:
 			return
-		iter    = self.sellsTreeView.get_selection().get_selected()[1]
+		iter    = self.tradeTreeView.get_selection().get_selected()[1]
 		if iter:
-			No   = int(self.sellListStore.get(iter, 0)[0])
+			No   = utility.getInt(self.sellListStore.get(iter, 0)[0])
 			abvNo   = No - 1
 			if abvNo > 0:
 				aboveIter   = self.sellsItersDict[abvNo]
@@ -526,12 +523,12 @@ class Trade:
 				self.sellListStore.set_value(iter,0,str(abvNo))
 				self.sellListStore.set_value(aboveIter,0,str(No))
 
-	def downSellInList(self,sender):
+	def downProInList(self,sender):
 		if len(self.sellsItersDict) == 1:
 			return
-		iter    = self.sellsTreeView.get_selection().get_selected()[1]
+		iter    = self.tradeTreeView.get_selection().get_selected()[1]
 		if iter:
-			No   = int(self.sellListStore.get(iter, 0)[0])
+			No   = utility.getInt(self.sellListStore.get(iter, 0)[0])
 			blwNo   = No + 1
 			if No < len(self.sellsItersDict):
 				belowIter   = self.sellsItersDict[blwNo]
@@ -541,17 +538,17 @@ class Trade:
 				self.sellListStore.set_value(iter,0,str(blwNo))
 				self.sellListStore.set_value(belowIter,0,str(No))
 								
-	def cancelSell(self,sender=0,ev=0):
+	def cancelProduct(self,sender=0,ev=0):
 		self.clearSellFields()
-		self.addSellDlg.hide_all()
+		self.addDlg.hide_all()
 		return True
 			
-	def addSellToList(self,sender=0):
+	def addProToList(self,sender=0):
 		proCd   = unicode(self.proVal.get_text())
 		product   = self.session.query(Products).select_from(Products).filter(Products.code==proCd).first()
 		if not product:
 			errorstr = _("The \"Product Code\" which you selected is not a valid Code.")
-			msgbox = gtk.MessageDialog( self.addSellDlg, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, 
+			msgbox = gtk.MessageDialog( self.addDlg, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, 
 										gtk.BUTTONS_OK, errorstr )
 			msgbox.set_title(_("Invalid Product Code"))
 			msgbox.run()
@@ -565,7 +562,7 @@ class Trade:
 		avQnty  = product.quantity
 		if qnty <= 0:
 			errorstr = _("The \"Quantity\" Must be greater than 0.")
-			msgbox = gtk.MessageDialog( self.addSellDlg, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, 
+			msgbox = gtk.MessageDialog( self.addDlg, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, 
 										gtk.BUTTONS_OK, errorstr )
 			msgbox.set_title(_("Invalid Quantity"))
 			msgbox.run()
@@ -575,7 +572,7 @@ class Trade:
 			if not over:
 				errorstr = _("The \"Quantity\" is larger than the storage, and over-sell is off!")
 				errorstr += _("\nQuantity can be at most %s.") %avQnty
-				msgbox = gtk.MessageDialog( self.addSellDlg, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, 
+				msgbox = gtk.MessageDialog( self.addDlg, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, 
 											gtk.BUTTONS_OK, errorstr )
 				msgbox.set_title(_("Invalid Quantity"))
 				msgbox.run()
@@ -584,7 +581,7 @@ class Trade:
 		slPrc   = self.unitPriceEntry.get_float()
 		if slPrc <= 0:
 			errorstr = _("The \"Unit Price\" Must be greater than 0.")
-			msgbox = gtk.MessageDialog( self.addSellDlg, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, 
+			msgbox = gtk.MessageDialog( self.addDlg, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, 
 										gtk.BUTTONS_OK, errorstr )
 			msgbox.set_title(_("Invalid Unit Price"))
 			msgbox.run()
@@ -593,7 +590,7 @@ class Trade:
 			
 		if slPrc < purchasePrc:
 			msg     = _("The Unit Sell Price you entered is less than the product Purchase Price!\"")
-			msgBox  = gtk.MessageDialog( self.addSellDlg, gtk.DIALOG_MODAL, gtk.MESSAGE_QUESTION,
+			msgBox  = gtk.MessageDialog( self.addDlg, gtk.DIALOG_MODAL, gtk.MESSAGE_QUESTION,
 											gtk.BUTTONS_OK_CANCEL, msg                             )
 			msgBox.set_title(               _("Are you sure?")              )
 			answer  = msgBox.run(                                           )
@@ -605,7 +602,7 @@ class Trade:
 		headers = ("Code","Product Name","Quantity","Unit Price","Unit Discount","Discount","Total Price","Description")
 		#----values:
 		discnt  = self.discTtlVal.get_text()
-		discnt_val = utility.getFloatNumber(discnt)
+		discnt_val = utility.getFloat(discnt)
 		total   = qnty*slPrc
 		descp   = self.descVal.get_text()
 		untDisc = self.discountEntry.get_text()
@@ -619,7 +616,7 @@ class Trade:
 			self.appendDiscount(discnt_val - self.oldTtlDisc)
 			self.valsChanged()
 			self.sellsItersDict[No]   = self.editingSell
-			self.addSellDlg.hide()
+			self.addDlg.hide()
 			
 		else:
 			No = len(self.sellsItersDict) + 1
@@ -641,27 +638,29 @@ class Trade:
 			self.appendDiscount(discnt_val)
 			self.valsChanged()
 			self.sellsItersDict[No]   = iter
-			self.addSellDlg.hide()
+			self.addDlg.hide()
 
 	def appendPrice(self,  price):
-		oldPrice    = utility.getFloatNumber(self.totalEntry.get_text())
+		oldPrice    = utility.getFloat(self.totalEntry.get_text())
 		totalPrce   = oldPrice + price
 		self.totalEntry.set_text(utility.LN(totalPrce))
 
 	def appendDiscount(self, discount):
-		oldDiscount = utility.getFloatNumber(self.totalDiscsEntry.get_text())
-		oldDiscount = oldDiscount + float(discount) 
-		self.totalDiscsEntry.set_text(utility.LN(oldDiscount))
+		# oldDiscount = utility.getFloat(self.totalDiscsEntry.get_text())
+		# oldDiscount = oldDiscount + float(discount) 
+		self.listTotalDiscount += float(discount)
+		self.totalDiscsEntry.set_text(utility.LN(self.listTotalDiscount))
 												
 	def reducePrice(self,  price):
-		oldPrice    = utility.getFloatNumber(self.totalEntry.get_text())
+		oldPrice    = utility.getFloat(self.totalEntry.get_text())
 		totalPrce   = oldPrice - price
 		self.totalEntry.set_text(utility.LN(totalPrce))
 
 	def reduceDiscount(self, discount):
-		oldDiscount = utility.getFloatNumber(self.totalDiscsEntry.get_text())
-		oldDiscount = oldDiscount - discount
-		self.totalDiscsEntry.set_text(utility.LN(oldDiscount))
+		# oldDiscount = utility.getFloat(self.totalDiscsEntry.get_text())
+		# oldDiscount = oldDiscount - discount
+		self.listTotalDiscount -= float(discount)
+		self.totalDiscsEntry.set_text(utility.LN(self.listTotalDiscount))
 
 					
 	def clearSellFields(self):
@@ -684,14 +683,14 @@ class Trade:
 		
 
 	def calculatePayable(self):
-		subtotal    = utility.getFloatNumber(
-							self.builder.get_object("subtotalEntry").get_text())
-		ttlDiscs    = utility.getFloatNumber(
-							self.builder.get_object("totalDiscsEntry").get_text())
+		subtotal    = utility.getFloat(self.builder.get_object("subtotalEntry").get_text())
+		ttlDiscs    = self.listTotalDiscount + utility.getFloat(self.builder.get_object("custDiscount").get_text())
 		additions   = self.additionsEntry.get_float()
 		subtracts   = self.subsEntry.get_float()
-		
 		taxEntry    = self.taxEntry
+
+		self.totalDiscsEntry.set_text(utility.LN(ttlDiscs))
+
 		err = False
 		try:
 			tax   = float(taxEntry.get_text())
@@ -707,8 +706,8 @@ class Trade:
 			self.payableAmntEntry.set_text(utility.LN(amnt))
 
 	def calculateBalance(self):
-		payableAmnt = utility.getFloatNumber(self.payableAmntEntry.get_text())
-		ttlPayment = utility.getFloatNumber(self.totalPaymentsEntry.get_text())
+		payableAmnt = utility.getFloat(self.payableAmntEntry.get_text())
+		ttlPayment = utility.getFloat(self.totalPaymentsEntry.get_text())
 		blnc = payableAmnt - ttlPayment
 		self.remainedAmountEntry.set_text(utility.LN(blnc))
 		
@@ -726,7 +725,7 @@ class Trade:
 				self.proVal.modify_base(gtk.STATE_NORMAL,self.redClr)
 				msg = "Product code is invalid"
 				self.proVal.set_tooltip_text(msg)
-				self.addSellStBar.push(1,msg)
+				self.addStBar.push(1,msg)
 				self.proNameLbl.set_text("")
 				self.product = None
 			else:
@@ -743,7 +742,7 @@ class Trade:
 			severe = False
 			
 			if self.qntyEntry.get_text() == "":
-				self.qntyEntry.set_text(utility.LN(0.0))
+				self.qntyEntry.set_text(utility.LN(0))
 				qnty = 0
 			else:
 				qnty = self.qntyEntry.get_float()
@@ -771,7 +770,7 @@ class Trade:
 					self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
 					self.qntyEntry.set_tooltip_text("")
 					
-				self.addSellStBar.push(1,stMsg)
+				self.addStBar.push(1,stMsg)
 				
 				if not severe:
 					code   = self.proVal.get_text()
@@ -826,7 +825,7 @@ class Trade:
 					self.unitPriceEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
 					self.unitPriceEntry.set_tooltip_text("")
 					
-			self.addSellStBar.push(1,stMsg)
+			self.addStBar.push(1,stMsg)
 			if not severe:
 				self.calcTotal()
 	
@@ -841,7 +840,7 @@ class Trade:
 			
 			if self.discountEntry.get_text() == "":
 				self.discountEntry.set_text(self.stnrdDisc.get_text())
-				discval = utility.getFloatNumber(self.stnrdDisc.get_text())
+				discval = utility.getFloat(self.stnrdDisc.get_text())
 			else:
 				disc  = utility.convertToLatin(self.discountEntry.get_text())
 				discval = 0
@@ -878,14 +877,14 @@ class Trade:
 							severe = True
 				
 			
-			self.addSellStBar.push(1,stMsg)
+			self.addStBar.push(1,stMsg)
 			if not severe:
 				if untPrc - discval < purcPrc:
 					self.discountEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
 					errMess  = "Applying discount decreases product price below its purchase price!"
 					self.discountEntry.set_tooltip_text(errMess)
 					if not stMsg:
-						self.addSellStBar.push(1,errMess)
+						self.addStBar.push(1,errMess)
 				else:
 					self.discountEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
 					self.discountEntry.set_tooltip_text("")
@@ -934,14 +933,14 @@ class Trade:
 		self.calcTotalPayable()
 
 	def calcTotalPayable(self):
-		ttlAmnt = utility.getFloatNumber(self.ttlAmntVal.get_text())
-		ttldiscount = utility.getFloatNumber(self.discTtlVal.get_text())
+		ttlAmnt = utility.getFloat(self.ttlAmntVal.get_text())
+		ttldiscount = utility.getFloat(self.discTtlVal.get_text())
 		self.ttlPyblVal.set_text(utility.LN(ttlAmnt - ttldiscount))
 
 	def paymentsChanged(self, sender=0, ev=0):
 		ttlCash = self.cashPymntsEntry.get_float()
 		self.cashPayment = ttlCash
-		ttlNonCash  = utility.getFloatNumber(self.nonCashPymntsEntry.get_text())
+		ttlNonCash  = utility.getFloat(self.nonCashPymntsEntry.get_text())
 		ttlPayments = ttlCash + ttlNonCash
 		
 		self.totalPaymentsEntry.set_text(utility.LN(ttlPayments))
@@ -992,7 +991,7 @@ class Trade:
 			pro_dic = {}
 			for exch in self.sellListStore:
 				pro_name = unicode(exch[1])
-				pro_qnty = utility.getFloatNumber(exch[2])
+				pro_qnty = utility.getFloat(exch[2])
 				
 				if pro_name in pro_dic:
 					pro_dic[pro_name] -= pro_qnty
@@ -1019,15 +1018,15 @@ class Trade:
 									
 		self.subAdd     	= self.additionsEntry.get_float()
 		self.subSub     	= self.subsEntry.get_float()
-		self.subTax     	= utility.getFloatNumber(self.taxEntry.get_text())
+		self.subTax     	= utility.getFloat(self.taxEntry.get_text())
 		self.subShpDate 	= self.shippedDate.getDateObject()
 		self.subFOB     	= unicode(self.builder.get_object("FOBEntry").get_text())
 		self.subShipVia 	= unicode(self.builder.get_object("shipViaEntry").get_text())
 		self.subDesc    	= unicode(self.builder.get_object("transDescEntry").get_text())
 	#	self.editdate		=self.
-		self.payableAmnt 	= utility.getFloatNumber(self.payableAmntEntry.get_text())
-		self.totalDisc 		= utility.getFloatNumber(self.totalDiscsEntry.get_text())
-		self.totalPayment 	= utility.getFloatNumber(self.totalPaymentsEntry.get_text())
+		self.payableAmnt 	= utility.getFloat(self.payableAmntEntry.get_text())
+		self.totalDisc 		= utility.getFloat(self.totalDiscsEntry.get_text())
+		self.totalPayment 	= utility.getFloat(self.totalPaymentsEntry.get_text())
 		self.statusBar.push(1,"")
 		return True
 
@@ -1048,7 +1047,7 @@ class Trade:
 			self.session.add( sell )
 			self.session.commit()
 		else:
-			sell = Trade( self.subCode, self.subDate, 0, self.custId, self.subAdd,
+			sell = Trades( self.subCode, self.subDate, 0, self.custId, self.subAdd,
 								self.subSub, self.subTax,self.payableAmnt ,self.cashPayment, 
 								self.subShpDate, self.subFOB, self.subShipVia,
 								self.subPreInv, self.subDesc, self.sell_factor,self.subDate,1)#editdate=subdate
@@ -1094,8 +1093,8 @@ class Trade:
 			query = self.session.query(Products).select_from(Products)
 			pid = query.filter(Products.name == unicode(exch[1])).first().id
 						
-			self.lastexchangequantity=utility.getFloatNumber(0)
-			self.nowexchangequantity=utility.getFloatNumber(exch[2])
+			self.lastexchangequantity=utility.getFloat(0)
+			self.nowexchangequantity=utility.getFloat(exch[2])
 						
 			if self.editFalg:
 											
@@ -1118,30 +1117,30 @@ class Trade:
 				exchange1=exchange1.filter(Exchanges.exchngTransId==lasttransId).first()
 				
 				if not exchange1:					
-					self.lastexchangequantity=utility.getFloatNumber(str(0))
-					self.nowexchangequantity=utility.getFloatNumber(exch[2])
+					self.lastexchangequantity=utility.getFloat(str(0))
+					self.nowexchangequantity=utility.getFloat(exch[2])
 					
-					exchange = Exchanges(utility.getInt(exch[0]), pid, utility.getFloatNumber(exch[2]),
-										 utility.getFloatNumber(exch[3]), utility.convertToLatin(exch[5]),
+					exchange = Exchanges(utility.getInt(exch[0]), pid, utility.getFloat(exch[2]),
+										 utility.getFloat(exch[3]), utility.convertToLatin(exch[5]),
 										 lasttransId1, unicode(exch[7]))
 					self.session.add( exchange )
 					self.session.commit()										
 				else:
-					self.lastexchangequantity=utility.getFloatNumber(str(exchange1.exchngQnty))
-					self.nowexchangequantity=utility.getFloatNumber(exch[2])
+					self.lastexchangequantity=utility.getFloat(str(exchange1.exchngQnty))
+					self.nowexchangequantity=utility.getFloat(exch[2])
 										
-					exchange = Exchanges(utility.getInt(exch[0]), pid, utility.getFloatNumber(exch[2]),
-										 utility.getFloatNumber(exch[3]), utility.convertToLatin(exch[5]),
+					exchange = Exchanges(utility.getInt(exch[0]), pid, utility.getFloat(exch[2]),
+										 utility.getFloat(exch[3]), utility.convertToLatin(exch[5]),
 										 lasttransId1, unicode(exch[7]))
 					self.session.add( exchange )
 					self.session.commit()
 					
 			# in add mode transaction																						
 			else:	
-				self.lastexchangequantity=utility.getFloatNumber(str(0))
-				self.nowexchangequantity=utility.getFloatNumber(exch[2])
-				exchange = Exchanges(utility.getInt(exch[0]), pid, utility.getFloatNumber(exch[2]),
-									 utility.getFloatNumber(exch[3]), utility.convertToLatin(exch[5]),
+				self.lastexchangequantity=utility.getFloat(str(0))
+				self.nowexchangequantity=utility.getFloat(exch[2])
+				exchange = Exchanges(utility.getInt(exch[0]), pid, utility.getFloat(exch[2]),
+									 utility.getFloat(exch[3]), utility.convertToLatin(exch[5]),
 									 self.Id, unicode(exch[7]))
 				self.session.add( exchange )									
 							
@@ -1153,14 +1152,14 @@ class Trade:
 
 					pro.quantity -= self.nowexchangequantity
 					
-					self.lastexchangequantity=utility.getFloatNumber(0)
-					self.nowexchangequantity=utility.getFloatNumber(0)
+					self.lastexchangequantity=utility.getFloat(0)
+					self.nowexchangequantity=utility.getFloat(0)
 					self.session.commit()
 					
 		print "------ Saving the Exchanges:\tDONE! "
 		
 	def registerDocument(self):
-		dbconf = dbconfig.dbConfig()		
+		# dbconf = dbconfig.dbConfig()		
 		query = self.session.query(Cheque).select_from(Cheque)
 		cheques = query.filter(Cheque.chqTransId == self.Id).all()
 
@@ -1175,26 +1174,12 @@ class Trade:
 			print cust.custId
 			self.session.add(pay)
 			self.session.commit()
-	
-		# Find last document number
-		query = config.db.session.query(Bill.id, Bill.number).select_from(Bill)
-		lastnumber = query.order_by(Bill.number.desc()).first()
-		if lastnumber != None:
-			bill_id = lastnumber[0] + 1
-			doc_number = lastnumber[1] + 1
-		else:
-			bill_id = 1
-			doc_number = 1
-		
+
 		# Create new document
-		print 'save new  bill'
-		bill = Bill(doc_number, self.subDate, self.subDate, self.subDate, False)
-		self.session.add(bill)
-		print 'save new  bill done!'
-		#print "bill id is %d" % bill_id
+		bill_id = self.saveDocument();
 		
 		# Assign document to the current transaction
-		query = self.session.query(Trade)#.select_from(Trade)
+		query = self.session.query(Trades)#.select_from(Trade)
 		query = query.filter(Trades.Id == self.Code)
 		query.update( {Trades.Bill : bill_id } )	
 		self.session.commit()	
@@ -1210,74 +1195,6 @@ class Trade:
 		query =query.update( {Payment.paymntBillId : bill_id } )		
  		self.session.commit()
  			
-# 		# Create document rows
-#  		doc_rows = []
-#  		
-#  		#write 
-#  		
-#  		trans_code = utility.LN(self.subCode, False)
-#    		#print self.custSubj
-# 		row = Notebook(self.custSubj, bill_id, (self.payableAmnt),
-# 					 _("credit for invoice number %s") % trans_code)
-#  		 		
-# 		row1 = Notebook(dbconf.get_int("cash"), bill_id, -(self.payableAmnt),
-# 					 _("Credit for invoice number %s") % trans_code)
-#  		
-# 		self.session.add(row)
-# 		self.session.add(row1)
-# 		self.session.commit()
-#  		
-# 		
-# 		doc_rows.append(row)
-# 		
-# 		row = Notebook(dbconf.get_int("sell-discount"), bill_id, -(self.totalDisc + self.subSub), 
-# 		               _("Discount for invoice number %s") % trans_code)
-# 
-# 		doc_rows.append(row)
-# #   		
-#  		
-#  		row = Notebook(dbconf.get_int("sell-adds"),
-# 						 bill_id, self.subAdd, 
-#  		               _("Additions for invoice number %s") % trans_code)
-#  		self.session.add(row)
-# 		self.session.commit()
-#  		
- 		#doc_rows.append(row)
-# 		row = Notebook(dbconf.get_int("tax"), bill_id, self.subTax, 
-# 		               _("Taxes for invoice number %s") % trans_code)
-# 		doc_rows.append(row)
-#   		
-# 		# Create a row for each sold product
-# 		for exch in self.sellListStore:
-# 			query = self.session.query(ProductGroups.sellId)
-# 			query = query.select_from(outerjoin(Products, ProductGroups, Products.accGroup == ProductGroups.id))
-# 			result = query.filter(Products.name == unicode(exch[1])).first()
-# 			sellid = result[0]
-#   			
-# 			exch_totalAmnt = utility.getFloatNumber(exch[2]) * utility.getFloatNumber(exch[3])
-# 			#TODO Use unit name specified for each product
-# 			row = Notebook(sellid, bill_id, exch_totalAmnt, 
-# 			               _("Selling %s units, invoice number %s") 
-# 			               % (exch[2], trans_code) )
-# 			doc_rows.append(row)
-#   			
-# 		# Create rows for payments
-# 		row = Notebook(self.custSubj, bill_id, self.totalPayment, 
-# 		               _("Payment for invoice number %s") % trans_code)
-# 		doc_rows.append(row)
-# 		row = Notebook(dbconf.get_int("fund"), bill_id, -(self.cashPayment), 
-# 		               _("Cash Payment for invoice number %s") % trans_code)
-# 		doc_rows.append(row)
-# 		row = Notebook(dbconf.get_int("acc-receivable"), bill_id, 
-# 		               -(self.totalPayment - self.cashPayment), 
-# 		               _("Non-cash Payment for invoice number %s") % trans_code)
-# 		doc_rows.append(row)
-#   		
-# 		#TODO Add rows for customer introducer's commision
-#   		
-# 		self.session.add_all(doc_rows)
-		#self.session.commit()
-
 	
 # 	def RegisterBill(self):
 # 		print'test'
@@ -1309,4 +1226,48 @@ class Trade:
 				
 		self.mainDlg.hide_all()
 		return True;
+
+	def saveDocument(self):
+		dbconf = dbconfig.dbConfig()
+		total = self.payableAmnt - self.totalDisc + self.subAdd + self.subTax
+		
+		trans_code = utility.LN(self.subCode, False)
+		self.Document.add_notebook(self.custSubj, -(total - self.cashPayment), _("Debit for invoice number %s") % trans_code)
+		self.Document.add_notebook(dbconf.get_int("cash"), (self.cashPayment), _("Credit for invoice number %s") % trans_code)
+		self.Document.add_notebook(dbconf.get_int("sell-discount"), (self.totalDisc), _("Discount for invoice number %s") % trans_code)
+		if self.subAdd:
+			self.Document.add_notebook(dbconf.get_int("sell-adds"), self.subAdd, _("Additions for invoice number %s") % trans_code)
+		self.Document.add_notebook(dbconf.get_int("tax"), (self.subTax), _("Taxes for invoice number %s") % trans_code)
+  		
+		# Create a row for each sold product
+		for exch in self.sellListStore:
+			query = self.session.query(ProductGroups.sellId)
+			query = query.select_from(outerjoin(Products, ProductGroups, Products.accGroup == ProductGroups.id))
+			result = query.filter(Products.name == unicode(exch[1])).first()
+			sellid = result[0]
+
+			exch_totalAmnt = utility.getFloat(exch[2]) * utility.getFloat(exch[3])
+			#TODO Use unit name specified for each product
+			# row = Notebook(sellid, bill.id, exch_totalAmnt, _("Selling %s units, invoice number %s") % (exch[2], trans_code) )
+			self.Document.add_notebook(sellid, exch_totalAmnt, _("Selling %s units, invoice number %s") % (exch[2], trans_code))
+  			
+# 		# Create rows for payments
+# 		row = Notebook(self.custSubj, bill.id, self.totalPayment, 
+# 		               _("Payment for invoice number %s") % trans_code)
+# 		self.session.add(row)
+# 		# doc_rows.append(row)
+# 		row = Notebook(dbconf.get_int("fund"), bill.id, -(self.cashPayment), 
+# 		               _("Cash Payment for invoice number %s") % trans_code)
+# 		self.session.add(row)
+# 		# doc_rows.append(row)
+# 		row = Notebook(dbconf.get_int("acc-receivable"), bill.id, -(self.totalPayment - self.cashPayment),
+# 		               _("Non-cash Payment for invoice number %s") % trans_code)
+# 		self.session.add(row)
+# 		# doc_rows.append(row)
+  		
+# 		#TODO Add rows for customer introducer's commision
+  		
+# 		# self.session.add_all(doc_rows)
+# 		self.session.commit()
+		self.Document.save()
 ## @}

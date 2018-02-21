@@ -147,7 +147,11 @@ class AddEditDoc:
                 debt = utility.LN(0)
                 self.credit_sum += n.value
                 
-            code = s.code
+            if s:
+                code = s.code
+            else:
+                code = 0;
+                s = Subject()
             numrows = str(self.numrows)
             if config.digittype == 1:
                 code = utility.convertToPersian(code)

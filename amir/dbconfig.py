@@ -35,8 +35,11 @@ class dbConfig:
     def get_value(self, key):
         key = unicode(key)
         query = config.db.session.query(database.Config)
-        query = query.filter(database.Config.cfgKey == key)
-        return query.first().cfgValue
+        query = query.filter(database.Config.cfgKey == key).first()
+        if query:
+            return query.cfgValue
+        else:
+            return '';
 
     def exists(self, key):
         query = config.db.session.query(database.Config)

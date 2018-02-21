@@ -85,9 +85,9 @@ class Document:
             sum += notebook[1]
         for cheque in self.cheques:
             sum += cheque[1]
-        if sum != 0:
-            self.notebooks = []
-            return -2
+        # if sum != 0:
+        #     self.notebooks = []
+        #     return -2
         
         if self.number > 0:
             bill = share.config.db.session.query(Bill).select_from(Bill)

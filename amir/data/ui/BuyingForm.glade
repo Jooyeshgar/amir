@@ -2,14 +2,14 @@
 <interface>
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy project-wide -->
-  <object class="GtkDialog" id="addABuyDlg">
+  <object class="GtkDialog" id="addDlg">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
     <property name="window_position">center-always</property>
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">normal</property>
     <property name="gravity">center</property>
-    <signal name="delete-event" handler="cancelBuy" swapped="no"/>
+    <signal name="delete-event" handler="cancelProduct" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox1">
         <property name="visible">True</property>
@@ -523,7 +523,7 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_action_appearance">False</property>
-                <signal name="clicked" handler="addToList" swapped="no"/>
+                <signal name="clicked" handler="addProToList" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -538,7 +538,7 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_action_appearance">False</property>
-                <signal name="clicked" handler="cancelBuy" swapped="no"/>
+                <signal name="clicked" handler="cancelProduct" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1237,7 +1237,7 @@
                     <property name="label" translatable="yes">Edit</property>
                     <property name="stock_id">gtk-edit</property>
                     <accelerator key="plus" signal="clicked"/>
-                    <signal name="clicked" handler="editBuy" swapped="no"/>
+                    <signal name="clicked" handler="editProduct" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -1253,7 +1253,7 @@
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-delete</property>
                     <accelerator key="plus" signal="clicked"/>
-                    <signal name="clicked" handler="removeBuy" swapped="no"/>
+                    <signal name="clicked" handler="removeProduct" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -1278,7 +1278,7 @@
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-go-up</property>
                     <accelerator key="plus" signal="clicked"/>
-                    <signal name="clicked" handler="upBuyInList" swapped="no"/>
+                    <signal name="clicked" handler="upProInList" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -1294,7 +1294,7 @@
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-go-down</property>
                     <accelerator key="plus" signal="clicked"/>
-                    <signal name="clicked" handler="downBuyInList" swapped="no"/>
+                    <signal name="clicked" handler="downProInList" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -1317,7 +1317,7 @@
                 <property name="hscrollbar_policy">automatic</property>
                 <property name="vscrollbar_policy">automatic</property>
                 <child>
-                  <object class="GtkTreeView" id="BuysTreeView">
+                  <object class="GtkTreeView" id="TradeTreeView">
                     <property name="height_request">150</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
@@ -1851,7 +1851,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry" id="entry1">
+                              <object class="GtkEntry" id="custDiscount">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="invisible_char">●</property>
@@ -1861,6 +1861,8 @@
                                 <property name="secondary_icon_activatable">False</property>
                                 <property name="primary_icon_sensitive">True</property>
                                 <property name="secondary_icon_sensitive">True</property>
+                                <signal name="key-release-event" handler="valsChanged" swapped="no"/>
+                                <signal name="focus-out-event" handler="valsChanged" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>

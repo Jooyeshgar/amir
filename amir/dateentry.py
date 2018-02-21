@@ -25,7 +25,7 @@ def dateToString(date):
         
     delim = share.config.datedelims[share.config.datedelim]
     datestring = str(datelist[0]) + delim + str(datelist[1]) + delim + str(datelist[2])
-    datestring = LN(datestring)
+    datestring = LN(datestring, False)
     return datestring
 
 def stringToDate(dateString):
@@ -84,7 +84,7 @@ class DateEntry(gtk.Entry):
         
         delim = share.config.datedelims[share.config.datedelim]
         datestring = str(datelist[0]) + delim + str(datelist[1]) + delim + str(datelist[2])
-        datestring = LN(datestring)
+        datestring = LN(datestring, False)
         self.set_text(datestring)
         self.year = year
         self.month = month

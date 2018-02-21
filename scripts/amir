@@ -194,9 +194,9 @@ class MainWindow(gobject.GObject):
         obj.addNewCustomer(sender)
 
 
-    def addNewSell(     self,   sender  ):
-        obj = sellProducts.SellProducts()
-        obj.addNewSell()
+    def addNewSell(self, sender):
+        obj = trades.Trade()
+        obj.addNew()
 
     def addNewBuy(self, sender):
         obj = trades.Trade(False)

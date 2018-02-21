@@ -9,7 +9,7 @@ from share import share
 # TODO: Instead of using just persian characters,
 # TODO: chek mee 
 ## Check the active locale and choose number characters from that locale
-def LN (num, comma=False):
+def LN (num, comma=True):
     
     if type(num) == int:
         num = str(num)
@@ -31,12 +31,27 @@ def LN (num, comma=False):
         
         if dot_pos != -1:
             num = l + num[dot_pos:]
+        else:
+            num = l
         
     if share.config.digittype == 1:
         num = convertToPersian(num)
     return num
 
 def getFloatNumber (number_string):
+    """
+        Reverses LN() procedure. Gets a string representing a number,
+        (Maybe containing commas) And returns the value as float
+        Backward compatible dont use it
+    """
+    if not number_string:
+        return 0
+        
+    number_string = number_string.replace(',', '')
+    number_string = convertToLatin(number_string)
+    return float(number_string)
+
+def getFloat (number_string):
     """
         Reverses LN() procedure. Gets a string representing a number,
         (Maybe containing commas) And returns the value as float
