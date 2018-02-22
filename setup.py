@@ -34,7 +34,7 @@ for lang in ('fa', 'fr', 'he', 'tr'):
     pofile = "po/" + lang + ".po"
     locale_path = "locale/" + lang + "/LC_MESSAGES/amir.mo"
     if not os.path.exists("locale/" + lang + "/LC_MESSAGES/"):
-        os.mkdir("locale/" + lang + "/LC_MESSAGES/")
+        os.makedirs("locale/" + lang + "/LC_MESSAGES/")
     print "generating", locale_path
     os.system("msgfmt %s -o %s" % (pofile, locale_path))
 
