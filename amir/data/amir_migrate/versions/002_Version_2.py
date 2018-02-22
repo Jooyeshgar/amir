@@ -261,42 +261,28 @@ def upgrade(migrate_engine):
         # 1 : Entry
         # 2 : Entry (Single Int from Subjects)
         # 3 : Entry (Multi  Int from Subjects)
-        {'cfgId' : 1, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-name'       , 'cfgValue' : u'Enter Company Name',
-            'cfgDesc' : u'Enter Company name here'},
-        {'cfgId' : 2, 'cfgType' : 0, 'cfgCat' : 0, 'cfgKey' : u'co-logo'       , 'cfgValue' : u'',
-            'cfgDesc' : u'Select Colpany logo'},
-        {'cfgId' : 3, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'custSubject'   , 'cfgValue' : u'4',
-            'cfgDesc' : u'Enter here'},
-        {'cfgId' : 4, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'bank'          , 'cfgValue' : u'1',
-            'cfgDesc' : u'Enter here'},
-        {'cfgId' : 5, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'cash'          , 'cfgValue' : u'3',
-            'cfgDesc' : u'Enter here'},
-        {'cfgId' : 6, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'buy'           , 'cfgValue' : u'17',
-            'cfgDesc':u'Enter here'},
-        {'cfgId' : 7, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'sell'          , 'cfgValue' : u'18',
-            'cfgDesc':u'Enter here'},
-        {'cfgId' : 8, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'sell-discount' , 'cfgValue' : u'25',
-            'cfgDesc':u'Enter here'},
-        {'cfgId' : 9, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'tax'           , 'cfgValue' : u'33',
-            'cfgDesc':u'Enter here'},
-        {'cfgId' :10, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'partners'      , 'cfgValue' : u'8',
-            'cfgDesc':u'Enter here'},
-        {'cfgId' :11, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'cost'          , 'cfgValue' : u'2',
-            'cfgDesc':u'Enter here'},
-        {'cfgId' :12, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'bank-wage'     , 'cfgValue' : u'31',
-            'cfgDesc':u'Enter here'},
-        {'cfgId' :13, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'our_cheque'    , 'cfgValue' : u'22',
-            'cfgDesc' :u'Enter here'},
-        {'cfgId' :14, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'other_cheque'    , 'cfgValue' : u'6',
-            'cfgDesc' :u'Enter here'},
-        {'cfgId' :15, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'income'     , 'cfgValue' : u'83',
-            'cfgDesc':u'Enter here'}
-        #{'cfgId' :11, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'fund'          , 'cfgValue' : u'??',
-        #    'cfgDesc':u'Enter here'},  #TODO cfgKey
-        #{'cfgId' :12, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'acc-receivable', 'cfgValue' : u'??',
-        #    'cfgDesc':u'Enter here',}, #TODO cfgKey
-        #{'cfgId' :13, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' :u'commission'     , 'cfgValue' : u'??',
-        #    'cfgDesc':u'Enter here'}   #TODO cfgKey
+        {'cfgId' : 1, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-name'       , 'cfgValue' : u'Enter Company Name', 'cfgDesc' : u'Enter Company name here'},
+        {'cfgId' : 2, 'cfgType' : 0, 'cfgCat' : 0, 'cfgKey' : u'co-logo'       , 'cfgValue' : u'', 'cfgDesc' : u'Select Company logo'},
+        {'cfgId' : 3, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'custSubject'   , 'cfgValue' : u'4', 'cfgDesc' : u'Enter here'},
+        {'cfgId' : 4, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'bank'          , 'cfgValue' : u'1', 'cfgDesc' : u'Enter here'},
+        {'cfgId' : 5, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'cash'          , 'cfgValue' : u'3', 'cfgDesc' : u'Enter here'},
+        {'cfgId' : 6, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'buy'           , 'cfgValue' : u'17', 'cfgDesc':u'Enter here'},
+        {'cfgId' : 8, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'buy-discount'  , 'cfgValue' : u'25',    'cfgDesc':u'Enter here'},
+        {'cfgId' : 7, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'sell'          , 'cfgValue' : u'18',    'cfgDesc':u'Enter here'},
+        {'cfgId' : 8, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'sell-discount' , 'cfgValue' : u'25',    'cfgDesc':u'Enter here'},
+        {'cfgId' : 9, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'tax'           , 'cfgValue' : u'6',     'cfgDesc':u'Enter here'},
+        {'cfgId' : 9, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'tax-rate'      , 'cfgValue' : u'6',     'cfgDesc':u'Enter here'},
+        {'cfgId' :16, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'fee'           , 'cfgValue' : u'3',     'cfgDesc':u'Enter here'}
+        {'cfgId' :16, 'cfgType' : 1, 'cfgCat' : 1, 'cfgKey' : u'fee-rate'      , 'cfgValue' : u'3',     'cfgDesc':u'Enter here'}
+        {'cfgId' :10, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'partners'      , 'cfgValue' : u'8',     'cfgDesc':u'Enter here'},
+        {'cfgId' :11, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'cost'          , 'cfgValue' : u'2',     'cfgDesc':u'Enter here'},
+        {'cfgId' :12, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'bank-wage'     , 'cfgValue' : u'31',    'cfgDesc':u'Enter here'},
+        {'cfgId' :13, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'our_cheque'    , 'cfgValue' : u'22',    'cfgDesc':u'Enter here'},
+        {'cfgId' :14, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'other_cheque'  , 'cfgValue' : u'6',     'cfgDesc':u'Enter here'},
+        {'cfgId' :15, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'income'     , 'cfgValue' : u'83', 'cfgDesc':u'Enter here'}
+        #{'cfgId' :11, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'fund'          , 'cfgValue' : u'??', 'cfgDesc':u'Enter here'},  #TODO cfgKey
+        #{'cfgId' :12, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'acc-receivable', 'cfgValue' : u'??', 'cfgDesc':u'Enter here',}, #TODO cfgKey
+        #{'cfgId' :13, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' :u'commission'     , 'cfgValue' : u'??', 'cfgDesc':u'Enter here'}   #TODO cfgKey
      )
                
     op = banknames.insert()

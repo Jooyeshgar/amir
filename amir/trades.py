@@ -39,6 +39,7 @@ class Trade:
 		self.editTransaction = None
 		self.removeFlag = False
 		self.listTotalDiscount = 0.0
+		self.totalFactor = 0
 
 		self.session = config.db.session	
 		self.Document = class_document.Document()
@@ -188,14 +189,9 @@ class Trade:
 		result = query.all()
 
 		for t ,c in reversed(result):		
-
-	  			grouprow = self.treestore.append(None,(int(t.Id),int(t.Code),
-														t.Date, c.custName,t.PayableAmnt))	  			
-  			
+	  		grouprow = self.treestore.append(None,(int(t.Id),int(t.Code), t.Date, c.custName,t.PayableAmnt))
   			
 		self.window.show_all()
-		
-
 		
 	def on_add_clicked(self,sender):
 		self.addNew()
@@ -298,11 +294,8 @@ class Trade:
  		self.editTransaction=result 	
  		self.addNew() 		
  		
- 		
- 			
 																						
 	def removeSelling(self, sender):
-		
 		selection = self.treeview.get_selection()
 		iter1 = selection.get_selected()[1]	
 		code = self.treestore.get_value(iter1, 0)
@@ -702,13 +695,13 @@ class Trade:
 			err     = True
 
 		if not err:
-			amnt = subtotal + additions + tax - subtracts - ttlDiscs
-			self.payableAmntEntry.set_text(utility.LN(amnt))
+			self.totalFactor = subtotal + additions + tax - subtracts - ttlDiscs
+			self.payableAmntEntry.set_text(utility.LN(self.totalFactor))
 
 	def calculateBalance(self):
-		payableAmnt = utility.getFloat(self.payableAmntEntry.get_text())
+		# self.totalFactor = utility.getFloat(self.payableAmntEntry.get_text())
 		ttlPayment = utility.getFloat(self.totalPaymentsEntry.get_text())
-		blnc = payableAmnt - ttlPayment
+		blnc = self.totalFactor - ttlPayment
 		self.remainedAmountEntry.set_text(utility.LN(blnc))
 		
 	
@@ -1024,40 +1017,34 @@ class Trade:
 		self.subShipVia 	= unicode(self.builder.get_object("shipViaEntry").get_text())
 		self.subDesc    	= unicode(self.builder.get_object("transDescEntry").get_text())
 	#	self.editdate		=self.
-		self.payableAmnt 	= utility.getFloat(self.payableAmntEntry.get_text())
+		self.totalFactor 	= utility.getFloat(self.payableAmntEntry.get_text())
 		self.totalDisc 		= utility.getFloat(self.totalDiscsEntry.get_text())
 		self.totalPayment 	= utility.getFloat(self.totalPaymentsEntry.get_text())
 		self.statusBar.push(1,"")
 		return True
 
 	def registerTransaction(self):
-				
-		print "--------- Starting... ------------"
-		print "\nSaving the Transaction ----------"
 		if self.editFalg:
-			
 			query=self.session.query(Trade).select_from(Trade)
 			query=query.filter(Trades.Code==self.subCode).all()
 			for trans in query:
 				trans.Acivated=0
 			sell = Trade( self.subCode, self.subDate, 0, self.custId, self.subAdd,
-								self.subSub, self.subTax,self.payableAmnt ,self.cashPayment, 
+								self.subSub, self.subTax, self.totalFactor, self.cashPayment, 
 								self.subShpDate, self.subFOB, self.subShipVia,
 								self.subPreInv, self.subDesc, self.sell_factor,self.editDate,1)
 			self.session.add( sell )
 			self.session.commit()
+
 		else:
 			sell = Trades( self.subCode, self.subDate, 0, self.custId, self.subAdd,
-								self.subSub, self.subTax,self.payableAmnt ,self.cashPayment, 
+								self.subSub, self.subTax, self.totalFactor, self.cashPayment, 
 								self.subShpDate, self.subFOB, self.subShipVia,
 								self.subPreInv, self.subDesc, self.sell_factor,self.subDate,1)#editdate=subdate
 			self.session.add( sell )
 			self.session.commit()
-		print "------ Saving the Transaction:\tDONE! "
-		print "------ show to list"
-		#"test"
-		self.treestore.append(None,(int(self.Id),int(self.subCode), self.subDate, "test",self.payableAmnt))
-		print "------ showing to list Done"		
+
+		self.treestore.append(None,(int(self.Id),int(self.subCode), self.subDate, "test", self.totalFactor))
 		
 	def registerExchanges(self):	
 				
@@ -1229,15 +1216,31 @@ class Trade:
 
 	def saveDocument(self):
 		dbconf = dbconfig.dbConfig()
-		total = self.payableAmnt - self.totalDisc + self.subAdd + self.subTax
+		# total = self.payableAmnt - self.totalDisc + self.subAdd + self.subTax
 		
 		trans_code = utility.LN(self.subCode, False)
-		self.Document.add_notebook(self.custSubj, -(total - self.cashPayment), _("Debit for invoice number %s") % trans_code)
-		self.Document.add_notebook(dbconf.get_int("cash"), (self.cashPayment), _("Credit for invoice number %s") % trans_code)
-		self.Document.add_notebook(dbconf.get_int("sell-discount"), (self.totalDisc), _("Discount for invoice number %s") % trans_code)
-		if self.subAdd:
-			self.Document.add_notebook(dbconf.get_int("sell-adds"), self.subAdd, _("Additions for invoice number %s") % trans_code)
-		self.Document.add_notebook(dbconf.get_int("tax"), (self.subTax), _("Taxes for invoice number %s") % trans_code)
+		if self.sell:
+			self.Document.add_notebook(self.custSubj, -(self.totalFactor), _("Debit for invoice number %s") % trans_code)
+			if self.cashPayment:
+				self.Document.add_notebook(self.custSubj, self.cashPayment, _("Cash Payment for invoice number %s") % trans_code)
+				self.Document.add_notebook(dbconf.get_int("cash"), -(self.cashPayment), _("Cash Payment for invoice number %s") % trans_code)
+			if self.totalDisc:
+				self.Document.add_notebook(dbconf.get_int("sell-discount"), -(self.totalDisc), _("Discount for invoice number %s") % trans_code)
+			if self.subAdd:
+				self.Document.add_notebook(dbconf.get_int("sell-adds"), self.subAdd, _("Additions for invoice number %s") % trans_code)
+			if self.subTax:
+				self.Document.add_notebook(dbconf.get_int("tax"), (self.subTax), _("Taxes for invoice number %s") % trans_code)
+		else:
+			self.Document.add_notebook(self.custSubj, self.totalFactor, _("Debit for invoice number %s") % trans_code)
+			if self.cashPayment:
+				self.Document.add_notebook(self.custSubj, -(self.cashPayment), _("Cash Payment for invoice number %s") % trans_code)
+				self.Document.add_notebook(dbconf.get_int("cash"), self.cashPayment, _("Cash Payment for invoice number %s") % trans_code)
+			if self.totalDisc:
+				self.Document.add_notebook(dbconf.get_int("sell-discount"), self.totalDisc, _("Discount for invoice number %s") % trans_code)
+			if self.subAdd:
+				self.Document.add_notebook(dbconf.get_int("sell-adds"), self.subAdd, _("Additions for invoice number %s") % trans_code)
+			if self.subTax:
+				self.Document.add_notebook(dbconf.get_int("tax"), (self.subTax), _("Taxes for invoice number %s") % trans_code)
   		
 		# Create a row for each sold product
 		for exch in self.sellListStore:
@@ -1248,7 +1251,6 @@ class Trade:
 
 			exch_totalAmnt = utility.getFloat(exch[2]) * utility.getFloat(exch[3])
 			#TODO Use unit name specified for each product
-			# row = Notebook(sellid, bill.id, exch_totalAmnt, _("Selling %s units, invoice number %s") % (exch[2], trans_code) )
 			self.Document.add_notebook(sellid, exch_totalAmnt, _("Selling %s units, invoice number %s") % (exch[2], trans_code))
   			
 # 		# Create rows for payments
