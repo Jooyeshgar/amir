@@ -40,6 +40,10 @@ class Trade:
 		self.removeFlag = False
 		self.listTotalDiscount = 0.0
 		self.totalFactor = 0
+		self.totalTax = 0
+		self.VAT = 0
+		self.fee = 0
+		self.vatCheck = True
 
 		self.session = config.db.session	
 		self.Document = class_document.Document()
@@ -93,7 +97,7 @@ class Trade:
 		self.builder.get_object("subsbox").add(self.subsEntry)
 		self.subsEntry.set_alignment(0.95)
 		#self.subsEntry.show()
-		self.subsEntry.set_sensitive(False)
+		# self.subsEntry.set_sensitive(False)
 		self.subsEntry.connect("changed", self.valsChanged)
 		
 		self.cashPymntsEntry = decimalentry.DecimalEntry()
@@ -122,6 +126,7 @@ class Trade:
 		self.nonCashPymntsEntry = self.builder.get_object("nonCashPymntsEntry")
 		self.customerNameEntry  = self.builder.get_object("customerNameEntry")
 		self.taxEntry           = self.builder.get_object("taxEntry")
+		self.feeEntry           = self.builder.get_object("feeEntry")
 		
 		self.treeview = self.builder.get_object("TreeView")
 		self.treestore = gtk.TreeStore(int, str, str, str,str)
@@ -676,32 +681,34 @@ class Trade:
 		
 
 	def calculatePayable(self):
+		dbconf = dbconfig.dbConfig()
 		subtotal    = utility.getFloat(self.builder.get_object("subtotalEntry").get_text())
 		ttlDiscs    = self.listTotalDiscount + utility.getFloat(self.builder.get_object("custDiscount").get_text())
 		additions   = self.additionsEntry.get_float()
 		subtracts   = self.subsEntry.get_float()
 		taxEntry    = self.taxEntry
+		feeEntry    = self.feeEntry
 
 		self.totalDiscsEntry.set_text(utility.LN(ttlDiscs))
+		self.totalFactor = subtotal + additions - subtracts - ttlDiscs
+		
+		if self.vatCheck:
+			self.VAT = self.totalFactor * dbconf.get_int("vat-rate")/100
+			self.fee = self.totalFactor * dbconf.get_int("fee-rate")/100
+			self.totalTax = self.VAT + self.fee
 
-		err = False
-		try:
-			tax   = float(taxEntry.get_text())
-			taxEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
-			taxEntry.set_tooltip_text("")
-		except:
-			taxEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
-			taxEntry.set_tooltip_text("Invalid Number")
-			err     = True
+			taxEntry.set_text(str(self.VAT))
+			feeEntry.set_text(str(self.fee))
+		else:
+			self.totalTax = 0
+			self.VAT = 0
+			self.fee = 0
 
-		if not err:
-			self.totalFactor = subtotal + additions + tax - subtracts - ttlDiscs
-			self.payableAmntEntry.set_text(utility.LN(self.totalFactor))
+		self.payableAmntEntry.set_text(utility.LN(self.totalFactor + self.totalTax))
 
 	def calculateBalance(self):
-		# self.totalFactor = utility.getFloat(self.payableAmntEntry.get_text())
 		ttlPayment = utility.getFloat(self.totalPaymentsEntry.get_text())
-		blnc = self.totalFactor - ttlPayment
+		blnc = self.totalFactor + self.totalTax - ttlPayment
 		self.remainedAmountEntry.set_text(utility.LN(blnc))
 		
 	
@@ -1011,7 +1018,6 @@ class Trade:
 									
 		self.subAdd     	= self.additionsEntry.get_float()
 		self.subSub     	= self.subsEntry.get_float()
-		self.subTax     	= utility.getFloat(self.taxEntry.get_text())
 		self.subShpDate 	= self.shippedDate.getDateObject()
 		self.subFOB     	= unicode(self.builder.get_object("FOBEntry").get_text())
 		self.subShipVia 	= unicode(self.builder.get_object("shipViaEntry").get_text())
@@ -1030,7 +1036,7 @@ class Trade:
 			for trans in query:
 				trans.Acivated=0
 			sell = Trade( self.subCode, self.subDate, 0, self.custId, self.subAdd,
-								self.subSub, self.subTax, self.totalFactor, self.cashPayment, 
+								self.subSub, self.VAT, self.totalFactor, self.cashPayment, 
 								self.subShpDate, self.subFOB, self.subShipVia,
 								self.subPreInv, self.subDesc, self.sell_factor,self.editDate,1)
 			self.session.add( sell )
@@ -1038,7 +1044,7 @@ class Trade:
 
 		else:
 			sell = Trades( self.subCode, self.subDate, 0, self.custId, self.subAdd,
-								self.subSub, self.subTax, self.totalFactor, self.cashPayment, 
+								self.subSub, self.VAT, self.totalFactor, self.cashPayment, 
 								self.subShpDate, self.subFOB, self.subShipVia,
 								self.subPreInv, self.subDesc, self.sell_factor,self.subDate,1)#editdate=subdate
 			self.session.add( sell )
@@ -1050,9 +1056,6 @@ class Trade:
 				
 		# Exchanges( self, exchngNo, exchngProduct, exchngQnty,
 		#            exchngUntPrc, exchngUntDisc, exchngTransId, exchngDesc):
-		print "\nSaving the Exchanges -----------"
-		
-		
 		if self.editFalg:								
 			#get last trans id beacause in the save transaction we save this transaction
 			lasttransId=self.session.query(Trade).select_from(Trade)
@@ -1143,7 +1146,6 @@ class Trade:
 					self.nowexchangequantity=utility.getFloat(0)
 					self.session.commit()
 					
-		print "------ Saving the Exchanges:\tDONE! "
 		
 	def registerDocument(self):
 		# dbconf = dbconfig.dbConfig()		
@@ -1228,19 +1230,23 @@ class Trade:
 				self.Document.add_notebook(dbconf.get_int("sell-discount"), -(self.totalDisc), _("Discount for invoice number %s") % trans_code)
 			if self.subAdd:
 				self.Document.add_notebook(dbconf.get_int("sell-adds"), self.subAdd, _("Additions for invoice number %s") % trans_code)
-			if self.subTax:
-				self.Document.add_notebook(dbconf.get_int("tax"), (self.subTax), _("Taxes for invoice number %s") % trans_code)
+			if self.VAT:
+				self.Document.add_notebook(dbconf.get_int("sell-vat"), (self.VAT), _("VAT for invoice number %s") % trans_code)
+			if self.fee:
+				self.Document.add_notebook(dbconf.get_int("sell-fee"), (self.fee), _("Fee for invoice number %s") % trans_code)
 		else:
 			self.Document.add_notebook(self.custSubj, self.totalFactor, _("Debit for invoice number %s") % trans_code)
 			if self.cashPayment:
 				self.Document.add_notebook(self.custSubj, -(self.cashPayment), _("Cash Payment for invoice number %s") % trans_code)
 				self.Document.add_notebook(dbconf.get_int("cash"), self.cashPayment, _("Cash Payment for invoice number %s") % trans_code)
 			if self.totalDisc:
-				self.Document.add_notebook(dbconf.get_int("sell-discount"), self.totalDisc, _("Discount for invoice number %s") % trans_code)
+				self.Document.add_notebook(dbconf.get_int("buy-discount"), self.totalDisc, _("Discount for invoice number %s") % trans_code)
 			if self.subAdd:
-				self.Document.add_notebook(dbconf.get_int("sell-adds"), self.subAdd, _("Additions for invoice number %s") % trans_code)
-			if self.subTax:
-				self.Document.add_notebook(dbconf.get_int("tax"), (self.subTax), _("Taxes for invoice number %s") % trans_code)
+				self.Document.add_notebook(dbconf.get_int("buy-adds"), self.subAdd, _("Additions for invoice number %s") % trans_code)
+			if self.VAT:
+				self.Document.add_notebook(dbconf.get_int("buy-vat"), (self.VAT), _("VAT for invoice number %s") % trans_code)
+			if self.fee:
+				self.Document.add_notebook(dbconf.get_int("buy-fee"), (self.fee), _("Fee for invoice number %s") % trans_code)
   		
 		# Create a row for each sold product
 		for exch in self.sellListStore:
@@ -1272,4 +1278,15 @@ class Trade:
 # 		# self.session.add_all(doc_rows)
 # 		self.session.commit()
 		self.Document.save()
+
+	def vatCalc(self, sender=0, ev=0):
+		self.vatCheck = self.builder.get_object("vatCheck").get_active()
+		if not self.vatCheck:
+			self.builder.get_object("taxEntry").set_text("0")
+			self.builder.get_object("feeEntry").set_text("0")
+
+		self.builder.get_object("taxEntry").set_sensitive(self.vatCheck)
+		self.builder.get_object("feeEntry").set_sensitive(self.vatCheck)
+
+		self.valsChanged()
 ## @}

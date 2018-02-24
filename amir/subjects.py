@@ -69,12 +69,7 @@ class Subjects(gobject.GObject):
         Subject2 = aliased(Subject, name="s2")
         
         #Find top level ledgers (with parent_id equal to 0)
-        query = config.db.session.query(Subject1.code,
-                                        Subject1.name, 
-                                        Subject1.type,
-                                        Subject1.lft,
-                                        Subject1.rgt,
-                                        count(Subject2.id))
+        query = config.db.session.query(Subject1.code, Subject1.name, Subject1.type, Subject1.lft, Subject1.rgt, count(Subject2.id))
         query = query.select_from(outerjoin(Subject1, Subject2, Subject1.id == Subject2.parent_id))
         if len(parent_id) == 1:
             result = query.filter(Subject1.parent_id == parent_id[0]).group_by(Subject1.id).all()
@@ -83,7 +78,7 @@ class Subjects(gobject.GObject):
 
         for a in result :
             type = _(self.subjecttypes[a[2]])
-            code = LN(a[0])
+            code = LN(a[0], False)
             #--------
             subject_sum = config.db.session.query(sum(Notebook.value)).select_from(outerjoin(Subject, Notebook, Subject.id == Notebook.subject_id))
             subject_sum = subject_sum.filter(and_(Subject.lft >= a.lft, Subject.lft <= a.rgt)).first()
@@ -134,7 +129,7 @@ class Subjects(gobject.GObject):
         else:
             lastcode = "%02d" % (int(code[0][-2:]) + 1)
             
-        lastcode = LN(lastcode)
+        lastcode = LN(lastcode, False)
         self.code.set_text(lastcode)
         self.builder.get_object("parentcode").set_text("")
         
@@ -182,7 +177,7 @@ class Subjects(gobject.GObject):
             else :
                 lastcode = "%02d" % (int(code[0][-2:]) + 1)
                 
-            lastcode = LN(lastcode) 
+            lastcode = LN(lastcode, False) 
             self.code.set_text(lastcode)
             
             result = dialog.run()
@@ -213,8 +208,8 @@ class Subjects(gobject.GObject):
         if iter != None :
 
             code = convertToLatin(self.treestore.get(iter, 0)[0])
-            pcode = LN(code[0:-2])
-            ccode = LN(code[-2:])
+            pcode = LN(code[0:-2], False)
+            ccode = LN(code[-2:], False)
 
             self.builder.get_object("parentcode").set_text(pcode)
             self.code.set_text(ccode)
@@ -260,6 +255,7 @@ class Subjects(gobject.GObject):
             Subject2 = aliased(Subject, name="s2")
             
             code = convertToLatin(self.treestore.get(iter, 0)[0])
+
             #Check to see if there is any subledger for this ledger.
             query = config.db.session.query(Subject1.id, count(Subject2.id))
             query = query.select_from(outerjoin(Subject1, Subject2, Subject1.id == Subject2.parent_id))
@@ -410,7 +406,7 @@ class Subjects(gobject.GObject):
                 config.db.session.commit()
                 
                 #TODO show updated children on screen
-                basecode = LN(lastcode)
+                basecode = LN(lastcode, False)
                     
                 if temp_code != lastcode:
 #                    chiter = self.treestore.iter_children(iter)
@@ -471,7 +467,7 @@ class Subjects(gobject.GObject):
                 
                 config.db.session.commit()
                 
-                lastcode = LN(lastcode)
+                lastcode = LN(lastcode, False)
                 child = self.treestore.append(iter, (lastcode, name, _(self.subjecttypes[type]), LN("0")))
                 
                 self.temppath = self.treestore.get_path(child)
@@ -498,7 +494,7 @@ class Subjects(gobject.GObject):
                 result = query.filter(Sub.parent_id == parent_id[0][0]).group_by(Sub.id).all()
                 for row in result :
                     code = row[0]
-                    code = LN(code)
+                    code = LN(code, False)
                     type = _(self.subjecttypes[row[2]])
                     
                     #--------
@@ -524,7 +520,7 @@ class Subjects(gobject.GObject):
         length = data[1]
         chcode = model.get(iter, 0)[0]
         chcode = convertToLatin(chcode)[length:]
-        chcode = LN(chcode)
+        chcode = LN(chcode, False)
         self.treestore.set(model.convert_iter_to_child_iter(iter), 0, basecode + chcode )
         
     def match_func(self, iter, data):
