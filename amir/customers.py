@@ -67,7 +67,7 @@ class Customer(customergroup.Group):
             self.costmenu.hide()
             
         self.treeview = self.builder.get_object("customersTreeView")
-        self.treestore = gtk.TreeStore(str, str, str, str)
+        self.treestore = gtk.TreeStore(str, str, str, str, str)
         self.treestore.clear()
         self.treeview.set_model(self.treestore)
 
@@ -85,12 +85,17 @@ class Customer(customergroup.Group):
         column.set_sort_indicator(True)
         self.treeview.append_column(column)
         
-        column = gtk.TreeViewColumn(_("Balance"), gtk.CellRendererText(), text = 2)
+        column = gtk.TreeViewColumn(_("Debt"), gtk.CellRendererText(), text = 2)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
-        
+
         column = gtk.TreeViewColumn(_("Credit"), gtk.CellRendererText(), text = 3)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        self.treeview.append_column(column)
+
+        column = gtk.TreeViewColumn(_("Balance"), gtk.CellRendererText(), text = 4)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
@@ -104,15 +109,45 @@ class Customer(customergroup.Group):
         query = query.select_from(outerjoin(CustGroups, Customers, CustGroups.custGrpId == Customers.custGroup))
         query = query.order_by(CustGroups.custGrpId.asc())
         result = query.all()
-        
+
+        #Fill groups treeview
+        query = config.db.session.query(Notebook)
+        notes = query.all()
+        creditNote = {}
+        debtNote = {}
+        for n in notes:
+            if n.value > 0:
+                try:
+                    creditNote[n.subject_id] += n.value
+                except KeyError:
+                    creditNote[n.subject_id] = n.value
+            else:
+                try:
+                    debtNote[n.subject_id] += n.value
+                except KeyError:
+                    debtNote[n.subject_id] = n.value
+
         last_gid = 0
         grouprow = None
         for g, c in result:
             if g.custGrpId != last_gid:
-                grouprow = self.treestore.append(None, (g.custGrpCode, g.custGrpName, "", ""))
+                grouprow = self.treestore.append(None, (g.custGrpCode, g.custGrpName, "", "", ""))
                 last_gid = g.custGrpId
             if c != None:
-                self.treestore.append(grouprow, (c.custCode, c.custName, str(c.custBalance), str(c.custCredit)))
+                try:
+                    credit = creditNote[c.custSubj]
+                except KeyError:
+                    credit = 0
+                try:
+                    debt = abs(debtNote[c.custSubj])
+                except KeyError:
+                    debt = 0
+                balance = credit - debt
+                if balance < 0:
+                    showBalance = "(" + str(abs(balance)) + ")"
+                else:
+                    showBalance = str(balance)
+                self.treestore.append(grouprow, (c.custCode, c.custName, str(debt), str(credit), showBalance))
         
         self.window.show_all()    
 
