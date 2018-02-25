@@ -187,14 +187,14 @@ class Trade:
 		
 	
 	def viewSells(self,sender=0):
-		query = config.db.session.query(Trade,Customers)
-		query = query.select_from(outerjoin(Trade,Customers, Trades.Cust == Customers.custId))
+		query = config.db.session.query(Trades,Customers)
+		query = query.select_from(outerjoin(Trades,Customers, Trades.Cust == Customers.custId))
 		query = query.order_by(Trades.Code.asc())
 		query =	query.filter(Trades.Acivated==1)
 		result = query.all()
 
 		for t ,c in reversed(result):		
-	  		grouprow = self.treestore.append(None,(int(t.Id),int(t.Code), t.Date, c.custName,t.PayableAmnt))
+	  		grouprow = self.treestore.append(None,(int(t.Id),int(t.Code), t.tDate, c.custName,t.PayableAmnt))
   			
 		self.window.show_all()
 		
@@ -279,7 +279,7 @@ class Trade:
 			self.taxEntry.set_text(str(self.editTransaction.Tax))
 			self.additionsEntry.set_text(str(self.editTransaction.Addition))
 			self.cashPymntsEntry.set_text(str(self.editTransaction.CashPayment))
-			self.builder.get_object("FOBEntry").set_text(str(self.editTransaction.FOB))
+			self.builder.get_object("FOBEntry").set_text(str(self.editTransaction.Delivery))
 			self.builder.get_object("shipViaEntry").set_text(str(self.editTransaction.ShipVia))
 			self.builder.get_object("transDescEntry").set_text(str(self.editTransaction.Desc))
 			self.factorDate.set_text(str(self.editTransaction.LastEdit))			
@@ -287,14 +287,12 @@ class Trade:
 		self.mainDlg.show_all()
 																	
 	def editSelling(self,transId=None):
-		print "test:edit sell" 	
-		print self.Id	 	
 		self.editFalg=True		
 		selection = self.treeview.get_selection()
 		iter = selection.get_selected()[1]		
 		code = self.treestore.get_value(iter, 0) 		
-		query = config.db.session.query(Trade, Customers)
-		query = query.select_from(outerjoin(Trade, Customers, Trades.Cust== Customers.custId))
+		query = config.db.session.query(Trades, Customers)
+		query = query.select_from(outerjoin(Trades, Customers, Trades.Cust== Customers.custId))
 		result,result2 = query.filter(Trades.Id == code).first() 		
  		self.editTransaction=result 	
  		self.addNew() 		
@@ -691,7 +689,7 @@ class Trade:
 
 		self.totalDiscsEntry.set_text(utility.LN(ttlDiscs))
 		self.totalFactor = subtotal + additions - subtracts - ttlDiscs
-		
+		print self.totalFactor
 		if self.vatCheck:
 			self.VAT = self.totalFactor * dbconf.get_int("vat-rate")/100
 			self.fee = self.totalFactor * dbconf.get_int("fee-rate")/100
@@ -1242,11 +1240,11 @@ class Trade:
 			if self.totalDisc:
 				self.Document.add_notebook(dbconf.get_int("buy-discount"), self.totalDisc, _("Discount for invoice number %s") % trans_code)
 			if self.subAdd:
-				self.Document.add_notebook(dbconf.get_int("buy-adds"), self.subAdd, _("Additions for invoice number %s") % trans_code)
+				self.Document.add_notebook(dbconf.get_int("buy-adds"), -self.subAdd, _("Additions for invoice number %s") % trans_code)
 			if self.VAT:
-				self.Document.add_notebook(dbconf.get_int("buy-vat"), (self.VAT), _("VAT for invoice number %s") % trans_code)
+				self.Document.add_notebook(dbconf.get_int("buy-vat"), -(self.VAT), _("VAT for invoice number %s") % trans_code)
 			if self.fee:
-				self.Document.add_notebook(dbconf.get_int("buy-fee"), (self.fee), _("Fee for invoice number %s") % trans_code)
+				self.Document.add_notebook(dbconf.get_int("buy-fee"), -(self.fee), _("Fee for invoice number %s") % trans_code)
   		
 		# Create a row for each sold product
 		for exch in self.sellListStore:
@@ -1257,8 +1255,11 @@ class Trade:
 
 			exch_totalAmnt = utility.getFloat(exch[2]) * utility.getFloat(exch[3])
 			#TODO Use unit name specified for each product
-			self.Document.add_notebook(sellid, exch_totalAmnt, _("Selling %s units, invoice number %s") % (exch[2], trans_code))
-  			
+			if self.sell:
+				self.Document.add_notebook(sellid, exch_totalAmnt, _("Selling %s units, invoice number %s") % (exch[2], trans_code))
+  			else:
+				self.Document.add_notebook(sellid, -exch_totalAmnt, _("Buying %s units, invoice number %s") % (exch[2], trans_code))
+
 # 		# Create rows for payments
 # 		row = Notebook(self.custSubj, bill.id, self.totalPayment, 
 # 		               _("Payment for invoice number %s") % trans_code)
@@ -1277,7 +1278,8 @@ class Trade:
   		
 # 		# self.session.add_all(doc_rows)
 # 		self.session.commit()
-		self.Document.save()
+		docnum = self.Document.save()
+		share.mainwin.silent_daialog(_("Document saved with number %s.") % docnum)
 
 	def vatCalc(self, sender=0, ev=0):
 		self.vatCheck = self.builder.get_object("vatCheck").get_active()
