@@ -55,15 +55,6 @@ class Trade:
 		else:
 			lastId  = lastId.Id
 		self.Id = lastId + 1
-		
-		
-		query   = self.session.query(Trades.Code).select_from(Trades).filter(Trades.Sell == self.sell)
-		lastCode  = query.order_by(Trades.Code.desc()).first()
-		if not lastCode:
-			lastCode  = 0
-		else:
-			lastCode  = int(lastCode.Code)
-		self.Code = lastCode + 1
 				
 		if sell:
 			self.builder    = get_builder("SellingForm")
@@ -190,7 +181,7 @@ class Trade:
 		query = config.db.session.query(Trades,Customers)
 		query = query.select_from(outerjoin(Trades,Customers, Trades.Cust == Customers.custId))
 		query = query.order_by(Trades.Code.asc())
-		query =	query.filter(Trades.Acivated==1)
+		query =	query.filter(Trades.Sell==self.sell).filter(Trades.Acivated==1)
 		result = query.all()
 
 		for t ,c in reversed(result):		
@@ -202,6 +193,13 @@ class Trade:
 		self.addNew()
 							
 	def addNew(self,transId=None):
+		query   = self.session.query(Trades.Code).select_from(Trades).filter(Trades.Sell == self.sell)
+		lastCode  = query.order_by(Trades.Code.desc()).first()
+		if not lastCode:
+			self.Code  = 1
+		else:
+			self.Code  = int(lastCode.Code) + 1
+
 		self.mainDlg = self.builder.get_object("FormWindow")
 
 		self.Codeentry = self.builder.get_object("transCode")
@@ -235,7 +233,6 @@ class Trade:
 				disc    = sell.exchngUntDisc * sell.exchngQnty
 				list    = (sell.exchngNo,sell.exchngProduct,sell.exchngQnty,sell.exchngUntPrc,str(ttl),sell.exchngUntDisc,str(disc),sell.exchngDesc)
 				self.sellListStore.append(None,list)
-				print "---------------------------------"
 		
 		
 		if self.editFalg:
@@ -266,11 +263,9 @@ class Trade:
 			for exchange in exchanges:							
 				query=self.session.query(Products).select_from(Products)
 				product = query.filter(Products.id==exchange.exchngProduct).first()
-				sellList = (str(number), product.name,
-						 exchange.exchngQnty, exchange.exchngUntPrc, 
-						 exchange.exchngQnty*exchange.exchngUntPrc,
-						  exchange.exchngUntDisc, float(exchange.exchngQnty)*float(exchange.exchngUntDisc),
-						   exchange.exchngDesc)
+				sellList = (str(number), product.name, exchange.exchngQnty, exchange.exchngUntPrc,
+						 exchange.exchngQnty*exchange.exchngUntPrc, exchange.exchngUntDisc,
+						 float(exchange.exchngQnty)*float(exchange.exchngUntDisc), exchange.exchngDesc)
 				self.sellListStore.append(None,sellList)
 				self.appendPrice(exchange.exchngQnty*exchange.exchngUntPrc)
 				self.appendDiscount(float(exchange.exchngQnty)*float(exchange.exchngUntDisc))
@@ -957,7 +952,6 @@ class Trade:
 			self.registerTransaction()
 			self.registerExchanges()			
 			if not self.subPreInv:
-				print "\nSaving the Document -----------"
 				self.registerDocument()			
 			self.mainDlg.hide()						
 				
@@ -985,7 +979,6 @@ class Trade:
 		self.subPreInv  = self.builder.get_object("preChkBx").get_active()
 		
 		if not self.subPreInv:
-			print "full invoice!"
 			pro_dic = {}
 			for exch in self.sellListStore:
 				pro_name = unicode(exch[1])
@@ -1033,20 +1026,15 @@ class Trade:
 			query=query.filter(Trades.Code==self.subCode).all()
 			for trans in query:
 				trans.Acivated=0
-			sell = Trade( self.subCode, self.subDate, 0, self.custId, self.subAdd,
-								self.subSub, self.VAT, self.totalFactor, self.cashPayment, 
-								self.subShpDate, self.subFOB, self.subShipVia,
-								self.subPreInv, self.subDesc, self.sell_factor,self.editDate,1)
-			self.session.add( sell )
-			self.session.commit()
+			sell = Trade( self.subCode, self.subDate, 0, self.custId, self.subAdd, self.subSub, self.VAT, self.fee, self.totalFactor, self.cashPayment,
+								self.subShpDate, self.subFOB, self.subShipVia, self.subPreInv, self.subDesc, self.sell, self.editDate, 1)
 
 		else:
-			sell = Trades( self.subCode, self.subDate, 0, self.custId, self.subAdd,
-								self.subSub, self.VAT, self.totalFactor, self.cashPayment, 
-								self.subShpDate, self.subFOB, self.subShipVia,
-								self.subPreInv, self.subDesc, self.sell_factor,self.subDate,1)#editdate=subdate
-			self.session.add( sell )
-			self.session.commit()
+			sell = Trades(self.subCode, self.subDate, 0, self.custId, self.subAdd, self.subSub, self.VAT, self.fee, self.totalFactor, self.cashPayment,
+					self.subShpDate, self.subFOB, self.subShipVia, self.subPreInv, self.subDesc, self.sell, self.subDate, 1)#editdate=subdate
+
+		self.session.add(sell)
+		self.session.commit()
 
 		self.treestore.append(None,(int(self.Id),int(self.subCode), self.subDate, "test", self.totalFactor))
 		

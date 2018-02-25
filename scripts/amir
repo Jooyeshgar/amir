@@ -206,6 +206,11 @@ class MainWindow(gobject.GObject):
         obj = trades.Trade()
         obj.viewSells()
 
+    def ViewBuying(self , sender   ):
+        obj = trades.Trade(False)
+        obj.viewSells()
+
+
     def delete_event(self, widget, event, data=None):
 #         msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, _("Are you sure to close the app?"))
 #         msgbox.set_title(_("Are you sure?"))

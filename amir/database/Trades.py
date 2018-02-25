@@ -21,7 +21,8 @@ class Trades (Base):
     Cust = Column(Integer, ForeignKey('customers.custId'))
     Addition = Column(Float, ColumnDefault(0), nullable=False)
     Subtraction = Column(Float, ColumnDefault(0), nullable=False)
-    Tax = Column(Float, ColumnDefault(0), nullable=False)
+    VAT = Column(Float, ColumnDefault(0), nullable=False)
+    Fee = Column(Float, ColumnDefault(0), nullable=False)
     PayableAmnt = Column(Float, ColumnDefault(0), nullable=False)
     CashPayment = Column(Float, ColumnDefault(0), nullable=False)
     ShipDate = Column(Date, nullable=True)
@@ -33,8 +34,8 @@ class Trades (Base):
     LastEdit = Column(Date, nullable=True)
     Acivated = Column(Boolean, ColumnDefault(0), nullable=False)
 
-    def __init__(self, Code, Date, Bill, Cust, Add, Sub,
-                 Tax, PayableAmnt, Cash, ShpDate, Delivery, ShipVia, Prmnt,
+    def __init__(self, Code, Date, Bill, Cust, Add, Sub, VAT, Fee, 
+                 PayableAmnt, Cash, ShpDate, Delivery, ShipVia, Prmnt,
                  Desc, Sell, LastEdit, Acivated):
 
         self.Code = Code
@@ -43,7 +44,8 @@ class Trades (Base):
         self.Cust = Cust
         self.Addition = Add
         self.Subtraction = Sub
-        self.Tax = Tax
+        self.VAT = VAT
+        self.Fee = Fee
         self.PayableAmnt = PayableAmnt
         self.CashPayment = Cash
         self.ShipDate = ShpDate

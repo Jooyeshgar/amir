@@ -45,25 +45,26 @@ productGroups = Table('productGroups', meta,
 	mysql_charset='utf8'
 )
     
-transactions = Table('transactions', meta,
-    Column('transId',            Integer,      primary_key = True                      ),
-    Column('transCode',          Unicode(50),       nullable = False                        ),
-    Column('transDate',          Date,         nullable = False                        ),
-    Column('transBill',          Integer,      ColumnDefault(0)                        ),
-    Column('transCust',          Integer,      ForeignKey('customers.custId')          ),
-    Column('transAddition',      Float,        ColumnDefault(0),   nullable = False    ),
-    Column('transSubtraction',   Float,        ColumnDefault(0),   nullable = False    ),
-    Column('transTax',           Float,        ColumnDefault(0),   nullable = False    ),
-    Column('transPayableAmnt',   Float,        ColumnDefault(0),   nullable = False    ),
-    Column('transCashPayment',   Float,        ColumnDefault(0),   nullable = False    ),
-    Column('transShipDate',      Date,         nullable = True                         ),
-    Column('transFOB',           Unicode(50),  nullable = True                         ),
-    Column('transShipVia',       Unicode(100), nullable = True                         ),
-    Column('transPermanent',     Boolean,      ColumnDefault(0)                        ),
-    Column('transDesc',          Unicode(200), nullable = True                         ),
-    Column('transSell',          Boolean,      ColumnDefault(0)                        ),
-    Column('transLastEdit',      Date,         nullable = True                         ),
-    Column('transAcivated',      Boolean,      ColumnDefault(0),   nullable = False    ),
+trades = Table('trades', meta,
+    Column('Id'         , Integer     , primary_key = True ),
+    Column('Code'       , Unicode(50) , nullable = False ),
+    Column('tDate'      , Date        , nullable = False ),
+    Column('Bill'       , Integer     , ColumnDefault(0) ),
+    Column('Cust'       , Integer     , ForeignKey('customers.custId') ),
+    Column('Addition'   , Float       , ColumnDefault(0), nullable = False),
+    Column('Subtraction', Float       , ColumnDefault(0), nullable = False),
+    Column('VAT'        , Float       , ColumnDefault(0), nullable = False),
+    Column('Fee'        , Float       , ColumnDefault(0), nullable = False),
+    Column('PayableAmnt', Float       , ColumnDefault(0), nullable = False),
+    Column('CashPayment', Float       , ColumnDefault(0), nullable = False),
+    Column('ShipDate'   , Date        , nullable = True ),
+    Column('Delivery'   , Unicode(50) , nullable = True ),
+    Column('ShipVia'    , Unicode(100), nullable = True ),
+    Column('Permanent'  , Boolean     , ColumnDefault(0)),
+    Column('Desc'       , Unicode(200), nullable = True),
+    Column('Sell'       , Boolean     , ColumnDefault(0)),
+    Column('LastEdit'   , Date        , nullable = True),
+    Column('Acivated'   , Boolean     , ColumnDefault(0), nullable = False),
 	mysql_charset='utf8'
 )
 
@@ -74,7 +75,7 @@ exchanges = Table('exchanges', meta,
     Column('exchngQnty',        Float,          ColumnDefault(0),   nullable = False    ),
     Column('exchngUntPrc',      Float,          ColumnDefault(0),   nullable = False    ),
     Column('exchngUntDisc',     Unicode(30),    ColumnDefault("0"), nullable = False    ),
-    Column('exchngTransId',     Integer,        ForeignKey('transactions.transId')      ),
+    Column('exchngTransId',     Integer,        ForeignKey('trades.Id')      ),
     Column('exchngDesc',        Unicode(200),   nullable = True                         ),
 	mysql_charset='utf8'
 )
@@ -235,7 +236,7 @@ def upgrade(migrate_engine):
 
     products.create(checkfirst=True)
     productGroups.create(checkfirst=True)
-    transactions.create(checkfirst=True)
+    trades.create(checkfirst=True)
     exchanges.create(checkfirst=True)
     payments.create(checkfirst=True)
     cheque.create(checkfirst=True)
@@ -308,17 +309,17 @@ def downgrade(migrate_engine):
     # Operations to reverse the above upgrade go here.
     meta.bind = migrate_engine
 
-    products.drop()
-    productGroups.drop()
-    transactions.drop()
-    exchanges.drop()
-    payments.drop()
+    # products.drop()
+    # productGroups.drop()
+    # trades.drop()
+    # exchanges.drop()
+    # payments.drop()
 
-    cheques.drop()
-    custGroups.drop()
-    customers.drop()
-    bankAccounts.drop()
-    config.drop()
+    # cheques.drop()
+    # custGroups.drop()
+    # customers.drop()
+    # bankAccounts.drop()
+    # config.drop()
     print("downgrade to 1")
     
 

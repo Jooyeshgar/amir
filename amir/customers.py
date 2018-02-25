@@ -365,7 +365,7 @@ class Customer(customergroup.Group):
             custCode = LN(custCode)
             
             if not self.editCustomer:
-                self.treestore.append(parent_iter, (custCode, custName, "0.0", "0.0"))
+                self.treestore.append(parent_iter, (custCode, custName, "0", "0", "0"))
             else:
                 self.treestore.set(self.editIter, 0, custCode, 1, custName)
                 

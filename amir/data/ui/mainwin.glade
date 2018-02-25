@@ -675,6 +675,15 @@ Hadi Aminzadeh &lt;hadi60@gmail.com&gt;</property>
                       </object>
                     </child>
                     <child>
+                      <object class="GtkMenuItem" id="editBuysMenuItem">
+                        <property name="label" translatable="yes">View All Buys</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
+                        <signal name="activate" handler="ViewBuying" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkMenuItem" id="addSellMenuItem">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
