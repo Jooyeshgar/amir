@@ -2,9 +2,9 @@ import sys
 import os
 from datetime import date
 
-import gobject
-import pygtk
-import gtk
+from gi.repository import GObject
+import gi
+from gi.repository import Gtk
 
 from sqlalchemy.sql import and_
 from sqlalchemy.orm.util import outerjoin
@@ -26,7 +26,7 @@ from helpers import get_builder, comboInsertItems
 
 config = share.config
 
-class Payments(gobject.GObject):
+class Payments(GObject.GObject):
 	
 	chequeStatus = [_("Pending"), _("In Account"), _("Refused"), _("Paid"), _("Spent")]
 	chequePayment=[]
@@ -37,11 +37,11 @@ class Payments(gobject.GObject):
 		#temp for vackground
 		self.bank_names_count = 0
 		
-		self.background = gtk.Fixed()
-		self.background.put(gtk.image_new_from_file(os.path.join(config.data_path, "media", "background.png")), 0, 0)
+		self.background = Gtk.Fixed()
+		self.background.put(Gtk.image_new_from_file(os.path.join(config.data_path, "media", "background.png")), 0, 0)
 		self.background.show_all()
 					
-		gobject.GObject.__init__(self)
+		GObject.GObject.__init__(self)
 		
 		self.session = config.db.session
 		self.builder = get_builder("SellingForm")
@@ -81,11 +81,11 @@ class Payments(gobject.GObject):
 		
 		self.bankaccounts_class = class_bankaccounts.BankAccountsClass()
 	 	self.bankCombo = self.builder.get_object('bank_names_combo')
-		model = gtk.ListStore(str)
+		model = Gtk.ListStore(str)
 		self.bankCombo.set_model(model)
 
-		cell = gtk.CellRendererText()
-		self.bankCombo.pack_start(cell)
+		cell = Gtk.CellRendererText()
+		self.bankCombo.pack_start(cell, True, True, 0)
 		self.bankCombo.add_attribute(cell, 'text', 0)
 		
 		for item in self.bankaccounts_class.get_bank_names():
@@ -107,12 +107,12 @@ class Payments(gobject.GObject):
 		self.bankAccountEntry = self.builder.get_object("bankAccountEntry")
 		
 		self.paysTreeView = self.builder.get_object("receiptTreeView")
-		self.paysListStore = gtk.ListStore(str, str, str, str, str, str, str, str, str)
+		self.paysListStore = Gtk.ListStore(str, str, str, str, str, str, str, str, str)
 		self.paysListStore.clear()
 		self.paysTreeView.set_model(self.paysListStore)
 		
 		self.cheqTreeView = self.builder.get_object("chequeTreeView")
-		self.cheqListStore = gtk.ListStore(str, str, str, str, str, str, str, str, str)
+		self.cheqListStore = Gtk.ListStore(str, str, str, str, str, str, str, str, str)
 		self.cheqListStore.clear()
 		self.cheqTreeView.set_model(self.cheqListStore)
 		
@@ -120,7 +120,7 @@ class Payments(gobject.GObject):
 					  _("Bank"), _("Serial No."), _("Track Code"), _("Description"))
 		txt = 0
 		for header in payHeaders:
-			column = gtk.TreeViewColumn(header,gtk.CellRendererText(),text = txt)
+			column = Gtk.TreeViewColumn(header,Gtk.CellRendererText(),text = txt)
 			column.set_spacing(5)
 			column.set_resizable(True)
 			self.paysTreeView.append_column(column)
@@ -130,7 +130,7 @@ class Payments(gobject.GObject):
 					  _("Bank"), _("Serial No."), _("Status"), _("Description"))
 		txt = 0
 		for header in cheqHeaders:
-			column = gtk.TreeViewColumn(header,gtk.CellRendererText(),text = txt)
+			column = Gtk.TreeViewColumn(header,Gtk.CellRendererText(),text = txt)
 			column.set_spacing(5)
 			column.set_resizable(True)
 			self.cheqTreeView.append_column(column)
@@ -326,12 +326,12 @@ class Payments(gobject.GObject):
 				number = utility.getInt(self.cheqListStore.get(iter, 0)[0])
 				print number
 				msg = _("Are you sure to delete the cheque number %d?") % number
-				msgBox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, 
-				                           gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK_CANCEL, msg)
+				msgBox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, 
+				                           Gtk.MessageType.QUESTION, Gtk.ButtonsType.OK_CANCEL, msg)
 				msgBox.set_title(_("Confirm Deletion"))
 				answer = msgBox.run()
 				msgBox.destroy()
-				if answer != gtk.RESPONSE_OK:
+				if answer != Gtk.ResponseType.OK:
 					return
 				query = self.session.query(Cheque).select_from(Cheque)
 				query = query.filter(and_(Cheque.chqTransId == self.transId, 
@@ -352,12 +352,12 @@ class Payments(gobject.GObject):
 		else:
 			number = utility.getInt(self.paysListStore.get(iter, 0)[0])
 			msg = _("Are you sure to delete the receipt number %d?") % number
-			msgBox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, 
-										gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK_CANCEL, msg)
+			msgBox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, 
+										Gtk.MessageType.QUESTION, Gtk.ButtonsType.OK_CANCEL, msg)
 			msgBox.set_title(_("Confirm Deletion"))
 			answer = msgBox.run()
 			msgBox.destroy()
-			if answer != gtk.RESPONSE_OK:
+			if answer != Gtk.ResponseType.OK:
 				return
 			query = self.session.query(Payment).select_from(Payment)
 			query = query.filter(and_(Payment.paymntTransId == self.transId, 
@@ -594,8 +594,8 @@ class Payments(gobject.GObject):
 		#----values:
 		if errFlg:
 			msg = _("The payment cannot be saved.\n\n%s") % msg
-			msgbox = gtk.MessageDialog( self.addPymntDlg, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, 
-										gtk.BUTTONS_OK, msg )
+			msgbox = Gtk.MessageDialog( self.addPymntDlg, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, 
+										Gtk.ButtonsType.OK, msg )
 			msgbox.set_title(_("Invalid data"))
 			msgbox.run()
 			msgbox.destroy()
@@ -689,7 +689,7 @@ class Payments(gobject.GObject):
 		self.cheqTreeView.get_selection().unselect_all()
 
 	def receiptTreeView_button_press(self, sender, event):
-		if event.type == gtk.gdk._2BUTTON_PRESS:
+		if event.type == Gdk._2BUTTON_PRESS:
 			selection = self.paysTreeView.get_selection()
 			iter = selection.get_selected()[1]
 			if iter != None :
@@ -698,7 +698,7 @@ class Payments(gobject.GObject):
 				self.addPayment(sender, False)
 	
 	def chequeTreeView_button_press(self, sender, event):
-		if event.type == gtk.gdk._2BUTTON_PRESS:
+		if event.type == Gdk._2BUTTON_PRESS:
 			selection = self.cheqTreeView.get_selection()
 			iter = selection.get_selected()[1]
 			if iter != None :
@@ -707,18 +707,18 @@ class Payments(gobject.GObject):
 				self.addPayment(sender, True)
 
 	def on_add_bank_clicked(self, sender):
-		dialog = gtk.Dialog(None, None,
-					 gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-					 (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-					  gtk.STOCK_OK, gtk.RESPONSE_OK))
-		label = gtk.Label('Bank Name:')
-		entry = gtk.Entry()
+		dialog = Gtk.Dialog(None, None,
+					 Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+					 (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+					  Gtk.STOCK_OK, Gtk.ResponseType.OK))
+		label = Gtk.Label(label='Bank Name:')
+		entry = Gtk.Entry()
 		dialog.vbox.pack_start(label, False, False)
 		dialog.vbox.pack_start(entry, False, False)
 		dialog.show_all()
 		result = dialog.run()
 		bank_name = entry.get_text()
-		if result == gtk.RESPONSE_OK and len(bank_name) != 0:
+		if result == Gtk.ResponseType.OK and len(bank_name) != 0:
 				combo = self.builder.get_object('bank_names_combo')
 				model = combo.get_model()
  
@@ -764,7 +764,7 @@ class Payments(gobject.GObject):
 			self.buyerNameEntry.set_text(query.name)
 	
 							
-gobject.type_register(Payments)
-gobject.signal_new("payments-changed", Payments, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (gobject.TYPE_STRING,))
+GObject.type_register(Payments)
+GObject.signal_new("payments-changed", Payments, GObject.SignalFlags.RUN_LAST,
+                   None, (GObject.TYPE_STRING,))
                    

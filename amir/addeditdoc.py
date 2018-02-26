@@ -1,4 +1,4 @@
-import gtk
+from gi.repository import Gtk
 import class_document
 import numberentry
 import dateentry
@@ -48,48 +48,48 @@ class AddEditDoc:
         self.amount.show()
         
         self.treeview = self.builder.get_object("treeview")
-        #self.treeview.set_direction(gtk.TEXT_DIR_LTR)
-        if gtk.widget_get_default_direction() == gtk.TEXT_DIR_RTL :
+        #self.treeview.set_direction(Gtk.TextDirection.LTR)
+        if Gtk.widget_get_default_direction() == Gtk.TextDirection.RTL :
             halign = 1
         else:
             halign = 0
-        self.liststore = gtk.ListStore(str, str, str, str, str, str, str)
+        self.liststore = Gtk.ListStore(str, str, str, str, str, str, str)
         
-        column = gtk.TreeViewColumn(_("Index"), gtk.CellRendererText(), text=0)
+        column = Gtk.TreeViewColumn(_("Index"), Gtk.CellRendererText(), text=0)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
-        column = gtk.TreeViewColumn(_("Subject Code"), gtk.CellRendererText(), text=1)
+        column = Gtk.TreeViewColumn(_("Subject Code"), Gtk.CellRendererText(), text=1)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
-        column = gtk.TreeViewColumn(_("Subject Name"), gtk.CellRendererText(), text=2)
+        column = Gtk.TreeViewColumn(_("Subject Name"), Gtk.CellRendererText(), text=2)
         column.set_spacing(5)
         column.set_resizable(True)
         
-        money_cell_renderer = gtk.CellRendererText()
+        money_cell_renderer = Gtk.CellRendererText()
         #money_cell_renderer.set_alignment(1.0, 0.5) #incompatible with pygtk2.16
         
         self.treeview.append_column(column)
-        column = gtk.TreeViewColumn(_("Debt"), money_cell_renderer, text=3)
+        column = Gtk.TreeViewColumn(_("Debt"), money_cell_renderer, text=3)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
-        column = gtk.TreeViewColumn(_("Credit"), money_cell_renderer, text=4)
+        column = Gtk.TreeViewColumn(_("Credit"), money_cell_renderer, text=4)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
-        column = gtk.TreeViewColumn(_("Description"), gtk.CellRendererText(), text=5)
+        column = Gtk.TreeViewColumn(_("Description"), Gtk.CellRendererText(), text=5)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
-        #column = gtk.TreeViewColumn(_("Notebook ID") , gtk.CellRendererText(), text=6)
+        #column = Gtk.TreeViewColumn(_("Notebook ID") , Gtk.CellRendererText(), text=6)
         #column.set_alignment(halign)
         #column.set_spacing(5)
         #column.set_resizable(True)
         #self.treeview.append_column(column)
 
-        self.treeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
+        self.treeview.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
         
         self.debt_sum   = 0
         self.credit_sum = 0
@@ -105,11 +105,11 @@ class AddEditDoc:
             else:
                 numstring = utility.LN(number)
                 msg = _("No document found with number %s\nDo you want to register a document with this number?") % numstring
-                msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, msg)
+                msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL, msg)
                 msgbox.set_title(_("No Documents found"))
                 result = msgbox.run()
                 msgbox.destroy()
-                if result == gtk.RESPONSE_CANCEL:
+                if result == Gtk.ResponseType.CANCEL:
                     return
                 else:
                     self.builder.get_object("docnumber").set_text (numstring)
@@ -240,7 +240,7 @@ class AddEditDoc:
             if config.digittype == 1:
                 code = utility.convertToPersian(code)
             errorstr = _("No subject is registered with the code: %s") % code
-            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK, errorstr)
+            msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK, errorstr)
             msgbox.set_title(_("No subjects found"))
             msgbox.run()
             msgbox.destroy()
@@ -286,11 +286,11 @@ class AddEditDoc:
         selection = self.treeview.get_selection()
         iter = selection.get_selected()[1]
         if iter != None :
-            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, 
+            msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL, 
                                        _("Are you sure to remove this row?"))
             msgbox.set_title(_("Are you sure?"))
             result = msgbox.run();
-            if result == gtk.RESPONSE_OK :
+            if result == Gtk.ResponseType.OK :
                 id     = int(unicode(self.liststore.get(iter, 6)[0]))
                 code   = int(unicode(self.liststore.get(iter, 1)[0]))
                 debt   = int(unicode(self.liststore.get(iter, 3)[0].replace(",", "")))
@@ -351,7 +351,7 @@ class AddEditDoc:
 
         result = self.cl_document.save(self.deleted_items)
         if result == -1:
-            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 
+            msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, 
                                        _("Document should not be empty"))
             msgbox.set_title(_("Can not save document"))
             msgbox.run()
@@ -359,7 +359,7 @@ class AddEditDoc:
             self.cl_document.clear_notebook()
             return
         elif result == -2:
-            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 
+            msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, 
                                        _("Debt sum and Credit sum should be equal"))
             msgbox.set_title(_("Can not save document"))
             msgbox.run()
@@ -383,7 +383,7 @@ class AddEditDoc:
             self.builder.get_object("editable").hide()
             self.builder.get_object("non-editable").show()
         else:
-            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 
+            msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.INFO, Gtk.ButtonsType.OK, 
                                    _("You should save the document before make it permanent"))
             msgbox.set_title(_("Document is not saved"))
             msgbox.run()
@@ -391,13 +391,13 @@ class AddEditDoc:
     
     ##Mark document as temporary 
     def makeTemporary(self, sender):
-        msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, 
+        msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL, 
                                    _("Are you sure to make this document temporary?"))
         msgbox.set_title(_("Are you sure?"))
         result = msgbox.run();
         msgbox.destroy()
         
-        if result == gtk.RESPONSE_OK and self.cl_document.id > 0 :
+        if result == Gtk.ResponseType.OK and self.cl_document.id > 0 :
             self.cl_document.set_permanent(False)
             self.builder.get_object("non-editable").hide()
             self.builder.get_object("editable").show()
@@ -407,12 +407,12 @@ class AddEditDoc:
         if self.cl_document.id == 0 :
             return
         
-        msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL,
+        msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL,
                                    _("Are you sure to delete the whole document?"))
         msgbox.set_title(_("Are you sure?"))
         result = msgbox.run();
         
-        if result == gtk.RESPONSE_OK :
+        if result == Gtk.ResponseType.OK :
             self.cl_document.delete()
             self.window.destroy()
         msgbox.destroy() 

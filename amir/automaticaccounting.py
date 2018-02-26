@@ -13,7 +13,7 @@ from database import Customers
 from class_subject import Subjects
 from utility import LN
 
-import gtk
+from gi.repository import Gtk
 
 ## \defgroup UserInterface
 ## @{
@@ -71,16 +71,16 @@ class AutomaticAccounting:
         self.current_time = self.date_entry.getDateObject()
         # type combo
         type_combo = self.builder.get_object('select-type')
-        model = gtk.ListStore(str, str)
+        model = Gtk.ListStore(str, str)
         type_combo.set_model(model)
 
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         cell.set_visible(False)
-        type_combo.pack_start(cell)
+        type_combo.pack_start(cell, True, True, 0)
         type_combo.add_attribute(cell, 'text', 0)
 
-        cell = gtk.CellRendererText()
-        type_combo.pack_start(cell)
+        cell = Gtk.CellRendererText()
+        type_combo.pack_start(cell, True, True, 0)
         type_combo.add_attribute(cell, 'text', 1)
 
         for item in self.type_names:
@@ -101,11 +101,11 @@ class AutomaticAccounting:
         # names table
         table = self.builder.get_object('names-table')
 
-        self.from_entry = gtk.Entry()
+        self.from_entry = Gtk.Entry()
         self.from_entry.set_sensitive(False)
         table.attach(self.from_entry, 1, 2, 0, 1)
 
-        self.to_entry = gtk.Entry()
+        self.to_entry = Gtk.Entry()
         self.to_entry.set_sensitive(False)
         table.attach(self.to_entry, 1, 2, 1, 2)
 
@@ -209,23 +209,23 @@ class AutomaticAccounting:
         self.on_cash_payment_entry_change(None)
 
     def on_discount_clicked(self, button):
-        dialog = gtk.Dialog("Discount percentage",
+        dialog = Gtk.Dialog("Discount percentage",
                             self.builder.get_object('general'),
-                            gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                            (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OK, gtk.RESPONSE_OK)
+                            Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OK, Gtk.ResponseType.OK)
                            )
-        adj = gtk.Adjustment(0, 0, 100, 1, 1)
-        spin = gtk.SpinButton(adj)
+        adj = Gtk.Adjustment(0, 0, 100, 1, 1)
+        spin = Gtk.SpinButton(adj)
 
-        hbox = gtk.HBox()
-        hbox.pack_start(spin)
-        hbox.pack_start(gtk.Label(' % '), False, False)
+        hbox = Gtk.HBox()
+        hbox.pack_start(spin, True, True, 0)
+        hbox.pack_start(Gtk.Label(' % ', True, True, 0), False, False)
         hbox.show_all()
 
         dialog.vbox.pack_start(hbox, False, False)
 
         result = dialog.run()
-        if result == gtk.RESPONSE_OK:
+        if result == Gtk.ResponseType.OK:
             val = spin.get_value()
             total = self.total_credit_entry.get_float()
             discount = (val*total)/100
@@ -350,7 +350,7 @@ class AutomaticAccounting:
             result = document.save()
 
             if result < 0:
-                dialog = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 'Failed, %s' % document.get_error_message(result))
+                dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, 'Failed, %s' % document.get_error_message(result))
                 dialog.run()
                 dialog.destroy()
                 return
@@ -371,8 +371,8 @@ class AutomaticAccounting:
             self.on_destroy(self.builder.get_object('general'))
             
             share.mainwin.silent_daialog(_('successfully added. Document number : %d') % document.number)
-#            infobar = gtk.InfoBar()
-#            label = gtk.Label(_('successfully added. Document number : %d') % document.number)
+#            infobar = Gtk.InfoBar()
+#            label = Gtk.Label(label=_('successfully added. Document number : %d') % document.number)
 #            infobar.get_content_area().add(label)
 #            width , height = self.main_window_background.window.get_size()
 #            infobar.set_size_request(width, -1)
@@ -434,7 +434,7 @@ class AutomaticAccounting:
 
         if parent:
             self.win.set_transient_for(parent)
-        #win.set_position(gtk.WIN_POS_CENTER)
+        #win.set_position(Gtk.WindowPosition.CENTER)
         self.win.set_destroy_with_parent(True)
         self.win.show_all()
         

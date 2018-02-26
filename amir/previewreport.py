@@ -1,5 +1,5 @@
-import pygtk
-import gtk
+import gi
+from gi.repository import Gtk
 import math
 
 import utility
@@ -17,23 +17,23 @@ class PreviewReport:
         
         self.builder = get_builder("report")
         self.treeview = self.builder.get_object("previewBox")
-        self.treeview.set_direction(gtk.TEXT_DIR_LTR)
+        self.treeview.set_direction(Gtk.TextDirection.LTR)
         
-        self.liststore = gtk.ListStore(*([str] * len(self.heading)))
+        self.liststore = Gtk.ListStore(*([str] * len(self.heading)))
         self.pagecount = self.builder.get_object("pagecount")
         
         self.pageNumber = self.builder.get_object("pageNumber")
         self.current_page = 1
         self.pageNumber.set_value(self.current_page)
         
-        if gtk.widget_get_default_direction() == gtk.TEXT_DIR_RTL :
+        if Gtk.widget_get_default_direction() == Gtk.TextDirection.RTL :
             halign = 1
         else:
             halign = 0
             
         index = 0
         for label in self.heading:
-            column = gtk.TreeViewColumn(label, gtk.CellRendererText(), text=index)
+            column = Gtk.TreeViewColumn(label, Gtk.CellRendererText(), text=index)
             column.set_alignment(halign)
             column.set_spacing(10)
             column.set_resizable(True)

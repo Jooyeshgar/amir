@@ -45,12 +45,12 @@
 
 import sys
 import os, logging
-import gtk
-import pygtk
-pygtk.require('2.0')
-import gtk,gtk.glade
+from gi.repository import Gtk
+import gi
+gi.require_version('Gtk', '3.0')
+import gtk,Gtk.glade
 import gettext,locale
-import gobject
+from gi.repository import GObject
 import glib
 
 if sys.platform == 'win32':
@@ -61,8 +61,8 @@ if sys.platform == 'win32':
 
     # set windows theme
     gtkrc = r'.\\gtkrc'
-    gtk.rc_set_default_files([gtkrc])
-    gtk.rc_reparse_all_for_settings(gtk.settings_get_default(), True)
+    Gtk.rc_set_default_files([gtkrc])
+    Gtk.rc_reparse_all_for_settings(Gtk.Settings.get_default(), True)
 
 
 # Check if we are working in the source tree or from the installed
@@ -105,8 +105,8 @@ except:
     logging.error("Unable to set locale.")
 
 logging.debug('Locale Path=%s' % (config.locale_path))
-gtk.glade.bindtextdomain('amir', config.locale_path)
-gtk.glade.textdomain('amir')
+Gtk.glade.bindtextdomain('amir', config.locale_path)
+Gtk.glade.textdomain('amir')
 gettext.install('amir', config.locale_path, unicode=1)
 
 from amir import subjects, addeditdoc, database, numberentry, notebookreport, docreport, tbalancereport, notebookutils, \
@@ -114,7 +114,7 @@ setting, helpers, customers, customergroup, product, productgroup, trades
 from amir import automaticaccounting
 from amir import bankaccountsui
 
-class MainWindow(gobject.GObject):
+class MainWindow(GObject.GObject):
 
     def manualDocument(self, sender):
         dialog = addeditdoc.AddEditDoc(0,self.background)
@@ -152,7 +152,7 @@ class MainWindow(gobject.GObject):
         self.numentry.set_activates_default(True)
         res = dialog.run()
         dialog.hide()
-        if res == gtk.RESPONSE_OK:
+        if res == Gtk.ResponseType.OK:
             if self.numentry.get_text() != "":
                 dialog = addeditdoc.AddEditDoc(self.numentry.get_int())
                 self.connect("database-changed", dialog.dbChanged)
@@ -167,10 +167,10 @@ class MainWindow(gobject.GObject):
         window.connect("locale-changed", self.localeChanged)
 
     def quitMainWindow(self, sender):
-        msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, "Are you sure to close the app?")
+        msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL, "Are you sure to close the app?")
         msgbox.set_title("Are you sure?")
         result = msgbox.run();
-        if result == gtk.RESPONSE_OK:
+        if result == Gtk.ResponseType.OK:
             self.window.destroy()
         else:
             msgbox.destroy()
@@ -212,10 +212,10 @@ class MainWindow(gobject.GObject):
 
 
     def delete_event(self, widget, event, data=None):
-#         msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, _("Are you sure to close the app?"))
+#         msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL, _("Are you sure to close the app?"))
 #         msgbox.set_title(_("Are you sure?"))
 #         result = msgbox.run();
-#         if result == gtk.RESPONSE_CANCEL :
+#         if result == Gtk.ResponseType.CANCEL :
 #        msgbox.destroy()
 #         return True
 #         else :
@@ -225,27 +225,27 @@ class MainWindow(gobject.GObject):
 
     def destroy(self, widget, data=None):
         config.updateConfigFile()
-        gtk.main_quit()
+        Gtk.main_quit()
 
     def __init__(self):
-        gobject.GObject.__init__(self)
+        GObject.GObject.__init__(self)
 
         if config.directionlist[config.localelist.index(config.locale)] == "rtl" :
-            gtk.widget_set_default_direction(gtk.TEXT_DIR_RTL)
+            Gtk.widget_set_default_direction(Gtk.TextDirection.RTL)
         else:
-            gtk.widget_set_default_direction(gtk.TEXT_DIR_LTR)
+            Gtk.widget_set_default_direction(Gtk.TextDirection.LTR)
 
         icondir = os.path.join(config.data_path, "media", "icon")
 
         try:
-        	icon16 = gtk.gdk.pixbuf_new_from_file(os.path.join(icondir, "16.png"))
-        	icon22 = gtk.gdk.pixbuf_new_from_file(os.path.join(icondir, "22.png"))
-        	icon32 = gtk.gdk.pixbuf_new_from_file(os.path.join(icondir, "32.png"))
-        	icon48 = gtk.gdk.pixbuf_new_from_file(os.path.join(icondir, "48.png"))
-        	icon64 = gtk.gdk.pixbuf_new_from_file(os.path.join(icondir, "64.png"))
-        	icon128 = gtk.gdk.pixbuf_new_from_file(os.path.join(icondir, "128.png"))
-        	gtk.window_set_default_icon_list(icon16, icon22, icon32, icon48, icon64, icon128)
-        except gobject.GError:
+        	icon16 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "16.png"))
+        	icon22 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "22.png"))
+        	icon32 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "32.png"))
+        	icon48 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "48.png"))
+        	icon64 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "64.png"))
+        	icon128 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "128.png"))
+        	Gtk.window_set_default_icon_list(icon16, icon22, icon32, icon48, icon64, icon128)
+        except GObject.GError:
         	pass
 
         self.builder = helpers.get_builder("mainwin")
@@ -260,9 +260,9 @@ class MainWindow(gobject.GObject):
         self.dblist.set_active(config.currentdb - 1)
 
         main_box = self.builder.get_object('vbox2')
-        self.background = gtk.Fixed()
+        self.background = Gtk.Fixed()
         main_box.add(self.background)
-        self.background.put(gtk.image_new_from_file(os.path.join(config.data_path, "media", "background.png")), 0, 0)
+        self.background.put(Gtk.image_new_from_file(os.path.join(config.data_path, "media", "background.png")), 0, 0)
         self.background.show_all()
 
         #NOTE: Bad idea, because until initial menu is shown, user can not register any bill;
@@ -286,20 +286,20 @@ class MainWindow(gobject.GObject):
 
         if config.repair_atstart == True:
         	msg = _("Repairing database, Please wait...")
-        	self.msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_NONE, msg)
+        	self.msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.INFO, Gtk.ButtonsType.NONE, msg)
         	self.msgbox.set_title(_("Repairing database"))
         	self.msgbox.show_all()
 
-        	while gtk.events_pending():
-        		gtk.main_iteration_do(False)
+        	while Gtk.events_pending():
+        		Gtk.main_iteration_do(False)
 
-       		gobject.timeout_add(1000, self.repairDbFunc)
+       		GObject.timeout_add(1000, self.repairDbFunc)
 
     def repairDbFunc(self):
         config.db.rebuild_nested_set(0, 0)
 
         self.msgbox.set_markup(_("Repair Operation Completed!"))
-        self.msgbox.add_button(gtk.STOCK_OK, -5)
+        self.msgbox.add_button(Gtk.STOCK_OK, -5)
         self.msgbox.run()
         self.msgbox.destroy()
         return False
@@ -307,12 +307,12 @@ class MainWindow(gobject.GObject):
     def dbSelected(self, combo):
         active_index = combo.get_active()
         if active_index != config.currentdb - 1:
-            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL,
+            msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL,
                                        _("You have changed the current database, any unsaved data will be lost.\nAre you sure to continue?"))
             msgbox.set_title(_("Are you sure?"))
             result = msgbox.run()
             msgbox.destroy()
-            if result == gtk.RESPONSE_OK :
+            if result == Gtk.ResponseType.OK :
                 config.db.session.close()
                 config.db = database.Database(config.dblist[active_index], config.db_repository, config.echodbresult)
                 config.currentdb = active_index + 1
@@ -337,8 +337,8 @@ class MainWindow(gobject.GObject):
     def localeChanged(self, sender, new_locale):
         os.environ['LANG'] = new_locale
         locale.setlocale(locale.LC_ALL, '')
-        gtk.glade.bindtextdomain('amir', config.locale_path)
-        gtk.glade.textdomain('amir')
+        Gtk.glade.bindtextdomain('amir', config.locale_path)
+        Gtk.glade.textdomain('amir')
         gettext.install('amir', config.locale_path, unicode=1)
         logging.info('New locale: ' + new_locale)
 
@@ -355,8 +355,8 @@ class MainWindow(gobject.GObject):
         obj.add_account()
 
     def silent_daialog(self, text):
-        infobar = gtk.InfoBar()
-        infobar.get_content_area().add(gtk.Label(text))
+        infobar = Gtk.InfoBar()
+        infobar.get_content_area().add(Gtk.Label(label=text))
         width , height = self.background.window.get_size()
         infobar.set_size_request(width, -1)
         self.background.put(infobar ,0 , 0)
@@ -365,11 +365,11 @@ class MainWindow(gobject.GObject):
         glib.timeout_add_seconds(3, lambda w: w.destroy(), infobar)
 
     def main(self):
-        gtk.main()
+        Gtk.main()
 
 if __name__ == "__main__":
-    gobject.type_register(MainWindow)
-    gobject.signal_new("database-changed", MainWindow, gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_STRING,))
+    GObject.type_register(MainWindow)
+    GObject.signal_new("database-changed", MainWindow, GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_STRING,))
 
     mainwin = MainWindow()
     share.mainwin = mainwin

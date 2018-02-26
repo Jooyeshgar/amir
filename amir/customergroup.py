@@ -18,13 +18,13 @@ from    share                       import  share
 from    datetime                    import  date
 from    database                    import  *
 
-pygtk.require('2.0')
+gi.require_version('Gtk', '3.0')
 config  = share.config
 
-class Group(gobject.GObject):
+class Group(GObject.GObject):
     
     def __init__(self):
-        gobject.GObject.__init__(self)
+        GObject.GObject.__init__(self)
         
         self.builder    = get_builder("customers" )
         self.window = None
@@ -42,32 +42,32 @@ class Group(gobject.GObject):
         self.window = self.builder.get_object("viewCustGroupsWindow")
         
         self.treeview = self.builder.get_object("custGroupsTreeView")
-        self.treestore = gtk.TreeStore(str, str, str)
+        self.treestore = Gtk.TreeStore(str, str, str)
         self.treestore.clear()
         self.treeview.set_model(self.treestore)
 
-        column = gtk.TreeViewColumn(_("Code"), gtk.CellRendererText(), text = 0)
+        column = Gtk.TreeViewColumn(_("Code"), Gtk.CellRendererText(), text = 0)
         column.set_spacing(5)
         column.set_resizable(True)
         column.set_sort_column_id(0)
         column.set_sort_indicator(True)
         self.treeview.append_column(column)
         
-        column = gtk.TreeViewColumn(_("Name"), gtk.CellRendererText(), text = 1)
+        column = Gtk.TreeViewColumn(_("Name"), Gtk.CellRendererText(), text = 1)
         column.set_spacing(5)
         column.set_resizable(True)
         column.set_sort_column_id(1)
         column.set_sort_indicator(True)
         self.treeview.append_column(column)
         
-        column = gtk.TreeViewColumn(_("Description"), gtk.CellRendererText(), text = 2)
+        column = Gtk.TreeViewColumn(_("Description"), Gtk.CellRendererText(), text = 2)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
         
-        self.treeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
+        self.treeview.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
         #self.treestore.set_sort_func(0, self.sortGroupIds)
-        self.treestore.set_sort_column_id(0, gtk.SORT_ASCENDING)
+        self.treestore.set_sort_column_id(0, Gtk.SortType.ASCENDING)
         
         #Fill groups treeview
         query = config.db.session.query(CustGroups).select_from(CustGroups)
@@ -135,7 +135,7 @@ class Group(gobject.GObject):
             result = query.filter(CustGroups.custGrpCode == code).first()
             
             if result[1] != 0 :
-                msgbox =  gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
+                msgbox =  Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.CLOSE,
                                     _("Group can not be deleted, Because there are some customers registered in it."))
                 msgbox.set_title(_("Error deleting group"))
                 msgbox.run()
@@ -156,7 +156,7 @@ class Group(gobject.GObject):
             msg = _("Group code should not be empty")
             
         if msg != "":
-            msgbox =  gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, msg)
+            msgbox =  Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.CLOSE, msg)
             msgbox.set_title(_("Empty fields"))
             msgbox.run()
             msgbox.destroy()
@@ -184,7 +184,7 @@ class Group(gobject.GObject):
                 msg = _("A group with this name already exists.")
                 break
         if msg != "":
-            msgbox =  gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE, msg)
+            msgbox =  Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.CLOSE, msg)
             msgbox.set_title(_("Duplicate group"))
             msgbox.run()
             msgbox.destroy()
@@ -252,6 +252,6 @@ class Group(gobject.GObject):
         group_id = query.first().custGrpId
         self.emit("group-selected", group_id, code)   
 
-gobject.type_register(Group)
-gobject.signal_new("group-selected", Group, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (gobject.TYPE_INT, gobject.TYPE_STRING))   
+GObject.type_register(Group)
+GObject.signal_new("group-selected", Group, GObject.SignalFlags.RUN_LAST,
+                   None, (GObject.TYPE_INT, GObject.TYPE_STRING))   

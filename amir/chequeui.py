@@ -5,7 +5,7 @@ import decimalentry
 import helpers
 from share import share
 from database import Cheque
-import gtk
+from gi.repository import Gtk
 
 config = share.config
 
@@ -40,45 +40,45 @@ class ChequeUI:
         self.due_date = dateentry.DateEntry()
         
         add_table = self.builder.get_object('add_table')
-        add_table.attach(self.amount_entry, 1, 2, 1, 2, gtk.EXPAND|gtk.FILL, gtk.SHRINK)
-        add_table.attach(self.write_date , 1, 2, 3, 4, gtk.EXPAND|gtk.FILL, gtk.SHRINK)
-        add_table.attach(self.due_date   , 1, 2, 4, 5, gtk.EXPAND|gtk.FILL, gtk.SHRINK)
+        add_table.attach(self.amount_entry, 1, 2, 1, 2, Gtk.AttachOptions.EXPAND|Gtk.AttachOptions.FILL, Gtk.AttachOptions.SHRINK)
+        add_table.attach(self.write_date , 1, 2, 3, 4, Gtk.AttachOptions.EXPAND|Gtk.AttachOptions.FILL, Gtk.AttachOptions.SHRINK)
+        add_table.attach(self.due_date   , 1, 2, 4, 5, Gtk.AttachOptions.EXPAND|Gtk.AttachOptions.FILL, Gtk.AttachOptions.SHRINK)
 
         self.builder.get_object('list_cheque_window').resize(400, 1)
         self.builder.get_object('desc_frame').set_size_request(0, 100)
 
-        model = gtk.ListStore(str, str, str, str, str, str, str)
+        model = Gtk.ListStore(str, str, str, str, str, str, str)
         treeview = self.builder.get_object('list_cheque_treeview')
         treeview.set_model(model)
 
-        column = gtk.TreeViewColumn(_("Customer"), gtk.CellRendererText(), text=0)
+        column = Gtk.TreeViewColumn(_("Customer"), Gtk.CellRendererText(), text=0)
         treeview.append_column(column)
-        column = gtk.TreeViewColumn(_("Bank Account"), gtk.CellRendererText(), text=1)
+        column = Gtk.TreeViewColumn(_("Bank Account"), Gtk.CellRendererText(), text=1)
         treeview.append_column(column)
-        column = gtk.TreeViewColumn(_("Bank/Branch"), gtk.CellRendererText(), text=2)
+        column = Gtk.TreeViewColumn(_("Bank/Branch"), Gtk.CellRendererText(), text=2)
         treeview.append_column(column)
-        column = gtk.TreeViewColumn(_("Serial"), gtk.CellRendererText(), text=3)
+        column = Gtk.TreeViewColumn(_("Serial"), Gtk.CellRendererText(), text=3)
         treeview.append_column(column)
-        column = gtk.TreeViewColumn(_("Amount"), gtk.CellRendererText(), text=4)
+        column = Gtk.TreeViewColumn(_("Amount"), Gtk.CellRendererText(), text=4)
         treeview.append_column(column)
         self.new_cheques = []
-        column = gtk.TreeViewColumn(_("Due Date"), gtk.CellRendererText(), text=5)
+        column = Gtk.TreeViewColumn(_("Due Date"), Gtk.CellRendererText(), text=5)
         treeview.append_column(column)
 
-        model = gtk.ListStore(str, str, str)
+        model = Gtk.ListStore(str, str, str)
         combo = self.builder.get_object('bank_accounts')
         combo.set_model(model)
 
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         cell.set_visible(False)
         combo.pack_start(cell, True)
         combo.add_attribute(cell, 'text', 0)
 
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         combo.pack_start(cell, True)
         combo.add_attribute(cell, 'text', 1)
 
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         combo.pack_start(cell, True)
         combo.add_attribute(cell, 'text', 2)
 
@@ -95,7 +95,7 @@ class ChequeUI:
         model = self.builder.get_object('list_cheque_treeview').get_model()
         model.clear()
         if(is_spend_cheque == 1):
-            treeviwe.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
+            treeviwe.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
             selection = treeviwe.get_selection()
             self.builder.get_object('add_cheque').set_sensitive(False)
             self.builder.get_object('edit_cheque').set_sensitive(False)
@@ -115,7 +115,7 @@ class ChequeUI:
                     if info.chqSerial == unicode(sp_ch):
                         selection.select_iter(iter)
         else:
-            treeviwe.get_selection().set_mode(gtk.SELECTION_SINGLE)
+            treeviwe.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
             self.builder.get_object('add_cheque').set_sensitive(True)
             self.builder.get_object('edit_cheque').set_sensitive(True)
             self.builder.get_object('delete_cheque').set_sensitive(True)
@@ -130,7 +130,7 @@ class ChequeUI:
                                 3, info['serial'], 4, info['amount'], 5, info['due_date'])
 
         w = self.builder.get_object('list_cheque_window')
-        w.set_position(gtk.WIN_POS_CENTER)
+        w.set_position(Gtk.WindowPosition.CENTER)
         w.set_size_request(700,400)
         w.show_all()
 
@@ -210,7 +210,7 @@ class ChequeUI:
         self.bank_account_name = '---'
 
         w = self.builder.get_object('add_cheque_window')
-        w.set_position(gtk.WIN_POS_CENTER)
+        w.set_position(Gtk.WindowPosition.CENTER)
         
         combo = self.builder.get_object('bank_accounts')
         model = combo.get_model()
@@ -323,7 +323,7 @@ class ChequeUI:
             msg += 'Select a bank account\n'
 
         if len(msg):
-            dialog = gtk.MessageDialog(buttons=gtk.BUTTONS_OK, message_format=msg)
+            dialog = Gtk.MessageDialog(buttons=Gtk.ButtonsType.OK, message_format=msg)
             dialog.run()
             dialog.destroy()
             return

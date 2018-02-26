@@ -20,12 +20,12 @@ from    database                    import  *
 
 config = share.config
 
-pygtk.require('2.0')
+gi.require_version('Gtk', '3.0')
 
-class ProductGroup(gobject.GObject):
+class ProductGroup(GObject.GObject):
     
     def __init__(self):
-        gobject.GObject.__init__(self)
+        GObject.GObject.__init__(self)
         
         self.builder    = get_builder("warehousing" )
         self.window = None
@@ -57,36 +57,36 @@ class ProductGroup(gobject.GObject):
         self.window = self.builder.get_object("viewProGroupsWindow")
         
         self.treeview = self.builder.get_object("GroupsTreeView")
-        self.treestore = gtk.TreeStore(str, str, str, str)
+        self.treestore = Gtk.TreeStore(str, str, str, str)
         self.treestore.clear()
         self.treeview.set_model(self.treestore)
 
-        column = gtk.TreeViewColumn(_("Code"), gtk.CellRendererText(), text = 0)
+        column = Gtk.TreeViewColumn(_("Code"), Gtk.CellRendererText(), text = 0)
         column.set_spacing(5)
         column.set_resizable(True)
         column.set_sort_column_id(0)
         column.set_sort_indicator(True)
         self.treeview.append_column(column)
         
-        column = gtk.TreeViewColumn(_("Name"), gtk.CellRendererText(), text = 1)
+        column = Gtk.TreeViewColumn(_("Name"), Gtk.CellRendererText(), text = 1)
         column.set_spacing(5)
         column.set_resizable(True)
         column.set_sort_column_id(1)
         column.set_sort_indicator(True)
         self.treeview.append_column(column)
         
-        column = gtk.TreeViewColumn(_("Buy ID"), gtk.CellRendererText(), text = 2)
+        column = Gtk.TreeViewColumn(_("Buy ID"), Gtk.CellRendererText(), text = 2)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
         
-        column = gtk.TreeViewColumn(_("Sell ID"), gtk.CellRendererText(), text = 3)
+        column = Gtk.TreeViewColumn(_("Sell ID"), Gtk.CellRendererText(), text = 3)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
         
-        self.treeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
-        self.treestore.set_sort_column_id(0, gtk.SORT_ASCENDING)
+        self.treeview.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
+        self.treestore.set_sort_column_id(0, Gtk.SortType.ASCENDING)
         
         #Fill groups treeview
         query = config.db.session.query(ProductGroups).select_from(ProductGroups)
@@ -183,7 +183,7 @@ class ProductGroup(gobject.GObject):
             result = query.filter(ProductGroups.code == code).first()
             
             if result[1] != 0 :
-                msgbox =  gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
+                msgbox =  Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.CLOSE,
                                     _("Group can not be deleted, Because there are some products registered in it."))
                 msgbox.set_title(_("Error deleting group"))
                 msgbox.run()
@@ -205,7 +205,7 @@ class ProductGroup(gobject.GObject):
         #TODO set default values for buyid & sellid if empty
             
         if msg != "":
-            msgbox =  gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, msg)
+            msgbox =  Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.CLOSE, msg)
             msgbox.set_title(_("Empty fields"))
             msgbox.run()
             msgbox.destroy()
@@ -250,7 +250,7 @@ class ProductGroup(gobject.GObject):
 	    msg += _("Selling code is not valid.\n")
 	    
         if msg != "":
-            msgbox =  gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE, msg)
+            msgbox =  Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.CLOSE, msg)
             msgbox.set_title(_("Invalid group properties"))
             msgbox.run()
             msgbox.destroy()
@@ -322,7 +322,7 @@ class ProductGroup(gobject.GObject):
         self.emit("group-selected", group_id, code)
         
     def on_button_press_event(self, sender, event):
-	if event.type == gtk.gdk._2BUTTON_PRESS:
+	if event.type == Gdk._2BUTTON_PRESS:
 	    selection = self.treeview.get_selection()
 	    iter = selection.get_selected()[1]
 	    if iter != None :
@@ -335,14 +335,14 @@ class ProductGroup(gobject.GObject):
         selection = self.treeview.get_selection()
         iter = selection.get_selected()[1]
         if iter != None :
-            if gtk.gdk.keyval_name(event.keyval) == "Left":
-                if self.treeview.get_direction() != gtk.TEXT_DIR_LTR:
+            if Gdk.keyval_name(event.keyval) == "Left":
+                if self.treeview.get_direction() != Gtk.TextDirection.LTR:
                     expand = 1
                 else:
                     expand = -1
                     
-            if gtk.gdk.keyval_name(event.keyval) == "Right":
-                if self.treeview.get_direction() != gtk.TEXT_DIR_RTL:
+            if Gdk.keyval_name(event.keyval) == "Right":
+                if self.treeview.get_direction() != Gtk.TextDirection.RTL:
                     expand = 1
                 else:
                     expand = -1
@@ -391,10 +391,10 @@ class ProductGroup(gobject.GObject):
         sender.window.destroy()
         
         
-gobject.type_register(ProductGroup)
-gobject.signal_new("group-selected", ProductGroup, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (gobject.TYPE_INT, gobject.TYPE_STRING))
-gobject.signal_new("item-activated", ProductGroup, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, ())
-gobject.signal_new("blank-activated", ProductGroup, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, ())
+GObject.type_register(ProductGroup)
+GObject.signal_new("group-selected", ProductGroup, GObject.SignalFlags.RUN_LAST,
+                   None, (GObject.TYPE_INT, GObject.TYPE_STRING))
+GObject.signal_new("item-activated", ProductGroup, GObject.SignalFlags.RUN_LAST,
+                   None, ())
+GObject.signal_new("blank-activated", ProductGroup, GObject.SignalFlags.RUN_LAST,
+                   None, ())

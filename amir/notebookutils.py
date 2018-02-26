@@ -1,5 +1,5 @@
-import pygtk
-import gtk
+import gi
+from gi.repository import Gtk
 from datetime import date
 
 from sqlalchemy import or_, and_
@@ -12,11 +12,11 @@ config = share.config
 
 def arrangeDocuments(parentWin):
     msg = _("This operation may change numbers of permanent documents too.\n\nAre you sure to continue?")
-    msgbox = gtk.MessageDialog(parentWin, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, msg)
+    msgbox = Gtk.MessageDialog(parentWin, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL, msg)
     msgbox.set_title(_("Changing document numbers"))
     result = msgbox.run()
     msgbox.destroy()
-    if result == gtk.RESPONSE_CANCEL:
+    if result == Gtk.ResponseType.CANCEL:
         return
     
     query = config.db.session.query(Bill).select_from(Bill)
@@ -31,7 +31,7 @@ def arrangeDocuments(parentWin):
         
     config.db.session.commit()   
     msg = _("Ordering documents completed successfully.")
-    msgbox = gtk.MessageDialog(parentWin, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, msg)
+    msgbox = Gtk.MessageDialog(parentWin, Gtk.DialogFlags.MODAL, Gtk.MessageType.INFO, Gtk.ButtonsType.OK, msg)
     msgbox.set_title(_("Operation successfull"))
     result = msgbox.run()
     msgbox.destroy()      

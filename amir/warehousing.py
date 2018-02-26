@@ -18,7 +18,7 @@ from    database                    import  *
 ## Class Warehousing:    Displays all the warehousing registered products. 
 ##
 ###################################################################################
-class Warehousing(gobject.GObject):
+class Warehousing(GObject.GObject):
     
     #--------------------------------------------------------------------
     #    initializing method
@@ -32,13 +32,13 @@ class Warehousing(gobject.GObject):
         Products are viewed by the "ViewProducts" method and added by "addNewProduct"
         method.
         """
-        gobject.GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self.builder    = get_builder("warehousing")
         self.session    = config.db.session
         
-        self.proListStore   = gtk.TreeStore(str, str, str, str, str)
-        self.grpListStore   = gtk.TreeStore(str, str, str, str)
-#        self.grpListStore   = gtk.ListStore(str, str, str, str)
+        self.proListStore   = Gtk.TreeStore(str, str, str, str, str)
+        self.grpListStore   = Gtk.TreeStore(str, str, str, str)
+#        self.grpListStore   = Gtk.ListStore(str, str, str, str)
         
         self.groupsList     = []
         self.productsList   = []
@@ -65,36 +65,36 @@ class Warehousing(gobject.GObject):
         self.productTreeView    = self.builder.get_object("productsTreeView")
         self.proListStore.clear()
 
-        column      = gtk.TreeViewColumn(_("Code"), 
-                                            gtk.CellRendererText(),
+        column      = Gtk.TreeViewColumn(_("Code"), 
+                                            Gtk.CellRendererText(),
                                             text = 0)
         column.set_spacing(5)
         column.set_resizable(True)
         self.productTreeView.append_column(column)
         
-        column      = gtk.TreeViewColumn(_("Name"), 
-                                            gtk.CellRendererText(),
+        column      = Gtk.TreeViewColumn(_("Name"), 
+                                            Gtk.CellRendererText(),
                                             text = 1)
         column.set_spacing(5)
         column.set_resizable(True)
         self.productTreeView.append_column(column)
         
-        column      = gtk.TreeViewColumn(_("Quantity"), 
-                                            gtk.CellRendererText(),
+        column      = Gtk.TreeViewColumn(_("Quantity"), 
+                                            Gtk.CellRendererText(),
                                             text = 2)
         column.set_spacing(5)
         column.set_resizable(True)
         self.productTreeView.append_column(column)
         
-        column      = gtk.TreeViewColumn(_("Purchase Price"), 
-                                            gtk.CellRendererText(),
+        column      = Gtk.TreeViewColumn(_("Purchase Price"), 
+                                            Gtk.CellRendererText(),
                                             text = 3)
         column.set_spacing(5)
         column.set_resizable(True)
         self.productTreeView.append_column(column)
 
-        column      = gtk.TreeViewColumn(_("Selling Price"), 
-                                            gtk.CellRendererText(),
+        column      = Gtk.TreeViewColumn(_("Selling Price"), 
+                                            Gtk.CellRendererText(),
                                             text = 4)
         column.set_spacing(5)
         column.set_resizable(True)
@@ -104,49 +104,49 @@ class Warehousing(gobject.GObject):
         # Later we can read this from the setting, which helps us show the needed values of the user
         
         if columnsInSetting: 
-            column  = gtk.TreeViewColumn(_("Accounting Group"), 
-                                            gtk.CellRendererText(), 
+            column  = Gtk.TreeViewColumn(_("Accounting Group"), 
+                                            Gtk.CellRendererText(), 
                                             text = 5)
             column.set_spacing(5)
             column.set_resizable(True)
             self.productTreeView.append_column(column)
     
-            column  = gtk.TreeViewColumn(_("Product Location"), 
-                                            gtk.CellRendererText(),
+            column  = Gtk.TreeViewColumn(_("Product Location"), 
+                                            Gtk.CellRendererText(),
                                             text = 6)
             column.set_spacing(5)
             column.set_resizable(True)
             self.productTreeView.append_column(column)
             
-            column  = gtk.TreeViewColumn(_("Quantity Warning"),
-                                            gtk.CellRendererText(),
+            column  = Gtk.TreeViewColumn(_("Quantity Warning"),
+                                            Gtk.CellRendererText(),
                                             text = 7)
             column.set_spacing(5)
             column.set_resizable(True)
             self.productTreeView.append_column(column)
     
-            column  = gtk.TreeViewColumn(_("Over-Sell"), 
-                                            gtk.CellRendererText(),
+            column  = Gtk.TreeViewColumn(_("Over-Sell"), 
+                                            Gtk.CellRendererText(),
                                             text = 8)
             column.set_spacing(5)
             column.set_resizable(True)
             self.productTreeView.append_column(column)
     
-            column  = gtk.TreeViewColumn(_("Discount Formula"), 
-                                            gtk.CellRendererText(),
+            column  = Gtk.TreeViewColumn(_("Discount Formula"), 
+                                            Gtk.CellRendererText(),
                                             text = 9)
             column.set_spacing(5)
             column.set_resizable(True)
             self.productTreeView.append_column(column)
     
-            column  = gtk.TreeViewColumn(_("Description"), 
-                                            gtk.CellRendererText(),
+            column  = Gtk.TreeViewColumn(_("Description"), 
+                                            Gtk.CellRendererText(),
                                             text = 10)
             column.set_spacing(5)
             column.set_resizable(True)
             self.productTreeView.append_column(column)
 
-        self.productTreeView.get_selection().set_mode(gtk.SELECTION_SINGLE)
+        self.productTreeView.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
         self.productTreeView.set_model(self.proListStore)
         self.populateProList()
         
@@ -206,15 +206,15 @@ class Warehousing(gobject.GObject):
             qnty    = self.proListStore.get(iter, 2)[0]
             if qnty:    #selected iter is a product
                 msg     = _("Are you sure you want to delete the product \"%s\"") %code
-                msgBox  = gtk.MessageDialog(self.viewProsWin,
-                                                gtk.DIALOG_MODAL,
-                                                gtk.MESSAGE_QUESTION,
-                                                gtk.BUTTONS_OK_CANCEL,
+                msgBox  = Gtk.MessageDialog(self.viewProsWin,
+                                                Gtk.DialogFlags.MODAL,
+                                                Gtk.MessageType.QUESTION,
+                                                Gtk.ButtonsType.OK_CANCEL,
                                                 msg)
                 msgBox.set_title(_("Are you sure?"))
                 answer  = msgBox.run()
                 msgBox.destroy()
-                if answer == gtk.RESPONSE_OK:
+                if answer == Gtk.ResponseType.OK:
                     query       = self.session.query(Products).select_from(Products)
                     query       = query.filter(Products.code == code).first()
                     self.session.delete(query)
@@ -225,25 +225,25 @@ class Warehousing(gobject.GObject):
             else:       #selected iter is a group
                 if self.proListStore.iter_has_child(iter):
                     msg     = _("Selected Group has some related products and cannot be deleted.")
-                    msgbox  = gtk.MessageDialog(self.viewProsWin,
-                                                    gtk.DIALOG_MODAL,
-                                                    gtk.MESSAGE_WARNING,
-                                                    gtk.BUTTONS_OK, msg)
+                    msgbox  = Gtk.MessageDialog(self.viewProsWin,
+                                                    Gtk.DialogFlags.MODAL,
+                                                    Gtk.MessageType.WARNING,
+                                                    Gtk.ButtonsType.OK, msg)
                     msgbox.set_title(_("Unable to Delete"))
                     msgbox.run()
                     msgbox.destroy()
                     return
                 else:
                     msg     = _("Are you sure you want to delete the group \"%s\"") %code
-                    msgBox  = gtk.MessageDialog(self.viewProsWin,
-                                                    gtk.DIALOG_MODAL,
-                                                    gtk.MESSAGE_QUESTION,
-                                                    gtk.BUTTONS_OK_CANCEL,
+                    msgBox  = Gtk.MessageDialog(self.viewProsWin,
+                                                    Gtk.DialogFlags.MODAL,
+                                                    Gtk.MessageType.QUESTION,
+                                                    Gtk.ButtonsType.OK_CANCEL,
                                                     msg)
                     msgBox.set_title(_("Are you sure?"))
                     answer  = msgBox.run()
                     msgBox.destroy()
-                    if answer == gtk.RESPONSE_OK:
+                    if answer == Gtk.ResponseType.OK:
                         query       = self.session.query(Groups).select_from(Groups)
                         query       = query.filter(Groups.code == code).first()
                         self.session.delete(query)
@@ -279,7 +279,7 @@ class Warehousing(gobject.GObject):
         # ------------- OBJECTS OF THE FORM:
         self.proLoc     = self.builder.get_object("proLoc")
         
-        self.proCode    = gtk.Entry()
+        self.proCode    = Gtk.Entry()
         box             = self.builder.get_object("proCodeHBox")
         box.add(self.proCode)
         self.proCode.show()
@@ -292,7 +292,7 @@ class Warehousing(gobject.GObject):
         box.add(self.proQnty)
         self.proQnty.show()
         
-        self.accGroup   = gtk.Entry()
+        self.accGroup   = Gtk.Entry()
         box             = self.builder.get_object("accGrpHBox")
         box.add(self.accGroup)
         self.accGroup.show()
@@ -366,10 +366,10 @@ class Warehousing(gobject.GObject):
         pDisc   = unicode(self.discFormula.get_text())
         if not pCode:
             errorstr = _("There must be a \"Code\" for each product.")
-            msgbox = gtk.MessageDialog(self.addProWin,
-                                                gtk.DIALOG_MODAL, 
-                                                gtk.MESSAGE_WARNING, 
-                                                gtk.BUTTONS_OK, 
+            msgbox = Gtk.MessageDialog(self.addProWin,
+                                                Gtk.DialogFlags.MODAL, 
+                                                Gtk.MessageType.WARNING, 
+                                                Gtk.ButtonsType.OK, 
                                                 errorstr)
             msgbox.set_title(_("Missing Data"))
             msgbox.run()
@@ -377,10 +377,10 @@ class Warehousing(gobject.GObject):
             return
         elif not pName:
             errorstr = _("There is no \"Name\" mentioned for this product.")
-            msgbox = gtk.MessageDialog(self.addProWin,
-                                                gtk.DIALOG_MODAL,
-                                                gtk.MESSAGE_WARNING,
-                                                gtk.BUTTONS_OK,
+            msgbox = Gtk.MessageDialog(self.addProWin,
+                                                Gtk.DialogFlags.MODAL,
+                                                Gtk.MessageType.WARNING,
+                                                Gtk.ButtonsType.OK,
                                                 errorstr)
             msgbox.set_title(_("Missing Data"))
             msgbox.run()
@@ -388,10 +388,10 @@ class Warehousing(gobject.GObject):
             return
         elif not pAccc:
             errorstr = _("No \"Accounting Group\" is selected for this product.")
-            msgbox = gtk.MessageDialog(self.addProWin,
-                                                gtk.DIALOG_MODAL,
-                                                gtk.MESSAGE_WARNING, 
-                                                gtk.BUTTONS_OK, 
+            msgbox = Gtk.MessageDialog(self.addProWin,
+                                                Gtk.DialogFlags.MODAL,
+                                                Gtk.MessageType.WARNING, 
+                                                Gtk.ButtonsType.OK, 
                                                 errorstr)
             msgbox.set_title(_("Missing Data"))
             msgbox.run()
@@ -406,10 +406,10 @@ class Warehousing(gobject.GObject):
             acgQ    = acgQ.filter(Groups.code == pAccc).first()
             if not acgQ:
                 errorstr = _("\"Accounting Group\" which you selected does not exist.")
-                msgbox = gtk.MessageDialog(self.addProWin,
-                                            gtk.DIALOG_MODAL,
-                                            gtk.MESSAGE_WARNING, 
-                                            gtk.BUTTONS_OK, 
+                msgbox = Gtk.MessageDialog(self.addProWin,
+                                            Gtk.DialogFlags.MODAL,
+                                            Gtk.MessageType.WARNING, 
+                                            Gtk.ButtonsType.OK, 
                                             errorstr)
                 msgbox.set_title(_("Wrong Accounting Group ID"))
                 msgbox.run()
@@ -448,10 +448,10 @@ class Warehousing(gobject.GObject):
                     dup = True
                     
                 if dup:
-                    msgbox  = gtk.MessageDialog(self.addProWin,
-                                                    gtk.DIALOG_MODAL,
-                                                    gtk.MESSAGE_WARNING,
-                                                    gtk.BUTTONS_OK, err)
+                    msgbox  = Gtk.MessageDialog(self.addProWin,
+                                                    Gtk.DialogFlags.MODAL,
+                                                    Gtk.MessageType.WARNING,
+                                                    Gtk.ButtonsType.OK, err)
                     msgbox.set_title(_("Used Data Selected"))
                     msgbox.run()
                     msgbox.destroy()
@@ -474,9 +474,9 @@ class Warehousing(gobject.GObject):
                     dup = True
                 
                 if dup:
-                    msgbox  = gtk.MessageDialog(self.addProWin, gtk.DIALOG_MODAL,
-                                                    gtk.MESSAGE_WARNING,
-                                                    gtk.BUTTONS_OK, err)
+                    msgbox  = Gtk.MessageDialog(self.addProWin, Gtk.DialogFlags.MODAL,
+                                                    Gtk.MessageType.WARNING,
+                                                    Gtk.ButtonsType.OK, err)
                     msgbox.set_title(_("Used Data Selected"))
                     msgbox.run()
                     msgbox.destroy()
@@ -537,17 +537,17 @@ class Warehousing(gobject.GObject):
                 warnMsg += "\n\n The above value(s) will be set to 0."
                 warnMsg += " Press \"Ok\" if you want to edit them later"
                 warnMsg += " or \"Cancel\" to edit them now."
-            msgbox  = gtk.MessageDialog(self.addProWin, 
-                                            gtk.DIALOG_MODAL, 
-                                            gtk.MESSAGE_INFO, 
-                                            gtk.BUTTONS_OK_CANCEL, 
+            msgbox  = Gtk.MessageDialog(self.addProWin, 
+                                            Gtk.DialogFlags.MODAL, 
+                                            Gtk.MessageType.INFO, 
+                                            Gtk.ButtonsType.OK_CANCEL, 
                                             warnMsg)
             msgbox.set_title(_("Warning: Missing Data"))
             answer  = msgbox.run()
             msgbox.destroy()
-            if answer == gtk.RESPONSE_OK:
+            if answer == Gtk.ResponseType.OK:
                 saveFlg = True
-            elif answer == gtk.RESPONSE_CANCEL:
+            elif answer == Gtk.ResponseType.CANCEL:
                 saveFlg = False
         
         if saveFlg:
@@ -618,17 +618,17 @@ class Warehousing(gobject.GObject):
                 warnMsg += "\n\n The above value(s) will be set to 0."
                 warnMsg += " Press \"Ok\" if you want to edit them later"
                 warnMsg += " or \"Cancel\" to edit them now."
-            msgbox  = gtk.MessageDialog(self.addProWin, 
-                                            gtk.DIALOG_MODAL, 
-                                            gtk.MESSAGE_INFO, 
-                                            gtk.BUTTONS_OK_CANCEL, 
+            msgbox  = Gtk.MessageDialog(self.addProWin, 
+                                            Gtk.DialogFlags.MODAL, 
+                                            Gtk.MessageType.INFO, 
+                                            Gtk.ButtonsType.OK_CANCEL, 
                                             warnMsg)
             msgbox.set_title(_("Warning: Missing Data"))
             answer  = msgbox.run()
             msgbox.destroy()
-            if answer == gtk.RESPONSE_OK:
+            if answer == Gtk.ResponseType.OK:
                 saveFlg = True
-            elif answer == gtk.RESPONSE_CANCEL:
+            elif answer == Gtk.ResponseType.CANCEL:
                 saveFlg = False
         
         if saveFlg:
@@ -717,36 +717,36 @@ class Warehousing(gobject.GObject):
         self.grpListStore.clear()
         self.groupsTreeView.set_model(self.grpListStore)          
         
-        column      = gtk.TreeViewColumn(_("Code"), 
-                                            gtk.CellRendererText(),
+        column      = Gtk.TreeViewColumn(_("Code"), 
+                                            Gtk.CellRendererText(),
                                             text = 0)
         column.set_spacing(5)
         column.set_resizable(True)
         self.groupsTreeView.append_column(column)
         
-        column      = gtk.TreeViewColumn(_("Name"), 
-                                            gtk.CellRendererText(),
+        column      = Gtk.TreeViewColumn(_("Name"), 
+                                            Gtk.CellRendererText(),
                                             text = 1)
         column.set_spacing(5)
         column.set_resizable(True)
         self.groupsTreeView.append_column(column)
         
-        column      = gtk.TreeViewColumn(_("Buy ID"), 
-                                            gtk.CellRendererText(),
+        column      = Gtk.TreeViewColumn(_("Buy ID"), 
+                                            Gtk.CellRendererText(),
                                             text = 2)
         column.set_spacing(5)
         column.set_resizable(True)
         self.groupsTreeView.append_column(column)
         
-        column      = gtk.TreeViewColumn(_("Sell ID"), 
-                                            gtk.CellRendererText(),
+        column      = Gtk.TreeViewColumn(_("Sell ID"), 
+                                            Gtk.CellRendererText(),
                                             text = 3)
         column.set_spacing(5)
         column.set_resizable(True)
         self.groupsTreeView.append_column(column)
 
 
-        self.groupsTreeView.get_selection().set_mode(gtk.SELECTION_SINGLE)
+        self.groupsTreeView.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
         
         self.populateGrpList()
         self.viewGrpWin.show_all()
@@ -783,25 +783,25 @@ class Warehousing(gobject.GObject):
             chkChildren = chkQuery.filter(Products.accGroup == deloldId).all()
             if chkChildren:
                 msg     = _("Selected Group has some related products and cannot be deleted.")
-                msgbox  = gtk.MessageDialog(self.viewGrpWin,
-                                                gtk.DIALOG_MODAL,
-                                                gtk.MESSAGE_WARNING,
-                                                gtk.BUTTONS_OK, msg)
+                msgbox  = Gtk.MessageDialog(self.viewGrpWin,
+                                                Gtk.DialogFlags.MODAL,
+                                                Gtk.MessageType.WARNING,
+                                                Gtk.ButtonsType.OK, msg)
                 msgbox.set_title(_("Unable to Delete"))
                 msgbox.run()
                 msgbox.destroy()
                 return
             else:
                 msg     = _("Are you sure you want to delete the group \"%s\"") %code
-                msgBox  = gtk.MessageDialog(self.viewGrpWin,
-                                                gtk.DIALOG_MODAL,
-                                                gtk.MESSAGE_QUESTION,
-                                                gtk.BUTTONS_OK_CANCEL,
+                msgBox  = Gtk.MessageDialog(self.viewGrpWin,
+                                                Gtk.DialogFlags.MODAL,
+                                                Gtk.MessageType.QUESTION,
+                                                Gtk.ButtonsType.OK_CANCEL,
                                                 msg)
                 msgBox.set_title(_("Are you sure?"))
                 answer  = msgBox.run()
                 msgBox.destroy()
-                if answer == gtk.RESPONSE_OK:
+                if answer == Gtk.ResponseType.OK:
                     query   = self.session.query(Groups).filter(Groups.id == deloldId).first()
                     self.session.delete(query)
                     self.session.commit()
@@ -839,17 +839,17 @@ class Warehousing(gobject.GObject):
         self.addGrpWindow   = self.builder.get_object("addGroup")
         self.addGrpWindow.set_title(title)
         
-        self.groupCodeEntry     = gtk.Entry()#numberentry.NumberEntry()
+        self.groupCodeEntry     = Gtk.Entry()#numberentry.NumberEntry()
         box     = self.builder.get_object("grpCodeHBox")
         box.add(self.groupCodeEntry)
       
         self.groupNameEntry     = self.builder.get_object("groupName")
         
-        self.groupSellIDEntry   = gtk.Entry()
+        self.groupSellIDEntry   = Gtk.Entry()
         box     = self.builder.get_object("sellIdHBox")
         box.add(self.groupSellIDEntry)
 
-        self.groupBuyIDEntry    = gtk.Entry()
+        self.groupBuyIDEntry    = Gtk.Entry()
         box     = self.builder.get_object("buyIdHBox")
         box.add(self.groupBuyIDEntry)
         
@@ -905,10 +905,10 @@ class Warehousing(gobject.GObject):
             
         if empErr:
             errMsg  += "\n\nThere should be a valid value for above field(s)."
-            msgbox  = gtk.MessageDialog(self.addGrpWindow, 
-                                            gtk.DIALOG_MODAL, 
-                                            gtk.MESSAGE_WARNING, 
-                                            gtk.BUTTONS_OK, 
+            msgbox  = Gtk.MessageDialog(self.addGrpWindow, 
+                                            Gtk.DialogFlags.MODAL, 
+                                            Gtk.MessageType.WARNING, 
+                                            Gtk.ButtonsType.OK, 
                                             errMsg)
             msgbox.set_title(_("Data Missing!"))
             msgbox.run()
@@ -919,10 +919,10 @@ class Warehousing(gobject.GObject):
         grpSelId    = grpSelId.filter(Subject.code == groupSellId).first()
         if not grpSelId:
             errorstr = _("\"Selling Group ID\" which you selected is not a valid ID.")
-            msgbox = gtk.MessageDialog(self.addGrpWindow,
-                                            gtk.DIALOG_MODAL,
-                                            gtk.MESSAGE_WARNING, 
-                                            gtk.BUTTONS_OK, 
+            msgbox = Gtk.MessageDialog(self.addGrpWindow,
+                                            Gtk.DialogFlags.MODAL,
+                                            Gtk.MessageType.WARNING, 
+                                            Gtk.ButtonsType.OK, 
                                             errorstr)
             msgbox.set_title(_("Invalid Selling ID"))
             msgbox.run()
@@ -935,10 +935,10 @@ class Warehousing(gobject.GObject):
         grpBuyId    = grpBuyId.filter(Subject.code == groupBuyId).first()
         if not grpBuyId:
             errorstr = _("\"Buying Group ID\" which you selected is not a valid ID.")
-            msgbox = gtk.MessageDialog(self.addGrpWindow,
-                                            gtk.DIALOG_MODAL,
-                                            gtk.MESSAGE_WARNING, 
-                                            gtk.BUTTONS_OK, 
+            msgbox = Gtk.MessageDialog(self.addGrpWindow,
+                                            Gtk.DialogFlags.MODAL,
+                                            Gtk.MessageType.WARNING, 
+                                            Gtk.ButtonsType.OK, 
                                             errorstr)
             msgbox.set_title(_("Invalid Buying ID"))
             msgbox.run()
@@ -977,10 +977,10 @@ class Warehousing(gobject.GObject):
                 dup = True
                 
             if dup:
-                msgbox  = gtk.MessageDialog(self.addGrpWindow,
-                                                gtk.DIALOG_MODAL,
-                                                gtk.MESSAGE_WARNING,
-                                                gtk.BUTTONS_OK, err)
+                msgbox  = Gtk.MessageDialog(self.addGrpWindow,
+                                                Gtk.DialogFlags.MODAL,
+                                                Gtk.MessageType.WARNING,
+                                                Gtk.ButtonsType.OK, err)
                 msgbox.set_title(_("Used Data Selected"))
                 msgbox.run()
                 msgbox.destroy()
@@ -1006,10 +1006,10 @@ class Warehousing(gobject.GObject):
                 dup = True
                 
             if dup:
-                msgbox  = gtk.MessageDialog(self.addGrpWindow,
-                                                gtk.DIALOG_MODAL,
-                                                gtk.MESSAGE_WARNING,
-                                                gtk.BUTTONS_OK, err)
+                msgbox  = Gtk.MessageDialog(self.addGrpWindow,
+                                                Gtk.DialogFlags.MODAL,
+                                                Gtk.MessageType.WARNING,
+                                                Gtk.ButtonsType.OK, err)
                 msgbox.set_title(_("Used Data Selected"))
                 msgbox.run()
                 msgbox.destroy()
@@ -1178,11 +1178,11 @@ class Warehousing(gobject.GObject):
 #----------------------------------------------------------------------
 # Creating New Signal to return the selected group when double clicked!
 #----------------------------------------------------------------------
-gobject.type_register(Warehousing)
-gobject.signal_new("group-selected", Warehousing, 
-                    gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, 
-                    (gobject.TYPE_INT, gobject.TYPE_STRING))
+GObject.type_register(Warehousing)
+GObject.signal_new("group-selected", Warehousing, 
+                    GObject.SignalFlags.RUN_LAST, None, 
+                    (GObject.TYPE_INT, GObject.TYPE_STRING))
 
-gobject.signal_new("product-selected", Warehousing, 
-                    gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, 
-                    (gobject.TYPE_INT, gobject.TYPE_STRING))
+GObject.signal_new("product-selected", Warehousing, 
+                    GObject.SignalFlags.RUN_LAST, None, 
+                    (GObject.TYPE_INT, GObject.TYPE_STRING))

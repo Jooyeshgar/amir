@@ -120,12 +120,12 @@ class Trade:
 		self.feeEntry           = self.builder.get_object("feeEntry")
 		
 		self.treeview = self.builder.get_object("TreeView")
-		self.treestore = gtk.TreeStore(int, str, str, str,str)
+		self.treestore = Gtk.TreeStore(int, str, str, str,str)
 		self.treestore.clear()
 		self.treeview.set_model(self.treestore)
 		
 					
-		column = gtk.TreeViewColumn(_("Id"), gtk.CellRendererText(), text = 0)
+		column = Gtk.TreeViewColumn(_("Id"), Gtk.CellRendererText(), text = 0)
 		column.set_spacing(5)
 		column.set_resizable(True)
 		#column.set_sort_column_id(0)
@@ -133,38 +133,38 @@ class Trade:
 		self.treeview.append_column(column)
 		
 		
-		column = gtk.TreeViewColumn(_("factor"), gtk.CellRendererText(), text = 1)
+		column = Gtk.TreeViewColumn(_("factor"), Gtk.CellRendererText(), text = 1)
 		column.set_spacing(5)
 		column.set_resizable(True)
  		column.set_sort_column_id(0)
  		column.set_sort_indicator(True)
 		self.treeview.append_column(column)
 		
-		column = gtk.TreeViewColumn(_("Date"), gtk.CellRendererText(), text = 2)
+		column = Gtk.TreeViewColumn(_("Date"), Gtk.CellRendererText(), text = 2)
 		column.set_spacing(5)
 		column.set_resizable(True)
 # 		column.set_sort_column_id(1)
 # 		column.set_sort_indicator(True)
 		self.treeview.append_column(column)		
 		
-		column = gtk.TreeViewColumn(_("Customer"), gtk.CellRendererText(), text = 3)
+		column = Gtk.TreeViewColumn(_("Customer"), Gtk.CellRendererText(), text = 3)
 		column.set_spacing(5)
 		column.set_resizable(True)
 		self.treeview.append_column(column)	
 		
-		column = gtk.TreeViewColumn(_("Total"), gtk.CellRendererText(), text = 4)
+		column = Gtk.TreeViewColumn(_("Total"), Gtk.CellRendererText(), text = 4)
 		column.set_spacing(5)
 		column.set_resizable(True)
 		self.treeview.append_column(column)		
 
-		column = gtk.TreeViewColumn(_("Permanent"), gtk.CellRendererText(), text = 5)
+		column = Gtk.TreeViewColumn(_("Permanent"), Gtk.CellRendererText(), text = 5)
 		column.set_spacing(5)
 		column.set_resizable(True)
 		self.treeview.append_column(column)	
 		
-		self.treeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
+		self.treeview.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
 		#self.treestore.set_sort_func(0, self.sortGroupIds)
-		self.treestore.set_sort_column_id(1, gtk.SORT_ASCENDING)
+		self.treestore.set_sort_column_id(1, Gtk.SortType.ASCENDING)
 		self.builder.connect_signals(self)	
 		###editing		
 		
@@ -173,8 +173,8 @@ class Trade:
 		self.sellsItersDict  = {}
 		self.paysItersDict   = {}
 
-		self.redClr = gtk.gdk.color_parse("#FFCCCC")
-		self.whiteClr = gtk.gdk.color_parse("#FFFFFF")
+		self.redClr = Gdk.color_parse("#FFCCCC")
+		self.whiteClr = Gdk.color_parse("#FFFFFF")
 		
 	
 	def viewSells(self,sender=0):
@@ -206,7 +206,7 @@ class Trade:
 		self.Codeentry.set_text(LN(self.Code))
 		self.statusBar  = self.builder.get_object("FormStatusBar")	
 		self.tradeTreeView = self.builder.get_object("TradeTreeView")
-		self.sellListStore = gtk.TreeStore(str,str,str,str,str,str,str,str)
+		self.sellListStore = Gtk.TreeStore(str,str,str,str,str,str,str,str)
 		self.sellListStore.clear()
 		self.tradeTreeView.set_model(self.sellListStore)
 		
@@ -214,12 +214,12 @@ class Trade:
 				   _("Total Price"), _("Unit Disc."), _("Disc."), _("Description"))
 		txt = 0
 		for header in headers:
-			column = gtk.TreeViewColumn(header,gtk.CellRendererText(),text = txt)
+			column = Gtk.TreeViewColumn(header,Gtk.CellRendererText(),text = txt)
 			column.set_spacing(5)
 			column.set_resizable(True)
 			self.tradeTreeView.append_column(column)
 			txt += 1
-		#self.tradeTreeView.get_selection().set_mode(  gtk.SELECTION_SINGLE    )
+		#self.tradeTreeView.get_selection().set_mode(  Gtk.SelectionMode.SINGLE    )
 		
 		self.paymentManager = payments.Payments(transId=self.Id,transCode=self.Code)
 		self.paymentManager.connect("payments-changed", self.setNonCashPayments)
@@ -415,10 +415,10 @@ class Trade:
 		self.addStBar   = self.builder.get_object("addStatusBar")
 		self.addStBar.push(1,"")
 		
-		self.proVal.modify_base(gtk.STATE_NORMAL,self.whiteClr)
-		self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
-		self.unitPriceEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
-		self.discountEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
+		self.proVal.modify_base(Gtk.StateType.NORMAL,self.whiteClr)
+		self.qntyEntry.modify_base(Gtk.StateType.NORMAL,self.whiteClr)
+		self.unitPriceEntry.modify_base(Gtk.StateType.NORMAL,self.whiteClr)
+		self.discountEntry.modify_base(Gtk.StateType.NORMAL,self.whiteClr)
 		
 		if self.edtSellFlg:
 			(No,pName,qnty,untPrc,ttlPrc,untDisc,ttlDisc,desc) = edit
@@ -474,11 +474,11 @@ class Trade:
 		if delIter:
 			No  = unicode(self.sellListStore.get(delIter, 0)[0])
 			msg = _("Are You sure you want to delete the sell row number %s?") %No
-			msgBox  = gtk.MessageDialog( self.mainDlg, gtk.DIALOG_MODAL, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK_CANCEL, msg)
+			msgBox  = Gtk.MessageDialog( self.mainDlg, Gtk.DialogFlags.MODAL, Gtk.MessageType.QUESTION, Gtk.ButtonsType.OK_CANCEL, msg)
 			msgBox.set_title(_("Confirm Deletion"))
 			answer  = msgBox.run()
 			msgBox.destroy()
-			if answer != gtk.RESPONSE_OK:
+			if answer != Gtk.ResponseType.OK:
 				return
 			ttlPrc  = utility.getFloat(self.sellListStore.get(delIter,4)[0])
 			ttlDisc = utility.getFloat(self.sellListStore.get(delIter,6)[0])
@@ -539,8 +539,8 @@ class Trade:
 		product   = self.session.query(Products).select_from(Products).filter(Products.code==proCd).first()
 		if not product:
 			errorstr = _("The \"Product Code\" which you selected is not a valid Code.")
-			msgbox = gtk.MessageDialog( self.addDlg, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, 
-										gtk.BUTTONS_OK, errorstr )
+			msgbox = Gtk.MessageDialog( self.addDlg, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, 
+										Gtk.ButtonsType.OK, errorstr )
 			msgbox.set_title(_("Invalid Product Code"))
 			msgbox.run()
 			msgbox.destroy()
@@ -553,8 +553,8 @@ class Trade:
 		avQnty  = product.quantity
 		if qnty <= 0:
 			errorstr = _("The \"Quantity\" Must be greater than 0.")
-			msgbox = gtk.MessageDialog( self.addDlg, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, 
-										gtk.BUTTONS_OK, errorstr )
+			msgbox = Gtk.MessageDialog( self.addDlg, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, 
+										Gtk.ButtonsType.OK, errorstr )
 			msgbox.set_title(_("Invalid Quantity"))
 			msgbox.run()
 			msgbox.destroy()
@@ -563,8 +563,8 @@ class Trade:
 			if not over:
 				errorstr = _("The \"Quantity\" is larger than the storage, and over-sell is off!")
 				errorstr += _("\nQuantity can be at most %s.") %avQnty
-				msgbox = gtk.MessageDialog( self.addDlg, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, 
-											gtk.BUTTONS_OK, errorstr )
+				msgbox = Gtk.MessageDialog( self.addDlg, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, 
+											Gtk.ButtonsType.OK, errorstr )
 				msgbox.set_title(_("Invalid Quantity"))
 				msgbox.run()
 				msgbox.destroy()
@@ -572,8 +572,8 @@ class Trade:
 		slPrc   = self.unitPriceEntry.get_float()
 		if slPrc <= 0:
 			errorstr = _("The \"Unit Price\" Must be greater than 0.")
-			msgbox = gtk.MessageDialog( self.addDlg, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, 
-										gtk.BUTTONS_OK, errorstr )
+			msgbox = Gtk.MessageDialog( self.addDlg, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, 
+										Gtk.ButtonsType.OK, errorstr )
 			msgbox.set_title(_("Invalid Unit Price"))
 			msgbox.run()
 			msgbox.destroy()
@@ -581,12 +581,12 @@ class Trade:
 			
 		if slPrc < purchasePrc:
 			msg     = _("The Unit Sell Price you entered is less than the product Purchase Price!\"")
-			msgBox  = gtk.MessageDialog( self.addDlg, gtk.DIALOG_MODAL, gtk.MESSAGE_QUESTION,
-											gtk.BUTTONS_OK_CANCEL, msg                             )
+			msgBox  = Gtk.MessageDialog( self.addDlg, Gtk.DialogFlags.MODAL, Gtk.MessageType.QUESTION,
+											Gtk.ButtonsType.OK_CANCEL, msg                             )
 			msgBox.set_title(               _("Are you sure?")              )
 			answer  = msgBox.run(                                           )
 			msgBox.destroy(                                                 )
-			if answer != gtk.RESPONSE_OK:
+			if answer != Gtk.ResponseType.OK:
 				return
 
 				
@@ -715,14 +715,14 @@ class Trade:
 			print "validateCode"
 			product = self.session.query(Products).select_from(Products).filter(Products.code==productCd).first()
 			if not product:
-				self.proVal.modify_base(gtk.STATE_NORMAL,self.redClr)
+				self.proVal.modify_base(Gtk.StateType.NORMAL,self.redClr)
 				msg = "Product code is invalid"
 				self.proVal.set_tooltip_text(msg)
 				self.addStBar.push(1,msg)
 				self.proNameLbl.set_text("")
 				self.product = None
 			else:
-				self.proVal.modify_base(gtk.STATE_NORMAL,self.whiteClr)
+				self.proVal.modify_base(Gtk.StateType.NORMAL,self.whiteClr)
 				self.proVal.set_tooltip_text("")
 				self.proSelected(code=product.code)
 				self.proNameLbl.set_text(str(product.name))
@@ -745,14 +745,14 @@ class Trade:
 				qntyAvlble  = float(self.product.quantity)
 				over    = self.product.oversell
 				if qnty < 0:
-					self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
+					self.qntyEntry.modify_base(Gtk.StateType.NORMAL,self.redClr)
 					if not stMsg:
 						stMsg  = "Quantity must be greater than 0."
 						severe = True
 					self.qntyEntry.set_tooltip_text("Quantity must be greater than 0.")
 
 				elif qnty > qntyAvlble and not over:
-					self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
+					self.qntyEntry.modify_base(Gtk.StateType.NORMAL,self.redClr)
 					msg = "Quantity is more than the available storage. (Over-Sell is Off)"
 					if not stMsg:
 						stMsg  = msg
@@ -760,7 +760,7 @@ class Trade:
 					self.qntyEntry.set_tooltip_text(msg)
 
 				else:
-					self.qntyEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
+					self.qntyEntry.modify_base(Gtk.StateType.NORMAL,self.whiteClr)
 					self.qntyEntry.set_tooltip_text("")
 					
 				self.addStBar.push(1,stMsg)
@@ -800,7 +800,7 @@ class Trade:
 			if untPrc != None:
 				purcPrc = self.product.purchacePrice
 				if untPrc < 0:
-					self.unitPriceEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
+					self.unitPriceEntry.modify_base(Gtk.StateType.NORMAL,self.redClr)
 					erMsg  = "Unit Price cannot be negative."
 					self.unitPriceEntry.set_tooltip_text(erMsg)
 					if not stMsg:
@@ -808,14 +808,14 @@ class Trade:
 						severe = True
 
 				elif untPrc < purcPrc:
-					self.unitPriceEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
+					self.unitPriceEntry.modify_base(Gtk.StateType.NORMAL,self.redClr)
 					err  = "Unit Price is less than the product purchase price."
 					self.unitPriceEntry.set_tooltip_text(err)
 					if not stMsg:
 						stMsg  = err
 
 				else:
-					self.unitPriceEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
+					self.unitPriceEntry.modify_base(Gtk.StateType.NORMAL,self.whiteClr)
 					self.unitPriceEntry.set_tooltip_text("")
 					
 			self.addStBar.push(1,stMsg)
@@ -845,7 +845,7 @@ class Trade:
 						discp = float(disc.strip(u'%'))
 						
 						if discp > 100 or discp < 0:
-							self.discountEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
+							self.discountEntry.modify_base(Gtk.StateType.NORMAL,self.redClr)
 							errMess  = "Invalid discount range. (Discount must be between 0 and 100 percent)"
 							self.discountEntry.set_tooltip_text(errMess)
 							if not stMsg:
@@ -858,11 +858,11 @@ class Trade:
 						try:
 							discval = float(disc)
 						except ValueError:
-							self.discountEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
+							self.discountEntry.modify_base(Gtk.StateType.NORMAL,self.redClr)
 							errMess  = "Invalid discount. (Use numbers and percentage sign only)"
 							self.discountEntry.set_tooltip_text(errMess)
 					else:
-						self.discountEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
+						self.discountEntry.modify_base(Gtk.StateType.NORMAL,self.redClr)
 						errMess  = "Invalid discount. (Put percentage sign before or after discount amount)"
 						self.discountEntry.set_tooltip_text(errMess)
 						if not stMsg:
@@ -873,13 +873,13 @@ class Trade:
 			self.addStBar.push(1,stMsg)
 			if not severe:
 				if untPrc - discval < purcPrc:
-					self.discountEntry.modify_base(gtk.STATE_NORMAL,self.redClr)
+					self.discountEntry.modify_base(Gtk.StateType.NORMAL,self.redClr)
 					errMess  = "Applying discount decreases product price below its purchase price!"
 					self.discountEntry.set_tooltip_text(errMess)
 					if not stMsg:
 						self.addStBar.push(1,errMess)
 				else:
-					self.discountEntry.modify_base(gtk.STATE_NORMAL,self.whiteClr)
+					self.discountEntry.modify_base(Gtk.StateType.NORMAL,self.whiteClr)
 					self.discountEntry.set_tooltip_text("")
 						
 				self.calcTotalDiscount(discval)

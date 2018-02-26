@@ -1,5 +1,5 @@
-import pygtk
-import gtk
+import gi
+from gi.repository import Gtk
 from datetime import date
 import os
 import platform
@@ -73,7 +73,7 @@ class TBalanceReport:
                     fdate = self.fdate.getDateObject()
                     tdate = self.tdate.getDateObject()
                     if tdate < fdate:
-                        msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 
+                        msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, 
                                                     _("Second date value shouldn't precede the first one."))
                         msgbox.set_title(_("Invalid date order"))
                         msgbox.run()
@@ -109,7 +109,7 @@ class TBalanceReport:
         if report == None:
             return
         if len(report["data"]) == 0:
-            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 
+            msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.INFO, Gtk.ButtonsType.OK, 
                                        _("No ledgers found."))
             msgbox.set_title(_("Empty report"))
             msgbox.run()
@@ -127,7 +127,7 @@ class TBalanceReport:
         if report == None:
             return
         if len(report["data"]) == 0:
-            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 
+            msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.INFO, Gtk.ButtonsType.OK, 
                                        _("No ledgers found."))
             msgbox.set_title(_("Empty report"))
             msgbox.run()
@@ -147,12 +147,12 @@ class TBalanceReport:
         else:
             printjob = self.createPrintJob()
             if printjob != None:
-                printjob.doPrintJob(gtk.PRINT_OPERATION_ACTION_PREVIEW)
+                printjob.doPrintJob(Gtk.PRINT_OPERATION_ACTION_PREVIEW)
     
     def printReport(self, sender):
         printjob = self.createPrintJob()
         if printjob != None:
-            printjob.doPrintJob(gtk.PRINT_OPERATION_ACTION_PRINT_DIALOG)
+            printjob.doPrintJob(Gtk.PRINT_OPERATION_ACTION_PRINT_DIALOG)
         
     def exportToCSV(self, sender):
         report = self.createReport()
@@ -169,8 +169,8 @@ class TBalanceReport:
                 content += item.replace(",", "") + ","
             content += "\n"
             
-        dialog = gtk.FileChooserDialog(None, self.window, gtk.FILE_CHOOSER_ACTION_SAVE, (gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
-                                                                                         gtk.STOCK_SAVE, gtk.RESPONSE_ACCEPT))
+        dialog = Gtk.FileChooserDialog(None, self.window, Gtk.FileChooserAction.SAVE, (Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT,
+                                                                                         Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT))
         dialog.run()
         filename = os.path.splitext(dialog.get_filename())[0]
         file = open(filename + ".csv", "w")

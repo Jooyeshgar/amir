@@ -1,6 +1,6 @@
-import pygtk
-import gtk
-import gobject
+import gi
+from gi.repository import Gtk
+from gi.repository import GObject
 import string
 from datetime import date
 
@@ -46,7 +46,7 @@ def stringToDate(dateString):
 ## \defgroup Widgets
 ## @{
 
-class DateEntry(gtk.Entry):
+class DateEntry(Gtk.Entry):
     
     cal = calverter()
     
@@ -54,7 +54,7 @@ class DateEntry(gtk.Entry):
         """
         date is a tuple containing the default DateEntry value. date is in the form of (YYYY, MM, DD) as three integers. 
         """
-        gtk.Entry.__init__(self)
+        GObject.GObject.__init__(self)
         self.set_alignment(0.5)
         self.connect("focus-out-event", self.correctDate)
 #        self.connect("hide", self.correctDate)

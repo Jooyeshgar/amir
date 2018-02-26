@@ -24,7 +24,7 @@ from    database                    import  *
 
 config = share.config
 
-pygtk.require('2.0')
+gi.require_version('Gtk', '3.0')
 
 class Product(productgroup.ProductGroup):
 
@@ -52,12 +52,12 @@ class Product(productgroup.ProductGroup):
 		self.window = self.builder.get_object("viewProductsWindow")
 		
 		self.treeview = self.builder.get_object("productsTreeView")
-		self.treestore = gtk.TreeStore(str, str, str, str, str)
+		self.treestore = Gtk.TreeStore(str, str, str, str, str)
 		self.treestore.clear()
 		self.treeview.set_model(self.treestore)
 
-		column      = gtk.TreeViewColumn(_("Code"), 
-											gtk.CellRendererText(),
+		column      = Gtk.TreeViewColumn(_("Code"), 
+											Gtk.CellRendererText(),
 											text = 0)
 		column.set_spacing(5)
 		column.set_resizable(True)
@@ -65,8 +65,8 @@ class Product(productgroup.ProductGroup):
 		column.set_sort_indicator(True)
 		self.treeview.append_column(column)
 		
-		column      = gtk.TreeViewColumn(_("Name"), 
-											gtk.CellRendererText(),
+		column      = Gtk.TreeViewColumn(_("Name"), 
+											Gtk.CellRendererText(),
 											text = 1)
 		column.set_spacing(5)
 		column.set_resizable(True)
@@ -74,8 +74,8 @@ class Product(productgroup.ProductGroup):
 		column.set_sort_indicator(True)
 		self.treeview.append_column(column)
 		
-		column      = gtk.TreeViewColumn(_("Quantity"), 
-											gtk.CellRendererText(),
+		column      = Gtk.TreeViewColumn(_("Quantity"), 
+											Gtk.CellRendererText(),
 											text = 2)
 		column.set_spacing(5)
 		column.set_resizable(True)
@@ -83,23 +83,23 @@ class Product(productgroup.ProductGroup):
 		column.set_sort_indicator(True)
 		self.treeview.append_column(column)
 		
-		column      = gtk.TreeViewColumn(_("Purchase Price"), 
-											gtk.CellRendererText(),
+		column      = Gtk.TreeViewColumn(_("Purchase Price"), 
+											Gtk.CellRendererText(),
 											text = 3)
 		column.set_spacing(5)
 		column.set_resizable(True)
 		self.treeview.append_column(column)
 
-		column      = gtk.TreeViewColumn(_("Selling Price"), 
-											gtk.CellRendererText(),
+		column      = Gtk.TreeViewColumn(_("Selling Price"), 
+											Gtk.CellRendererText(),
 											text = 4)
 		column.set_spacing(5)
 		column.set_resizable(True)
 		self.treeview.append_column(column)
 
 		
-		self.treeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
-		self.treestore.set_sort_column_id(0, gtk.SORT_ASCENDING)
+		self.treeview.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
+		self.treestore.set_sort_column_id(0, Gtk.SortType.ASCENDING)
 		
 		#Fill groups treeview
 		self.fillTreeview()
@@ -266,7 +266,7 @@ class Product(productgroup.ProductGroup):
 			msg += _("Product name should not be empty.\n")
 	
 		if msg != "":
-			msgbox =  gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, msg)
+			msgbox =  Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.CLOSE, msg)
 			msgbox.set_title(_("Empty fields"))
 			msgbox.run()
 			msgbox.destroy()
@@ -325,7 +325,7 @@ class Product(productgroup.ProductGroup):
 			msg += _("Discount formula is not valid")
 			
 		if msg != "":
-			msgbox =  gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, msg)
+			msgbox =  Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.CLOSE, msg)
 			msgbox.set_title(_("Invalid product properties"))
 			msgbox.run()
 			msgbox.destroy()
@@ -477,6 +477,6 @@ class Product(productgroup.ProductGroup):
 		sender.window.destroy()
         
 
-gobject.type_register(Product)
-gobject.signal_new("product-selected", Product, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (gobject.TYPE_INT, gobject.TYPE_STRING))
+GObject.type_register(Product)
+GObject.signal_new("product-selected", Product, GObject.SignalFlags.RUN_LAST,
+                   None, (GObject.TYPE_INT, GObject.TYPE_STRING))

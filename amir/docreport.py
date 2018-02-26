@@ -1,5 +1,5 @@
-import pygtk
-import gtk
+import gi
+from gi.repository import Gtk
 from datetime import date
 import os
 import platform
@@ -27,7 +27,7 @@ class DocumentReport:
         
         self.window = self.builder.get_object("window2")
         
-        self.number = gtk.Entry(max=0) #numberentry.NumberEntry()
+        self.number = Gtk.Entry(max=0) #numberentry.NumberEntry()
         box = self.builder.get_object("numbox")
         box.add(self.number)
         self.number.set_activates_default(True)
@@ -63,7 +63,7 @@ class DocumentReport:
         query1 = query1.filter(Bill.number.in_(self.docnumbers)).order_by(Bill.number.asc(),Notebook.id.asc())
         res = query1.all()
         if len(res) == 0:
-            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 
+            msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, 
                                        _("No document found with the requested number."))
             msgbox.set_title(_("Invalid document number"))
             msgbox.run()
@@ -140,12 +140,12 @@ class DocumentReport:
         else:
             printjob = self.createPrintJob()
             if printjob != None:
-                printjob.doPrintJob(gtk.PRINT_OPERATION_ACTION_PREVIEW)
+                printjob.doPrintJob(Gtk.PRINT_OPERATION_ACTION_PREVIEW)
     
     def printReport(self, sender):
         printjob = self.createPrintJob()
         if printjob != None:
-            printjob.doPrintJob(gtk.PRINT_OPERATION_ACTION_PRINT_DIALOG)
+            printjob.doPrintJob(Gtk.PRINT_OPERATION_ACTION_PRINT_DIALOG)
     
     def exportToCSV(self, sender):
         report = self.createReport()
@@ -162,8 +162,8 @@ class DocumentReport:
                 content += item.replace(",", "") + ","
             content += "\n"
             
-        dialog = gtk.FileChooserDialog(None, self.window, gtk.FILE_CHOOSER_ACTION_SAVE, (gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
-                                                                                         gtk.STOCK_SAVE, gtk.RESPONSE_ACCEPT))
+        dialog = Gtk.FileChooserDialog(None, self.window, Gtk.FileChooserAction.SAVE, (Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT,
+                                                                                         Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT))
         dialog.run()
         filename = os.path.splitext(dialog.get_filename())[0]
         file = open(filename + ".csv", "w")

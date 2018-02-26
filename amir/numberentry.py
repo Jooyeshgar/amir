@@ -1,8 +1,8 @@
 #-*- encoding: utf-8 -*-
 
-import pygtk
-import gtk
-import gobject
+import gi
+from gi.repository import Gtk
+from gi.repository import GObject
 
 import utility
 
@@ -11,14 +11,14 @@ from string import replace
 ## \defgroup Widgets
 ## @{
 
-class NumberEntry(gtk.Entry):
+class NumberEntry(Gtk.Entry):
     """
         Creates a text entry widget that just accepts number keys. no dots, spaces or commas.
         Please consider this class usage in other classes before changing this behaviour.
     """
     
     def __init__(self, Max=0):
-        gtk.Entry.__init__(self, Max)
+        GObject.GObject.__init__(self, Max)
         self.insert_sig = self.connect("insert-text", self.insert_cb)
     
     def insert(self, widget, text, pos):
@@ -47,7 +47,7 @@ class NumberEntry(gtk.Entry):
         pos = widget.get_position()
     # stop default emission
         widget.emit_stop_by_name("insert_text")
-        gobject.idle_add(self.insert, widget, text, pos)
+        GObject.idle_add(self.insert, widget, text, pos)
 
     def get_int(self):
         #--- This method will return the integer format of the entered  

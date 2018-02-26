@@ -1,6 +1,6 @@
-import gtk
+from gi.repository import Gtk
 import os
-import gobject
+from gi.repository import GObject
 
 import class_subject
 import upgrade
@@ -12,9 +12,9 @@ from helpers import get_builder, comboInsertItems
 
 config = share.config
 
-class Setting(gobject.GObject):    
+class Setting(GObject.GObject):    
     def __init__(self):
-        gobject.GObject.__init__(self)
+        GObject.GObject.__init__(self)
         
         self.builder = get_builder("setting")
         
@@ -24,28 +24,28 @@ class Setting(gobject.GObject):
         self.filename = self.builder.get_object("filename")
         
         self.treeview = self.builder.get_object("databases-table")
-        self.treeview.set_direction(gtk.TEXT_DIR_LTR)
-        self.liststore = gtk.ListStore(gobject.TYPE_BOOLEAN, str, str)
-        if gtk.widget_get_default_direction() == gtk.TEXT_DIR_RTL :
+        self.treeview.set_direction(Gtk.TextDirection.LTR)
+        self.liststore = Gtk.ListStore(GObject.TYPE_BOOLEAN, str, str)
+        if Gtk.widget_get_default_direction() == Gtk.TextDirection.RTL :
             halign = 1
         else:
             halign = 0
             
-        crtoggle = gtk.CellRendererToggle()
+        crtoggle = Gtk.CellRendererToggle()
         crtoggle.set_radio(True)
 #        crtoggle.set_activatable(True)
         crtoggle.connect('toggled', self.changeCurrentDb, 0)
-        column = gtk.TreeViewColumn(_("Current"),  crtoggle, active=0)
+        column = Gtk.TreeViewColumn(_("Current"),  crtoggle, active=0)
         column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
-        column = gtk.TreeViewColumn(_("Name"), gtk.CellRendererText(), text=1)
+        column = Gtk.TreeViewColumn(_("Name"), Gtk.CellRendererText(), text=1)
         column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
-        column = gtk.TreeViewColumn(_("Path"), gtk.CellRendererText(), text=2)
+        column = Gtk.TreeViewColumn(_("Path"), Gtk.CellRendererText(), text=2)
         column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
@@ -103,8 +103,8 @@ class Setting(gobject.GObject):
         self.builder.get_object("contentfont").set_value(config.contentfont)
         self.builder.get_object("footerfont").set_value(config.footerfont)
         
-        paper_size = gtk.paper_size_new_from_ppd(config.paper_ppd, config.paper_name, config.paper_width, config.paper_height)
-        self.page_setup = gtk.PageSetup()
+        paper_size = Gtk.paper_size_new_from_ppd(config.paper_ppd, config.paper_name, config.paper_width, config.paper_height)
+        self.page_setup = Gtk.PageSetup()
         self.page_setup.set_paper_size(paper_size)
         self.page_setup.set_orientation(config.paper_orientation)
         self.builder.get_object("papersize").set_text(config.paper_name)
@@ -123,24 +123,24 @@ class Setting(gobject.GObject):
             self.active_iter = iter
         
     def selectDbFile(self, sender):
-        self.filechooser.set_action(gtk.FILE_CHOOSER_ACTION_OPEN)
+        self.filechooser.set_action(Gtk.FileChooserAction.OPEN)
         self.filechooser.set_current_folder (os.path.dirname (config.db.dbfile))
         result = self.filechooser.run()
-        if result == gtk.RESPONSE_OK:
+        if result == Gtk.ResponseType.OK:
             self.filename.set_text(self.filechooser.get_filename())
         self.filechooser.hide()
         
 #    def selectOldDatabase(self, sender):
-#        self.filechooser.set_action(gtk.FILE_CHOOSER_ACTION_OPEN)
+#        self.filechooser.set_action(Gtk.FileChooserAction.OPEN)
 #        result = self.filechooser.run()
-#        if result == gtk.RESPONSE_OK:
+#        if result == Gtk.ResponseType.OK:
 #            self.olddb.set_text(self.filechooser.get_filename())
 #        self.filechooser.hide()
 #        
 #    def selectNewDatabase(self, sender):
-#        self.filechooser.set_action(gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER)
+#        self.filechooser.set_action(Gtk.FileChooserAction.SELECT_FOLDER)
 #        result = self.filechooser.run()
-#        if result == gtk.RESPONSE_OK:
+#        if result == Gtk.ResponseType.OK:
 #            self.newdb.set_text(self.filechooser.get_filename())
 #        self.filechooser.hide()
     
@@ -160,7 +160,7 @@ class Setting(gobject.GObject):
                     msg = _("The selected file is compatible with older versions of Amir. First convert it to the new version.")
             
                 if msg != "":  
-                    msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK, msg)
+                    msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK, msg)
                     msgbox.set_title(_("Error opening new database"))
                     msgbox.run()
                     msgbox.destroy()
@@ -172,18 +172,18 @@ class Setting(gobject.GObject):
         selection = self.treeview.get_selection()
         iter = selection.get_selected()[1]
         if iter != None :
-            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, 
+            msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL, 
                                        _("Are you sure to remove this database from the list?"))
             msgbox.set_title(_("Are you sure?"))
             result = msgbox.run()
             msgbox.destroy()
-            if result == gtk.RESPONSE_OK :
+            if result == Gtk.ResponseType.OK :
                 self.liststore.remove(iter)
                 iter = self.liststore.get_iter_first()
                 if iter == None:
                     dbfile = os.path.join(os.path.expanduser('~'), '.amir', 'amir.sqlite')
                     dbname = 'amir.sqlite'
-                    msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 
+                    msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.INFO, Gtk.ButtonsType.OK, 
                                    _("All databases removed.\nThe default database will be opened for use.") )
                     msgbox.set_title(_("All databases removed"))
                     msgbox.run()
@@ -196,20 +196,20 @@ class Setting(gobject.GObject):
                
     def repairDatabaseNow(self, sender):
         msg = _("Please wait...")
-        self.msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_NONE, msg)
+        self.msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.INFO, Gtk.ButtonsType.NONE, msg)
         self.msgbox.set_title(_("Repairing database"))
         self.msgbox.show_all()
         
-        while gtk.events_pending():
-            gtk.main_iteration_do(False)
+        while Gtk.events_pending():
+            Gtk.main_iteration_do(False)
 
-        gobject.timeout_add(1000, self.repairDbFunc)
+        GObject.timeout_add(1000, self.repairDbFunc)
         
     def repairDbFunc(self):
         config.db.rebuild_nested_set(0, 0)
                     
         self.msgbox.set_markup(_("Repair Operation Completed!"))
-        self.msgbox.add_button(gtk.STOCK_OK, -5)
+        self.msgbox.add_button(Gtk.STOCK_OK, -5)
         self.msgbox.run()
         self.msgbox.destroy()
         return False
@@ -218,12 +218,12 @@ class Setting(gobject.GObject):
         active_path = self.liststore.get(self.active_iter, 2)[0]
         dbchanged_flag = False
         if active_path != config.dblist[config.currentdb - 1]:
-            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, 
+            msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL, 
                        _("You have changed the current database, any unsaved data will be lost.\nAre you sure to continue?"))
             msgbox.set_title(_("Are you sure?"))
             result = msgbox.run()
             msgbox.destroy()
-            if result == gtk.RESPONSE_CANCEL :
+            if result == Gtk.ResponseType.CANCEL :
                 return
             else:
                 config.db.session.close()
@@ -264,7 +264,7 @@ class Setting(gobject.GObject):
 #                msg = _("The requested database file doesn' exist.")
 #            
 #            if msg != "":  
-#                msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK, msg)
+#                msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK, msg)
 #                msgbox.set_title(_("Error opening new database"))
 #                msgbox.run()
 #                msgbox.destroy()
@@ -274,7 +274,7 @@ class Setting(gobject.GObject):
 #                config.db = database.Database(dbfile, config.echodbresult)
 #                self.infolabel.set_text(dbfile)
 #                
-#                msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 
+#                msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.INFO, Gtk.ButtonsType.OK, 
 #                                   _("Database changed successfully.\nNew database: %s") % dbfile )
 #                msgbox.set_title(_("Successfully changed"))
 #                msgbox.run()
@@ -297,7 +297,7 @@ class Setting(gobject.GObject):
 #                msg = _("The requested database file doesn't exist.")
 #                
 #            if msg != "":  
-#                msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK, msg)
+#                msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK, msg)
 #                msgbox.set_title(_("Error opening database for conversion"))
 #                msgbox.run()
 #                msgbox.destroy()
@@ -316,35 +316,35 @@ class Setting(gobject.GObject):
 #                    check = os.path.exists(newdb)
 #                    if check == True:
 #                        msg = _("File %s already exists in destination directory, Do you want to overwrite it?") % (ofshortname + ".db")
-#                        msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL, msg)
+#                        msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL, msg)
 #                        msgbox.set_title(_("Overwrite destination file?"))
 #                        result = msgbox.run()
 #                        msgbox.destroy()
-#                        if result == gtk.RESPONSE_CANCEL:
+#                        if result == Gtk.ResponseType.CANCEL:
 #                            return
 #                        else:
 #                            os.remove(newdb)
 #                
 #                    msg = _("Please wait...")
-#                    self.msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_NONE, msg)
+#                    self.msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.INFO, Gtk.ButtonsType.NONE, msg)
 #                    self.msgbox.set_title(_("Converting database"))
 #                    self.msgbox.show_all()
 #                    
-#                    while gtk.events_pending():
-#                        gtk.main_iteration_do(False)
+#                    while Gtk.events_pending():
+#                        Gtk.main_iteration_do(False)
 ##                    upgrade.update(olddb, newdb)
 ##                    
 ##                    msgbox.set_markup(_("Convert Operation Completed!\nNew databas: %s") % newdb)
 ##                    msgbox.set_response_sensitive(-5, True)
 ##                    msgbox.run()
 ##                    msgbox.destroy()
-#                    gobject.timeout_add(1000, self.updateFunc, olddb, newdb)
+#                    GObject.timeout_add(1000, self.updateFunc, olddb, newdb)
 #                    return
 #                    
 #                else:
 #                    msg = _("The requested directory doesn't exist.")
 #            
-#            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK, msg)
+#            msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK, msg)
 #            msgbox.set_title(_("Error opening destination"))
 #            msgbox.run()
 #            msgbox.destroy()
@@ -357,9 +357,9 @@ class Setting(gobject.GObject):
             self.emit("locale-changed", config.locale)
             
             if config.directionlist[langindex] == "rtl":
-                gtk.widget_set_default_direction(gtk.TEXT_DIR_RTL)
+                Gtk.widget_set_default_direction(Gtk.TextDirection.RTL)
             else:
-                gtk.widget_set_default_direction(gtk.TEXT_DIR_LTR)
+                Gtk.widget_set_default_direction(Gtk.TextDirection.LTR)
             
         config.datetype = self.dateformat.get_active()
         config.datedelim = self.delimiter.get_active()
@@ -373,8 +373,8 @@ class Setting(gobject.GObject):
             config.digittype = 1
             
     def reportPaperSetup(self, sender):
-        settings = gtk.PrintSettings()
-        self.page_setup = gtk.print_run_page_setup_dialog(None, self.page_setup, settings)
+        settings = Gtk.PrintSettings()
+        self.page_setup = Gtk.print_run_page_setup_dialog(None, self.page_setup, settings)
         self.builder.get_object("papersize").set_text(self.page_setup.get_paper_size().get_display_name())
         
     def applyReportSetting(self):
@@ -391,17 +391,17 @@ class Setting(gobject.GObject):
         paper_size = self.page_setup.get_paper_size()
         config.paper_ppd = paper_size.get_ppd_name()
         config.paper_name = paper_size.get_display_name()
-        config.paper_width = paper_size.get_width(gtk.UNIT_POINTS)
-        config.paper_height = paper_size.get_height(gtk.UNIT_POINTS)
+        config.paper_width = paper_size.get_width(Gtk.UNIT_POINTS)
+        config.paper_height = paper_size.get_height(Gtk.UNIT_POINTS)
         config.paper_orientation = int(self.page_setup.get_orientation())
 #        self.page_setup.to_file(config.reportconfig)
 
     def restoreDefaultsReports(self):
         paper_size = self.page_setup.get_paper_size()
-        config.topmargin = int(paper_size.get_default_top_margin(gtk.UNIT_POINTS))
-        config.botmargin = int(paper_size.get_default_bottom_margin(gtk.UNIT_POINTS))
-        config.rightmargin = int(paper_size.get_default_right_margin(gtk.UNIT_POINTS))
-        config.leftmargin = int(paper_size.get_default_left_margin(gtk.UNIT_POINTS))
+        config.topmargin = int(paper_size.get_default_top_margin(Gtk.UNIT_POINTS))
+        config.botmargin = int(paper_size.get_default_bottom_margin(Gtk.UNIT_POINTS))
+        config.rightmargin = int(paper_size.get_default_right_margin(Gtk.UNIT_POINTS))
+        config.leftmargin = int(paper_size.get_default_left_margin(Gtk.UNIT_POINTS))
         
         config.restoreDefaultFonts()
         
@@ -490,13 +490,13 @@ class Setting(gobject.GObject):
 
             # self.config_items( 0 => item_id, 1 => get_val function, 2 => exists in subjects)
             if   row.cfgType == 0:
-                widget = gtk.FileChooserButton(row.cfgKey)
-                filt = gtk.FileFilter()
+                widget = Gtk.FileChooserButton(row.cfgKey)
+                filt = Gtk.FileFilter()
                 filt.set_name('png,jpg')
                 filt.add_pattern('*.png')
                 filt.add_pattern('*.jpg')
                 widget.add_filter(filt)
-                filt = gtk.FileFilter()
+                filt = Gtk.FileFilter()
                 filt.set_name('All files')
                 filt.add_pattern('*')
                 widget.add_filter(filt)
@@ -505,7 +505,7 @@ class Setting(gobject.GObject):
                     widget.set_filename(row.cfgValue)
                 self.config_items.append((row.cfgId, widget.get_filename, False,row.cfgKey))
             elif row.cfgType in (1, 2, 3):
-                widget = gtk.Entry()
+                widget = Gtk.Entry()
                 if row.cfgType == 1:
                     self.config_items.append((row.cfgId, widget.get_text, False, row.cfgKey))
                 else:
@@ -515,8 +515,8 @@ class Setting(gobject.GObject):
             widget3 = None
             widget4 = None
             if   row.cfgType == 0:
-                widget2 = gtk.Button() # clear button
-                widget2.set_image(gtk.image_new_from_stock(gtk.STOCK_CLEAR, gtk.ICON_SIZE_MENU))
+                widget2 = Gtk.Button() # clear button
+                widget2.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_CLEAR, Gtk.IconSize.MENU))
                 widget2.connect('clicked', lambda widget2, widget: widget.unselect_all(), widget)
             elif row.cfgType == 1:
                 widget.set_text(row.cfgValue)
@@ -529,9 +529,9 @@ class Setting(gobject.GObject):
                 widget.set_text(txt)
 
                 widget.set_sensitive(False)
-                widget2 = gtk.Button()         # clear button
-                widget2.set_image(gtk.image_new_from_stock(gtk.STOCK_CLEAR, gtk.ICON_SIZE_MENU))
-                widget3 = gtk.Button('Select') # select button
+                widget2 = Gtk.Button()         # clear button
+                widget2.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_CLEAR, Gtk.IconSize.MENU))
+                widget3 = Gtk.Button('Select') # select button
                 if   row.cfgType == 2:
                     multivalue = False
                 elif row.cfgType == 3:
@@ -540,23 +540,23 @@ class Setting(gobject.GObject):
                 widget3.connect('clicked', self.on_select_button_clicked, widget, multivalue)
 
             if row.cfgCat == 2:
-                widget4 = gtk.Button()         # Delete Button
-                widget4.set_image(gtk.image_new_from_stock(gtk.STOCK_DELETE, gtk.ICON_SIZE_MENU))
+                widget4 = Gtk.Button()         # Delete Button
+                widget4.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_DELETE, Gtk.IconSize.MENU))
                 widget4.connect('clicked', self.on_delete_row_clicked, row.cfgId)
 
-            table.attach(gtk.Label(row.cfgKey), 0, 1, top-1, top, gtk.SHRINK)
+            table.attach(Gtk.Label(label=row.cfgKey), 0, 1, top-1, top, Gtk.AttachOptions.SHRINK)
             table.attach(widget, 1, 2, top-1, top)
             if widget2:
-                table.attach(widget2, 2, 3, top-1, top, gtk.SHRINK)
+                table.attach(widget2, 2, 3, top-1, top, Gtk.AttachOptions.SHRINK)
             if widget3:
-                table.attach(widget3, 3, 4, top-1, top, gtk.SHRINK)
+                table.attach(widget3, 3, 4, top-1, top, Gtk.AttachOptions.SHRINK)
             if widget4:
-                table.attach(widget4, 4, 5, top-1, top, gtk.SHRINK)
-            table.attach(gtk.Label(row.cfgDesc), 5, 6, top-1, top)
+                table.attach(widget4, 4, 5, top-1, top, Gtk.AttachOptions.SHRINK)
+            table.attach(Gtk.Label(label=row.cfgDesc), 5, 6, top-1, top)
             table.show_all()
 
         if others_top == 0:
-            others.attach(gtk.Label(), 0, 5, 0, 1, gtk.SHRINK)
+            others.attach(Gtk.Label(), 0, 5, 0, 1, Gtk.AttachOptions.SHRINK)
 
     def on_delete_row_clicked(self, button, id):
         conf = dbconfig.dbConfig()
@@ -590,7 +590,7 @@ class Setting(gobject.GObject):
     def on_conf_key_changed(self, entry):
         add   = self.builder.get_object('add_config')
 
-        entry.set_icon_from_stock(gtk.ENTRY_ICON_SECONDARY, None)
+        entry.set_icon_from_stock(Gtk.EntryIconPosition.SECONDARY, None)
 
         key = entry.get_text()
         if len(key) == 0:
@@ -599,8 +599,8 @@ class Setting(gobject.GObject):
 
         conf = dbconfig.dbConfig()
         if conf.exists(key):
-            entry.set_icon_from_stock(gtk.ENTRY_ICON_SECONDARY, gtk.STOCK_DIALOG_WARNING)
-            entry.set_icon_tooltip_text(gtk.ENTRY_ICON_SECONDARY, 'Key already exists')
+            entry.set_icon_from_stock(Gtk.EntryIconPosition.SECONDARY, Gtk.STOCK_DIALOG_WARNING)
+            entry.set_icon_tooltip_text(Gtk.EntryIconPosition.SECONDARY, 'Key already exists')
             add.set_sensitive(False)
             return
 
@@ -629,11 +629,11 @@ class Setting(gobject.GObject):
 
         self.setup_config_tab()
 
-gobject.type_register(Setting)
-gobject.signal_new("database-changed", Setting, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (gobject.TYPE_STRING,))
-gobject.signal_new("dblist-changed", Setting, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (gobject.TYPE_STRING,))
-gobject.signal_new("locale-changed", Setting, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (gobject.TYPE_STRING,))
+GObject.type_register(Setting)
+GObject.signal_new("database-changed", Setting, GObject.SignalFlags.RUN_LAST,
+                   None, (GObject.TYPE_STRING,))
+GObject.signal_new("dblist-changed", Setting, GObject.SignalFlags.RUN_LAST,
+                   None, (GObject.TYPE_STRING,))
+GObject.signal_new("locale-changed", Setting, GObject.SignalFlags.RUN_LAST,
+                   None, (GObject.TYPE_STRING,))
 

@@ -1,5 +1,5 @@
-import pygtk
-import gtk
+import gi
+from gi.repository import Gtk
 from datetime import date
 import os
 import platform
@@ -111,7 +111,7 @@ class NotebookReport:
             names = query3.first()
             if names == None:
                 errorstr = _("No subject is registered with the code: %s") % self.code.get_text()
-                msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK, errorstr)
+                msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK, errorstr)
                 msgbox.set_title(_("No subjects found"))
                 msgbox.run()
                 msgbox.destroy()
@@ -144,7 +144,7 @@ class NotebookReport:
                     fdate = self.fdate.getDateObject()
                     tdate = self.tdate.getDateObject()
                     if tdate < fdate:
-                        msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 
+                        msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, 
                                                    _("Second date value shouldn't precede the first one."))
                         msgbox.set_title(_("Invalid date order"))
                         msgbox.run()
@@ -154,7 +154,7 @@ class NotebookReport:
                     query2 = query2.filter(Bill.date < fdate)
                 else:
                     if unicode(self.fnum.get_text()) == '' or unicode(self.tnum.get_text()) == '':
-                        msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 
+                        msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, 
                                                    _("One of document numbers are empty."))
                         msgbox.set_title(_("Invalid document order"))
                         msgbox.run()
@@ -164,7 +164,7 @@ class NotebookReport:
                     fnumber = int(unicode(self.fnum.get_text()))
                     tnumber = int(unicode(self.tnum.get_text()))
                     if tnumber < fnumber:
-                        msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, 
+                        msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, 
                                                    _("Second document number shouldn't be greater than the first one."))
                         msgbox.set_title(_("Invalid document order"))
                         msgbox.run()
@@ -255,7 +255,7 @@ class NotebookReport:
         if report == None:
             return
         if len(report["data"]) == 0:
-            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 
+            msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.INFO, Gtk.ButtonsType.OK, 
                                        _("The requested notebook is empty."))
             msgbox.set_title(_("Empty notebook"))
             msgbox.run()
@@ -285,7 +285,7 @@ class NotebookReport:
         if report == None:
             return
         if len(report["data"]) == 0:
-            msgbox = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, 
+            msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.INFO, Gtk.ButtonsType.OK, 
                                        _("The requested notebook is empty."))
             msgbox.set_title(_("Empty notebook"))
             msgbox.run()
@@ -313,12 +313,12 @@ class NotebookReport:
         else:
             printjob = self.createPrintJob()
             if printjob != None:
-                printjob.doPrintJob(gtk.PRINT_OPERATION_ACTION_PREVIEW)
+                printjob.doPrintJob(Gtk.PRINT_OPERATION_ACTION_PREVIEW)
     
     def printReport(self, sender):
         printjob = self.createPrintJob()
         if printjob != None:
-            printjob.doPrintJob(gtk.PRINT_OPERATION_ACTION_PRINT_DIALOG)
+            printjob.doPrintJob(Gtk.PRINT_OPERATION_ACTION_PRINT_DIALOG)
         
     def exportToCSV(self, sender):
         report = self.createReport()
@@ -335,8 +335,8 @@ class NotebookReport:
                 content += item.replace(",", "") + ","
             content += "\n"
             
-        dialog = gtk.FileChooserDialog(None, self.window, gtk.FILE_CHOOSER_ACTION_SAVE, (gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
-                                                                                         gtk.STOCK_SAVE, gtk.RESPONSE_ACCEPT))
+        dialog = Gtk.FileChooserDialog(None, self.window, Gtk.FileChooserAction.SAVE, (Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT,
+                                                                                         Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT))
         dialog.run()
         filename = os.path.splitext(dialog.get_filename())[0]
         file = open(filename + ".csv", "w")

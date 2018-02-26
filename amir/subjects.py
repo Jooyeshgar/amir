@@ -1,6 +1,6 @@
-import pygtk
-import gtk
-import gobject
+import gi
+from gi.repository import Gtk
+from gi.repository import GObject
 
 from sqlalchemy.orm.util import outerjoin
 from sqlalchemy.orm.query import aliased
@@ -17,11 +17,11 @@ from amir.share import Share
 
 config = share.config
 
-class Subjects(gobject.GObject):
+class Subjects(GObject.GObject):
     subjecttypes = ["Debtor", "Creditor", "Both"]
     
     def __init__ (self, ledgers_only=False, parent_id=[0,], multiselect=False):
-        gobject.GObject.__init__(self)
+        GObject.GObject.__init__(self)
 
         self.builder = get_builder("notebook")
         
@@ -30,33 +30,33 @@ class Subjects(gobject.GObject):
         
         self.treeview = self.builder.get_object("treeview")
 
-        if gtk.widget_get_default_direction() == gtk.TEXT_DIR_RTL :
+        if Gtk.widget_get_default_direction() == Gtk.TextDirection.RTL :
             halign = 1
         else:
             halign = 0
             
-        self.treestore = gtk.TreeStore(str, str, str, str)
-        column = gtk.TreeViewColumn(_("Subject Code"), gtk.CellRendererText(), text=0)
+        self.treestore = Gtk.TreeStore(str, str, str, str)
+        column = Gtk.TreeViewColumn(_("Subject Code"), Gtk.CellRendererText(), text=0)
         column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
-        column = gtk.TreeViewColumn(_("Subject Name"), gtk.CellRendererText(), text=1)
+        column = Gtk.TreeViewColumn(_("Subject Name"), Gtk.CellRendererText(), text=1)
         column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
-        column = gtk.TreeViewColumn(_("Debtor or Creditor"), gtk.CellRendererText(), text=2)
+        column = Gtk.TreeViewColumn(_("Debtor or Creditor"), Gtk.CellRendererText(), text=2)
         column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
-        column = gtk.TreeViewColumn(_("Sum"), gtk.CellRendererText(), text=3)
+        column = Gtk.TreeViewColumn(_("Sum"), Gtk.CellRendererText(), text=3)
         column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
-        self.treeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
+        self.treeview.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
         
         self.code = numberentry.NumberEntry()
         box = self.builder.get_object("codebox")
@@ -102,13 +102,13 @@ class Subjects(gobject.GObject):
             btn.hide()
         
         self.treeview.set_model(self.treestore)
-        self.treestore.set_sort_column_id(0, gtk.SORT_ASCENDING)
+        self.treestore.set_sort_column_id(0, Gtk.SortType.ASCENDING)
         self.window.show_all()
         self.builder.connect_signals(self)
         #self.rebuild_nested_set(0, 0)  
 
         if multiselect:
-            self.treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
+            self.treeview.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
             self.builder.get_object('toolbar4').hide_all()
             self.builder.get_object('statusbar1').hide_all()
         else:
@@ -193,7 +193,7 @@ class Subjects(gobject.GObject):
                 self.saveLedger(unicode(entry.get_text()), type, parent, False, dialog)
             dialog.hide()
         else :
-            msgbox =  gtk.MessageDialog(parent, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_CLOSE,
+            msgbox =  Gtk.MessageDialog(parent, Gtk.DialogFlags.MODAL, Gtk.MessageType.INFO, Gtk.ButtonsType.CLOSE,
                                     _("Please select an item from the list, to add subject for it."))
             msgbox.set_title(_("Select a subject"))
             msgbox.run()
@@ -262,7 +262,7 @@ class Subjects(gobject.GObject):
             result = query.filter(Subject1.code == code).first()
             
             if result[1] != 0 :
-                msgbox =  gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
+                msgbox =  Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.CLOSE,
                                     _("Subject can not be deleted, because it has some child subjects."))
                 msgbox.set_title(_("Error deleting subject"))
                 msgbox.run()
@@ -273,7 +273,7 @@ class Subjects(gobject.GObject):
                 query = query.filter(Notebook.subject_id == result[0])
                 rowcount = query.first()[0]
                 if rowcount != 0 :
-                    msgbox =  gtk.MessageDialog(self.window, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
+                    msgbox =  Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.CLOSE,
                                     _("Subject can not be deleted, because there are some documents registered for it."))
                     msgbox.set_title(_("Error deleting subject"))
                     msgbox.run()
@@ -299,7 +299,7 @@ class Subjects(gobject.GObject):
     
     def saveLedger(self, name, type, iter, edit, widget):
         if name == "" :
-            msgbox = gtk.MessageDialog(widget, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
+            msgbox = Gtk.MessageDialog(widget, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.CLOSE,
                                     _("Subject name should not be empty."))
             msgbox.set_title(_("Empty subject name"))
             msgbox.run()
@@ -335,7 +335,7 @@ class Subjects(gobject.GObject):
             result = query.first()
             
             if result[0] != 0 :
-                msgbox = gtk.MessageDialog(widget, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
+                msgbox = Gtk.MessageDialog(widget, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.CLOSE,
                                         _("A subject with this name already exists in the current level."))
                 msgbox.set_title(_("Duplicate subject name"))
                 msgbox.run()
@@ -345,7 +345,7 @@ class Subjects(gobject.GObject):
             #TODO pass code through function parameters
             lastcode = convertToLatin(self.code.get_text())[0:2]
             if lastcode == '':
-                msgbox = gtk.MessageDialog(widget, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
+                msgbox = Gtk.MessageDialog(widget, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.CLOSE,
                                         _("Ledger Code field is empty"))
                 msgbox.set_title(_("Invalid subject code"))
                 msgbox.run()
@@ -360,7 +360,7 @@ class Subjects(gobject.GObject):
                 result = query.first()
             
             if result[0] != 0 :
-                msgbox = gtk.MessageDialog(widget, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE,
+                msgbox = Gtk.MessageDialog(widget, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.CLOSE,
                                         _("A subject with this code already exists."))
                 msgbox.set_title(_("Duplicate subject code"))
                 msgbox.run()
@@ -383,7 +383,7 @@ class Subjects(gobject.GObject):
                     msg = _("The type of this subject can not be changed to 'debtor', Because there are \
                             %d documents that use it as creditor.") % rowcount
                 if (rowcount > 0):
-                    msgbox = gtk.MessageDialog(widget, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE, msg)
+                    msgbox = Gtk.MessageDialog(widget, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.CLOSE, msg)
                     msgbox.set_title(_("Can not change subject type"))
                     msgbox.run()
                     msgbox.destroy()
@@ -572,19 +572,19 @@ class Subjects(gobject.GObject):
     def on_key_release_event(self, sender, event):
         expand = 0
         selection = self.treeview.get_selection()
-        if selection.get_mode() == gtk.SELECTION_MULTIPLE:
+        if selection.get_mode() == Gtk.SelectionMode.MULTIPLE:
             return
 
         iter = selection.get_selected()[1]
         if iter != None :
-            if gtk.gdk.keyval_name(event.keyval) == "Left":
-                if self.treeview.get_direction() != gtk.TEXT_DIR_LTR:
+            if Gdk.keyval_name(event.keyval) == "Left":
+                if self.treeview.get_direction() != Gtk.TextDirection.LTR:
                     expand = 1
                 else:
                     expand = -1
                     
-            if gtk.gdk.keyval_name(event.keyval) == "Right":
-                if self.treeview.get_direction() != gtk.TEXT_DIR_RTL:
+            if Gdk.keyval_name(event.keyval) == "Right":
+                if self.treeview.get_direction() != Gtk.TextDirection.RTL:
                     expand = 1
                 else:
                     expand = -1
@@ -606,11 +606,11 @@ class Subjects(gobject.GObject):
                         self.treeview.set_cursor(path, None, False)
                         self.treeview.grab_focus()
                 return
-#            if gtk.gdk.keyval_name(event.keyval) == Ri:
+#            if Gdk.keyval_name(event.keyval) == Ri:
             
     def selectSubjectFromList(self, treeview, path, view_column):
         selection = self.treeview.get_selection()
-        if selection.get_mode() == gtk.SELECTION_MULTIPLE:
+        if selection.get_mode() == Gtk.SelectionMode.MULTIPLE:
             return
 
         iter = self.treestore.get_iter(path)
@@ -640,9 +640,9 @@ class Subjects(gobject.GObject):
             items.append((sub_id, code, name))
         self.emit("subject-multi-selected", items)
 
-gobject.type_register(Subjects)
-gobject.signal_new("subject-selected", Subjects, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (gobject.TYPE_INT, gobject.TYPE_STRING, gobject.TYPE_STRING))
-gobject.signal_new("subject-multi-selected", Subjects, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,))
+GObject.type_register(Subjects)
+GObject.signal_new("subject-selected", Subjects, GObject.SignalFlags.RUN_LAST,
+                   None, (GObject.TYPE_INT, GObject.TYPE_STRING, GObject.TYPE_STRING))
+GObject.signal_new("subject-multi-selected", Subjects, GObject.SignalFlags.RUN_LAST,
+                   None, (GObject.TYPE_PYOBJECT,))
    

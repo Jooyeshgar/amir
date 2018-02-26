@@ -7,7 +7,7 @@ from database import BankAccounts
 from database import Customers
 
 import glib
-import gtk
+from gi.repository import Gtk
 
 config = share.config
 
@@ -31,11 +31,11 @@ class BankAccountsUI:
         self.bankaccounts_class = class_bankaccounts.BankAccountsClass()
         
         combo = self.builder.get_object('bank_names_combo')
-        model = gtk.ListStore(str)
+        model = Gtk.ListStore(str)
         combo.set_model(model)
 
-        cell = gtk.CellRendererText()
-        combo.pack_start(cell)
+        cell = Gtk.CellRendererText()
+        combo.pack_start(cell, True, True, 0)
         combo.add_attribute(cell, 'text', 0)
 
         for item in self.bankaccounts_class.get_bank_names():
@@ -44,11 +44,11 @@ class BankAccountsUI:
             self.bank_names_count+=1
 
         combo = self.builder.get_object('account_types_combo')
-        model = gtk.ListStore(str)
+        model = Gtk.ListStore(str)
         combo.set_model(model)
 
-        cell = gtk.CellRendererText()
-        combo.pack_start(cell)
+        cell = Gtk.CellRendererText()
+        combo.pack_start(cell, True, True, 0)
         combo.add_attribute(cell, 'text', 0)
 
         for item in ('جاری', 'حساب پس انداز'):
@@ -56,20 +56,20 @@ class BankAccountsUI:
             model.set(iter, 0, item)
 
         treeview = self.builder.get_object('treeview')
-        model = gtk.ListStore(str, str, str, str, str, str)
+        model = Gtk.ListStore(str, str, str, str, str, str)
         treeview.set_model(model)
 
-        column = gtk.TreeViewColumn('id', gtk.CellRendererText(), text=0)
+        column = Gtk.TreeViewColumn('id', Gtk.CellRendererText(), text=0)
         treeview.append_column(column)
-        column = gtk.TreeViewColumn('Account Name', gtk.CellRendererText(), text=1)
+        column = Gtk.TreeViewColumn('Account Name', Gtk.CellRendererText(), text=1)
         treeview.append_column(column)
-        column = gtk.TreeViewColumn('Number', gtk.CellRendererText(), text=2)
+        column = Gtk.TreeViewColumn('Number', Gtk.CellRendererText(), text=2)
         treeview.append_column(column)
-        column = gtk.TreeViewColumn('Owner', gtk.CellRendererText(), text=3)
+        column = Gtk.TreeViewColumn('Owner', Gtk.CellRendererText(), text=3)
         treeview.append_column(column)
-        column = gtk.TreeViewColumn('Type', gtk.CellRendererText(), text=4)
+        column = Gtk.TreeViewColumn('Type', Gtk.CellRendererText(), text=4)
         treeview.append_column(column)
-        column = gtk.TreeViewColumn('Bank Name', gtk.CellRendererText(), text=5)
+        column = Gtk.TreeViewColumn('Bank Name', Gtk.CellRendererText(), text=5)
         treeview.append_column(column)
 
     ## List all accounts in a window
@@ -162,18 +162,18 @@ class BankAccountsUI:
         self.builder.get_object('general_window').hide()
 
     def on_add_bank_clicked(self, sender):
-        dialog = gtk.Dialog(None, None,
-                     gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                     (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                      gtk.STOCK_OK, gtk.RESPONSE_OK))
-        label = gtk.Label('Bank Name:')
-        entry = gtk.Entry()
+        dialog = Gtk.Dialog(None, None,
+                     Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                     (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                      Gtk.STOCK_OK, Gtk.ResponseType.OK))
+        label = Gtk.Label(label='Bank Name:')
+        entry = Gtk.Entry()
         dialog.vbox.pack_start(label, False, False)
         dialog.vbox.pack_start(entry, False, False)
         dialog.show_all()
         result = dialog.run()
         bank_name = entry.get_text()
-        if result == gtk.RESPONSE_OK and len(bank_name) != 0:
+        if result == Gtk.ResponseType.OK and len(bank_name) != 0:
                 combo = self.builder.get_object('bank_names_combo')
                 model = combo.get_model()
 
@@ -212,7 +212,7 @@ class BankAccountsUI:
             msg+= 'Select a Bank\n'
 
         if len(msg):
-            dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, msg)
+            dialog = Gtk.MessageDialog(None, 0, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, msg)
             dialog.run()
             dialog.destroy()
             return
@@ -230,8 +230,8 @@ class BankAccountsUI:
                 self.builder.get_object('desc').get_text())
         if result > 0:
             window = self.builder.get_object('add_window').hide_all()
-            infobar = gtk.InfoBar()
-            label = gtk.Label('successfully added.')
+            infobar = Gtk.InfoBar()
+            label = Gtk.Label(label='successfully added.')
             infobar.get_content_area().add(label)
             width , height = self.main_window_background.window.get_size()
             infobar.set_size_request(width, -1)

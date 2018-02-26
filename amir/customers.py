@@ -23,7 +23,7 @@ from    datetime                    import  date
 from    database                    import  *
 from amir.dbconfig import dbconf
 
-pygtk.require('2.0')
+gi.require_version('Gtk', '3.0')
 config = share.config
 
 ## \defgroup UserInterface
@@ -67,42 +67,42 @@ class Customer(customergroup.Group):
             self.costmenu.hide()
             
         self.treeview = self.builder.get_object("customersTreeView")
-        self.treestore = gtk.TreeStore(str, str, str, str, str)
+        self.treestore = Gtk.TreeStore(str, str, str, str, str)
         self.treestore.clear()
         self.treeview.set_model(self.treestore)
 
-        column = gtk.TreeViewColumn(_("Code"), gtk.CellRendererText(), text = 0)
+        column = Gtk.TreeViewColumn(_("Code"), Gtk.CellRendererText(), text = 0)
         column.set_spacing(5)
         column.set_resizable(True)
         column.set_sort_column_id(0)
         column.set_sort_indicator(True)
         self.treeview.append_column(column)
         
-        column = gtk.TreeViewColumn(_("Name"), gtk.CellRendererText(), text = 1)
+        column = Gtk.TreeViewColumn(_("Name"), Gtk.CellRendererText(), text = 1)
         column.set_spacing(5)
         column.set_resizable(True)
         column.set_sort_column_id(1)
         column.set_sort_indicator(True)
         self.treeview.append_column(column)
         
-        column = gtk.TreeViewColumn(_("Debt"), gtk.CellRendererText(), text = 2)
+        column = Gtk.TreeViewColumn(_("Debt"), Gtk.CellRendererText(), text = 2)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
 
-        column = gtk.TreeViewColumn(_("Credit"), gtk.CellRendererText(), text = 3)
+        column = Gtk.TreeViewColumn(_("Credit"), Gtk.CellRendererText(), text = 3)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
 
-        column = gtk.TreeViewColumn(_("Balance"), gtk.CellRendererText(), text = 4)
+        column = Gtk.TreeViewColumn(_("Balance"), Gtk.CellRendererText(), text = 4)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
         
-        self.treeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
+        self.treeview.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
         #self.treestore.set_sort_func(0, self.sortGroupIds)
-        self.treestore.set_sort_column_id(0, gtk.SORT_ASCENDING)
+        self.treestore.set_sort_column_id(0, Gtk.SortType.ASCENDING)
         
         #Fill groups treeview
         query = config.db.session.query(CustGroups, Customers)
@@ -295,7 +295,7 @@ class Customer(customergroup.Group):
             
         #--------------------
         if msg != "":
-            msgbox = gtk.MessageDialog(self.customerForm, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE, msg)
+            msgbox = Gtk.MessageDialog(self.customerForm, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.CLOSE, msg)
             msgbox.set_title(_("Can not save customer"))
             msgbox.run()
             msgbox.destroy()
@@ -539,8 +539,8 @@ class Customer(customergroup.Group):
             customer_id = query.first().custId
             self.emit("customer-selected", customer_id, code)
              
-gobject.type_register(Customer)
-gobject.signal_new("customer-selected", Customer, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (gobject.TYPE_INT, gobject.TYPE_STRING))
+GObject.type_register(Customer)
+GObject.signal_new("customer-selected", Customer, GObject.SignalFlags.RUN_LAST,
+                   None, (GObject.TYPE_INT, GObject.TYPE_STRING))
 
 ## @}
