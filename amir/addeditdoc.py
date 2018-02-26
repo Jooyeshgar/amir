@@ -49,10 +49,10 @@ class AddEditDoc:
         
         self.treeview = self.builder.get_object("treeview")
         #self.treeview.set_direction(Gtk.TextDirection.LTR)
-        if Gtk.widget_get_default_direction() == Gtk.TextDirection.RTL :
-            halign = 1
-        else:
-            halign = 0
+        # if Gtk.widget_get_default_direction() == Gtk.TextDirection.RTL :
+        #     halign = 1
+        # else:
+        #     halign = 0
         self.liststore = Gtk.ListStore(str, str, str, str, str, str, str)
         
         column = Gtk.TreeViewColumn(_("Index"), Gtk.CellRendererText(), text=0)

@@ -17,6 +17,8 @@ from    helpers                     import  get_builder
 from    share                       import  share
 from    datetime                    import  date
 from    database                    import  *
+import gi
+from gi.repository import GObject
 
 gi.require_version('Gtk', '3.0')
 config  = share.config

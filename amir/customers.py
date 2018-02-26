@@ -22,6 +22,9 @@ from    share                       import  share
 from    datetime                    import  date
 from    database                    import  *
 from amir.dbconfig import dbconf
+import gi
+from gi.repository import Gtk
+from gi.repository import GObject
 
 gi.require_version('Gtk', '3.0')
 config = share.config

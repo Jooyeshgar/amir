@@ -2,7 +2,7 @@ import gi
 from gi.repository import Gtk
 from gi.repository import Pango
 import cairo
-import pangocairo
+# import pangocairo
 import logging
 import math
 

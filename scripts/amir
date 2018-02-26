@@ -44,12 +44,13 @@
 # Copyright (C) 2010 <jooyeshgar> <info@jooyeshgar.com>
 
 import sys
-import os, logging
-from gi.repository import Gtk
+import os
+import logging
 import gi
 gi.require_version('Gtk', '3.0')
-import gtk,Gtk.glade
-import gettext,locale
+from gi.repository import Gtk
+import gettext
+import locale
 from gi.repository import GObject
 import glib
 
@@ -105,8 +106,8 @@ except:
     logging.error("Unable to set locale.")
 
 logging.debug('Locale Path=%s' % (config.locale_path))
-Gtk.glade.bindtextdomain('amir', config.locale_path)
-Gtk.glade.textdomain('amir')
+gettext.bindtextdomain('amir', config.locale_path)
+gettext.textdomain('amir')
 gettext.install('amir', config.locale_path, unicode=1)
 
 from amir import subjects, addeditdoc, database, numberentry, notebookreport, docreport, tbalancereport, notebookutils, \
@@ -230,23 +231,23 @@ class MainWindow(GObject.GObject):
     def __init__(self):
         GObject.GObject.__init__(self)
 
-        if config.directionlist[config.localelist.index(config.locale)] == "rtl" :
-            Gtk.widget_set_default_direction(Gtk.TextDirection.RTL)
-        else:
-            Gtk.widget_set_default_direction(Gtk.TextDirection.LTR)
+        # if config.directionlist[config.localelist.index(config.locale)] == "rtl" :
+        #     Gtk.widget_set_default_direction(Gtk.TextDirection.RTL)
+        # else:
+        #     Gtk.widget_set_default_direction(Gtk.TextDirection.LTR)
 
         icondir = os.path.join(config.data_path, "media", "icon")
 
-        try:
-        	icon16 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "16.png"))
-        	icon22 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "22.png"))
-        	icon32 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "32.png"))
-        	icon48 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "48.png"))
-        	icon64 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "64.png"))
-        	icon128 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "128.png"))
-        	Gtk.window_set_default_icon_list(icon16, icon22, icon32, icon48, icon64, icon128)
-        except GObject.GError:
-        	pass
+        # try:
+        # 	icon16 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "16.png"))
+        # 	icon22 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "22.png"))
+        # 	icon32 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "32.png"))
+        # 	icon48 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "48.png"))
+        # 	icon64 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "64.png"))
+        # 	icon128 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "128.png"))
+        # 	Gtk.window_set_default_icon_list(icon16, icon22, icon32, icon48, icon64, icon128)
+        # except GObject.GError:
+        # 	pass
 
         self.builder = helpers.get_builder("mainwin")
         self.window = self.builder.get_object("window1")
@@ -262,7 +263,7 @@ class MainWindow(GObject.GObject):
         main_box = self.builder.get_object('vbox2')
         self.background = Gtk.Fixed()
         main_box.add(self.background)
-        self.background.put(Gtk.image_new_from_file(os.path.join(config.data_path, "media", "background.png")), 0, 0)
+        # self.background.put(Gtk.image_new_from_file(os.path.join(config.data_path, "media", "background.png")), 0, 0)
         self.background.show_all()
 
         #NOTE: Bad idea, because until initial menu is shown, user can not register any bill;

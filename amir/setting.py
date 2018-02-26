@@ -26,27 +26,27 @@ class Setting(GObject.GObject):
         self.treeview = self.builder.get_object("databases-table")
         self.treeview.set_direction(Gtk.TextDirection.LTR)
         self.liststore = Gtk.ListStore(GObject.TYPE_BOOLEAN, str, str)
-        if Gtk.widget_get_default_direction() == Gtk.TextDirection.RTL :
-            halign = 1
-        else:
-            halign = 0
+        # if Gtk.widget_get_default_direction() == Gtk.TextDirection.RTL :
+        #     halign = 1
+        # else:
+        #     halign = 0
             
         crtoggle = Gtk.CellRendererToggle()
         crtoggle.set_radio(True)
 #        crtoggle.set_activatable(True)
         crtoggle.connect('toggled', self.changeCurrentDb, 0)
         column = Gtk.TreeViewColumn(_("Current"),  crtoggle, active=0)
-        column.set_alignment(halign)
+        # column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
         column = Gtk.TreeViewColumn(_("Name"), Gtk.CellRendererText(), text=1)
-        column.set_alignment(halign)
+        # column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
         column = Gtk.TreeViewColumn(_("Path"), Gtk.CellRendererText(), text=2)
-        column.set_alignment(halign)
+        # column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
@@ -80,8 +80,8 @@ class Setting(GObject.GObject):
         
         self.dateorder = self.builder.get_object("dateorder")
         comboInsertItems(self.dateorder, [])
-        for order in config.dateorders:
-            self.dateorder.append_text(order[0] + " - " + order[1] + " - " + order[2])
+        # for order in config.dateorders:
+        #     self.dateorder.append_text(order[0] + " - " + order[1] + " - " + order[2])
         self.dateorder.set_active(config.dateorder)
         
         self.uselatin = self.builder.get_object("uselatin")
@@ -103,9 +103,9 @@ class Setting(GObject.GObject):
         self.builder.get_object("contentfont").set_value(config.contentfont)
         self.builder.get_object("footerfont").set_value(config.footerfont)
         
-        paper_size = Gtk.paper_size_new_from_ppd(config.paper_ppd, config.paper_name, config.paper_width, config.paper_height)
+        # paper_size = Gtk.paper_size_new_from_ppd(config.paper_ppd, config.paper_name, config.paper_width, config.paper_height)
         self.page_setup = Gtk.PageSetup()
-        self.page_setup.set_paper_size(paper_size)
+        # self.page_setup.set_paper_size(paper_size)
         self.page_setup.set_orientation(config.paper_orientation)
         self.builder.get_object("papersize").set_text(config.paper_name)
 

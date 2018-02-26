@@ -10,9 +10,6 @@ import  payments
 import  dbconfig
 import  customers
 
-import  gobject
-import  gtk
-
 from    sqlalchemy.orm              import  sessionmaker, join
 from    helpers                     import  get_builder
 from    sqlalchemy.orm.util         import  outerjoin
@@ -22,6 +19,8 @@ from    sqlalchemy.sql              import  and_
 from    sqlalchemy.sql.functions    import  *
 from    database                    import  *
 import	class_document
+from gi.repository import Gtk
+from gi.repository import Gdk
 
 
 config = share.config

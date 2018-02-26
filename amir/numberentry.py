@@ -18,7 +18,7 @@ class NumberEntry(Gtk.Entry):
     """
     
     def __init__(self, Max=0):
-        GObject.GObject.__init__(self, Max)
+        GObject.GObject.__init__(self)
         self.insert_sig = self.connect("insert-text", self.insert_cb)
     
     def insert(self, widget, text, pos):

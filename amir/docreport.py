@@ -27,7 +27,7 @@ class DocumentReport:
         
         self.window = self.builder.get_object("window2")
         
-        self.number = Gtk.Entry(max=0) #numberentry.NumberEntry()
+        self.number = Gtk.Entry() #numberentry.NumberEntry()
         box = self.builder.get_object("numbox")
         box.add(self.number)
         self.number.set_activates_default(True)

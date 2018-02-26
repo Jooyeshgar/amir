@@ -313,8 +313,6 @@
           <object class="GtkNotebook" id="notebook1">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="tab_hborder">6</property>
-            <property name="tab_vborder">4</property>
             <signal name="switch-page" handler="on_notebook1_switch_page" swapped="no"/>
             <child>
               <object class="GtkVBox" id="vbox4">

@@ -35,7 +35,7 @@ class BankAccountsUI:
         combo.set_model(model)
 
         cell = Gtk.CellRendererText()
-        combo.pack_start(cell, True, True, 0)
+        combo.pack_start(cell, True)
         combo.add_attribute(cell, 'text', 0)
 
         for item in self.bankaccounts_class.get_bank_names():
@@ -48,7 +48,7 @@ class BankAccountsUI:
         combo.set_model(model)
 
         cell = Gtk.CellRendererText()
-        combo.pack_start(cell, True, True, 0)
+        combo.pack_start(cell, True)
         combo.add_attribute(cell, 'text', 0)
 
         for item in ('جاری', 'حساب پس انداز'):

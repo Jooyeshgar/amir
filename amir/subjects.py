@@ -30,29 +30,29 @@ class Subjects(GObject.GObject):
         
         self.treeview = self.builder.get_object("treeview")
 
-        if Gtk.widget_get_default_direction() == Gtk.TextDirection.RTL :
-            halign = 1
-        else:
-            halign = 0
+        # if Gtk.widget_get_default_direction() == Gtk.TextDirection.RTL :
+        #     halign = 1
+        # else:
+        #     halign = 0
             
         self.treestore = Gtk.TreeStore(str, str, str, str)
         column = Gtk.TreeViewColumn(_("Subject Code"), Gtk.CellRendererText(), text=0)
-        column.set_alignment(halign)
+        # column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
         column = Gtk.TreeViewColumn(_("Subject Name"), Gtk.CellRendererText(), text=1)
-        column.set_alignment(halign)
+        # column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
         column = Gtk.TreeViewColumn(_("Debtor or Creditor"), Gtk.CellRendererText(), text=2)
-        column.set_alignment(halign)
+        # column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
         column = Gtk.TreeViewColumn(_("Sum"), Gtk.CellRendererText(), text=3)
-        column.set_alignment(halign)
+        # column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)

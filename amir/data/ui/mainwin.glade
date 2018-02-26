@@ -349,7 +349,6 @@ Hadi Aminzadeh &lt;hadi60@gmail.com&gt;</property>
                         <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="image">image7</property>
                         <property name="use_stock">False</property>
                         <signal name="activate" handler="addNewBuy" swapped="no"/>
                         <accelerator key="F6" signal="activate"/>
@@ -518,7 +517,6 @@ Hadi Aminzadeh &lt;hadi60@gmail.com&gt;</property>
                           <object class="GtkMenu" id="menu9">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="ubuntu_local">True</property>
                             <child>
                               <object class="GtkMenuItem" id="viewCustomersMenuItem">
                                 <property name="visible">True</property>
@@ -555,7 +553,6 @@ Hadi Aminzadeh &lt;hadi60@gmail.com&gt;</property>
                           <object class="GtkMenu" id="menu2">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="ubuntu_local">True</property>
                             <child>
                               <object class="GtkImageMenuItem" id="arrangedocitem">
                                 <property name="label" translatable="yes" comments="Re-orders documents by changing Doc.numbers according to Doc.dates (in ascending order)">Arrange Documents</property>
@@ -581,7 +578,6 @@ Hadi Aminzadeh &lt;hadi60@gmail.com&gt;</property>
                           <object class="GtkMenu" id="menu6">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="ubuntu_local">True</property>
                             <child>
                               <object class="GtkMenuItem" id="menuitem11">
                                 <property name="visible">True</property>
@@ -633,7 +629,6 @@ Hadi Aminzadeh &lt;hadi60@gmail.com&gt;</property>
                   <object class="GtkMenu" id="warehousingSub">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="ubuntu_local">True</property>
                     <child>
                       <object class="GtkImageMenuItem" id="allProductsMenuItem">
                         <property name="label" translatable="yes">View All Products</property>
@@ -787,7 +782,6 @@ Hadi Aminzadeh &lt;hadi60@gmail.com&gt;</property>
                   <object class="GtkMenu" id="menu10">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="ubuntu_local">True</property>
                     <child>
                       <object class="GtkMenuItem" id="subjectsmenuitem1">
                         <property name="visible">True</property>
@@ -809,7 +803,6 @@ Hadi Aminzadeh &lt;hadi60@gmail.com&gt;</property>
                           <object class="GtkMenu" id="menu11">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="ubuntu_local">True</property>
                             <child>
                               <object class="GtkMenuItem" id="viewCustomersMenuItem1">
                                 <property name="visible">True</property>
@@ -846,7 +839,6 @@ Hadi Aminzadeh &lt;hadi60@gmail.com&gt;</property>
                           <object class="GtkMenu" id="warehousingSub1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="ubuntu_local">True</property>
                             <child>
                               <object class="GtkImageMenuItem" id="allProductsMenuItem1">
                                 <property name="label" translatable="yes">View All Products</property>

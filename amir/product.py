@@ -21,6 +21,9 @@ from    helpers                     import  get_builder
 from    share                       import  share
 from    datetime                    import  date
 from    database                    import  *
+import gi
+from gi.repository import Gtk
+from gi.repository import GObject
 
 config = share.config
 

@@ -67,7 +67,7 @@ class AutomaticAccounting:
         # Date entry
         date_box = self.builder.get_object('date-box')
         self.date_entry = dateentry.DateEntry()
-        date_box.pack_start(self.date_entry, False, False)
+        date_box.pack_start(self.date_entry, False, False, False)
         self.current_time = self.date_entry.getDateObject()
         # type combo
         type_combo = self.builder.get_object('select-type')
@@ -76,16 +76,14 @@ class AutomaticAccounting:
 
         cell = Gtk.CellRendererText()
         cell.set_visible(False)
-        type_combo.pack_start(cell, True, True, 0)
+        type_combo.pack_start(cell, True)
         type_combo.add_attribute(cell, 'text', 0)
 
         cell = Gtk.CellRendererText()
-        type_combo.pack_start(cell, True, True, 0)
+        type_combo.pack_start(cell, True)
         type_combo.add_attribute(cell, 'text', 1)
-
         for item in self.type_names:
-            iter = model.append()
-            model.set(iter, 0, item[0], 1, item[1])
+            model.set(item)
 
         # payment table
         table = self.builder.get_object('payment-table')

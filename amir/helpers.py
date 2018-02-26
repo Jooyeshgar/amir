@@ -23,6 +23,8 @@ __all__ = [
 import os
 import gtk,logging
 from share import share
+import gi
+from gi.repository import Gtk
 
 ## \defgroup Utility
 ## @{
@@ -55,7 +57,7 @@ def comboInsertItems(combo, items):
     combo.set_model(ls)
     cellr = Gtk.CellRendererText()
     combo.clear()
-    combo.pack_start(cellr, True, True, 0)
+    combo.pack_start(cellr, True)
     combo.add_attribute(cellr, 'text', 0)
     
 ## @}
