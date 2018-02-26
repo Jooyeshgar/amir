@@ -9,6 +9,9 @@ import dbconfig
 import subjects
 from share import share
 from helpers import get_builder, comboInsertItems
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 config = share.config
 
@@ -357,9 +360,9 @@ class Setting(GObject.GObject):
             self.emit("locale-changed", config.locale)
             
             if config.directionlist[langindex] == "rtl":
-                Gtk.widget_set_default_direction(Gtk.TextDirection.RTL)
+                Gtk.Widget.set_default_direction(Gtk.TextDirection.RTL)
             else:
-                Gtk.widget_set_default_direction(Gtk.TextDirection.LTR)
+                Gtk.Widget.set_default_direction(Gtk.TextDirection.LTR)
             
         config.datetype = self.dateformat.get_active()
         config.datedelim = self.delimiter.get_active()
@@ -391,17 +394,17 @@ class Setting(GObject.GObject):
         paper_size = self.page_setup.get_paper_size()
         config.paper_ppd = paper_size.get_ppd_name()
         config.paper_name = paper_size.get_display_name()
-        config.paper_width = paper_size.get_width(Gtk.UNIT_POINTS)
-        config.paper_height = paper_size.get_height(Gtk.UNIT_POINTS)
+        config.paper_width = paper_size.get_width(Gtk.Unit.POINTS)
+        config.paper_height = paper_size.get_height(Gtk.Unit.POINTS)
         config.paper_orientation = int(self.page_setup.get_orientation())
 #        self.page_setup.to_file(config.reportconfig)
 
     def restoreDefaultsReports(self):
         paper_size = self.page_setup.get_paper_size()
-        config.topmargin = int(paper_size.get_default_top_margin(Gtk.UNIT_POINTS))
-        config.botmargin = int(paper_size.get_default_bottom_margin(Gtk.UNIT_POINTS))
-        config.rightmargin = int(paper_size.get_default_right_margin(Gtk.UNIT_POINTS))
-        config.leftmargin = int(paper_size.get_default_left_margin(Gtk.UNIT_POINTS))
+        config.topmargin = int(paper_size.get_default_top_margin(Gtk.Unit.POINTS))
+        config.botmargin = int(paper_size.get_default_bottom_margin(Gtk.Unit.POINTS))
+        config.rightmargin = int(paper_size.get_default_right_margin(Gtk.Unit.POINTS))
+        config.leftmargin = int(paper_size.get_default_left_margin(Gtk.Unit.POINTS))
         
         config.restoreDefaultFonts()
         

@@ -49,9 +49,9 @@ import logging
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
+from gi.repository import GObject
 import gettext
 import locale
-from gi.repository import GObject
 import glib
 
 if sys.platform == 'win32':
@@ -231,10 +231,10 @@ class MainWindow(GObject.GObject):
     def __init__(self):
         GObject.GObject.__init__(self)
 
-        # if config.directionlist[config.localelist.index(config.locale)] == "rtl" :
-        #     Gtk.widget_set_default_direction(Gtk.TextDirection.RTL)
-        # else:
-        #     Gtk.widget_set_default_direction(Gtk.TextDirection.LTR)
+        if config.directionlist[config.localelist.index(config.locale)] == "rtl" :
+            Gtk.Widget.set_default_direction(Gtk.TextDirection.RTL)
+        else:
+            Gtk.Widget.set_default_direction(Gtk.TextDirection.LTR)
 
         icondir = os.path.join(config.data_path, "media", "icon")
 

@@ -29,16 +29,16 @@ class PrintReport:
         self.page_setup.set_orientation(config.paper_orientation)
 #        self.page_setup = Gtk.print_run_page_setup_dialog(None, self.page_setup, settings)
         
-        self.page_setup.set_top_margin(config.topmargin, Gtk.UNIT_POINTS)
-        self.page_setup.set_bottom_margin(config.botmargin, Gtk.UNIT_POINTS)
-        self.page_setup.set_right_margin(config.rightmargin, Gtk.UNIT_POINTS)
-        self.page_setup.set_left_margin(config.leftmargin, Gtk.UNIT_POINTS)
+        self.page_setup.set_top_margin(config.topmargin, Gtk.Unit.POINTS)
+        self.page_setup.set_bottom_margin(config.botmargin, Gtk.Unit.POINTS)
+        self.page_setup.set_right_margin(config.rightmargin, Gtk.Unit.POINTS)
+        self.page_setup.set_left_margin(config.leftmargin, Gtk.Unit.POINTS)
         
         self.operation.set_default_page_setup(self.page_setup)
-        self.operation.set_unit(Gtk.UNIT_POINTS)
+        self.operation.set_unit(Gtk.Unit.POINTS)
         
         self.content = content
-        tablewidth = self.page_setup.get_page_width(Gtk.UNIT_POINTS)
+        tablewidth = self.page_setup.get_page_width(Gtk.Unit.POINTS)
         tablewidth -= (len(cols_width) * (self.line + self.cell_margin)) + self.line + (config.rightmargin + config.leftmargin)
         self.cols_width = []
         for percent in cols_width:
@@ -58,7 +58,7 @@ class PrintReport:
         self.fields = fields
              
     def beginPrint(self, operation, context):
-        tableheight = self.page_setup.get_page_height(Gtk.UNIT_POINTS)
+        tableheight = self.page_setup.get_page_height(Gtk.Unit.POINTS)
         name_lineheight = 2 * config.namefont
         header_lineheight = 2 * config.headerfont
         tableheight -= (math.floor((len(self.fields) + 1) / 2) * header_lineheight) + (config.topmargin + config.botmargin) + self.heading_height + name_lineheight + (self.cell_margin * 2)
@@ -107,7 +107,7 @@ class PrintReport:
         LINE_HEIGHT = 2 * (config.namefont)
 #        MARGIN = self.page_margin
 #        cwidth = context.get_width()
-        cwidth = self.page_setup.get_page_width(Gtk.UNIT_POINTS)
+        cwidth = self.page_setup.get_page_width(Gtk.Unit.POINTS)
         logging.info("Paper width: " + str(cwidth))
         cr = self.cairo_context
         
@@ -157,7 +157,7 @@ class PrintReport:
         self.formatHeader()
                 
 #        RIGHT_EDGE = 570  #(table width + PAGE_MARGIN)
-        RIGHT_EDGE = self.page_setup.get_page_width(Gtk.UNIT_POINTS) - config.rightmargin
+        RIGHT_EDGE = self.page_setup.get_page_width(Gtk.Unit.POINTS) - config.rightmargin
         HEADER_HEIGHT = self.header_height
         HEADING_HEIGHT = self.heading_height
 #        PAGE_MARGIN = self.page_margin
@@ -352,7 +352,7 @@ class PrintReport:
     def drawSubjectNotebook(self, page_nr):
         self.formatHeader()
 #        RIGHT_EDGE = 570  #(table width + PAGE_MARGIN)
-        RIGHT_EDGE = self.page_setup.get_page_width(Gtk.UNIT_POINTS) - config.rightmargin
+        RIGHT_EDGE = self.page_setup.get_page_width(Gtk.Unit.POINTS) - config.rightmargin
         HEADER_HEIGHT = self.header_height
         HEADING_HEIGHT = self.heading_height
 #        PAGE_MARGIN = self.page_margin
@@ -611,7 +611,7 @@ class PrintReport:
         self.fields = {_("Document Number"):docnumber, _("Date"):datestr}
         self.formatHeader()
 #        RIGHT_EDGE = 570  #(table width + PAGE_MARGIN)
-        RIGHT_EDGE = self.page_setup.get_page_width(Gtk.UNIT_POINTS) - config.rightmargin
+        RIGHT_EDGE = self.page_setup.get_page_width(Gtk.Unit.POINTS) - config.rightmargin
         HEADER_HEIGHT = self.header_height
         HEADING_HEIGHT = self.heading_height
 #        PAGE_MARGIN = self.page_margin
@@ -727,7 +727,7 @@ class PrintReport:
         
     def drawTrialReport(self, page_nr):
         self.formatHeader()
-        RIGHT_EDGE = self.page_setup.get_page_width(Gtk.UNIT_POINTS) - config.rightmargin
+        RIGHT_EDGE = self.page_setup.get_page_width(Gtk.Unit.POINTS) - config.rightmargin
         HEADER_HEIGHT = self.header_height
         HEADING_HEIGHT = self.heading_height
         MARGIN = self.cell_margin
@@ -790,7 +790,7 @@ class PrintReport:
 
     def drawTableHeading(self):
 #        RIGHT_EDGE = 570  #(table width + PAGE_MARGIN)
-        RIGHT_EDGE = self.page_setup.get_page_width(Gtk.UNIT_POINTS) - config.rightmargin
+        RIGHT_EDGE = self.page_setup.get_page_width(Gtk.Unit.POINTS) - config.rightmargin
         HEADING_HEIGHT = self.heading_height
         MARGIN = self.cell_margin
         LINE = self.line
