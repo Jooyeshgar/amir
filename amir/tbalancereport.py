@@ -147,12 +147,12 @@ class TBalanceReport:
         else:
             printjob = self.createPrintJob()
             if printjob != None:
-                printjob.doPrintJob(Gtk.PRINT_OPERATION_ACTION_PREVIEW)
+                printjob.doPrintJob(Gtk.PrintOperationAction.PREVIEW)
     
     def printReport(self, sender):
         printjob = self.createPrintJob()
         if printjob != None:
-            printjob.doPrintJob(Gtk.PRINT_OPERATION_ACTION_PRINT_DIALOG)
+            printjob.doPrintJob(Gtk.PrintOperationAction.PREVIEW)
         
     def exportToCSV(self, sender):
         report = self.createReport()

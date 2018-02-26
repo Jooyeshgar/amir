@@ -2,7 +2,7 @@ import gi
 from gi.repository import Gtk
 from gi.repository import Pango
 import cairo
-# import pangocairo
+from gi.repository import PangoCairo
 import logging
 import math
 
@@ -23,7 +23,7 @@ class PrintReport:
         
         self.operation = Gtk.PrintOperation()
         settings = Gtk.PrintSettings()
-        paper_size = Gtk.paper_size_new_from_ppd(config.paper_ppd, config.paper_name, config.paper_width, config.paper_height)
+        paper_size = Gtk.PaperSize.new_from_ppd(config.paper_ppd, config.paper_name, config.paper_width, config.paper_height)
         self.page_setup = Gtk.PageSetup()
         self.page_setup.set_paper_size(paper_size)
         self.page_setup.set_orientation(config.paper_orientation)
@@ -98,7 +98,7 @@ class PrintReport:
         self.cairo_context = context.get_cairo_context()
         
         self.pangolayout.set_width(-1)
-        self.pangocairo = pangocairo.CairoContext(self.cairo_context)
+        self.PangoCairo = PangoCairo.cairoContext(self.cairo_context)
         
         getattr(self, self.drawfunction)(page_nr)
         #self.drawDailyNotebook(page_nr)
@@ -121,7 +121,7 @@ class PrintReport:
             (width, height) = self.pangolayout.get_size()
             self.pangolayout.set_alignment(Pango.Alignment.CENTER)
             cr.move_to ((cwidth - width / Pango.SCALE) / 2, (LINE_HEIGHT - (height/ Pango.SCALE))/2)
-            self.pangocairo.show_layout(self.pangolayout)
+            self.PangoCairo.show_layout(self.pangolayout)
             
 #            cr.move_to((cwidth + width / Pango.SCALE) / 2, LINE_HEIGHT + config.topmargin)
 #            cr.line_to((cwidth - width / Pango.SCALE) / 2, LINE_HEIGHT + config.topmargin)
@@ -147,7 +147,7 @@ class PrintReport:
             else:
                 cr.move_to ((width / Pango.SCALE) + config.leftmargin, addh - (height/ Pango.SCALE)/2)
                 flag = 1
-            self.pangocairo.show_layout(self.pangolayout)
+            self.PangoCairo.show_layout(self.pangolayout)
             
         cr.stroke()
         self.header_height = addh + 8
@@ -193,7 +193,7 @@ class PrintReport:
         for i in range(0, 3):
             right_txt -= MARGIN + LINE
             cr.move_to (right_txt -(width / Pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-            self.pangocairo.show_layout(self.pangolayout)    
+            self.PangoCairo.show_layout(self.pangolayout)    
             right_txt -= self.cols_width[i]
             cr.move_to(right_txt, TABLE_TOP)
             cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
@@ -206,7 +206,7 @@ class PrintReport:
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
         cr.move_to (right_txt -(width / Pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-        self.pangocairo.show_layout(self.pangolayout)    
+        self.PangoCairo.show_layout(self.pangolayout)    
         right_txt -= self.cols_width[3]
         cr.move_to(right_txt, TABLE_TOP)
         cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
@@ -223,7 +223,7 @@ class PrintReport:
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
         cr.move_to (right_txt -(width / Pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-        self.pangocairo.show_layout(self.pangolayout)    
+        self.PangoCairo.show_layout(self.pangolayout)    
         right_txt -= self.cols_width[4]
         cr.move_to(right_txt, TABLE_TOP)
         cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
@@ -237,7 +237,7 @@ class PrintReport:
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
         cr.move_to (right_txt -(width / Pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-        self.pangocairo.show_layout(self.pangolayout)    
+        self.PangoCairo.show_layout(self.pangolayout)    
         right_txt -= self.cols_width[5]
         cr.move_to(right_txt, TABLE_TOP)
         cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
@@ -262,7 +262,7 @@ class PrintReport:
                         (width, height) = self.pangolayout.get_size()
                         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
                         cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-                        self.pangocairo.show_layout(self.pangolayout)
+                        self.PangoCairo.show_layout(self.pangolayout)
                         fontsize = config.contentfont
                         fdesc.set_size(fontsize * Pango.SCALE)
                         self.pangolayout.set_font_description(fdesc)
@@ -271,7 +271,7 @@ class PrintReport:
                         (width, height) = self.pangolayout.get_size()
                         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
                         cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-                        self.pangocairo.show_layout(self.pangolayout)
+                        self.PangoCairo.show_layout(self.pangolayout)
                         
                     right_txt -= self.cols_width[dindex]
                     cr.move_to(right_txt, addh)
@@ -298,7 +298,7 @@ class PrintReport:
         for i in range(0, 3):
             right_txt -= MARGIN + LINE
             cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-            self.pangocairo.show_layout(self.pangolayout)    
+            self.PangoCairo.show_layout(self.pangolayout)    
             right_txt -= self.cols_width[i]
             cr.move_to(right_txt, addh)
             cr.line_to(right_txt, addh + ROW_HEIGHT)
@@ -311,7 +311,7 @@ class PrintReport:
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
         cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-        self.pangocairo.show_layout(self.pangolayout)    
+        self.PangoCairo.show_layout(self.pangolayout)    
         right_txt -= self.cols_width[3]
         cr.move_to(right_txt, addh)
         cr.line_to(right_txt, addh + ROW_HEIGHT)
@@ -324,7 +324,7 @@ class PrintReport:
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
         cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-        self.pangocairo.show_layout(self.pangolayout)    
+        self.PangoCairo.show_layout(self.pangolayout)    
         right_txt -= self.cols_width[4]
         cr.move_to(right_txt, addh)
         cr.line_to(right_txt, addh + ROW_HEIGHT)
@@ -334,7 +334,7 @@ class PrintReport:
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
         cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-        self.pangocairo.show_layout(self.pangolayout)    
+        self.PangoCairo.show_layout(self.pangolayout)    
         right_txt -= self.cols_width[5]
         cr.move_to(right_txt, addh)
         cr.line_to(right_txt, addh + ROW_HEIGHT)
@@ -388,7 +388,7 @@ class PrintReport:
         for i in range(0, 2):
             right_txt -= MARGIN + LINE
             cr.move_to (right_txt -(width / Pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-            self.pangocairo.show_layout(self.pangolayout)    
+            self.PangoCairo.show_layout(self.pangolayout)    
             right_txt -= self.cols_width[i]
             cr.move_to(right_txt, TABLE_TOP)
             cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
@@ -401,7 +401,7 @@ class PrintReport:
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
         cr.move_to (right_txt -(width / Pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-        self.pangocairo.show_layout(self.pangolayout)    
+        self.PangoCairo.show_layout(self.pangolayout)    
         right_txt -= self.cols_width[2]
         cr.move_to(right_txt, TABLE_TOP)
         cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
@@ -418,7 +418,7 @@ class PrintReport:
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
         cr.move_to (right_txt -(width / Pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-        self.pangocairo.show_layout(self.pangolayout)    
+        self.PangoCairo.show_layout(self.pangolayout)    
         right_txt -= self.cols_width[3]
         cr.move_to(right_txt, TABLE_TOP)
         cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
@@ -432,7 +432,7 @@ class PrintReport:
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
         cr.move_to (right_txt -(width / Pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-        self.pangocairo.show_layout(self.pangolayout)    
+        self.PangoCairo.show_layout(self.pangolayout)    
         right_txt -= self.cols_width[4]
         cr.move_to(right_txt, TABLE_TOP)
         cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
@@ -458,7 +458,7 @@ class PrintReport:
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
         cr.move_to (right_txt -(width / Pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-        self.pangocairo.show_layout(self.pangolayout)    
+        self.PangoCairo.show_layout(self.pangolayout)    
         right_txt -= self.cols_width[5]
         cr.move_to(right_txt, TABLE_TOP)
         cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
@@ -468,7 +468,7 @@ class PrintReport:
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
         cr.move_to (right_txt -(width / Pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-        self.pangocairo.show_layout(self.pangolayout)    
+        self.PangoCairo.show_layout(self.pangolayout)    
         right_txt -= self.cols_width[6]
         cr.move_to(right_txt, TABLE_TOP)
         cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
@@ -493,7 +493,7 @@ class PrintReport:
                         (width, height) = self.pangolayout.get_size()
                         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
                         cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-                        self.pangocairo.show_layout(self.pangolayout)
+                        self.PangoCairo.show_layout(self.pangolayout)
                         fontsize = config.contentfont
                         fdesc.set_size(fontsize * Pango.SCALE)
                         self.pangolayout.set_font_description(fdesc)
@@ -502,7 +502,7 @@ class PrintReport:
                         (width, height) = self.pangolayout.get_size()
                         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
                         cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-                        self.pangocairo.show_layout(self.pangolayout)
+                        self.PangoCairo.show_layout(self.pangolayout)
                     right_txt -= self.cols_width[dindex]
                     cr.move_to(right_txt, addh)
                     cr.line_to(right_txt, addh + ROW_HEIGHT)
@@ -532,7 +532,7 @@ class PrintReport:
         for i in range(0, 2):
             right_txt -= MARGIN + LINE
             cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-            self.pangocairo.show_layout(self.pangolayout)    
+            self.PangoCairo.show_layout(self.pangolayout)    
             right_txt -= self.cols_width[i]
             cr.move_to(right_txt, addh)
             cr.line_to(right_txt, addh + ROW_HEIGHT)
@@ -545,7 +545,7 @@ class PrintReport:
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
         cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-        self.pangocairo.show_layout(self.pangolayout)    
+        self.PangoCairo.show_layout(self.pangolayout)    
         right_txt -= self.cols_width[2]
         cr.move_to(right_txt, addh)
         cr.line_to(right_txt, addh + ROW_HEIGHT)
@@ -558,7 +558,7 @@ class PrintReport:
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
         cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-        self.pangocairo.show_layout(self.pangolayout)    
+        self.PangoCairo.show_layout(self.pangolayout)    
         right_txt -= self.cols_width[3]
         cr.move_to(right_txt, addh)
         cr.line_to(right_txt, addh + ROW_HEIGHT)
@@ -568,7 +568,7 @@ class PrintReport:
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
         cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-        self.pangocairo.show_layout(self.pangolayout)    
+        self.PangoCairo.show_layout(self.pangolayout)    
         right_txt -= self.cols_width[4]
         cr.move_to(right_txt, addh)
         cr.line_to(right_txt, addh + ROW_HEIGHT)
@@ -578,7 +578,7 @@ class PrintReport:
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
         cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-        self.pangocairo.show_layout(self.pangolayout)    
+        self.PangoCairo.show_layout(self.pangolayout)    
         right_txt -= self.cols_width[5]
         cr.move_to(right_txt, addh)
         cr.line_to(right_txt, addh + ROW_HEIGHT)
@@ -588,7 +588,7 @@ class PrintReport:
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
         cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-        self.pangocairo.show_layout(self.pangolayout)    
+        self.PangoCairo.show_layout(self.pangolayout)    
         right_txt -= self.cols_width[6]
         cr.move_to(right_txt, addh)
         cr.line_to(right_txt, addh + ROW_HEIGHT)
@@ -653,7 +653,7 @@ class PrintReport:
                     (width, height) = self.pangolayout.get_size()
                     self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
                     cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-                    self.pangocairo.show_layout(self.pangolayout)
+                    self.PangoCairo.show_layout(self.pangolayout)
                     fontsize = config.contentfont
                     fdesc.set_size(fontsize * Pango.SCALE)
                     self.pangolayout.set_font_description(fdesc)
@@ -662,7 +662,7 @@ class PrintReport:
                     (width, height) = self.pangolayout.get_size()
                     self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
                     cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-                    self.pangocairo.show_layout(self.pangolayout)
+                    self.PangoCairo.show_layout(self.pangolayout)
             
                 right_txt -= self.cols_width[dindex]
                 cr.move_to(right_txt, addh)
@@ -687,7 +687,7 @@ class PrintReport:
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
         cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-        self.pangocairo.show_layout(self.pangolayout)    
+        self.PangoCairo.show_layout(self.pangolayout)    
         right_txt -= self.cols_width[3]
         cr.move_to(right_txt, addh)
         cr.line_to(right_txt, addh + ROW_HEIGHT)
@@ -700,7 +700,7 @@ class PrintReport:
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
         cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-        self.pangocairo.show_layout(self.pangolayout)    
+        self.PangoCairo.show_layout(self.pangolayout)    
         right_txt -= self.cols_width[4]
         cr.move_to(right_txt, addh)
         cr.line_to(right_txt, addh + ROW_HEIGHT)
@@ -710,7 +710,7 @@ class PrintReport:
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
         cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-        self.pangocairo.show_layout(self.pangolayout)    
+        self.PangoCairo.show_layout(self.pangolayout)    
         right_txt -= self.cols_width[5]
         cr.move_to(right_txt, addh)
         cr.line_to(right_txt, addh + ROW_HEIGHT)
@@ -763,7 +763,7 @@ class PrintReport:
                     (width, height) = self.pangolayout.get_size()
                     self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
                     cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
-                    self.pangocairo.show_layout(self.pangolayout)
+                    self.PangoCairo.show_layout(self.pangolayout)
                 
                     right_txt -= self.cols_width[dindex]
                     cr.move_to(right_txt, addh)
@@ -819,17 +819,17 @@ class PrintReport:
                 if (width / Pango.SCALE) < self.cols_width[dindex]:
                     #self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
                     cr.move_to (right_txt -(width / Pango.SCALE), htop + (HEADING_HEIGHT/2-(height / Pango.SCALE))/2)
-                    self.pangocairo.show_layout(self.pangolayout)
+                    self.PangoCairo.show_layout(self.pangolayout)
                     #
                     self.pangolayout.set_text(res[1])
                     (width, height) = self.pangolayout.get_size()
                     #self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
                     cr.move_to (right_txt -(width / Pango.SCALE), htop + ((HEADING_HEIGHT*3)/2-(height / Pango.SCALE))/2)
-                    self.pangocairo.show_layout(self.pangolayout)                    
+                    self.PangoCairo.show_layout(self.pangolayout)                    
             else:
                 #self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
                 cr.move_to (right_txt -(width / Pango.SCALE), htop + (HEADING_HEIGHT-(height / Pango.SCALE))/2)
-                self.pangocairo.show_layout(self.pangolayout)
+                self.PangoCairo.show_layout(self.pangolayout)
         
             right_txt -= self.cols_width[dindex]
             cr.move_to(right_txt, htop)
