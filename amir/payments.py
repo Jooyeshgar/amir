@@ -38,7 +38,7 @@ class Payments(GObject.GObject):
 		self.bank_names_count = 0
 		
 		self.background = Gtk.Fixed()
-		# self.background.put(Gtk.image_new_from_file(os.path.join(config.data_path, "media", "background.png")), 0, 0)
+		self.background.put(Gtk.Image.new_from_file(os.path.join(config.data_path, "media", "background.png")), 0, 0)
 		self.background.show_all()
 					
 		GObject.GObject.__init__(self)
