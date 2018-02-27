@@ -4,9 +4,10 @@ import  dateentry
 import  subjects
 import  utility
 
-import  gobject
-import  pygtk
-import  gtk
+# import  gobject
+# import  pygtk
+# import  gtk
+
 
 from    sqlalchemy.orm              import  sessionmaker, join
 from    sqlalchemy.orm.util         import  outerjoin
@@ -19,6 +20,8 @@ from    datetime                    import  date
 from    database                    import  *
 import gi
 from gi.repository import GObject
+from gi.repository import Gtk
+from gi.repository import Gdk
 
 gi.require_version('Gtk', '3.0')
 config  = share.config

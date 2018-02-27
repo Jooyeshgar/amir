@@ -119,7 +119,7 @@ class Trade:
 		self.feeEntry           = self.builder.get_object("feeEntry")
 		
 		self.treeview = self.builder.get_object("TreeView")
-		self.treestore = Gtk.TreeStore(int, str, str, str,str)
+		self.treestore = Gtk.TreeStore(int, str, str, str, str)
 		self.treestore.clear()
 		self.treeview.set_model(self.treestore)
 		
@@ -184,7 +184,7 @@ class Trade:
 		result = query.all()
 
 		for t ,c in reversed(result):		
-	  		grouprow = self.treestore.append(None,(int(t.Id),int(t.Code), t.tDate, c.custName,t.PayableAmnt))
+	  		grouprow = self.treestore.append(None, (int(t.Id), t.Code, False, t.tDate, c.custName, t.PayableAmnt))
   			
 		self.window.show_all()
 		
@@ -1035,7 +1035,7 @@ class Trade:
 		self.session.add(sell)
 		self.session.commit()
 
-		self.treestore.append(None,(int(self.Id),int(self.subCode), self.subDate, "test", self.totalFactor))
+		self.treestore.append(None,(int(self.Id), LN(self.subCode), str(self.subDate), "test", str(self.totalFactor)))
 		
 	def registerExchanges(self):	
 				
