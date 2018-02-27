@@ -1,5 +1,6 @@
 import gi
 from gi.repository import Gtk
+gi.require_version('PangoCairo', '1.0')
 from gi.repository import Pango
 import cairo
 from gi.repository import PangoCairo
@@ -98,7 +99,7 @@ class PrintReport:
         self.cairo_context = context.get_cairo_context()
         
         self.pangolayout.set_width(-1)
-        self.PangoCairo = PangoCairo.cairoContext(self.cairo_context)
+        self.PangoCairo = PangoCairo.cairo.Context(self.cairo_context)
         
         getattr(self, self.drawfunction)(page_nr)
         #self.drawDailyNotebook(page_nr)

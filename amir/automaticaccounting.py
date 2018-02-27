@@ -164,7 +164,7 @@ class AutomaticAccounting:
         dbconf = dbconfig.dbConfig()
         
         #3:from subj?    5:from key
-        if self.type_configs[self.type_index][3]:
+        if self.type_index is not None and self.type_configs[self.type_index][3]:
             if self.type_configs[self.type_index][5] == None:
                 sub = subjects.Subjects()
             else:
@@ -183,7 +183,7 @@ class AutomaticAccounting:
         entry = self.to_entry
         dbconf = dbconfig.dbConfig()
 
-        if self.type_configs[self.type_index][4]:
+        if self.type_index is not None and self.type_configs[self.type_index][4]:
             if self.type_configs[self.type_index][6] == None:
                 sub = subjects.Subjects()
             else:
@@ -297,7 +297,7 @@ class AutomaticAccounting:
         save_button.set_sensitive(True)
 
     def on_non_cash_payment_button_clicked(self, button):
-        if self.type_configs[self.type_index][3]:
+        if self.type_index is not None and self.type_configs[self.type_index][3]:
             self.mode = 'our'
         else:
             self.mode = 'other'
