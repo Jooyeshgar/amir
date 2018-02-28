@@ -5,7 +5,6 @@ import  utility
 
 import  gobject
 import  pygtk
-import  gtk
 
 from    sqlalchemy.orm              import  sessionmaker, join
 from    sqlalchemy.orm.util         import  outerjoin

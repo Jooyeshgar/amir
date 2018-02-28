@@ -1,8 +1,6 @@
 import  numberentry
 import  subjects
-import  gobject
 import  pygtk
-import  gtk
 
 from    sqlalchemy.orm              import  sessionmaker, join
 from    helpers                     import  get_builder
@@ -12,6 +10,10 @@ from    datetime                    import  date
 from    sqlalchemy.sql              import  and_
 from    sqlalchemy.sql.functions    import  *
 from    database                    import  *
+
+import gi
+from gi.repository import Gtk
+from gi.repository import GObject
 
 ###################################################################################
 ##

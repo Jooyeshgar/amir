@@ -21,7 +21,7 @@ __all__ = [
     ]
 
 import os
-import gtk,logging
+import logging
 from share import share
 import gi
 from gi.repository import Gtk
