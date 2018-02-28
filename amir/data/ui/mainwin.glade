@@ -481,6 +481,16 @@ Hadi Aminzadeh &lt;hadi60@gmail.com&gt;</property>
                         </child>
                       </object>
                     </child>
+                    <child>
+                      <object class="GtkMenuItem" id="menuitem12">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="label" translatable="yes">Cardex</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="cardexReport" swapped="no"/>
+                      </object>
+                    </child>
                   </object>
                 </child>
               </object>
