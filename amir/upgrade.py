@@ -5,7 +5,7 @@ import os
 import getopt
 import re
 import logging
-from datetime import date
+import datetime
 
 from sqlalchemy import create_engine
 from sqlalchemy import MetaData, Table, Column, ForeignKey, ColumnDefault

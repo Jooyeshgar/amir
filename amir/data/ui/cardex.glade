@@ -334,9 +334,11 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkEntry" id="entry1">
+                      <object class="GtkEntry" id="dateFromEntry">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <property name="placeholder_text" translatable="yes">1:1:2018</property>
+                        <signal name="changed" handler="factorFilter" swapped="no"/>
                       </object>
                       <packing>
                         <property name="left_attach">5</property>
@@ -355,9 +357,11 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkEntry" id="entry2">
+                      <object class="GtkEntry" id="dateToEntry">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <property name="placeholder_text" translatable="yes">10:1:2018</property>
+                        <signal name="changed" handler="factorFilter" swapped="no"/>
                       </object>
                       <packing>
                         <property name="left_attach">7</property>

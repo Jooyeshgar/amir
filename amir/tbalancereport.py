@@ -1,6 +1,6 @@
 import gi
 from gi.repository import Gtk
-from datetime import date
+import datetime
 import os
 import platform
 

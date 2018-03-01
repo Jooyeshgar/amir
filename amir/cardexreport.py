@@ -1,6 +1,6 @@
 import gi
 from gi.repository import Gtk
-from datetime import date
+import datetime
 import os
 import platform
 
@@ -83,7 +83,7 @@ class CardexReport:
         self.window.show_all()
         self.builder.connect_signals(self)
 
-    def show(self, productCode,factorType,customerCode,dateFrom,dateTo):
+    def showResult(self, productCode,factorType,customerCode,dateFrom,dateTo):
         query = config.db.session.query(Products)
         query = query.filter(Products.code == productCode)
         bill  = query.first()
@@ -115,6 +115,11 @@ class CardexReport:
             if customerCode:
                 query = query.filter(Customers.custCode == customerCode)
 
+            if dateFrom:
+                if not dateTo:
+                    dateTo = datetime.date.today()
+                query = query.filter(Trades.tDate.between(dateFrom, dateTo))
+
             result = query.all()
             
             for factor in result:
@@ -134,7 +139,7 @@ class CardexReport:
         # Get data from DB
         box = self.builder.get_object("productCodeSearchEntry")
         productCode = box.get_text()
-        self.show(productCode,0,0,0,0)
+        self.showResult(productCode,0,0,0,0)
         
 
     def factorFilter(self,sender):
@@ -152,4 +157,13 @@ class CardexReport:
             productType = None
         else:
             productType = item[0]
-        self.show(productCode,productType,customerCode,0,0)
+
+        box = self.builder.get_object("dateToEntry")
+        dateTo = box.get_text()
+        dateTo = dateTo.replace(":", "-")
+
+        box = self.builder.get_object("dateFromEntry")
+        dateFrom = box.get_text()
+        dateFrom = dateFrom.replace(":", "-")
+
+        self.showResult(productCode,productType,customerCode,dateFrom,dateTo)

@@ -2,7 +2,7 @@ import gi
 from gi.repository import Gtk
 from gi.repository import GObject
 import string
-from datetime import date
+import datetime
 
 from utility import LN,getInt,convertToLatin
 from share import share

@@ -5,7 +5,7 @@ from database import Subject
 from database import Cheque
 from database import ChequeHistory
 
-from datetime import date
+import datetime
 from sqlalchemy.orm.util import outerjoin
 
 ## \defgroup Controller
