@@ -1,6 +1,6 @@
 import sys
 import os
-import datetime
+from datetime import date
 
 from gi.repository import GObject
 import gi

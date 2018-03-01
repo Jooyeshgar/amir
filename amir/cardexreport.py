@@ -1,6 +1,6 @@
 import gi
 from gi.repository import Gtk
-import datetime
+from datetime import date
 import os
 import platform
 
@@ -16,6 +16,10 @@ from database import *
 from dateentry import *
 from share import share
 from helpers import get_builder
+import  customers
+import  product
+from gi.repository import Gdk
+
 
 config = share.config
 
@@ -82,30 +86,63 @@ class CardexReport:
         self.treestore.set_sort_column_id(0, Gtk.SortType.ASCENDING)
         self.window.show_all()
         self.builder.connect_signals(self)
+        self.session = config.db.session    
+
+    def selectProduct(self,sender=0):
+        self.proVal = self.builder.get_object("productCodeSearchEntry")
+        obj = product.Product()
+        obj.viewProducts()
+        obj.connect("product-selected",self.proSelected)
+        code = self.proVal.get_text()
+        obj.highlightProduct(unicode(code))
+
+    def proSelected(self,sender=0, id=0, code=0):
+        code = unicode(code)
+        print code
+        if sender:
+            self.proVal.set_text(code)
+            sender.window.destroy()
+
+
+    def selectCustomers(self,sender=0):
+        self.customerEntry      = self.builder.get_object("customerCodeEntry")
+        customer_win = customers.Customer()
+        customer_win.viewCustomers()
+        code = self.customerEntry.get_text()
+        if code != '':
+            customer_win.highlightCust(code)
+        customer_win.connect("customer-selected", self.sellerSelected)
+
+    def sellerSelected(self, sender, id, code):
+        self.customerEntry.set_text(code)
+        sender.window.destroy()     
+        self.setCustomerName()
 
     def showResult(self, productCode,factorType,customerCode,dateFrom,dateTo):
         query = config.db.session.query(Products)
         query = query.filter(Products.code == productCode)
         bill  = query.first()
+        self.treestore.clear()
         if bill is not None:
-            box = self.builder.get_object("statusTextView").get_buffer().set_text('')
+            statusbar = self.builder.get_object('statusbar3')
+            context_id = statusbar.get_context_id('statusbar')
+            statusbar.remove_all(context_id)
             box = self.builder.get_object("nameTextView").get_buffer().set_text(bill.name)
             box = self.builder.get_object("groupTextView").get_buffer().set_text(str(bill.accGroup))
             box = self.builder.get_object("locationTextView").get_buffer().set_text(bill.location)
-            box = self.builder.get_object("quantityTextView").get_buffer().set_text(str(bill.quantity))
-            box = self.builder.get_object("quantityWarningTextView").get_buffer().set_text(str(bill.qntyWarning))
+            box = self.builder.get_object("quantityTextView").get_buffer().set_text(str('{0:g}'.format(float(bill.quantity))))
+            box = self.builder.get_object("quantityWarningTextView").get_buffer().set_text(str('{0:g}'.format(float(bill.qntyWarning))))
             box = self.builder.get_object("oversellTextView").get_buffer().set_text(str(bill.oversell))
-            box = self.builder.get_object("purchacePriceTextView").get_buffer().set_text(str(bill.purchacePrice))
+            box = self.builder.get_object("purchacePriceTextView").get_buffer().set_text(str('{0:g}'.format(float(bill.purchacePrice))))
             box = self.builder.get_object("dicountFormulaTextView").get_buffer().set_text(str(bill.discountFormula))
-            box = self.builder.get_object("sellingPriceTextView").get_buffer().set_text(str(bill.sellingPrice))
+            box = self.builder.get_object("sellingPriceTextView").get_buffer().set_text(str('{0:g}'.format(float(bill.sellingPrice))))
             box = self.builder.get_object("productDescriptionTextView").get_buffer().set_text(bill.productDesc)
 
-            self.treestore.clear()
             
             #Fill factor treeview
             query = config.db.session.query(Exchanges,Trades,Customers)
             query = query.filter(bill.id == Exchanges.exchngProduct, Exchanges.exchngTransId == Trades.Id, Customers.custId == Trades.Cust)
-            if factorType:
+            if factorType and factorType != 'All':
                 if factorType == 'Sell':
                     factorType = 1
                 else:
@@ -117,7 +154,7 @@ class CardexReport:
 
             if dateFrom:
                 if not dateTo:
-                    dateTo = datetime.date.today()
+                    dateTo = date.today()
                 query = query.filter(Trades.tDate.between(dateFrom, dateTo))
 
             result = query.all()
@@ -125,14 +162,16 @@ class CardexReport:
             for factor in result:
                 if factor.Trades.Sell == True:
                     buy_quantity = '-'
-                    sell_quantity = str(factor.Exchanges.exchngQnty)
+                    sell_quantity = str('{0:g}'.format(float(factor.Exchanges.exchngQnty)))
                 else:
-                    buy_quantity = str(factor.Exchanges.exchngQnty)
+                    buy_quantity = str('{0:g}'.format(float(factor.Exchanges.exchngQnty)))
                     sell_quantity = '-'
-                self.treestore.append(None, (str(factor.Trades.Code), str(factor.Customers.custCode), str(factor.Customers.custName), str(sell_quantity), str(buy_quantity),
-                 str(factor.Exchanges.exchngQnty * factor.Exchanges.exchngUntPrc), str(factor.Trades.tDate)))
+                self.treestore.append(None, (str(factor.Trades.Code), str(factor.Customers.custCode), str(factor.Customers.custName), sell_quantity, buy_quantity,
+                 str('{0:g}'.format(float(factor.Exchanges.exchngQnty * factor.Exchanges.exchngUntPrc))), str(factor.Trades.tDate)))
         else:
-            box = self.builder.get_object("statusTextView").get_buffer().set_text("Not Found")
+            statusbar = self.builder.get_object('statusbar3')
+            context_id = statusbar.get_context_id('statusbar')
+            statusbar.push(context_id,_('Not Found'))
         self.window.show_all()
 
     def searchProduct(self,sender):

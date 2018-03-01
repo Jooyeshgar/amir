@@ -1,6 +1,6 @@
 import gi
 from gi.repository import Gtk
-import datetime
+from datetime import date
 
 from sqlalchemy import or_, and_
 from sqlalchemy.orm.util import outerjoin

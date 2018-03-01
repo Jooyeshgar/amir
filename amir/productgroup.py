@@ -104,7 +104,7 @@ class ProductGroup(GObject.GObject):
                 #code = utility.convertToPersian(code)
                 buyId = utility.convertToPersian(buyId)
                 sellId = utility.convertToPersian(sellId)
-            self.treestore.append(None, (code, group.name, buyId, sellId))
+            self.treestore.append(None, (str(code), str(group.name), str(buyId), str(sellId)))
             
         self.window.show_all()
         self.window.grab_focus()
