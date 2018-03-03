@@ -530,7 +530,7 @@ class Trade:
 								
 	def cancelProduct(self,sender=0,ev=0):
 		self.clearSellFields()
-		self.addDlg.hide_all()
+		self.addDlg.hide()
 		return True
 			
 	def addProToList(self,sender=0):
