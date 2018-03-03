@@ -87,7 +87,10 @@ class Subjects():
     def get_id_from_name(self, name):
         query = config.db.session.query(Subject.id).select_from(Subject)
         query = query.filter(Subject.name == name)
-        return query.first().id
+        try:
+            return query.first().id
+        except:
+            return 0
     
     ## chek customer code is valid and exist.
     # @return: -1 for invalid, 1 for valid, 2 for exist
