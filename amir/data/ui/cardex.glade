@@ -215,34 +215,6 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkTextView" id="dicountFormulaTextView">
-                            <property name="width_request">100</property>
-                            <property name="height_request">27</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="editable">False</property>
-                            <property name="accepts_tab">False</property>
-                          </object>
-                          <packing>
-                            <property name="left_attach">8</property>
-                            <property name="top_attach">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkTextView" id="sellingPriceTextView">
-                            <property name="width_request">100</property>
-                            <property name="height_request">27</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="editable">False</property>
-                            <property name="accepts_tab">False</property>
-                          </object>
-                          <packing>
-                            <property name="left_attach">8</property>
-                            <property name="top_attach">2</property>
-                          </packing>
-                        </child>
-                        <child>
                           <object class="GtkTextView" id="oversellTextView">
                             <property name="width_request">100</property>
                             <property name="height_request">27</property>
@@ -260,9 +232,12 @@
                           <object class="GtkSearchEntry" id="productCodeSearchEntry">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="width_chars">10</property>
+                            <property name="max_width_chars">10</property>
                             <property name="primary_icon_name">edit-find-symbolic</property>
                             <property name="primary_icon_activatable">False</property>
                             <property name="primary_icon_sensitive">False</property>
+                            <signal name="activate" handler="selectProduct" swapped="no"/>
                             <signal name="search-changed" handler="searchProduct" swapped="no"/>
                           </object>
                           <packing>
@@ -344,6 +319,8 @@
                           <object class="GtkEntry" id="dateFromEntry">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="width_chars">10</property>
+                            <property name="max_width_chars">10</property>
                             <property name="placeholder_text" translatable="yes">1:1:2018</property>
                             <signal name="changed" handler="factorFilter" swapped="no"/>
                           </object>
@@ -364,18 +341,6 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkEntry" id="dateToEntry">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="placeholder_text" translatable="yes">10:1:2018</property>
-                            <signal name="changed" handler="factorFilter" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="left_attach">8</property>
-                            <property name="top_attach">5</property>
-                          </packing>
-                        </child>
-                        <child>
                           <object class="GtkSeparator" id="separator1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
@@ -383,29 +348,16 @@
                           <packing>
                             <property name="left_attach">0</property>
                             <property name="top_attach">4</property>
-                            <property name="width">8</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkTextView" id="productDescriptionTextView">
-                            <property name="width_request">100</property>
-                            <property name="height_request">27</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="margin_bottom">5</property>
-                            <property name="editable">False</property>
-                            <property name="accepts_tab">False</property>
-                          </object>
-                          <packing>
-                            <property name="left_attach">4</property>
-                            <property name="top_attach">3</property>
-                            <property name="width">5</property>
+                            <property name="width">9</property>
                           </packing>
                         </child>
                         <child>
                           <object class="GtkEntry" id="customerCodeEntry">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="width_chars">10</property>
+                            <property name="max_width_chars">10</property>
+                            <signal name="activate" handler="selectCustomers" swapped="no"/>
                             <signal name="changed" handler="factorFilter" swapped="no"/>
                           </object>
                           <packing>
@@ -472,7 +424,62 @@
                           </packing>
                         </child>
                         <child>
-                          <placeholder/>
+                          <object class="GtkTextView" id="dicountFormulaTextView">
+                            <property name="width_request">100</property>
+                            <property name="height_request">27</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="editable">False</property>
+                            <property name="accepts_tab">False</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">8</property>
+                            <property name="top_attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkTextView" id="sellingPriceTextView">
+                            <property name="width_request">100</property>
+                            <property name="height_request">27</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="editable">False</property>
+                            <property name="accepts_tab">False</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">8</property>
+                            <property name="top_attach">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkTextView" id="productDescriptionTextView">
+                            <property name="width_request">100</property>
+                            <property name="height_request">27</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="margin_bottom">5</property>
+                            <property name="editable">False</property>
+                            <property name="accepts_tab">False</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">4</property>
+                            <property name="top_attach">3</property>
+                            <property name="width">5</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="dateToEntry">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="width_chars">10</property>
+                            <property name="max_width_chars">10</property>
+                            <property name="placeholder_text" translatable="yes">10:1:2018</property>
+                            <signal name="changed" handler="factorFilter" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left_attach">8</property>
+                            <property name="top_attach">5</property>
+                          </packing>
                         </child>
                         <child>
                           <placeholder/>
