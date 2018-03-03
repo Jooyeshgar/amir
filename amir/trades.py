@@ -360,6 +360,7 @@ class Trade:
 		name    = selectedPro.name
 		av_qnty    = selectedPro.quantity
 		sellPrc = selectedPro.sellingPrice
+		purchacePrc = selectedPro.purchacePrice
 		formula  = selectedPro.discountFormula
 		
 		qnty = self.qntyEntry.get_float()
@@ -367,9 +368,13 @@ class Trade:
 		
 		self.avQntyVal.set_text(utility.LN(av_qnty))
 		self.stnrdDisc.set_text(utility.LN(discnt))
-		self.unitPriceEntry.set_text(utility.LN(sellPrc, comma=False))
-		self.discountEntry.set_text(utility.LN(discnt, comma=False))
 
+		if self.sell:
+			self.unitPriceEntry.set_text(utility.LN(sellPrc, comma=False))
+		else:
+			self.unitPriceEntry.set_text(utility.LN(purchacePrc, comma=False))
+
+		self.discountEntry.set_text(utility.LN(discnt, comma=False))
 		self.stndrdPVal.set_text(utility.LN(sellPrc))
 
 		self.proNameLbl.show()
@@ -1125,7 +1130,7 @@ class Trade:
 					query   = self.session.query(Products).select_from(Products).filter(Products.id == pid)
 					pro = query.first()									
 
-					pro.quantity -= self.nowexchangequantity
+					pro.quantity += self.nowexchangequantity
 					
 					self.lastexchangequantity=utility.getFloat(0)
 					self.nowexchangequantity=utility.getFloat(0)

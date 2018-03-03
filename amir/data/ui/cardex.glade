@@ -119,6 +119,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="editable">False</property>
+                            <property name="justification">center</property>
                             <property name="accepts_tab">False</property>
                           </object>
                           <packing>
@@ -132,6 +133,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="editable">False</property>
+                            <property name="justification">center</property>
                             <property name="accepts_tab">False</property>
                           </object>
                           <packing>
@@ -145,6 +147,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="editable">False</property>
+                            <property name="justification">center</property>
                             <property name="accepts_tab">False</property>
                           </object>
                           <packing>
@@ -207,6 +210,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="editable">False</property>
+                            <property name="justification">center</property>
                             <property name="accepts_tab">False</property>
                           </object>
                           <packing>
@@ -221,6 +225,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="editable">False</property>
+                            <property name="justification">center</property>
                             <property name="accepts_tab">False</property>
                           </object>
                           <packing>
@@ -263,6 +268,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="editable">False</property>
+                            <property name="justification">center</property>
                             <property name="accepts_tab">False</property>
                           </object>
                           <packing>
@@ -371,6 +377,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="editable">False</property>
+                            <property name="justification">center</property>
                             <property name="accepts_tab">False</property>
                           </object>
                           <packing>
@@ -430,6 +437,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="editable">False</property>
+                            <property name="justification">center</property>
                             <property name="accepts_tab">False</property>
                           </object>
                           <packing>
@@ -444,6 +452,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="editable">False</property>
+                            <property name="justification">center</property>
                             <property name="accepts_tab">False</property>
                           </object>
                           <packing>
@@ -459,6 +468,7 @@
                             <property name="can_focus">True</property>
                             <property name="margin_bottom">5</property>
                             <property name="editable">False</property>
+                            <property name="justification">center</property>
                             <property name="accepts_tab">False</property>
                           </object>
                           <packing>
