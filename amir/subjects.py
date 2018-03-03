@@ -109,10 +109,10 @@ class Subjects(GObject.GObject):
 
         if multiselect:
             self.treeview.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
-            self.builder.get_object('toolbar4').hide_all()
-            self.builder.get_object('statusbar1').hide_all()
+            self.builder.get_object('toolbar4').hide()
+            self.builder.get_object('statusbar1').hide()
         else:
-            self.builder.get_object('hbox5').hide_all()
+            self.builder.get_object('hbox5').hide()
         
     def addLedger(self, sender):
         dialog = self.builder.get_object("dialog1")

@@ -122,7 +122,7 @@ class ChequeUI:
             self.builder.get_object('button1').set_sensitive(False)
             statusbar = self.builder.get_object('statusbar1')
             context_id = statusbar.get_context_id('statusbar')
-            statusbar.remove_message(context_id,1)
+            statusbar.remove(context_id,1)
             for info in self.new_cheques:
                 iter = model.append()
                 model.set(iter, 0, 'Customer Name', 1, info['bank_account_name'],
@@ -252,7 +252,7 @@ class ChequeUI:
 
     ## Signal Handler (When User Closes add Window)
     def on_add_cheque_window_delete_event(self, window, event):
-        window.hide_all()
+        window.hide()
         return True
 
     ## Signal Handler (When User Clicks on cancel in add window)
@@ -367,7 +367,7 @@ class ChequeUI:
         
         #
     def on_list_cheque_window_delete_event(self, window, event):
-        window.hide_all()
+        window.hide()
         return True
 
 ## @}

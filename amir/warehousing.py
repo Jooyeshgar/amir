@@ -697,7 +697,7 @@ class Warehousing(GObject.GObject):
         self.qntyWarning.destroy()
         self.sellingPrice.destroy()
         self.purchasePrice.destroy()
-        self.addProWin.hide_all()
+        self.addProWin.hide()
         return True
 
     #--------------------------------------------------------------------
@@ -1108,7 +1108,7 @@ class Warehousing(GObject.GObject):
         self.groupCodeEntry.destroy()
         self.groupSellIDEntry.destroy()
         self.groupBuyIDEntry.destroy()
-        self.addGrpWindow.hide_all()
+        self.addGrpWindow.hide()
         return True
      
     #--------------------------------------------------------------------

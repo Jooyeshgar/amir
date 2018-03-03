@@ -1198,7 +1198,7 @@ class Trade:
 				self.session.delete(pay)
 			self.session.commit()
 				
-		self.mainDlg.hide_all()
+		self.mainDlg.hide()
 		return True;
 
 	def saveDocument(self):

@@ -198,7 +198,7 @@ class Payments(GObject.GObject):
 		self.window.show_all()
 	
 	def hidePayments(self, sender=0, ev=0):
-		self.window.hide_all()
+		self.window.hide()
 		#Returns true to avoid destroying payments window
 		return True
 		
@@ -623,7 +623,7 @@ class Payments(GObject.GObject):
 				
 
 	def cancelPayment(self, sender=0, ev=0):
-		self.addPymntDlg.hide_all()
+		self.addPymntDlg.hide()
 		return True
 	
 		

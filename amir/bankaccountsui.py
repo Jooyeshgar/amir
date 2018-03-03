@@ -229,7 +229,7 @@ class BankAccountsUI:
                 self.builder.get_object('bank_webpage').get_text(), 
                 self.builder.get_object('desc').get_text())
         if result > 0:
-            window = self.builder.get_object('add_window').hide_all()
+            window = self.builder.get_object('add_window').hide()
             infobar = Gtk.InfoBar()
             label = Gtk.Label(label='successfully added.')
             infobar.get_content_area().add(label)
