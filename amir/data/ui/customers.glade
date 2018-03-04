@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.18.3 -->
 <interface>
-  <requires lib="gtk+" version="2.16"/>
-  <!-- interface-naming-policy project-wide -->
+  <requires lib="gtk+" version="3.0"/>
   <object class="GtkDialog" id="addCustGrpDlg">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
@@ -9,22 +9,22 @@
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
-      <object class="GtkVBox" id="dialog-vbox1">
+      <object class="GtkBox" id="dialog-vbox1">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="spacing">5</property>
         <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area1">
+          <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton" id="cancelGroup">
                 <property name="label">gtk-cancel</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
               </object>
               <packing>
@@ -36,12 +36,12 @@
             <child>
               <object class="GtkButton" id="okGroup">
                 <property name="label">gtk-ok</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
                 <property name="has_default">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
                 <accelerator key="s" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
               </object>
@@ -85,9 +85,9 @@
                       <object class="GtkLabel" id="grpCodeLbl">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="xalign">0</property>
                         <property name="xpad">10</property>
                         <property name="label" translatable="yes">Group Code:</property>
+                        <property name="xalign">0</property>
                       </object>
                       <packing>
                         <property name="x_options">GTK_FILL</property>
@@ -98,9 +98,9 @@
                       <object class="GtkLabel" id="grpNameLbl">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="xalign">0</property>
                         <property name="xpad">10</property>
                         <property name="label" translatable="yes">Name:</property>
+                        <property name="xalign">0</property>
                       </object>
                       <packing>
                         <property name="top_attach">1</property>
@@ -113,9 +113,9 @@
                       <object class="GtkLabel" id="grpDescLbl">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="xalign">0</property>
                         <property name="xpad">10</property>
                         <property name="label" translatable="yes">Description:</property>
+                        <property name="xalign">0</property>
                       </object>
                       <packing>
                         <property name="top_attach">2</property>
@@ -131,8 +131,6 @@
                         <property name="invisible_char">●</property>
                         <property name="primary_icon_activatable">False</property>
                         <property name="secondary_icon_activatable">False</property>
-                        <property name="primary_icon_sensitive">True</property>
-                        <property name="secondary_icon_sensitive">True</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
@@ -150,8 +148,6 @@
                         <property name="invisible_char">●</property>
                         <property name="primary_icon_activatable">False</property>
                         <property name="secondary_icon_activatable">False</property>
-                        <property name="primary_icon_sensitive">True</property>
-                        <property name="secondary_icon_sensitive">True</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
@@ -203,9 +199,9 @@
               <object class="GtkLabel" id="label9">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="xalign">0</property>
                 <property name="xpad">5</property>
                 <property name="label" translatable="yes">Enter, Ctrl+S: OK    Escape: Cancel</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -275,13 +271,22 @@
                             <property name="column_spacing">5</property>
                             <property name="row_spacing">5</property>
                             <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
                               <object class="GtkLabel" id="custCodeLbl">
                                 <property name="width_request">140</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="xpad">10</property>
                                 <property name="label" translatable="yes">Customer Code:</property>
+                                <property name="xalign">0</property>
                               </object>
                             </child>
                             <child>
@@ -292,8 +297,6 @@
                                 <property name="invisible_char">●</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -304,9 +307,9 @@
                               <object class="GtkLabel" id="custGrpLbl">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="xpad">10</property>
                                 <property name="label" translatable="yes">Customer Group:</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="left_attach">2</property>
@@ -325,11 +328,11 @@
                                 <child>
                                   <object class="GtkButton" id="custGrpSlctBtn">
                                     <property name="label" translatable="yes">...</property>
+                                    <property name="use_action_appearance">False</property>
                                     <property name="width_request">35</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
-                                    <property name="use_action_appearance">False</property>
                                     <property name="focus_on_click">False</property>
                                     <property name="xalign">0.47999998927116394</property>
                                     <signal name="clicked" handler="selectGroup" swapped="no"/>
@@ -351,9 +354,9 @@
                                 <property name="width_request">140</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="xpad">10</property>
                                 <property name="label" translatable="yes">Name:</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="top_attach">1</property>
@@ -367,8 +370,6 @@
                                 <property name="invisible_char">●</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -381,9 +382,9 @@
                               <object class="GtkLabel" id="custEcnmcsCodeLbl">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="xpad">10</property>
                                 <property name="label" translatable="yes">Economics Code:</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="top_attach">2</property>
@@ -398,8 +399,6 @@
                                 <property name="invisible_char">●</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -412,9 +411,9 @@
                               <object class="GtkLabel" id="label1">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="xpad">10</property>
                                 <property name="label" translatable="yes">Personal Code: </property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="top_attach">3</property>
@@ -432,8 +431,6 @@
                                     <property name="invisible_char">●</property>
                                     <property name="primary_icon_activatable">False</property>
                                     <property name="secondary_icon_activatable">False</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                   </object>
                                   <packing>
                                     <property name="expand">True</property>
@@ -449,15 +446,6 @@
                                 <property name="bottom_attach">4</property>
                               </packing>
                             </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
                           </object>
                         </child>
                       </object>
@@ -466,9 +454,9 @@
                       <object class="GtkLabel" id="mainInfoLbl">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="xalign">0</property>
                         <property name="label" translatable="yes">&lt;b&gt;  Main Information  &lt;/b&gt;</property>
                         <property name="use_markup">True</property>
+                        <property name="xalign">0</property>
                       </object>
                     </child>
                   </object>
@@ -502,13 +490,19 @@
                             <property name="column_spacing">5</property>
                             <property name="row_spacing">5</property>
                             <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
                               <object class="GtkLabel" id="custPhoneLbl">
                                 <property name="width_request">140</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="xpad">10</property>
                                 <property name="label" translatable="yes">Phone:</property>
+                                <property name="xalign">0</property>
                               </object>
                             </child>
                             <child>
@@ -518,8 +512,6 @@
                                 <property name="invisible_char">●</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -530,9 +522,9 @@
                               <object class="GtkLabel" id="custCellLbl">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="xpad">10</property>
                                 <property name="label" translatable="yes">Cell Phone:</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="left_attach">2</property>
@@ -546,8 +538,6 @@
                                 <property name="invisible_char">●</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">3</property>
@@ -559,9 +549,9 @@
                                 <property name="width_request">140</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="xpad">10</property>
                                 <property name="label" translatable="yes">Fax:</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="top_attach">1</property>
@@ -575,8 +565,6 @@
                                 <property name="invisible_char">●</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -590,9 +578,9 @@
                                 <property name="width_request">140</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="xpad">10</property>
                                 <property name="label" translatable="yes">Email:</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="top_attach">2</property>
@@ -606,8 +594,6 @@
                                 <property name="invisible_char">●</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -621,9 +607,9 @@
                                 <property name="width_request">140</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="xpad">10</property>
                                 <property name="label" translatable="yes">Address:</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="top_attach">3</property>
@@ -637,8 +623,6 @@
                                 <property name="invisible_char">●</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -651,9 +635,9 @@
                               <object class="GtkLabel" id="custWebPageLbl">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="xpad">10</property>
                                 <property name="label" translatable="yes">Web Page:</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="left_attach">2</property>
@@ -669,8 +653,6 @@
                                 <property name="invisible_char">●</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">3</property>
@@ -682,10 +664,11 @@
                             <child>
                               <object class="GtkCheckButton" id="custRepViaEmailChk">
                                 <property name="label" translatable="yes">Notify about transactions via email</property>
+                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="use_action_appearance">False</property>
+                                <property name="xalign">0.5</property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
@@ -701,9 +684,9 @@
                               <object class="GtkLabel" id="label4">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="xpad">10</property>
                                 <property name="label" translatable="yes">Postal Code: </property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="top_attach">4</property>
@@ -717,8 +700,6 @@
                                 <property name="invisible_char">●</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -726,12 +707,6 @@
                                 <property name="top_attach">4</property>
                                 <property name="bottom_attach">5</property>
                               </packing>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
                             </child>
                           </object>
                         </child>
@@ -781,9 +756,9 @@
                                 <property name="width_request">150</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="xpad">10</property>
                                 <property name="label" translatable="yes">Reply Responsible:</property>
+                                <property name="xalign">0</property>
                               </object>
                             </child>
                             <child>
@@ -793,8 +768,6 @@
                                 <property name="invisible_char">●</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -805,9 +778,9 @@
                               <object class="GtkLabel" id="custConnectorLbl">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="xpad">10</property>
                                 <property name="label" translatable="yes">Connector:</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="left_attach">2</property>
@@ -821,8 +794,6 @@
                                 <property name="invisible_char">●</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">3</property>
@@ -877,9 +848,9 @@
                                 <property name="width_request">140</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="xpad">10</property>
                                 <property name="label" translatable="yes">Description:</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="x_options">GTK_FILL</property>
@@ -892,8 +863,6 @@
                                 <property name="invisible_char">●</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -919,6 +888,7 @@
                     <property name="x_options">GTK_FILL</property>
                     <property name="y_options"/>
                     <property name="x_padding">5</property>
+                    <property name="y_padding">5</property>
                   </packing>
                 </child>
               </object>
@@ -930,10 +900,10 @@
               <object class="GtkLabel" id="personalTab">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="xalign">0</property>
                 <property name="xpad">10</property>
                 <property name="label" translatable="yes">Personal
 Information</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="tab_fill">False</property>
@@ -969,10 +939,10 @@ Information</property>
                             <child>
                               <object class="GtkCheckButton" id="markedChk">
                                 <property name="label" translatable="yes">Marked Customer</property>
+                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="xalign">0</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="toggled" handler="on_markedChk_toggled" swapped="no"/>
@@ -985,8 +955,8 @@ Information</property>
                               <object class="GtkLabel" id="markedReasonLbl">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Reason:</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="top_attach">1</property>
@@ -1002,8 +972,6 @@ Information</property>
                                 <property name="invisible_char">●</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -1069,9 +1037,9 @@ Information</property>
                               <object class="GtkLabel" id="custIntroducerLbl">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="xpad">10</property>
                                 <property name="label" translatable="yes">Introducer:</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="x_options">GTK_FILL</property>
@@ -1081,9 +1049,9 @@ Information</property>
                               <object class="GtkLabel" id="custDiscRateLbl">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="xpad">10</property>
                                 <property name="label" translatable="yes">Discount Rate:</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="top_attach">2</property>
@@ -1095,9 +1063,9 @@ Information</property>
                               <object class="GtkLabel" id="custCommissionLbl">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="xpad">10</property>
                                 <property name="label" translatable="yes">Commission Rate:</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="top_attach">1</property>
@@ -1148,11 +1116,11 @@ Information</property>
                                 <child>
                                   <object class="GtkButton" id="custCustSlctBtn">
                                     <property name="label" translatable="yes">...</property>
+                                    <property name="use_action_appearance">False</property>
                                     <property name="width_request">38</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
-                                    <property name="use_action_appearance">False</property>
                                     <signal name="clicked" handler="selectcustomer" swapped="no"/>
                                   </object>
                                   <packing>
@@ -1212,10 +1180,11 @@ Information</property>
                             <child>
                               <object class="GtkCheckButton" id="custTypeBuyerChk">
                                 <property name="label" translatable="yes">Buyer</property>
+                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="use_action_appearance">False</property>
+                                <property name="xalign">0.5</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
                               </object>
@@ -1228,10 +1197,11 @@ Information</property>
                             <child>
                               <object class="GtkCheckButton" id="custTypeSellerChk">
                                 <property name="label" translatable="yes">Seller</property>
+                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="use_action_appearance">False</property>
+                                <property name="xalign">0.5</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
                               </object>
@@ -1244,10 +1214,11 @@ Information</property>
                             <child>
                               <object class="GtkCheckButton" id="custTypeMateChk">
                                 <property name="label" translatable="yes">Mate</property>
+                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="use_action_appearance">False</property>
+                                <property name="xalign">0.5</property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
@@ -1259,10 +1230,11 @@ Information</property>
                             <child>
                               <object class="GtkCheckButton" id="custTypeAgentChk">
                                 <property name="label" translatable="yes">Agent</property>
+                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="use_action_appearance">False</property>
+                                <property name="xalign">0.5</property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
@@ -1298,10 +1270,10 @@ Information</property>
               <object class="GtkLabel" id="typeTab">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="xalign">0</property>
                 <property name="xpad">10</property>
                 <property name="label" translatable="yes">Customer
 Type</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="position">1</property>
@@ -1340,9 +1312,9 @@ Type</property>
                                 <property name="width_request">145</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="xpad">20</property>
                                 <property name="label" translatable="yes">Credit:</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="top_attach">1</property>
@@ -1356,9 +1328,9 @@ Type</property>
                                 <property name="width_request">145</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="xpad">20</property>
                                 <property name="label" translatable="yes">Balance:</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="x_options"/>
@@ -1443,9 +1415,9 @@ Type</property>
                                 <property name="width_request">145</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="xpad">20</property>
                                 <property name="label" translatable="yes">Account Number:</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="top_attach">1</property>
@@ -1458,9 +1430,9 @@ Type</property>
                                 <property name="width_request">145</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="xpad">20</property>
                                 <property name="label" translatable="yes">Name:</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="x_options"/>
@@ -1471,9 +1443,9 @@ Type</property>
                                 <property name="width_request">145</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="xpad">20</property>
                                 <property name="label" translatable="yes">Bank:</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="top_attach">2</property>
@@ -1489,8 +1461,6 @@ Type</property>
                                 <property name="invisible_char">●</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -1505,8 +1475,6 @@ Type</property>
                                 <property name="invisible_char">●</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -1523,8 +1491,6 @@ Type</property>
                                 <property name="invisible_char">●</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -1580,9 +1546,9 @@ Type</property>
                                 <property name="width_request">145</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="xpad">20</property>
                                 <property name="label" translatable="yes">Name:</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="x_options"/>
@@ -1593,9 +1559,9 @@ Type</property>
                                 <property name="width_request">145</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="xpad">20</property>
                                 <property name="label" translatable="yes">Account Number:</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="top_attach">1</property>
@@ -1608,9 +1574,9 @@ Type</property>
                                 <property name="width_request">145</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="xpad">20</property>
                                 <property name="label" translatable="yes">Bank:</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="top_attach">2</property>
@@ -1626,8 +1592,6 @@ Type</property>
                                 <property name="invisible_char">●</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -1644,8 +1608,6 @@ Type</property>
                                 <property name="invisible_char">●</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -1662,8 +1624,6 @@ Type</property>
                                 <property name="invisible_char">●</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -1701,10 +1661,10 @@ Type</property>
               <object class="GtkLabel" id="financialTab">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="xalign">0</property>
                 <property name="xpad">10</property>
                 <property name="label" translatable="yes">Financial
 Information</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="position">2</property>
@@ -1725,10 +1685,10 @@ Information</property>
             <property name="layout_style">spread</property>
             <child>
               <object class="GtkButton" id="addCustSubmitBtn">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <signal name="clicked" handler="customerFormOkPressed" swapped="no"/>
               </object>
               <packing>
@@ -1740,10 +1700,10 @@ Information</property>
             <child>
               <object class="GtkButton" id="addCustCancelBtn">
                 <property name="label" translatable="yes">Cancel</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <signal name="clicked" handler="customerFormCanceled" swapped="no"/>
               </object>
               <packing>
@@ -1792,13 +1752,13 @@ Information</property>
             <property name="toolbar_style">both</property>
             <child>
               <object class="GtkToolButton" id="addGroupBtn">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Add Group</property>
                 <property name="stock_id">gtk-new</property>
-                <accelerator key="Insert" signal="clicked"/>
                 <signal name="clicked" handler="addCustomerGroup" swapped="no"/>
+                <accelerator key="Insert" signal="clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1812,17 +1772,18 @@ Information</property>
               </object>
               <packing>
                 <property name="expand">False</property>
+                <property name="homogeneous">False</property>
               </packing>
             </child>
             <child>
               <object class="GtkToolButton" id="editGroupsBtn">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Edit</property>
                 <property name="stock_id">gtk-edit</property>
-                <accelerator key="e" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
                 <signal name="clicked" handler="editCustomerGroup" swapped="no"/>
+                <accelerator key="e" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1831,13 +1792,13 @@ Information</property>
             </child>
             <child>
               <object class="GtkToolButton" id="deleteGroupBtn">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Delete</property>
                 <property name="stock_id">gtk-delete</property>
-                <accelerator key="Delete" signal="clicked"/>
                 <signal name="clicked" handler="deleteCustomerGroup" swapped="no"/>
+                <accelerator key="Delete" signal="clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1856,8 +1817,6 @@ Information</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="border_width">10</property>
-            <property name="hscrollbar_policy">automatic</property>
-            <property name="vscrollbar_policy">automatic</property>
             <property name="shadow_type">in</property>
             <child>
               <object class="GtkTreeView" id="custGroupsTreeView">
@@ -1868,6 +1827,9 @@ Information</property>
                 <property name="enable_grid_lines">vertical</property>
                 <property name="enable_tree_lines">True</property>
                 <signal name="row-activated" handler="selectCustGroupFromList" swapped="no"/>
+                <child internal-child="selection">
+                  <object class="GtkTreeSelection" id="treeview-selection1"/>
+                </child>
               </object>
             </child>
           </object>
@@ -1886,9 +1848,9 @@ Information</property>
               <object class="GtkLabel" id="label10">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="xalign">0</property>
                 <property name="xpad">5</property>
                 <property name="label" translatable="yes">Insert: Add group    Ctrl+E: Edit    Del: Delete</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -1924,13 +1886,13 @@ Information</property>
             <property name="toolbar_style">both</property>
             <child>
               <object class="GtkToolButton" id="addCustomerBtn">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Add Customer</property>
                 <property name="stock_id">gtk-add</property>
-                <accelerator key="plus" signal="clicked"/>
                 <signal name="clicked" handler="on_addCustomerBtn_clicked" swapped="no"/>
+                <accelerator key="plus" signal="clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1939,13 +1901,13 @@ Information</property>
             </child>
             <child>
               <object class="GtkToolButton" id="addCustGroupBtn">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Add Group</property>
                 <property name="stock_id">gtk-new</property>
-                <accelerator key="Insert" signal="clicked"/>
                 <signal name="clicked" handler="addCustomerGroup" swapped="no"/>
+                <accelerator key="Insert" signal="clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1959,13 +1921,14 @@ Information</property>
               </object>
               <packing>
                 <property name="expand">False</property>
+                <property name="homogeneous">False</property>
               </packing>
             </child>
             <child>
               <object class="GtkToolButton" id="editBtn">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Edit</property>
                 <property name="stock_id">gtk-edit</property>
                 <signal name="clicked" handler="editCustAndGrps" swapped="no"/>
@@ -1977,13 +1940,13 @@ Information</property>
             </child>
             <child>
               <object class="GtkToolButton" id="deleteBtn">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Delete</property>
                 <property name="stock_id">gtk-delete</property>
-                <accelerator key="d" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
                 <signal name="clicked" handler="deleteCustAndGrps" swapped="no"/>
+                <accelerator key="d" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -2002,8 +1965,6 @@ Information</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="border_width">10</property>
-            <property name="hscrollbar_policy">automatic</property>
-            <property name="vscrollbar_policy">automatic</property>
             <property name="shadow_type">in</property>
             <child>
               <object class="GtkTreeView" id="customersTreeView">
@@ -2012,6 +1973,9 @@ Information</property>
                 <property name="rules_hint">True</property>
                 <property name="enable_tree_lines">True</property>
                 <signal name="row-activated" handler="selectCustomerFromList" swapped="no"/>
+                <child internal-child="selection">
+                  <object class="GtkTreeSelection" id="treeview-selection2"/>
+                </child>
               </object>
             </child>
           </object>

@@ -42,21 +42,6 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkToolButton" id="addBuyBtn">
-                    <property name="use_action_appearance">False</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Add Buy</property>
-                    <property name="stock_id">gtk-add</property>
-                    <signal name="clicked" handler="addProduct" swapped="no"/>
-                    <accelerator key="plus" signal="clicked"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkToolButton" id="editSellBtn">
                     <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
