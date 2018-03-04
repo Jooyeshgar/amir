@@ -184,7 +184,7 @@ class Trade:
 		result = query.all()
 
 		for t ,c in reversed(result):		
-	  		grouprow = self.treestore.append(None, (int(t.Id), t.Code, False, t.tDate, c.custName, t.PayableAmnt))
+	  		grouprow = self.treestore.append(None, (int(t.Id), t.Code, str(t.tDate), c.custName, str(t.PayableAmnt)))
   			
 		self.window.show_all()
 		
@@ -230,7 +230,7 @@ class Trade:
 			for sell in sellsQuery:
 				ttl     = sell.exchngUntPrc * sell.exchngQnty
 				disc    = sell.exchngUntDisc * sell.exchngQnty
-				list    = (sell.exchngNo,sell.exchngProduct,sell.exchngQnty,sell.exchngUntPrc,str(ttl),sell.exchngUntDisc,str(disc),sell.exchngDesc)
+				list    = (sell.exchngNo,sell.exchngProduct,sell.exchngQnty,str(sell.exchngUntPrc),str(ttl),str(sell.exchngUntDisc),str(disc),sell.exchngDesc)
 				self.sellListStore.append(None,list)
 		
 		
@@ -262,15 +262,106 @@ class Trade:
 			for exchange in exchanges:							
 				query=self.session.query(Products).select_from(Products)
 				product = query.filter(Products.id==exchange.exchngProduct).first()
-				sellList = (str(number), product.name, exchange.exchngQnty, exchange.exchngUntPrc,
-						 exchange.exchngQnty*exchange.exchngUntPrc, exchange.exchngUntDisc,
-						 float(exchange.exchngQnty)*float(exchange.exchngUntDisc), exchange.exchngDesc)
+				sellList = (str(number), product.name, str(exchange.exchngQnty), str(exchange.exchngUntPrc),
+						 str(exchange.exchngQnty*exchange.exchngUntPrc), str(exchange.exchngUntDisc),
+						 str(float(exchange.exchngQnty)*float(exchange.exchngUntDisc)), exchange.exchngDesc)
 				self.sellListStore.append(None,sellList)
 				self.appendPrice(exchange.exchngQnty*exchange.exchngUntPrc)
 				self.appendDiscount(float(exchange.exchngQnty)*float(exchange.exchngUntDisc))
 				self.valsChanged()
 				number+=1																
-			self.taxEntry.set_text(str(self.editTransaction.Tax))
+			self.taxEntry.set_text(str(self.editTransaction.VAT))
+			self.feeEntry.set_text(str(self.editTransaction.Fee))
+			self.additionsEntry.set_text(str(self.editTransaction.Addition))
+			self.cashPymntsEntry.set_text(str(self.editTransaction.CashPayment))
+			self.builder.get_object("FOBEntry").set_text(str(self.editTransaction.Delivery))
+			self.builder.get_object("shipViaEntry").set_text(str(self.editTransaction.ShipVia))
+			self.builder.get_object("transDescEntry").set_text(str(self.editTransaction.Desc))
+			self.factorDate.set_text(str(self.editTransaction.LastEdit))			
+			self.factorDate.showDateObject(self.editTransaction.LastEdit)																											
+		self.mainDlg.show_all()
+
+	def addNewBuy(self,transId=None):
+		query   = self.session.query(Trades.Code).select_from(Trades).filter(Trades.Sell == self.sell)
+		lastCode  = query.order_by(Trades.Code.desc()).first()
+		if not lastCode:
+			self.Code  = 1
+		else:
+			self.Code  = int(lastCode.Code) + 1
+
+		self.mainDlg = self.builder.get_object("FormWindow")
+
+		self.Codeentry = self.builder.get_object("transCode")
+		self.Codeentry.set_text(LN(self.Code))
+		self.statusBar  = self.builder.get_object("FormStatusBar")	
+		self.tradeTreeView = self.builder.get_object("TradeTreeView")
+		self.sellListStore = Gtk.TreeStore(str,str,str,str,str,str,str,str)
+		self.sellListStore.clear()
+		self.tradeTreeView.set_model(self.sellListStore)
+		
+		headers = (_("No."), _("Product Name"), _("Quantity"), _("Unit Price"), 
+				   _("Total Price"), _("Unit Disc."), _("Disc."), _("Description"))
+		txt = 0
+		for header in headers:
+			column = Gtk.TreeViewColumn(header,Gtk.CellRendererText(),text = txt)
+			column.set_spacing(5)
+			column.set_resizable(True)
+			self.tradeTreeView.append_column(column)
+			txt += 1
+		#self.tradeTreeView.get_selection().set_mode(  Gtk.SelectionMode.SINGLE    )
+		
+		self.paymentManager = payments.Payments(transId=self.Id,transCode=self.Code)
+		self.paymentManager.connect("payments-changed", self.setNonCashPayments)
+		self.paymentManager.fillPaymentTables()
+
+		if transId:
+			sellsQuery  = self.session.query(Exchanges).select_from(Exchanges)
+			sellsQuery  = sellsQuery.filter(Exchanges.exchngTransId==transId).order_by(Exchanges.exchngNo.asc()).all()
+			for sell in sellsQuery:
+				ttl     = sell.exchngUntPrc * sell.exchngQnty
+				disc    = sell.exchngUntDisc * sell.exchngQnty
+				list    = (sell.exchngNo,sell.exchngProduct,sell.exchngQnty,str(sell.exchngUntPrc),str(ttl),str(sell.exchngUntDisc),str(disc),sell.exchngDesc)
+				self.sellListStore.append(None,list)
+		
+		
+		if self.editFalg:
+			self.Id	= self.editTransaction.Id
+			self.Code 	= self.editTransaction.Code
+		
+			
+			self.paymentManager = payments.Payments(transId=self.Id,transCode=self.Code)
+			self.paymentManager.connect("payments-changed", self.setNonCashPayments)
+			self.paymentManager.fillPaymentTables()
+			print self.Id
+			self.builder.get_object("fullFactorBuyBtn").set_label("Save Changes ...")
+			
+			self.Codeentry = self.builder.get_object("transCode")
+			if config.digittype == 1:
+				self.Codeentry.set_text(utility.convertToPersian(str(self.editTransaction.Code)))				
+			else:
+				self.Codeentry.set_text(str(self.editTransaction.Code))			
+						
+			self.additionsEntry.set_text(str(self.editTransaction.Addition))	
+			query = self.session.query(Customers).select_from(Customers)
+			customer = query.filter(Customers.custId == self.editTransaction.Cust).first()						
+			self.sellerSelected(self, self.editTransaction.Cust,customer.custCode)	
+					
+			query=self.session.query(Exchanges).select_from(Exchanges)
+			exchanges = query.filter(Exchanges.exchngTransId==self.editTransaction.Id).all()			
+			number=1
+			for exchange in exchanges:							
+				query=self.session.query(Products).select_from(Products)
+				product = query.filter(Products.id==exchange.exchngProduct).first()
+				sellList = (str(number), product.name, str(exchange.exchngQnty), str(exchange.exchngUntPrc),
+						 str(exchange.exchngQnty*exchange.exchngUntPrc), str(exchange.exchngUntDisc),
+						 str(float(exchange.exchngQnty)*float(exchange.exchngUntDisc)), exchange.exchngDesc)
+				self.sellListStore.append(None,sellList)
+				self.appendPrice(exchange.exchngQnty*exchange.exchngUntPrc)
+				self.appendDiscount(float(exchange.exchngQnty)*float(exchange.exchngUntDisc))
+				self.valsChanged()
+				number+=1																
+			self.taxEntry.set_text(str(self.editTransaction.VAT))
+			self.feeEntry.set_text(str(self.editTransaction.Fee))
 			self.additionsEntry.set_text(str(self.editTransaction.Addition))
 			self.cashPymntsEntry.set_text(str(self.editTransaction.CashPayment))
 			self.builder.get_object("FOBEntry").set_text(str(self.editTransaction.Delivery))
@@ -290,7 +381,17 @@ class Trade:
 		result,result2 = query.filter(Trades.Id == code).first() 		
  		self.editTransaction=result 	
  		self.addNew() 		
- 		
+
+ 	def editBuying(self,transId=None):
+		self.editFalg=True		
+		selection = self.treeview.get_selection()
+		iter = selection.get_selected()[1]		
+		code = self.treestore.get_value(iter, 0) 		
+		query = config.db.session.query(Trades, Customers)
+		query = query.select_from(outerjoin(Trades, Customers, Trades.Cust== Customers.custId))
+		result,result2 = query.filter(Trades.Id == code).first() 		
+ 		self.editTransaction=result 	
+ 		self.addNewBuy()
 																						
 	def removeSelling(self, sender):
 		selection = self.treeview.get_selection()
@@ -1026,11 +1127,11 @@ class Trade:
 
 	def registerTransaction(self):
 		if self.editFalg:
-			query=self.session.query(Trade).select_from(Trade)
+			query=self.session.query(Trades).select_from(Trades)
 			query=query.filter(Trades.Code==self.subCode).all()
 			for trans in query:
 				trans.Acivated=0
-			sell = Trade( self.subCode, self.subDate, 0, self.custId, self.subAdd, self.subSub, self.VAT, self.fee, self.totalFactor, self.cashPayment,
+			sell = Trades( self.subCode, self.subDate, 0, self.custId, self.subAdd, self.subSub, self.VAT, self.fee, self.totalFactor, self.cashPayment,
 								self.subShpDate, self.subFOB, self.subShipVia, self.subPreInv, self.subDesc, self.sell, self.editDate, 1)
 
 		else:
@@ -1048,13 +1149,13 @@ class Trade:
 		#            exchngUntPrc, exchngUntDisc, exchngTransId, exchngDesc):
 		if self.editFalg:								
 			#get last trans id beacause in the save transaction we save this transaction
-			lasttransId=self.session.query(Trade).select_from(Trade)
+			lasttransId=self.session.query(Trades).select_from(Trades)
 			lasttransId=lasttransId.order_by(Trades.Id.desc())				
 			lasttransId=lasttransId.filter(Trades.Code==self.Code)
 			lasttransId=lasttransId.filter(Trades.Id!=self.Id).first()
 			lasttransId1=lasttransId.Id
 			
-			lasttransId=self.session.query(Trade).select_from(Trade)
+			lasttransId=self.session.query(Trades).select_from(Trades)
 			lasttransId=lasttransId.order_by(Trades.Id.desc())				
 			lasttransId=lasttransId.filter(Trades.Code==self.Code)
 			lasttransId=lasttransId.filter(Trades.Id!=lasttransId1).first()
@@ -1079,13 +1180,13 @@ class Trade:
 			if self.editFalg:
 											
 				#get last trans id beacause in the save transaction we save this transaction
-				lasttransId=self.session.query(Trade).select_from(Trade)
+				lasttransId=self.session.query(Trades).select_from(Trades)
 				lasttransId=lasttransId.order_by(Trades.Id.desc())				
 				lasttransId=lasttransId.filter(Trades.Code==self.Code)
 				lasttransId=lasttransId.filter(Trades.Id!=self.Id).first()
 				lasttransId1=lasttransId.Id
 				
-				lasttransId=self.session.query(Trade).select_from(Trade)
+				lasttransId=self.session.query(Trades).select_from(Trades)
 				lasttransId=lasttransId.order_by(Trades.Id.desc())				
 				lasttransId=lasttransId.filter(Trades.Code==self.Code)
 				lasttransId=lasttransId.filter(Trades.Id!=lasttransId1).first()
