@@ -19,7 +19,9 @@ from helpers import get_builder
 import  customers
 import  product
 from gi.repository import Gdk
-
+from calverter import calverter
+from converter import *
+from datetime import datetime, timedelta
 
 config = share.config
 
@@ -86,7 +88,16 @@ class CardexReport:
         self.treestore.set_sort_column_id(0, Gtk.SortType.ASCENDING)
         self.window.show_all()
         self.builder.connect_signals(self)
-        self.session = config.db.session    
+        self.session = config.db.session  
+
+        self.dateToEntry = self.builder.get_object("dateToEntry")
+        self.dateFromEntry = self.builder.get_object("dateFromEntry")
+        if share.config.datetypes[share.config.datetype] == "jalali":
+            self.dateToEntry.set_placeholder_text("1396:1:1")
+            self.dateFromEntry.set_placeholder_text("1396:1:1")
+        else:
+            self.dateToEntry.set_placeholder_text("1:1:2018")
+            self.dateFromEntry.set_placeholder_text("1:1:2018")
 
     def selectProduct(self,sender=0):
         self.proVal = self.builder.get_object("productCodeSearchEntry")
@@ -152,10 +163,31 @@ class CardexReport:
             if customerCode:
                 query = query.filter(Customers.custCode == customerCode)
 
+            if share.config.datetypes[share.config.datetype] == "jalali":
+                if dateTo:
+                    year, month, day = str(dateTo).split("-")
+                    e=jalali_to_gregorian(int(year),int(month),int(day))
+                    dateTo = datetime(e[0], e[1], e[2])
+                if dateFrom:
+                    year, month, day = dateFrom.split("-")
+                    e=jalali_to_gregorian(int(year),int(month),int(day))
+                    dateFrom = datetime(e[0], e[1], e[2])
+            else:
+
+                if dateTo:
+                    year, month, day = str(dateTo).split("-")
+                    dateTo = datetime(int(day),int(month),int(year))
+                if dateFrom:
+                    year, month, day = dateFrom.split("-")
+                    dateFrom = datetime(int(day),int(month),int(year))
+
+            if dateTo:
+                query = query.filter(Trades.tDate <= dateTo)
             if dateFrom:
-                if not dateTo:
-                    dateTo = date.today()
-                query = query.filter(Trades.tDate.between(dateFrom, dateTo))
+                DD = timedelta(days=1)
+                dateFrom -= DD
+                query = query.filter(Trades.tDate >= dateFrom)
+                
 
             result = query.all()
             
@@ -166,8 +198,16 @@ class CardexReport:
                 else:
                     buy_quantity = str('{0:g}'.format(float(factor.Exchanges.exchngQnty)))
                     sell_quantity = '-'
+                if share.config.datetypes[share.config.datetype] == "jalali": 
+                    year, month, day = str(factor.Trades.tDate).split("-")
+                    date = gregorian_to_jalali(int(year),int(month),int(day))
+                    date = str(date[2]) + '-' + str(date[1]) + '-' + str(date[0])
+                else:
+                    date = factor.Trades.tDate
+                    year, month, day = str(factor.Trades.tDate).split("-")
+                    date = str(day) + '-' + str(month) + '-' + str(year)
                 self.treestore.append(None, (str(factor.Trades.Code), str(factor.Customers.custCode), str(factor.Customers.custName), sell_quantity, buy_quantity,
-                 str('{0:g}'.format(float(factor.Exchanges.exchngQnty * factor.Exchanges.exchngUntPrc))), str(factor.Trades.tDate)))
+                 str('{0:g}'.format(float(factor.Exchanges.exchngQnty * factor.Exchanges.exchngUntPrc))), str(date)))
         else:
             statusbar = self.builder.get_object('statusbar3')
             context_id = statusbar.get_context_id('statusbar')
@@ -197,12 +237,10 @@ class CardexReport:
         else:
             productType = item[0]
 
-        box = self.builder.get_object("dateToEntry")
-        dateTo = box.get_text()
+        dateTo = self.dateToEntry.get_text()
         dateTo = dateTo.replace(":", "-")
 
-        box = self.builder.get_object("dateFromEntry")
-        dateFrom = box.get_text()
+        dateFrom = self.dateFromEntry.get_text()
         dateFrom = dateFrom.replace(":", "-")
 
         self.showResult(productCode,productType,customerCode,dateFrom,dateTo)
