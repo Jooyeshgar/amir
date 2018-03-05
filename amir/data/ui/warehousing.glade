@@ -392,7 +392,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="xalign">0.10000000149011612</property>
-                <property name="label" translatable="yes">Hint: From quantity - To quantity: Price , ...
+                <property name="label" translatable="yes">Hint: From quantity - To quantity: Amount of discount for each product (The order is important)
          Example:   1-30: 400 , 30-100: 360.7 , 100-170: 300</property>
               </object>
               <packing>

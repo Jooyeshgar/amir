@@ -500,7 +500,10 @@ class Trade:
 			btnVal  = "Save Changes..."
 		else:
 			self.editingSell    = None
-			self.addDlg.set_title("Choose sell information")
+			if self.sell:
+				self.addDlg.set_title("Choose sell information")
+			else:
+				self.addDlg.set_title("Choose buy information")
 			self.edtSellFlg = False
 			btnVal  = "Add to list"
 			
@@ -877,9 +880,10 @@ class Trade:
 						print "formula exists!"
 						discval = self.calcDiscount(self.product.discountFormula, qnty, sellPrc)
 						discstr = utility.LN(discval)
-						self.discountEntry.set_text(discstr)
-						self.stnrdDisc.set_text(discstr)
-						self.calcTotalDiscount(discval)
+						if self.sell:
+							self.discountEntry.set_text(discstr)
+							self.stnrdDisc.set_text(discstr)
+							self.calcTotalDiscount(sellPrc - discval)
 					else:
 						# if discount be expressed in percent, total discount is changed
 						# by changing quantity.
@@ -1000,9 +1004,9 @@ class Trade:
 				if len(numlist) == 1:
 					firstnum = float(numlist[0])
 					if qnty > firstnum:
+						discnt = float(partlist[1])
 						continue
 					elif qnty == firstnum:
-						discnt = sell_price - float(partlist[1])
 						break
 					else:
 						break
@@ -1010,11 +1014,12 @@ class Trade:
 					firstnum = float(numlist[0])
 					secnum = float(numlist[1])
 					if qnty > secnum:
+						discnt = float(partlist[1])
 						continue
 					elif qnty < firstnum:
 						break
 					else:
-						discnt = sell_price - float(partlist[1])
+						discnt = float(partlist[1])
 		return discnt
 						
 	def calcTotal(self):
