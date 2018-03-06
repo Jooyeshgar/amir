@@ -12,8 +12,8 @@ Base = get_declarative_base()
 # Version 0.2 tables
 
 
-class Trades (Base):
-    __tablename__ = "trades"
+class Factors (Base):
+    __tablename__ = "factors"
     Id = Column(Integer, primary_key=True)
     Code = Column(Integer, nullable=False)
     tDate = Column(Date, nullable=False)

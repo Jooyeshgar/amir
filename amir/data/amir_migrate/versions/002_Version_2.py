@@ -45,7 +45,7 @@ productGroups = Table('productGroups', meta,
 	mysql_charset='utf8'
 )
     
-trades = Table('trades', meta,
+factors = Table('factors', meta,
     Column('Id'         , Integer     , primary_key = True ),
     Column('Code'       , Unicode(50) , nullable = False ),
     Column('tDate'      , Date        , nullable = False ),
@@ -68,15 +68,15 @@ trades = Table('trades', meta,
 	mysql_charset='utf8'
 )
 
-exchanges = Table('exchanges', meta,
-    Column('exchngId',          Integer,        primary_key = True                      ),
-    Column('exchngNo',          Integer,        nullable = False                        ),
-    Column('exchngProduct',     Integer,        ForeignKey('products.id')               ),
-    Column('exchngQnty',        Float,          ColumnDefault(0),   nullable = False    ),
-    Column('exchngUntPrc',      Float,          ColumnDefault(0),   nullable = False    ),
-    Column('exchngUntDisc',     Unicode(30),    ColumnDefault("0"), nullable = False    ),
-    Column('exchngTransId',     Integer,        ForeignKey('trades.Id')      ),
-    Column('exchngDesc',        Unicode(200),   nullable = True                         ),
+factorItems = Table('factorItems', meta,
+    Column('factorItemId',          Integer,        primary_key = True                      ),
+    Column('factorItemNo',          Integer,        nullable = False                        ),
+    Column('factorItemProduct',     Integer,        ForeignKey('products.id')               ),
+    Column('factorItemQnty',        Float,          ColumnDefault(0),   nullable = False    ),
+    Column('factorItemUntPrc',      Float,          ColumnDefault(0),   nullable = False    ),
+    Column('factorItemUntDisc',     Unicode(30),    ColumnDefault("0"), nullable = False    ),
+    Column('factorItemTransId',     Integer,        ForeignKey('factors.Id')      ),
+    Column('factorItemDesc',        Unicode(200),   nullable = True                         ),
 	mysql_charset='utf8'
 )
 
@@ -236,8 +236,8 @@ def upgrade(migrate_engine):
 
     products.create(checkfirst=True)
     productGroups.create(checkfirst=True)
-    trades.create(checkfirst=True)
-    exchanges.create(checkfirst=True)
+    factors.create(checkfirst=True)
+    factorItems.create(checkfirst=True)
     payments.create(checkfirst=True)
     cheque.create(checkfirst=True)
     custGroups.create(checkfirst=True)
@@ -311,8 +311,8 @@ def downgrade(migrate_engine):
 
     # products.drop()
     # productGroups.drop()
-    # trades.drop()
-    # exchanges.drop()
+    # factors.drop()
+    # factorItems.drop()
     # payments.drop()
 
     # cheques.drop()

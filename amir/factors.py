@@ -28,7 +28,7 @@ config = share.config
 ## \defgroup Controller
 ## @{
 
-class Trade:
+class Factor:
 	"""Manage sell and buy form."""
 
 	def __init__(self,sell = True, transId=None):
@@ -47,8 +47,8 @@ class Trade:
 		self.session = config.db.session	
 		self.Document = class_document.Document()
 		
-		query   = self.session.query(Trades.Id).select_from(Trades)
-		lastId  = query.order_by(Trades.Id.desc()).first()			
+		query   = self.session.query(Factors.Id).select_from(Factors)
+		lastId  = query.order_by(Factors.Id.desc()).first()			
 		if not lastId:
 			lastId  = 0
 		else:
@@ -177,10 +177,10 @@ class Trade:
 		
 	
 	def viewSells(self,sender=0):
-		query = config.db.session.query(Trades,Customers)
-		query = query.select_from(outerjoin(Trades,Customers, Trades.Cust == Customers.custId))
-		query = query.order_by(Trades.Code.asc())
-		query =	query.filter(Trades.Sell==self.sell).filter(Trades.Acivated==1)
+		query = config.db.session.query(Factors,Customers)
+		query = query.select_from(outerjoin(Factors,Customers, Factors.Cust == Customers.custId))
+		query = query.order_by(Factors.Code.asc())
+		query =	query.filter(Factors.Sell==self.sell).filter(Factors.Acivated==1)
 		result = query.all()
 
 		from pprint import pprint
@@ -201,8 +201,8 @@ class Trade:
 		self.addNew()
 							
 	def addNew(self,transId=None):
-		query   = self.session.query(Trades.Code).select_from(Trades).filter(Trades.Sell == self.sell)
-		lastCode  = query.order_by(Trades.Code.desc()).first()
+		query   = self.session.query(Factors.Code).select_from(Factors).filter(Factors.Sell == self.sell)
+		lastCode  = query.order_by(Factors.Code.desc()).first()
 		if not lastCode:
 			self.Code  = 1
 		else:
@@ -213,10 +213,10 @@ class Trade:
 		self.Codeentry = self.builder.get_object("transCode")
 		self.Codeentry.set_text(LN(self.Code))
 		self.statusBar  = self.builder.get_object("FormStatusBar")	
-		self.tradeTreeView = self.builder.get_object("TradeTreeView")
+		self.factorTreeView = self.builder.get_object("FactorTreeView")
 		self.sellListStore = Gtk.TreeStore(str,str,str,str,str,str,str,str)
 		self.sellListStore.clear()
-		self.tradeTreeView.set_model(self.sellListStore)
+		self.factorTreeView.set_model(self.sellListStore)
 		
 		headers = (_("No."), _("Product Name"), _("Quantity"), _("Unit Price"), 
 				   _("Total Price"), _("Unit Disc."), _("Disc."), _("Description"))
@@ -225,21 +225,21 @@ class Trade:
 			column = Gtk.TreeViewColumn(header,Gtk.CellRendererText(),text = txt)
 			column.set_spacing(5)
 			column.set_resizable(True)
-			self.tradeTreeView.append_column(column)
+			self.factorTreeView.append_column(column)
 			txt += 1
-		#self.tradeTreeView.get_selection().set_mode(  Gtk.SelectionMode.SINGLE    )
+		#self.factorTreeView.get_selection().set_mode(  Gtk.SelectionMode.SINGLE    )
 		
 		self.paymentManager = payments.Payments(transId=self.Id,transCode=self.Code)
 		self.paymentManager.connect("payments-changed", self.setNonCashPayments)
 		self.paymentManager.fillPaymentTables()
 
 		if transId:
-			sellsQuery  = self.session.query(Exchanges).select_from(Exchanges)
-			sellsQuery  = sellsQuery.filter(Exchanges.exchngTransId==transId).order_by(Exchanges.exchngNo.asc()).all()
+			sellsQuery  = self.session.query(FactorItems).select_from(FactorItems)
+			sellsQuery  = sellsQuery.filter(FactorItems.factorItemTransId==transId).order_by(FactorItems.factorItemNo.asc()).all()
 			for sell in sellsQuery:
-				ttl     = sell.exchngUntPrc * sell.exchngQnty
-				disc    = sell.exchngUntDisc * sell.exchngQnty
-				list    = (sell.exchngNo,sell.exchngProduct,sell.exchngQnty,str(sell.exchngUntPrc),str(ttl),str(sell.exchngUntDisc),str(disc),sell.exchngDesc)
+				ttl     = sell.factorItemUntPrc * sell.factorItemQnty
+				disc    = sell.factorItemUntDisc * sell.factorItemQnty
+				list    = (sell.factorItemNo,sell.factorItemProduct,sell.factorItemQnty,str(sell.factorItemUntPrc),str(ttl),str(sell.factorItemUntDisc),str(disc),sell.factorItemDesc)
 				self.sellListStore.append(None,list)
 		
 		
@@ -265,18 +265,18 @@ class Trade:
 			customer = query.filter(Customers.custId == self.editTransaction.Cust).first()						
 			self.sellerSelected(self, self.editTransaction.Cust,customer.custCode)	
 					
-			query=self.session.query(Exchanges).select_from(Exchanges)
-			exchanges = query.filter(Exchanges.exchngTransId==self.editTransaction.Id).all()			
+			query=self.session.query(FactorItems).select_from(FactorItems)
+			factorItems = query.filter(FactorItems.factorItemTransId==self.editTransaction.Id).all()			
 			number=1
-			for exchange in exchanges:							
+			for factorItem in factorItems:							
 				query=self.session.query(Products).select_from(Products)
-				product = query.filter(Products.id==exchange.exchngProduct).first()
-				sellList = (str(number), product.name, str(exchange.exchngQnty), str(exchange.exchngUntPrc),
-						 str(exchange.exchngQnty*exchange.exchngUntPrc), str(exchange.exchngUntDisc),
-						 str(float(exchange.exchngQnty)*float(exchange.exchngUntDisc)), exchange.exchngDesc)
+				product = query.filter(Products.id==factorItem.factorItemProduct).first()
+				sellList = (str(number), product.name, str(factorItem.factorItemQnty), str(factorItem.factorItemUntPrc),
+						 str(factorItem.factorItemQnty*factorItem.factorItemUntPrc), str(factorItem.factorItemUntDisc),
+						 str(float(factorItem.factorItemQnty)*float(factorItem.factorItemUntDisc)), factorItem.factorItemDesc)
 				self.sellListStore.append(None,sellList)
-				self.appendPrice(exchange.exchngQnty*exchange.exchngUntPrc)
-				self.appendDiscount(float(exchange.exchngQnty)*float(exchange.exchngUntDisc))
+				self.appendPrice(factorItem.factorItemQnty*factorItem.factorItemUntPrc)
+				self.appendDiscount(float(factorItem.factorItemQnty)*float(factorItem.factorItemUntDisc))
 				self.valsChanged()
 				number+=1																
 			self.taxEntry.set_text(str(self.editTransaction.VAT))
@@ -291,8 +291,8 @@ class Trade:
 		self.mainDlg.show_all()
 
 	def addNewBuy(self,transId=None):
-		query   = self.session.query(Trades.Code).select_from(Trades).filter(Trades.Sell == self.sell)
-		lastCode  = query.order_by(Trades.Code.desc()).first()
+		query   = self.session.query(Factors.Code).select_from(Factors).filter(Factors.Sell == self.sell)
+		lastCode  = query.order_by(Factors.Code.desc()).first()
 		if not lastCode:
 			self.Code  = 1
 		else:
@@ -303,10 +303,10 @@ class Trade:
 		self.Codeentry = self.builder.get_object("transCode")
 		self.Codeentry.set_text(LN(self.Code))
 		self.statusBar  = self.builder.get_object("FormStatusBar")	
-		self.tradeTreeView = self.builder.get_object("TradeTreeView")
+		self.factorTreeView = self.builder.get_object("FactorTreeView")
 		self.sellListStore = Gtk.TreeStore(str,str,str,str,str,str,str,str)
 		self.sellListStore.clear()
-		self.tradeTreeView.set_model(self.sellListStore)
+		self.factorTreeView.set_model(self.sellListStore)
 		
 		headers = (_("No."), _("Product Name"), _("Quantity"), _("Unit Price"), 
 				   _("Total Price"), _("Unit Disc."), _("Disc."), _("Description"))
@@ -315,21 +315,21 @@ class Trade:
 			column = Gtk.TreeViewColumn(header,Gtk.CellRendererText(),text = txt)
 			column.set_spacing(5)
 			column.set_resizable(True)
-			self.tradeTreeView.append_column(column)
+			self.factorTreeView.append_column(column)
 			txt += 1
-		#self.tradeTreeView.get_selection().set_mode(  Gtk.SelectionMode.SINGLE    )
+		#self.factorTreeView.get_selection().set_mode(  Gtk.SelectionMode.SINGLE    )
 		
 		self.paymentManager = payments.Payments(transId=self.Id,transCode=self.Code)
 		self.paymentManager.connect("payments-changed", self.setNonCashPayments)
 		self.paymentManager.fillPaymentTables()
 
 		if transId:
-			sellsQuery  = self.session.query(Exchanges).select_from(Exchanges)
-			sellsQuery  = sellsQuery.filter(Exchanges.exchngTransId==transId).order_by(Exchanges.exchngNo.asc()).all()
+			sellsQuery  = self.session.query(FactorItems).select_from(FactorItems)
+			sellsQuery  = sellsQuery.filter(FactorItems.factorItemTransId==transId).order_by(FactorItems.factorItemNo.asc()).all()
 			for sell in sellsQuery:
-				ttl     = sell.exchngUntPrc * sell.exchngQnty
-				disc    = sell.exchngUntDisc * sell.exchngQnty
-				list    = (sell.exchngNo,sell.exchngProduct,sell.exchngQnty,str(sell.exchngUntPrc),str(ttl),str(sell.exchngUntDisc),str(disc),sell.exchngDesc)
+				ttl     = sell.factorItemUntPrc * sell.factorItemQnty
+				disc    = sell.factorItemUntDisc * sell.factorItemQnty
+				list    = (sell.factorItemNo,sell.factorItemProduct,sell.factorItemQnty,str(sell.factorItemUntPrc),str(ttl),str(sell.factorItemUntDisc),str(disc),sell.factorItemDesc)
 				self.sellListStore.append(None,list)
 		
 		
@@ -355,18 +355,18 @@ class Trade:
 			customer = query.filter(Customers.custId == self.editTransaction.Cust).first()						
 			self.sellerSelected(self, self.editTransaction.Cust,customer.custCode)	
 					
-			query=self.session.query(Exchanges).select_from(Exchanges)
-			exchanges = query.filter(Exchanges.exchngTransId==self.editTransaction.Id).all()			
+			query=self.session.query(FactorItems).select_from(FactorItems)
+			factorItems = query.filter(FactorItems.factorItemTransId==self.editTransaction.Id).all()			
 			number=1
-			for exchange in exchanges:							
+			for factorItem in factorItems:							
 				query=self.session.query(Products).select_from(Products)
-				product = query.filter(Products.id==exchange.exchngProduct).first()
-				sellList = (str(number), product.name, str(exchange.exchngQnty), str(exchange.exchngUntPrc),
-						 str(exchange.exchngQnty*exchange.exchngUntPrc), str(exchange.exchngUntDisc),
-						 str(float(exchange.exchngQnty)*float(exchange.exchngUntDisc)), exchange.exchngDesc)
+				product = query.filter(Products.id==factorItem.factorItemProduct).first()
+				sellList = (str(number), product.name, str(factorItem.factorItemQnty), str(factorItem.factorItemUntPrc),
+						 str(factorItem.factorItemQnty*factorItem.factorItemUntPrc), str(factorItem.factorItemUntDisc),
+						 str(float(factorItem.factorItemQnty)*float(factorItem.factorItemUntDisc)), factorItem.factorItemDesc)
 				self.sellListStore.append(None,sellList)
-				self.appendPrice(exchange.exchngQnty*exchange.exchngUntPrc)
-				self.appendDiscount(float(exchange.exchngQnty)*float(exchange.exchngUntDisc))
+				self.appendPrice(factorItem.factorItemQnty*factorItem.factorItemUntPrc)
+				self.appendDiscount(float(factorItem.factorItemQnty)*float(factorItem.factorItemUntDisc))
 				self.valsChanged()
 				number+=1																
 			self.taxEntry.set_text(str(self.editTransaction.VAT))
@@ -386,9 +386,9 @@ class Trade:
 		selection = self.treeview.get_selection()
 		iter = selection.get_selected()[1]		
 		code = self.treestore.get_value(iter, 0) 		
-		query = config.db.session.query(Trades, Customers)
-		query = query.select_from(outerjoin(Trades, Customers, Trades.Cust== Customers.custId))
-		result,result2 = query.filter(Trades.Id == code).first() 		
+		query = config.db.session.query(Factors, Customers)
+		query = query.select_from(outerjoin(Factors, Customers, Factors.Cust== Customers.custId))
+		result,result2 = query.filter(Factors.Id == code).first() 		
  		self.editTransaction=result 	
  		self.addNew() 		
 
@@ -397,9 +397,9 @@ class Trade:
 		selection = self.treeview.get_selection()
 		iter = selection.get_selected()[1]		
 		code = self.treestore.get_value(iter, 0) 		
-		query = config.db.session.query(Trades, Customers)
-		query = query.select_from(outerjoin(Trades, Customers, Trades.Cust== Customers.custId))
-		result,result2 = query.filter(Trades.Id == code).first() 		
+		query = config.db.session.query(Factors, Customers)
+		query = query.select_from(outerjoin(Factors, Customers, Factors.Cust== Customers.custId))
+		result,result2 = query.filter(Factors.Id == code).first() 		
  		self.editTransaction=result 	
  		self.addNewBuy()
 																						
@@ -408,24 +408,24 @@ class Trade:
 		iter1 = selection.get_selected()[1]	
 		code = self.treestore.get_value(iter1, 0)
 		print code
-		query = config.db.session.query(Trade).select_from(Trade)
-		Transaction = query.filter(Trades.Id ==unicode(code) )
-		Transaction = Transaction.filter(Trades.Acivated==1).first()
+		query = config.db.session.query(Factor).select_from(Factor)
+		Transaction = query.filter(Factors.Id ==unicode(code) )
+		Transaction = Transaction.filter(Factors.Acivated==1).first()
 		TransactionId=Transaction.Id
 		
-		exchanges=self.session.query(Exchanges).select_from(Exchanges)
-		exchanges=exchanges.filter(Exchanges.exchngTransId==TransactionId).all()
+		factorItems=self.session.query(FactorItems).select_from(FactorItems)
+		factorItems=factorItems.filter(FactorItems.factorItemTransId==TransactionId).all()
 		
-		for exchange in exchanges:
+		for factorItem in factorItems:
 			product=self.session.query(Products).select_from(Products)
-			product= product.filter(Products.id==exchange.exchngProduct).first()
-			product.quantity+=exchange.exchngQnty
+			product= product.filter(Products.id==factorItem.factorItemProduct).first()
+			product.quantity+=factorItem.factorItemQnty
 			
 		
 		
 		
-		query = config.db.session.query(Trade).select_from(Trade)
-		Transaction = query.filter(Trades.Id ==unicode(code) ).all()
+		query = config.db.session.query(Factor).select_from(Factor)
+		Transaction = query.filter(Factors.Id ==unicode(code) ).all()
 		for trans in Transaction:
 			trans.Acivated=0
 		config.db.session.commit()
@@ -573,7 +573,7 @@ class Trade:
 		self.addDlg.show_all()
 				
 	def editProduct(self,sender):
-		iter    = self.tradeTreeView.get_selection().get_selected()[1]
+		iter    = self.factorTreeView.get_selection().get_selected()[1]
 		if iter != None :
 			self.editingSell    = iter
 			No      = self.sellListStore.get(iter, 0)[0]
@@ -588,7 +588,7 @@ class Trade:
 			self.addProduct(edit=edtTpl)
 		
 	def removeProduct(self,sender):
-		delIter = self.tradeTreeView.get_selection().get_selected()[1]
+		delIter = self.factorTreeView.get_selection().get_selected()[1]
 		if delIter:
 			No  = unicode(self.sellListStore.get(delIter, 0)[0])
 			msg = _("Are You sure you want to delete the sell row number %s?") %No
@@ -620,7 +620,7 @@ class Trade:
 	def upProInList(self,sender):
 		if len(self.sellsItersDict) == 1:
 			return
-		iter    = self.tradeTreeView.get_selection().get_selected()[1]
+		iter    = self.factorTreeView.get_selection().get_selected()[1]
 		if iter:
 			No   = utility.getInt(self.sellListStore.get(iter, 0)[0])
 			abvNo   = No - 1
@@ -635,7 +635,7 @@ class Trade:
 	def downProInList(self,sender):
 		if len(self.sellsItersDict) == 1:
 			return
-		iter    = self.tradeTreeView.get_selection().get_selected()[1]
+		iter    = self.factorTreeView.get_selection().get_selected()[1]
 		if iter:
 			No   = utility.getInt(self.sellListStore.get(iter, 0)[0])
 			blwNo   = No + 1
@@ -1070,7 +1070,7 @@ class Trade:
 		self.sell_factor = True
 		if permit:
 			self.registerTransaction()
-			self.registerExchanges()			
+			self.registerFactorItems()			
 			if not self.subPreInv:
 				self.registerDocument()			
 			self.mainDlg.hide()						
@@ -1142,15 +1142,15 @@ class Trade:
 
 	def registerTransaction(self):
 		if self.editFalg:
-			query=self.session.query(Trades).select_from(Trades)
-			query=query.filter(Trades.Code==self.subCode).all()
+			query=self.session.query(Factors).select_from(Factors)
+			query=query.filter(Factors.Code==self.subCode).all()
 			for trans in query:
 				trans.Acivated=0
-			sell = Trades( self.subCode, self.subDate, 0, self.custId, self.subAdd, self.subSub, self.VAT, self.fee, self.totalFactor, self.cashPayment,
+			sell = Factors( self.subCode, self.subDate, 0, self.custId, self.subAdd, self.subSub, self.VAT, self.fee, self.totalFactor, self.cashPayment,
 								self.subShpDate, self.subFOB, self.subShipVia, self.subPreInv, self.subDesc, self.sell, self.editDate, 1)
 
 		else:
-			sell = Trades(self.subCode, self.subDate, 0, self.custId, self.subAdd, self.subSub, self.VAT, self.fee, self.totalFactor, self.cashPayment,
+			sell = Factors(self.subCode, self.subDate, 0, self.custId, self.subAdd, self.subSub, self.VAT, self.fee, self.totalFactor, self.cashPayment,
 					self.subShpDate, self.subFOB, self.subShipVia, self.subPreInv, self.subDesc, self.sell, self.subDate, 1)#editdate=subdate
 
 		self.session.add(sell)
@@ -1158,87 +1158,87 @@ class Trade:
 
 		self.treestore.append(None,(int(self.Id), LN(self.subCode), str(self.subDate), "test", str(self.totalFactor)))
 		
-	def registerExchanges(self):	
+	def registerFactorItems(self):	
 				
-		# Exchanges( self, exchngNo, exchngProduct, exchngQnty,
-		#            exchngUntPrc, exchngUntDisc, exchngTransId, exchngDesc):
+		# FactorItems( self, factorItemNo, factorItemProduct, factorItemQnty,
+		#            factorItemUntPrc, factorItemUntDisc, factorItemTransId, factorItemDesc):
 		if self.editFalg:								
 			#get last trans id beacause in the save transaction we save this transaction
-			lasttransId=self.session.query(Trades).select_from(Trades)
-			lasttransId=lasttransId.order_by(Trades.Id.desc())				
-			lasttransId=lasttransId.filter(Trades.Code==self.Code)
-			lasttransId=lasttransId.filter(Trades.Id!=self.Id).first()
+			lasttransId=self.session.query(Factors).select_from(Factors)
+			lasttransId=lasttransId.order_by(Factors.Id.desc())				
+			lasttransId=lasttransId.filter(Factors.Code==self.Code)
+			lasttransId=lasttransId.filter(Factors.Id!=self.Id).first()
 			lasttransId1=lasttransId.Id
 			
-			lasttransId=self.session.query(Trades).select_from(Trades)
-			lasttransId=lasttransId.order_by(Trades.Id.desc())				
-			lasttransId=lasttransId.filter(Trades.Code==self.Code)
-			lasttransId=lasttransId.filter(Trades.Id!=lasttransId1).first()
+			lasttransId=self.session.query(Factors).select_from(Factors)
+			lasttransId=lasttransId.order_by(Factors.Id.desc())				
+			lasttransId=lasttransId.filter(Factors.Code==self.Code)
+			lasttransId=lasttransId.filter(Factors.Id!=lasttransId1).first()
 			lasttransId=lasttransId.Id											
 			
-			exchange1 =self.session.query(Exchanges).select_from(Exchanges)
-			exchange1=exchange1.order_by(Exchanges.exchngTransId.desc())
-			exchange1=exchange1.filter(Exchanges.exchngTransId==lasttransId)
+			factorItem1 =self.session.query(FactorItems).select_from(FactorItems)
+			factorItem1=factorItem1.order_by(FactorItems.factorItemTransId.desc())
+			factorItem1=factorItem1.filter(FactorItems.factorItemTransId==lasttransId)
 			
-			for exchange in exchange1:
-				query   = self.session.query(Products).select_from(Products).filter(Products.id == exchange.exchngProduct)
+			for factorItem in factorItem1:
+				query   = self.session.query(Products).select_from(Products).filter(Products.id == factorItem.factorItemProduct)
 				pro = query.first()
-				pro.quantity+=exchange.exchngQnty
+				pro.quantity+=factorItem.factorItemQnty
 			self.session.commit()			
 		for exch in self.sellListStore:
 			query = self.session.query(Products).select_from(Products)
 			pid = query.filter(Products.name == unicode(exch[1])).first().id
 						
-			self.lastexchangequantity=utility.getFloat(0)
-			self.nowexchangequantity=utility.getFloat(exch[2])
+			self.lastfactorItemquantity=utility.getFloat(0)
+			self.nowfactorItemquantity=utility.getFloat(exch[2])
 						
 			if self.editFalg:
 											
 				#get last trans id beacause in the save transaction we save this transaction
-				lasttransId=self.session.query(Trades).select_from(Trades)
-				lasttransId=lasttransId.order_by(Trades.Id.desc())				
-				lasttransId=lasttransId.filter(Trades.Code==self.Code)
-				lasttransId=lasttransId.filter(Trades.Id!=self.Id).first()
+				lasttransId=self.session.query(Factors).select_from(Factors)
+				lasttransId=lasttransId.order_by(Factors.Id.desc())				
+				lasttransId=lasttransId.filter(Factors.Code==self.Code)
+				lasttransId=lasttransId.filter(Factors.Id!=self.Id).first()
 				lasttransId1=lasttransId.Id
 				
-				lasttransId=self.session.query(Trades).select_from(Trades)
-				lasttransId=lasttransId.order_by(Trades.Id.desc())				
-				lasttransId=lasttransId.filter(Trades.Code==self.Code)
-				lasttransId=lasttransId.filter(Trades.Id!=lasttransId1).first()
+				lasttransId=self.session.query(Factors).select_from(Factors)
+				lasttransId=lasttransId.order_by(Factors.Id.desc())				
+				lasttransId=lasttransId.filter(Factors.Code==self.Code)
+				lasttransId=lasttransId.filter(Factors.Id!=lasttransId1).first()
 				lasttransId=lasttransId.Id											
 								
-				exchange1 =self.session.query(Exchanges).select_from(Exchanges)
-				exchange1=exchange1.order_by(Exchanges.exchngTransId.desc())
-				exchange1=exchange1.filter(Exchanges.exchngProduct==pid)
-				exchange1=exchange1.filter(Exchanges.exchngTransId==lasttransId).first()
+				factorItem1 =self.session.query(FactorItems).select_from(FactorItems)
+				factorItem1=factorItem1.order_by(FactorItems.factorItemTransId.desc())
+				factorItem1=factorItem1.filter(FactorItems.factorItemProduct==pid)
+				factorItem1=factorItem1.filter(FactorItems.factorItemTransId==lasttransId).first()
 				
-				if not exchange1:					
-					self.lastexchangequantity=utility.getFloat(str(0))
-					self.nowexchangequantity=utility.getFloat(exch[2])
+				if not factorItem1:					
+					self.lastfactorItemquantity=utility.getFloat(str(0))
+					self.nowfactorItemquantity=utility.getFloat(exch[2])
 					
-					exchange = Exchanges(utility.getInt(exch[0]), pid, utility.getFloat(exch[2]),
+					factorItem = FactorItems(utility.getInt(exch[0]), pid, utility.getFloat(exch[2]),
 										 utility.getFloat(exch[3]), utility.convertToLatin(exch[5]),
 										 lasttransId1, unicode(exch[7]))
-					self.session.add( exchange )
+					self.session.add( factorItem )
 					self.session.commit()										
 				else:
-					self.lastexchangequantity=utility.getFloat(str(exchange1.exchngQnty))
-					self.nowexchangequantity=utility.getFloat(exch[2])
+					self.lastfactorItemquantity=utility.getFloat(str(factorItem1.factorItemQnty))
+					self.nowfactorItemquantity=utility.getFloat(exch[2])
 										
-					exchange = Exchanges(utility.getInt(exch[0]), pid, utility.getFloat(exch[2]),
+					factorItem = FactorItems(utility.getInt(exch[0]), pid, utility.getFloat(exch[2]),
 										 utility.getFloat(exch[3]), utility.convertToLatin(exch[5]),
 										 lasttransId1, unicode(exch[7]))
-					self.session.add( exchange )
+					self.session.add( factorItem )
 					self.session.commit()
 					
 			# in add mode transaction																						
 			else:	
-				self.lastexchangequantity=utility.getFloat(str(0))
-				self.nowexchangequantity=utility.getFloat(exch[2])
-				exchange = Exchanges(utility.getInt(exch[0]), pid, utility.getFloat(exch[2]),
+				self.lastfactorItemquantity=utility.getFloat(str(0))
+				self.nowfactorItemquantity=utility.getFloat(exch[2])
+				factorItem = FactorItems(utility.getInt(exch[0]), pid, utility.getFloat(exch[2]),
 									 utility.getFloat(exch[3]), utility.convertToLatin(exch[5]),
 									 self.Id, unicode(exch[7]))
-				self.session.add( exchange )									
+				self.session.add( factorItem )									
 							
 			#---- Updating the products quantity
 			#TODO product quantity should be updated while adding products to factor
@@ -1246,10 +1246,10 @@ class Trade:
 					query   = self.session.query(Products).select_from(Products).filter(Products.id == pid)
 					pro = query.first()									
 
-					pro.quantity += self.nowexchangequantity
+					pro.quantity += self.nowfactorItemquantity
 					
-					self.lastexchangequantity=utility.getFloat(0)
-					self.nowexchangequantity=utility.getFloat(0)
+					self.lastfactorItemquantity=utility.getFloat(0)
+					self.nowfactorItemquantity=utility.getFloat(0)
 					self.session.commit()
 					
 		
@@ -1274,9 +1274,9 @@ class Trade:
 		bill_id = self.saveDocument();
 		
 		# Assign document to the current transaction
-		query = self.session.query(Trades)#.select_from(Trade)
-		query = query.filter(Trades.Id == self.Code)
-		query.update( {Trades.Bill : bill_id } )	
+		query = self.session.query(Factors)#.select_from(Factor)
+		query = query.filter(Factors.Id == self.Code)
+		query.update( {Factors.Bill : bill_id } )	
 		self.session.commit()	
 
 		query = self.session.query(Cheque)#.select_from(Cheque)

@@ -23,14 +23,13 @@ from ChequeHistory import ChequeHistory
 from Config import Config
 from CustGroups import CustGroups
 from Customers import Customers
-from Exchanges import Exchanges
+from FactorItems import FactorItems
 from Notebook import Notebook
 from Payment import Payment
 from ProductGroups import ProductGroups
 from Products import Products
 from Subject import Subject
-from Transactions import Transactions
-from Trades import Trades
+from Factors import Factors
 from User import User
 import re
 

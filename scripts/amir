@@ -111,7 +111,7 @@ gettext.textdomain('amir')
 gettext.install('amir', config.locale_path, unicode=1)
 
 from amir import subjects, addeditdoc, database, numberentry, notebookreport, docreport, tbalancereport, notebookutils, \
-setting, helpers, customers, customergroup, product, productgroup, trades, cardexreport
+setting, helpers, customers, customergroup, product, productgroup, factors, cardexreport
 from amir import automaticaccounting
 from amir import bankaccountsui
 
@@ -199,19 +199,19 @@ class MainWindow(GObject.GObject):
 
 
     def addNewSell(self, sender):
-        obj = trades.Trade()
+        obj = factors.Factor()
         obj.addNew()
 
     def addNewBuy(self, sender):
-        obj = trades.Trade(False)
+        obj = factors.Factor(False)
         obj.addNew()
 
     def ViewSelling(self , sender   ):
-        obj = trades.Trade()
+        obj = factors.Factor()
         obj.viewSells()
 
     def ViewBuying(self , sender   ):
-        obj = trades.Trade(False)
+        obj = factors.Factor(False)
         obj.viewSells()
 
 

@@ -30,7 +30,7 @@ class CardexReport:
         self.builder = get_builder("cardex")
         self.window = self.builder.get_object("window1")
         
-        self.treeview = self.builder.get_object("tradeTreeView")
+        self.treeview = self.builder.get_object("factorTreeView")
         self.treestore = Gtk.TreeStore(str, str, str, str, str, str, str)
         self.treeview.set_model(self.treestore)
 
@@ -151,14 +151,14 @@ class CardexReport:
 
             
             #Fill factor treeview
-            query = config.db.session.query(Exchanges,Trades,Customers)
-            query = query.filter(bill.id == Exchanges.exchngProduct, Exchanges.exchngTransId == Trades.Id, Customers.custId == Trades.Cust)
+            query = config.db.session.query(FactorItems,Factors,Customers)
+            query = query.filter(bill.id == FactorItems.factorItemProduct, FactorItems.factorItemTransId == Factors.Id, Customers.custId == Factors.Cust)
             if factorType and factorType != 'All':
                 if factorType == 'Sell':
                     factorType = 1
                 else:
                     factorType = 0
-                query = query.filter(Trades.Sell == factorType)
+                query = query.filter(Factors.Sell == factorType)
 
             if customerCode:
                 query = query.filter(Customers.custCode == customerCode)
@@ -182,31 +182,31 @@ class CardexReport:
                     dateFrom = datetime(int(day),int(month),int(year))
 
             if dateTo:
-                query = query.filter(Trades.tDate <= dateTo)
+                query = query.filter(Factors.tDate <= dateTo)
             if dateFrom:
                 DD = timedelta(days=1)
                 dateFrom -= DD
-                query = query.filter(Trades.tDate >= dateFrom)
+                query = query.filter(Factors.tDate >= dateFrom)
                 
 
             result = query.all()
             
             for factor in result:
-                if factor.Trades.Sell == True:
+                if factor.Factors.Sell == True:
                     buy_quantity = '-'
-                    sell_quantity = str('{0:g}'.format(float(factor.Exchanges.exchngQnty)))
+                    sell_quantity = str('{0:g}'.format(float(factor.FactorItems.factorItemQnty)))
                 else:
-                    buy_quantity = str('{0:g}'.format(float(factor.Exchanges.exchngQnty)))
+                    buy_quantity = str('{0:g}'.format(float(factor.FactorItems.factorItemQnty)))
                     sell_quantity = '-'
                 if share.config.datetypes[share.config.datetype] == "jalali": 
-                    year, month, day = str(factor.Trades.tDate).split("-")
+                    year, month, day = str(factor.Factors.tDate).split("-")
                     date = gregorian_to_jalali(int(year),int(month),int(day))
                     date = str(date[2]) + '-' + str(date[1]) + '-' + str(date[0])
                 else:
-                    year, month, day = str(factor.Trades.tDate).split("-")
+                    year, month, day = str(factor.Factors.tDate).split("-")
                     date = str(day) + '-' + str(month) + '-' + str(year)
-                self.treestore.append(None, (str(factor.Trades.Code), str(factor.Customers.custCode), str(factor.Customers.custName), sell_quantity, buy_quantity,
-                 str('{0:g}'.format(float(factor.Exchanges.exchngQnty * factor.Exchanges.exchngUntPrc))), str(date)))
+                self.treestore.append(None, (str(factor.Factors.Code), str(factor.Customers.custCode), str(factor.Customers.custName), sell_quantity, buy_quantity,
+                 str('{0:g}'.format(float(factor.FactorItems.factorItemQnty * factor.FactorItems.factorItemUntPrc))), str(date)))
         else:
             statusbar = self.builder.get_object('statusbar3')
             context_id = statusbar.get_context_id('statusbar')
