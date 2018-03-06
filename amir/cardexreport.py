@@ -203,7 +203,6 @@ class CardexReport:
                     date = gregorian_to_jalali(int(year),int(month),int(day))
                     date = str(date[2]) + '-' + str(date[1]) + '-' + str(date[0])
                 else:
-                    date = factor.Trades.tDate
                     year, month, day = str(factor.Trades.tDate).split("-")
                     date = str(day) + '-' + str(month) + '-' + str(year)
                 self.treestore.append(None, (str(factor.Trades.Code), str(factor.Customers.custCode), str(factor.Customers.custName), sell_quantity, buy_quantity,

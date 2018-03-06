@@ -183,8 +183,17 @@ class Trade:
 		query =	query.filter(Trades.Sell==self.sell).filter(Trades.Acivated==1)
 		result = query.all()
 
+		from pprint import pprint
+		self.cal = calverter()
 		for t ,c in reversed(result):		
-	  		grouprow = self.treestore.append(None, (int(t.Id), t.Code, str(t.tDate), c.custName, str(t.PayableAmnt)))
+			date = t.tDate
+			if share.config.datetypes[share.config.datetype] == "jalali":
+				jd = self.cal.gregorian_to_jd(date.year, date.month, date.day)
+				date = self.cal.jd_to_jalali(jd)
+				date = str(date[0]) + '-' + str(date[1]) + '-' + str(date[2])
+			else:
+				date = dateToString(date)
+	  		grouprow = self.treestore.append(None, (int(t.Id), t.Code, str(date), c.custName, str(t.PayableAmnt)))
   			
 		self.window.show_all()
 		
@@ -277,8 +286,8 @@ class Trade:
 			self.builder.get_object("FOBEntry").set_text(str(self.editTransaction.Delivery))
 			self.builder.get_object("shipViaEntry").set_text(str(self.editTransaction.ShipVia))
 			self.builder.get_object("transDescEntry").set_text(str(self.editTransaction.Desc))
-			self.factorDate.set_text(str(self.editTransaction.LastEdit))			
-			self.factorDate.showDateObject(self.editTransaction.LastEdit)																											
+			self.factorDate.set_text(str(self.editTransaction.tDate))			
+			self.factorDate.showDateObject(self.editTransaction.tDate)																											
 		self.mainDlg.show_all()
 
 	def addNewBuy(self,transId=None):
@@ -367,8 +376,9 @@ class Trade:
 			self.builder.get_object("FOBEntry").set_text(str(self.editTransaction.Delivery))
 			self.builder.get_object("shipViaEntry").set_text(str(self.editTransaction.ShipVia))
 			self.builder.get_object("transDescEntry").set_text(str(self.editTransaction.Desc))
-			self.factorDate.set_text(str(self.editTransaction.LastEdit))			
-			self.factorDate.showDateObject(self.editTransaction.LastEdit)																											
+			print self.editTransaction.tDate
+			self.factorDate.set_text(str(self.editTransaction.tDate))			
+			self.factorDate.showDateObject(self.editTransaction.tDate)																											
 		self.mainDlg.show_all()
 																	
 	def editSelling(self,transId=None):
@@ -1268,7 +1278,7 @@ class Trade:
 		query = query.filter(Trades.Id == self.Code)
 		query.update( {Trades.Bill : bill_id } )	
 		self.session.commit()	
-	
+
 		query = self.session.query(Cheque)#.select_from(Cheque)
 		query = query.filter(Cheque.chqTransId == self.Id)
 		query.update( {Cheque.chqBillId : bill_id } )

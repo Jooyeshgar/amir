@@ -24,7 +24,10 @@ def dateToString(date):
     datelist[share.config.datefields["day"]] = day
         
     delim = share.config.datedelims[share.config.datedelim]
-    datestring = str(datelist[0]) + delim + str(datelist[1]) + delim + str(datelist[2])
+    if share.config.datetypes[share.config.datetype] == "jalali":
+        datestring = str(datelist[2]) + delim + str(datelist[1]) + delim + str(datelist[0])
+    else:
+        datestring = str(datelist[0]) + delim + str(datelist[1]) + delim + str(datelist[2])
     datestring = LN(datestring, False)
     return datestring
 
@@ -40,6 +43,11 @@ def stringToDate(dateString):
         dd = dateList[2]
         dateObj = date(int(dy),int(dm),int(dd))
         return dateObj 
+def arrayDateToString(dateArray):
+    delim = share.config.datedelims[share.config.datedelim]
+    date = str(date[0]) + '-' + str(date[1]) + '-' + str(date[2])
+    return date
+
 
 ## @}
     
@@ -83,7 +91,7 @@ class DateEntry(Gtk.Entry):
         datelist[share.config.datefields["day"]] = day
         
         delim = share.config.datedelims[share.config.datedelim]
-        datestring = str(datelist[0]) + delim + str(datelist[1]) + delim + str(datelist[2])
+        datestring = str(datelist[1]) + delim + str(datelist[0]) + delim + str(datelist[2])
         datestring = LN(datestring, False)
         self.set_text(datestring)
         self.year = year
