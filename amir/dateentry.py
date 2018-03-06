@@ -91,7 +91,7 @@ class DateEntry(Gtk.Entry):
         datelist[share.config.datefields["day"]] = day
         
         delim = share.config.datedelims[share.config.datedelim]
-        datestring = str(datelist[1]) + delim + str(datelist[0]) + delim + str(datelist[2])
+        datestring = str(datelist[0]) + delim + str(datelist[1]) + delim + str(datelist[2])
         datestring = LN(datestring, False)
         self.set_text(datestring)
         self.year = year

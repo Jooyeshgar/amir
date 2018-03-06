@@ -287,7 +287,9 @@ class Factor:
 			self.builder.get_object("shipViaEntry").set_text(str(self.editTransaction.ShipVia))
 			self.builder.get_object("transDescEntry").set_text(str(self.editTransaction.Desc))
 			self.factorDate.set_text(str(self.editTransaction.tDate))			
-			self.factorDate.showDateObject(self.editTransaction.tDate)																											
+			self.factorDate.showDateObject(self.editTransaction.tDate)	
+			self.shippedDate.set_text(str(self.editTransaction.ShipDate))			
+			self.shippedDate.showDateObject(self.editTransaction.ShipDate)																										
 		self.mainDlg.show_all()
 
 	def addNewBuy(self,transId=None):
@@ -376,9 +378,10 @@ class Factor:
 			self.builder.get_object("FOBEntry").set_text(str(self.editTransaction.Delivery))
 			self.builder.get_object("shipViaEntry").set_text(str(self.editTransaction.ShipVia))
 			self.builder.get_object("transDescEntry").set_text(str(self.editTransaction.Desc))
-			print self.editTransaction.tDate
 			self.factorDate.set_text(str(self.editTransaction.tDate))			
-			self.factorDate.showDateObject(self.editTransaction.tDate)																											
+			self.factorDate.showDateObject(self.editTransaction.tDate)	
+			self.shippedDate.set_text(str(self.editTransaction.ShipDate))			
+			self.shippedDate.showDateObject(self.editTransaction.ShipDate)																											
 		self.mainDlg.show_all()
 																	
 	def editSelling(self,transId=None):
@@ -1207,12 +1210,12 @@ class Factor:
 				lasttransId=lasttransId.filter(Factors.Id!=lasttransId1).first()
 				lasttransId=lasttransId.Id											
 								
-				factorItem1 =self.session.query(FactorItems).select_from(FactorItems)
+				factorItem1=self.session.query(FactorItems).select_from(FactorItems)
 				factorItem1=factorItem1.order_by(FactorItems.factorItemTransId.desc())
 				factorItem1=factorItem1.filter(FactorItems.factorItemProduct==pid)
 				factorItem1=factorItem1.filter(FactorItems.factorItemTransId==lasttransId).first()
 				
-				if not factorItem1:					
+				if not factorItem1:				
 					self.lastfactorItemquantity=utility.getFloat(str(0))
 					self.nowfactorItemquantity=utility.getFloat(exch[2])
 					
