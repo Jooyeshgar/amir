@@ -266,7 +266,8 @@ class Factor:
 			self.sellerSelected(self, self.editTransaction.Cust,customer.custCode)	
 					
 			query=self.session.query(FactorItems).select_from(FactorItems)
-			factorItems = query.filter(FactorItems.factorItemTransId==self.editTransaction.Id).all()			
+			factorItems = query.filter(FactorItems.factorItemTransId==self.editTransaction.Id).all()
+			self.oldProductList = factorItems
 			number=1
 			for factorItem in factorItems:							
 				query=self.session.query(Products).select_from(Products)
@@ -358,7 +359,8 @@ class Factor:
 			self.sellerSelected(self, self.editTransaction.Cust,customer.custCode)	
 					
 			query=self.session.query(FactorItems).select_from(FactorItems)
-			factorItems = query.filter(FactorItems.factorItemTransId==self.editTransaction.Id).all()			
+			factorItems = query.filter(FactorItems.factorItemTransId==self.editTransaction.Id).all()
+			self.oldProductList = factorItems
 			number=1
 			for factorItem in factorItems:							
 				query=self.session.query(Products).select_from(Products)
@@ -1165,21 +1167,35 @@ class Factor:
 				
 		# FactorItems( self, factorItemNo, factorItemProduct, factorItemQnty,
 		#            factorItemUntPrc, factorItemUntDisc, factorItemTransId, factorItemDesc):
-		if self.editFalg:								
-			#get last trans id beacause in the save transaction we save this transaction
-			lasttransId=self.session.query(Factors).select_from(Factors)
-			lasttransId=lasttransId.order_by(Factors.Id.desc())				
-			lasttransId=lasttransId.filter(Factors.Code==self.Code)
-			lasttransId=lasttransId.filter(Factors.Id!=self.Id).first()
-			lasttransId1=lasttransId.Id # Id of last factor
+		if self.editFalg:								 
+			lasttransId = self.Id # Id of old factor
 			
-			lasttransId=self.session.query(Factors).select_from(Factors)
-			lasttransId=lasttransId.order_by(Factors.Id.desc())				
-			lasttransId=lasttransId.filter(Factors.Code==self.Code)
-			lasttransId=lasttransId.filter(Factors.Id!=lasttransId1).first()
-			lasttransId=lasttransId.Id   # Id of previous factor
+			lasttrans=self.session.query(Factors).select_from(Factors)
+			lasttrans=lasttrans.order_by(Factors.Id.desc())				
+			lasttrans=lasttrans.filter(Factors.Code==self.Code)
+			lasttrans=lasttrans.filter(Factors.Id!=lasttransId).first()
+			lasttransId1=lasttrans.Id   # Id of new factor
+
+			for oldProduct in self.oldProductList: # The old product list
+				foundFlag = False
+				for exch in self.sellListStore: # The new sell list store
+					query = self.session.query(Products).select_from(Products)
+					pid = query.filter(Products.name == unicode(exch[1])).first().id
+					if pid == oldProduct.factorItemProduct:
+						foundFlag = True
+						break
+				if not foundFlag:
+					query   = self.session.query(Products).select_from(Products).filter(Products.id == oldProduct.factorItemProduct)
+					pro = query.first()
+					if self.sell:
+						pro.quantity += oldProduct.factorItemQnty
+					else:
+						pro.quantity -= oldProduct.factorItemQnty
+					self.session.commit()
+				print oldProduct.factorItemProduct
+
 		
-		for exch in self.sellListStore:
+		for exch in self.sellListStore: # The new sell list store
 			query = self.session.query(Products).select_from(Products)
 			pid = query.filter(Products.name == unicode(exch[1])).first().id
 		
