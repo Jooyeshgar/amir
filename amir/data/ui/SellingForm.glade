@@ -2792,7 +2792,7 @@
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Delete</property>
                 <property name="stock_id">gtk-delete</property>
-                <signal name="clicked" handler="removeSelling" swapped="no"/>
+                <signal name="clicked" handler="removeFactor" swapped="no"/>
                 <accelerator key="Delete" signal="clicked"/>
               </object>
               <packing>

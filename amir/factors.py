@@ -408,12 +408,12 @@ class Factor:
  		self.editTransaction=result 	
  		self.addNewBuy()
 																						
-	def removeSelling(self, sender):
+	def removeFactor(self, sender):
 		selection = self.treeview.get_selection()
 		iter1 = selection.get_selected()[1]	
 		code = self.treestore.get_value(iter1, 0)
 		print code
-		query = config.db.session.query(Factor).select_from(Factor)
+		query = config.db.session.query(Factors).select_from(Factors)
 		Transaction = query.filter(Factors.Id ==unicode(code) )
 		Transaction = Transaction.filter(Factors.Acivated==1).first()
 		TransactionId=Transaction.Id
@@ -424,20 +424,17 @@ class Factor:
 		for factorItem in factorItems:
 			product=self.session.query(Products).select_from(Products)
 			product= product.filter(Products.id==factorItem.factorItemProduct).first()
-			product.quantity+=factorItem.factorItemQnty
-			
+			if self.sell:
+				product.quantity+=factorItem.factorItemQnty
+			else:
+				product.quantity-=factorItem.factorItemQnty
 		
-		
-		
-		query = config.db.session.query(Factor).select_from(Factor)
+		query = config.db.session.query(Factors).select_from(Factors)
 		Transaction = query.filter(Factors.Id ==unicode(code) ).all()
 		for trans in Transaction:
 			trans.Acivated=0
 		config.db.session.commit()
 		self.treestore.remove(iter1)	
-		
-		
-
 
 	def selectCustomers(self,sender=0):
 		customer_win = customers.Customer()
