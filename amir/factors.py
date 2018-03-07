@@ -1243,13 +1243,16 @@ class Factor:
 									 self.Id, unicode(exch[7]))
 				self.session.add( factorItem )									
 							
-			#---- Updating the products quantity
-			#TODO product quantity should be updated while adding products to factor
-			if not self.subPreInv:
+				#---- Updating the products quantity
+				#TODO product quantity should be updated while adding products to factor
+				if not self.subPreInv:
 					query   = self.session.query(Products).select_from(Products).filter(Products.id == pid)
 					pro = query.first()									
-
-					pro.quantity += self.nowfactorItemquantity
+					print dir(self)
+					if self.sell:
+						pro.quantity -= self.nowfactorItemquantity
+					else:
+						pro.quantity += self.nowfactorItemquantity
 					
 					self.lastfactorItemquantity=utility.getFloat(0)
 					self.nowfactorItemquantity=utility.getFloat(0)
