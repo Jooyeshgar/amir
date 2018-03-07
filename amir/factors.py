@@ -1171,45 +1171,22 @@ class Factor:
 			lasttransId=lasttransId.order_by(Factors.Id.desc())				
 			lasttransId=lasttransId.filter(Factors.Code==self.Code)
 			lasttransId=lasttransId.filter(Factors.Id!=self.Id).first()
-			lasttransId1=lasttransId.Id
+			lasttransId1=lasttransId.Id # Id of last factor
 			
 			lasttransId=self.session.query(Factors).select_from(Factors)
 			lasttransId=lasttransId.order_by(Factors.Id.desc())				
 			lasttransId=lasttransId.filter(Factors.Code==self.Code)
 			lasttransId=lasttransId.filter(Factors.Id!=lasttransId1).first()
-			lasttransId=lasttransId.Id											
-			
-			factorItem1 =self.session.query(FactorItems).select_from(FactorItems)
-			factorItem1=factorItem1.order_by(FactorItems.factorItemTransId.desc())
-			factorItem1=factorItem1.filter(FactorItems.factorItemTransId==lasttransId)
-			
-			for factorItem in factorItem1:
-				query   = self.session.query(Products).select_from(Products).filter(Products.id == factorItem.factorItemProduct)
-				pro = query.first()
-				pro.quantity+=factorItem.factorItemQnty
-			self.session.commit()			
+			lasttransId=lasttransId.Id   # Id of previous factor
+		
 		for exch in self.sellListStore:
 			query = self.session.query(Products).select_from(Products)
 			pid = query.filter(Products.name == unicode(exch[1])).first().id
-						
+		
 			self.lastfactorItemquantity=utility.getFloat(0)
 			self.nowfactorItemquantity=utility.getFloat(exch[2])
-						
+
 			if self.editFalg:
-											
-				#get last trans id beacause in the save transaction we save this transaction
-				lasttransId=self.session.query(Factors).select_from(Factors)
-				lasttransId=lasttransId.order_by(Factors.Id.desc())				
-				lasttransId=lasttransId.filter(Factors.Code==self.Code)
-				lasttransId=lasttransId.filter(Factors.Id!=self.Id).first()
-				lasttransId1=lasttransId.Id
-				
-				lasttransId=self.session.query(Factors).select_from(Factors)
-				lasttransId=lasttransId.order_by(Factors.Id.desc())				
-				lasttransId=lasttransId.filter(Factors.Code==self.Code)
-				lasttransId=lasttransId.filter(Factors.Id!=lasttransId1).first()
-				lasttransId=lasttransId.Id											
-								
 				factorItem1=self.session.query(FactorItems).select_from(FactorItems)
 				factorItem1=factorItem1.order_by(FactorItems.factorItemTransId.desc())
 				factorItem1=factorItem1.filter(FactorItems.factorItemProduct==pid)
@@ -1223,16 +1200,31 @@ class Factor:
 										 utility.getFloat(exch[3]), utility.convertToLatin(exch[5]),
 										 lasttransId1, unicode(exch[7]))
 					self.session.add( factorItem )
+					self.session.commit()
+					query   = self.session.query(Products).select_from(Products).filter(Products.id == pid)
+					pro = query.first()
+					if self.sell:
+						pro.quantity -= self.nowfactorItemquantity
+					else:
+						pro.quantity += self.nowfactorItemquantity
 					self.session.commit()										
 				else:
-					self.lastfactorItemquantity=utility.getFloat(str(factorItem1.factorItemQnty))
-					self.nowfactorItemquantity=utility.getFloat(exch[2])
+					self.lastfactorItemquantity = utility.getFloat(str(factorItem1.factorItemQnty))
+					self.nowfactorItemquantity = utility.getFloat(exch[2])
 										
 					factorItem = FactorItems(utility.getInt(exch[0]), pid, utility.getFloat(exch[2]),
 										 utility.getFloat(exch[3]), utility.convertToLatin(exch[5]),
 										 lasttransId1, unicode(exch[7]))
 					self.session.add( factorItem )
 					self.session.commit()
+					if self.lastfactorItemquantity != self.nowfactorItemquantity:
+						query   = self.session.query(Products).select_from(Products).filter(Products.id == pid)
+						pro = query.first()
+						if self.sell:
+							pro.quantity += self.lastfactorItemquantity - self.nowfactorItemquantity
+						else:
+							pro.quantity -= self.lastfactorItemquantity - self.nowfactorItemquantity
+						self.session.commit()
 					
 			# in add mode transaction																						
 			else:	
@@ -1248,7 +1240,6 @@ class Factor:
 				if not self.subPreInv:
 					query   = self.session.query(Products).select_from(Products).filter(Products.id == pid)
 					pro = query.first()									
-					print dir(self)
 					if self.sell:
 						pro.quantity -= self.nowfactorItemquantity
 					else:
