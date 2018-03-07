@@ -1157,8 +1157,10 @@ class Factor:
 
 		self.session.add(sell)
 		self.session.commit()
-
-		self.treestore.append(None,(int(self.Id), LN(self.subCode), str(self.subDate), "test", str(self.totalFactor)))
+		query = config.db.session.query(Customers)
+		query =	query.filter(Customers.custId==self.custId)
+		customer = query.first()
+		self.treestore.append(None,(int(self.Id), LN(self.subCode), str(self.subDate), customer.custName, str(self.totalFactor)))
 		
 	def registerFactorItems(self):	
 				
