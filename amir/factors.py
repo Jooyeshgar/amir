@@ -21,6 +21,7 @@ from    database                    import  *
 import	class_document
 from gi.repository import Gtk
 from gi.repository import Gdk
+from payments import Payments
 
 
 config = share.config
@@ -28,7 +29,7 @@ config = share.config
 ## \defgroup Controller
 ## @{
 
-class Factor:
+class Factor(Payments):
 	"""Manage sell and buy form."""
 
 	def __init__(self,sell = True, transId=None):

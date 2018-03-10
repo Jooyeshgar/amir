@@ -86,7 +86,7 @@ class Payments(GObject.GObject):
 
 		cell = Gtk.CellRendererText()
 		self.bankCombo.pack_start(cell, True)
-		self.bankCombo.add_attribute(cell, 'text', 0)
+		# self.bankCombo.add_attribute(cell, 'text', 0)
 		
 		for item in self.bankaccounts_class.get_bank_names():
 			iter = model.append()

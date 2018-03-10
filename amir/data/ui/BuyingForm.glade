@@ -2191,7 +2191,7 @@
                       <placeholder/>
                     </child>
                     <child>
-                      <object class="GtkComboBox" id="bank_names_combo">
+                      <object class="GtkComboBoxText" id="bank_names_combo">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="row_span_column">0</property>
