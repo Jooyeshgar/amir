@@ -674,6 +674,7 @@ class Factor(Payments):
 		qnty    = self.qntyEntry.get_float()
 		over    = product.oversell
 		avQnty  = product.quantity
+		productQuantityWarning = product.qntyWarning
 		if qnty <= 0:
 			errorstr = _("The \"Quantity\" Must be greater than 0.")
 			msgbox = Gtk.MessageDialog( self.addDlg, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, 
@@ -691,6 +692,13 @@ class Factor(Payments):
 				msgbox.set_title(_("Invalid Quantity"))
 				msgbox.run()
 				msgbox.destroy()
+		elif productQuantityWarning > (avQnty - qnty):
+			errorstr = _("The \"Quantity\" is low!")
+			msgbox = Gtk.MessageDialog( self.addDlg, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, 
+										Gtk.ButtonsType.OK, errorstr )
+			msgbox.set_title(_("Quantity Warning"))
+			msgbox.run()
+			msgbox.destroy()
 				
 		slPrc   = self.unitPriceEntry.get_float()
 		if slPrc <= 0:
