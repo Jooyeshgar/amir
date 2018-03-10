@@ -291,7 +291,8 @@ class Factor(Payments):
 			self.factorDate.set_text(str(self.editTransaction.tDate))			
 			self.factorDate.showDateObject(self.editTransaction.tDate)	
 			self.shippedDate.set_text(str(self.editTransaction.ShipDate))			
-			self.shippedDate.showDateObject(self.editTransaction.ShipDate)																										
+			self.shippedDate.showDateObject(self.editTransaction.ShipDate)
+			self.builder.get_object("preChkBx").set_active(self.editTransaction.Permanent ^ 1)
 		self.mainDlg.show_all()
 
 	def addNewBuy(self,transId=None):
@@ -384,7 +385,8 @@ class Factor(Payments):
 			self.factorDate.set_text(str(self.editTransaction.tDate))			
 			self.factorDate.showDateObject(self.editTransaction.tDate)	
 			self.shippedDate.set_text(str(self.editTransaction.ShipDate))			
-			self.shippedDate.showDateObject(self.editTransaction.ShipDate)																											
+			self.shippedDate.showDateObject(self.editTransaction.ShipDate)
+			self.builder.get_object("preChkBx").set_active(self.editTransaction.Permanent ^ 1)
 		self.mainDlg.show_all()
 																	
 	def editSelling(self,transId=None):
@@ -1144,17 +1146,18 @@ class Factor(Payments):
 		return True
 
 	def registerTransaction(self):
+		permanent = self.subPreInv ^ 1
 		if self.editFalg:
 			query=self.session.query(Factors).select_from(Factors)
 			query=query.filter(Factors.Code==self.subCode).all()
 			for trans in query:
 				trans.Acivated=0
 			sell = Factors( self.subCode, self.subDate, 0, self.custId, self.subAdd, self.subSub, self.VAT, self.fee, self.totalFactor, self.cashPayment,
-								self.subShpDate, self.subFOB, self.subShipVia, self.subPreInv, self.subDesc, self.sell, self.editDate, 1)
+								self.subShpDate, self.subFOB, self.subShipVia, permanent, self.subDesc, self.sell, self.editDate, 1)
 
 		else:
 			sell = Factors(self.subCode, self.subDate, 0, self.custId, self.subAdd, self.subSub, self.VAT, self.fee, self.totalFactor, self.cashPayment,
-					self.subShpDate, self.subFOB, self.subShipVia, self.subPreInv, self.subDesc, self.sell, self.subDate, 1)#editdate=subdate
+					self.subShpDate, self.subFOB, self.subShipVia, permanent, self.subDesc, self.sell, self.subDate, 1)#editdate=subdate
 
 		self.session.add(sell)
 		self.session.commit()
@@ -1208,7 +1211,7 @@ class Factor(Payments):
 				factorItem1=factorItem1.filter(FactorItems.factorItemProduct==pid)
 				factorItem1=factorItem1.filter(FactorItems.factorItemTransId==lasttransId).first()
 				
-				if not factorItem1:				
+				if (not factorItem1) or (self.editTransaction.Permanent == 0 and self.subPreInv == 0):
 					self.lastfactorItemquantity=utility.getFloat(str(0))
 					self.nowfactorItemquantity=utility.getFloat(exch[2])
 					
