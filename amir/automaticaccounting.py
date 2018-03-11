@@ -71,7 +71,7 @@ class AutomaticAccounting:
         self.current_time = self.date_entry.getDateObject()
         # type combo
         type_combo = self.builder.get_object('select-type')
-        model = Gtk.ListStore(str, str)
+        model = Gtk.ListStore(int, str)
         type_combo.set_model(model)
 
         cell = Gtk.CellRendererText()
@@ -83,7 +83,7 @@ class AutomaticAccounting:
         type_combo.pack_start(cell, True)
         type_combo.add_attribute(cell, 'text', 1)
         for item in self.type_names:
-            model.set(item)
+            model.append(item)
 
         # payment table
         table = self.builder.get_object('payment-table')
