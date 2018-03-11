@@ -326,7 +326,7 @@ class ProductGroup(GObject.GObject):
         self.emit("group-selected", group_id, code)
         
     def on_button_press_event(self, sender, event):
-	if event.type == Gdk._2BUTTON_PRESS:
+	if event.type == Gdk.EventType._2BUTTON_PRESS:
 	    selection = self.treeview.get_selection()
 	    iter = selection.get_selected()[1]
 	    if iter != None :

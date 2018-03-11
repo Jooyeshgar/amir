@@ -19,10 +19,11 @@ from database import *
 from dateentry import *
 from share import share
 from helpers import get_builder
+from previewreport import PreviewReport
 
 config = share.config
 
-class NotebookReport:
+class NotebookReport(PreviewReport):
     DAILY = 1
     LEDGER = 2
     SUBLEDGER = 3

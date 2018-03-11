@@ -1561,7 +1561,6 @@
                     <property name="secondary_icon_activatable">False</property>
                     <signal name="activate" handler="selectProduct" swapped="no"/>
                     <signal name="focus-out-event" handler="validatePCode" swapped="no"/>
-                    <signal name="key-press-event" handler="keyPressedEvent" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">True</property>

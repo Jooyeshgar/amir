@@ -5,6 +5,7 @@ from datetime import date
 from gi.repository import GObject
 import gi
 from gi.repository import Gtk
+from gi.repository import Gdk
 
 from sqlalchemy.sql import and_
 from sqlalchemy.orm.util import outerjoin
@@ -689,7 +690,7 @@ class Payments(GObject.GObject):
 		self.cheqTreeView.get_selection().unselect_all()
 
 	def receiptTreeView_button_press(self, sender, event):
-		if event.type == Gdk._2BUTTON_PRESS:
+		if event.type == Gdk.EventType._2BUTTON_PRESS:
 			selection = self.paysTreeView.get_selection()
 			iter = selection.get_selected()[1]
 			if iter != None :
@@ -698,7 +699,7 @@ class Payments(GObject.GObject):
 				self.addPayment(sender, False)
 	
 	def chequeTreeView_button_press(self, sender, event):
-		if event.type == Gdk._2BUTTON_PRESS:
+		if event.type == Gdk.EventType._2BUTTON_PRESS:
 			selection = self.cheqTreeView.get_selection()
 			iter = selection.get_selected()[1]
 			if iter != None :
