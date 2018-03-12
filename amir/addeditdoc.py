@@ -156,7 +156,7 @@ class AddEditDoc:
             if config.digittype == 1:
                 code = utility.convertToPersian(code)
                 numrows = utility.convertToPersian(numrows)
-            self.liststore.append((numrows, code, s.name, debt, credit, n.desc, n.id))
+            self.liststore.append((numrows, code, s.name, debt, credit, n.desc, str(n.id)))
             
         docnum = utility.LN(self.cl_document.number)
         self.builder.get_object("docnumber").set_text (docnum)
