@@ -226,29 +226,6 @@ class NotebookReport(PreviewReport):
                     else:
                         diagnose = _("cre")
                     report_data.append((billnumber, dateToString(b.date), n.desc, debt, credit, diagnose, utility.LN(remaining)))
-    
-#            else:
-#                if self.type == self.__class__.SUBLEDGER:
-#                    report_header = [_("Doc. Number"), _("Date"), _("Description"), _("Debt"), _("Credit"), _("Diagnosis"), _("Remaining")]
-#                    col_width = [55, 64, 174, 70, 70, 20, 70]
-#                    for n, code, b in res:
-#                        if n.value < 0:
-#                            credit = "0"
-#                            debt = utility.showNumber(-(n.value))
-#                        else:
-#                            credit = utility.showNumber(n.value)
-#                            debt = "0"
-#
-#                        remaining += n.value
-#                        if remaining < 0:
-#                            diagnose = _("deb")
-#                            report_data.append((str(b.number), dateToString(b.date), n.desc, debt, credit, diagnose, utility.showNumber(-(remaining))))
-#                        else:
-#                            if remaining == 0:
-#                                diagnose = _("equ")
-#                            else:
-#                                diagnose = _("cre")
-#                            report_data.append((str(b.number), dateToString(b.date), n.desc, debt, credit, diagnose, utility.showNumber(remaining)))
         return {"data":report_data, "col-width":col_width ,"heading":report_header}
                 
     def createPrintJob(self):
@@ -262,24 +239,68 @@ class NotebookReport(PreviewReport):
             msgbox.run()
             msgbox.destroy()
             return
-        
-        printjob = printreport.PrintReport(report["data"], report["col-width"], report["heading"])
-        if self.type == self.__class__.DAILY:
-            todaystr = dateToString(date.today())
-            printjob.setHeader(_("Daily Notebook"), {_("Date"):todaystr})
-            printjob.setDrawFunction("drawDailyNotebook")
+        report_header = report['heading']
+        report_data = report['data']
+        if config.locale == 'en_US':
+            html = '<style>table{border-collapse: collapse;} table, th, td{padding: 10px;font-size:10px; text-align:center; border: 1px solid black }</style>'
+            if self.type == self.__class__.DAILY:
+                todaystr = dateToString(date.today())
+                html += '<p style="text-align:center;"><u>' + _("Daily NoteBook") + '</u></p><p style="font-size:9px;">' + _("Date") + ': ' + todaystr +'</p>'
+            else:
+                if config.digittype == 1:
+                    code = utility.convertToPersian(self.subcode)
+                else:
+                    code = self.subcode
+                    
+                if self.type == self.__class__.LEDGER:
+                    # printjob.setHeader(_("Ledgers Notebook"), {_("Subject Name"):self.subname, _("Subject Code"):code})
+                    html += '<p style="text-align:center;"><u>' + _("Ledgers Notebook") + '</u></p><p style="text-align:center;">' + _("Subject Name") + ': ' + self.subname + '</p><p style="font-size:9px;">' + _("Subject Code") + ': ' + code +'</p>'
+                else:
+                    # printjob.setHeader(_("Sub-ledgers Notebook"), {_("Subject Name"):self.subname, _("Subject Code"):code})
+                    html += '<p style="text-align:center;"><u>' + _("Sub-ledgers Notebook") + '</u></p><p style="text-align:center;">' + _("Subject Name") + ': ' + self.subname + '</p><p style="font-size:9px;">' + _("Subject Code") + ': ' + code +'</p>'
+            html += '<table style="width:100%"><tr>'
+            for header in report_header:
+                html += '<th>' + header + '</th>'
+            html += '</tr>'
+            for row in report_data:
+                html += '<tr>'
+                for data in row:
+                    html += '<td>' + data + '</td>'
+                html += '</tr>'
+            html += '</table>'
         else:
-            if config.digittype == 1:
-                code = utility.convertToPersian(self.subcode)
+            html = '<style>table{border-collapse: collapse;} table, th, td{padding: 10px;font-size:10px; text-align:center; border: 1px solid black }</style>'
+            if self.type == self.__class__.DAILY:
+                todaystr = dateToString(date.today())
+                html += '<p style="text-align:center;"><u>' + _("Daily NoteBook") + '</u></p><p style="text-align:right; font-size:9px;">' + _("Date") + ': ' + todaystr +'</p>'
             else:
-                code = self.subcode
-                
-            if self.type == self.__class__.LEDGER:
-                printjob.setHeader(_("Ledgers Notebook"), {_("Subject Name"):self.subname, _("Subject Code"):code})
-            else:
-                printjob.setHeader(_("Sub-ledgers Notebook"), {_("Subject Name"):self.subname, _("Subject Code"):code})
-            printjob.setDrawFunction("drawSubjectNotebook")
-        return printjob
+                if config.digittype == 1:
+                    code = utility.convertToPersian(self.subcode)
+                else:
+                    code = self.subcode
+                    
+                if self.type == self.__class__.LEDGER:
+                    # printjob.setHeader(_("Ledgers Notebook"), {_("Subject Name"):self.subname, _("Subject Code"):code})
+                    html += '<p style="text-align:center;"><u>' + _("Ledgers Notebook") + '</u></p><p style="text-align:center;">' + _("Subject Name") + ': ' + self.subname + '</p><p style="text-align:right; font-size:9px;">' + _("Subject Code") + ': ' + code +'</p>'
+                else:
+                    # printjob.setHeader(_("Sub-ledgers Notebook"), {_("Subject Name"):self.subname, _("Subject Code"):code})
+                    html += '<p style="text-align:center;"><u>' + _("Sub-ledgers Notebook") + '</u></p><p style="text-align:center;">' + _("Subject Name") + ': ' + self.subname + '</p><p style="text-align:right; font-size:9px;">' + _("Subject Code") + ': ' + code +'</p>'
+            html += '<table style="width:100%"><tr>'
+            report_header = report_header[::-1]
+            report_data = report_data[::-1]
+            for header in report_header:
+                html += '<th>' + header + '</th>'
+            html += '</tr>'
+            for row in report_data:
+                row = row[::-1]
+                html += '<tr>'
+                for data in row:
+                    html += '<td>' + data + '</td>'
+                html += '</tr>'
+            html += '</table>'
+
+
+        return html
             
     def createPreviewJob(self):
         report = self.createReport()
@@ -307,20 +328,14 @@ class NotebookReport(PreviewReport):
         return preview
     
     def previewReport(self, sender):
-        html = self.createHtml()
-        showPreview(html)
-        # if platform.system() == 'Windows':
-        #     printjob = self.createPreviewJob()
-        #     if printjob != None:
-        #         printjob.doPreviewJob()
-        # else:
-        #     printjob = self.createPrintJob()
-        #     if printjob != None:
-        #         printjob.doPrintJob(Gtk.PrintOperationAction.PREVIEW)
+        printjob = self.createPrintJob()
+        if printjob != None:
+            showPreview(printjob)
     
     def printReport(self, sender):
-        html = self.createHtml()
-        doPrint(html)
+        printjob = self.createPrintJob()
+        if printjob != None:
+            doPrint(printjob)
         
     def exportToCSV(self, sender):
         report = self.createReport()
@@ -373,159 +388,3 @@ class NotebookReport(PreviewReport):
         active = sender.get_active()
         self.fnum.set_sensitive(active)
         self.tnum.set_sensitive(active)
-    def createHtml(self):
-        report_header = []
-        report_data = []
-        remaining = 1
-        query1 = config.db.session.query(Notebook, Subject.code, Bill)
-        query1 = query1.select_from(outerjoin(outerjoin(Notebook, Subject, Notebook.subject_id == Subject.id), 
-                                            Bill, Notebook.bill_id == Bill.id))
-        query2 = config.db.session.query(sum(Notebook.value))
-        query2 = query2.select_from(outerjoin(outerjoin(Notebook, Subject, Notebook.subject_id == Subject.id), 
-                                            Bill, Notebook.bill_id == Bill.id))
-        # Check if the subject code is valid in ledger and subledger reports
-        if self.type != self.__class__.DAILY:
-            code = utility.convertToLatin(self.code.get_text())
-            query3 = config.db.session.query(Subject.name)
-            query3 = query3.select_from(Subject).filter(Subject.code == code)
-            names = query3.first()
-            if names == None:
-                errorstr = _("No subject is registered with the code: %s") % self.code.get_text()
-                msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK, errorstr)
-                msgbox.set_title(_("No subjects found"))
-                msgbox.run()
-                msgbox.destroy()
-                return
-            else:
-                self.subname = names[0]
-                self.subcode = code
-                query1 = query1.filter(Subject.code.startswith(code))
-                query2 = query2.filter(Subject.code.startswith(code))
-            
-        searchkey = unicode(self.builder.get_object("searchentry").get_text())
-        if searchkey != "":
-            try:
-                value = int(utility.convertToLatin(searchkey))
-            except (UnicodeEncodeError, ValueError):  #search key is not a number
-                query1 = query1.filter(Notebook.desc.like("%"+searchkey+"%"))
-            else:        
-                query1 = query1.filter(or_(Notebook.desc.like("%"+searchkey+"%"), Notebook.value == value, Notebook.value == -value))
-        # Check the report parameters  
-        if self.builder.get_object("allcontent").get_active() == True:
-            query1 = query1.order_by(Bill.date.asc(), Bill.number.asc())
-            remaining = 0
-        else:
-            if self.builder.get_object("atdate").get_active() == True:
-                date = self.date.getDateObject()
-                query1 = query1.filter(Bill.date == date).order_by(Bill.number.asc())
-                query2 = query2.filter(Bill.date < date)
-            else:
-                if self.builder.get_object("betweendates").get_active() == True:
-                    fdate = self.fdate.getDateObject()
-                    tdate = self.tdate.getDateObject()
-                    if tdate < fdate:
-                        msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, 
-                                                   _("Second date value shouldn't precede the first one."))
-                        msgbox.set_title(_("Invalid date order"))
-                        msgbox.run()
-                        msgbox.destroy()
-                        return
-                    query1 = query1.filter(Bill.date.between(fdate, tdate)).order_by(Bill.date.asc(), Bill.number.asc())
-                    query2 = query2.filter(Bill.date < fdate)
-                else:
-                    if unicode(self.fnum.get_text()) == '' or unicode(self.tnum.get_text()) == '':
-                        msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, 
-                                                   _("One of document numbers are empty."))
-                        msgbox.set_title(_("Invalid document order"))
-                        msgbox.run()
-                        msgbox.destroy()
-                        return
-                    
-                    fnumber = int(unicode(self.fnum.get_text()))
-                    tnumber = int(unicode(self.tnum.get_text()))
-                    if tnumber < fnumber:
-                        msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, 
-                                                   _("Second document number shouldn't be greater than the first one."))
-                        msgbox.set_title(_("Invalid document order"))
-                        msgbox.run()
-                        msgbox.destroy()
-                        return
-                    query1 = query1.filter(Bill.number.between(fnumber, tnumber)).order_by(Bill.date.asc(), Bill.number.asc())
-                    query2 = query2.filter(Bill.number < fnumber)
-        
-        #Prepare report data for PrintReport class
-        res = query1.all()
-        if self.type == self.__class__.DAILY:
-            report_header = [_("Doc. Number"), _("Date"), _("Subject Code"), _("Description"), _("Debt"), _("Credit")]
-            for n, code, b in res:
-                desc = n.desc
-                if n.value < 0:
-                    credit = utility.LN("0")
-                    debt = utility.LN(-(n.value))
-                else:
-                    credit = utility.LN(n.value)
-                    debt = utility.LN("0")
-                    desc = "   " + desc
-                
-                billnumber = str(b.number)   
-                if config.digittype == 1:
-                    code = utility.convertToPersian(code)
-                    billnumber = utility.convertToPersian(billnumber)
-                report_data.append((billnumber, dateToString(b.date), code, desc, debt, credit))
-        else:
-            diagnose = ""
-            if remaining != 0:
-                remaining = query2.first()[0]
-            
-            #if self.type == self.__class__.LEDGER:
-            report_header = [_("Doc. Number"), _("Date"), _("Description"), _("Debt"), _("Credit"), _("Diagnosis"), _("Remaining")]
-            #define the percentage of table width that each column needs
-            for n, code, b in res:
-                if n.value < 0:
-                    credit = utility.LN("0")
-                    debt = utility.LN(-(n.value))
-                else:
-                    credit = utility.LN(n.value)
-                    debt = utility.LN("0")
-                    
-                remaining += n.value
-                billnumber = str(b.number)
-                if config.digittype == 1:
-                    billnumber = utility.convertToPersian(billnumber)
-                if remaining < 0:
-                    diagnose = _("deb")
-                    report_data.append((billnumber, dateToString(b.date), n.desc, debt, credit, diagnose, utility.LN(-(remaining))))
-                else:
-                    if remaining == 0:
-                        diagnose = _("equ")
-                    else:
-                        diagnose = _("cre")
-                    report_data.append((billnumber, dateToString(b.date), n.desc, debt, credit, diagnose, utility.LN(remaining)))
-        date = self.date.getDateObject()
-        todaystr = dateToString(date.today())
-        if config.locale == 'en_US':
-            html = '<style>table{border-collapse: collapse;} table, th, td{padding: 10px;font-size:10px; text-align:center; border: 1px solid black }</style><p style="text-align:center;"><u>' + _("Daily NoteBook") + '</u></p><p style="font-size:9px;">' + _("Date") + ': ' + todaystr +'</p><table style="width:100%"><tr>'
-            for header in report_header:
-                html += '<th>' + header + '</th>'
-            html += '</tr>'
-            for row in report_data:
-                html += '<tr>'
-                for data in row:
-                    html += '<td>' + data + '</td>'
-                html += '</tr>'
-            html += '</table>'
-        else:
-            html = '<style>table{border-collapse: collapse;} table, th, td{padding: 10px;font-size:10px; text-align:center; border: 1px solid black }</style><p style="text-align:center;"><u>' + _("Daily NoteBook") + '</u></p><p style="text-align:right; font-size:9px;">' + _("Date") + ': ' + todaystr +'</p><table style="width:100%"><tr>'
-            report_header = report_header[::-1]
-            report_data = report_data[::-1]
-            for header in report_header:
-                html += '<th>' + header + '</th>'
-            html += '</tr>'
-            for row in report_data:
-                row = row[::-1]
-                html += '<tr>'
-                for data in row:
-                    html += '<td>' + data + '</td>'
-                html += '</tr>'
-            html += '</table>'
-        return html
