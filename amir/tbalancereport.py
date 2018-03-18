@@ -120,50 +120,24 @@ class TBalanceReport:
         todaystr = dateToString(date.today())        
         report_header = report['heading']
         report_data = report['data']
-        if config.locale == 'en_US':
-            html = '<style>table{border-collapse: collapse;} table, th, td{padding: 10px;font-size:10px; text-align:center; border: 1px solid black }</style>'
-            todaystr = dateToString(date.today())
-            html += '<p style="text-align:center;"><u>' + _("Trial Balance") + '</u></p><p style="font-size:9px;">' + _("Date") + ': ' + todaystr +'</p>'
-            
-            html += '<table style="width:100%"><tr>'
-            for header in report_header:
-                html += '<th>' + header + '</th>'
-            html += '</tr>'
-            for row in report_data:
-                html += '<tr>'
-                for data in row:
-                    html += '<td>' + data + '</td>'
-                html += '</tr>'
-            html += '</table>'
-        else:
-            html = '<style>table{border-collapse: collapse;} table, th, td{padding: 10px;font-size:10px; text-align:center; border: 1px solid black }</style>'
-            todaystr = dateToString(date.today())
-            html += '<p style="text-align:center;"><u>' + _("Trial Balance") + '</u></p><p style="text-align:right; font-size:9px;">' + _("Date") + ': ' + todaystr +'</p>'
-            html += '<table style="width:100%"><tr>'
-            report_header = report_header[::-1]
-            for header in report_header:
-                html += '<th>' + header + '</th>'
-            html += '</tr>'
-            for row in report_data:
-                row = row[::-1]
-                html += '<tr>'
-                for data in row:
-                    html += '<td>' + data + '</td>'
-                html += '</tr>'
-            html += '</table>'
-
+        html = '<style>table{border-collapse: collapse;} table, th, td{padding: 10px;font-size:10px; text-align:center; border: 1px solid black }</style>'
+        todaystr = dateToString(date.today())
+        html += '<p ' + self.reportObj.subjectHeaderStyle + '><u>' + _("Trial Balance") + '</u></p><p style="text-align:' + self.reportObj.direction + '; font-size:9px;">' + _("Date") + ': ' + todaystr +'</p>'
+        html += self.reportObj.createTable(report_header,report_data)
 
         return html
     
     def previewReport(self, sender):
+        self.reportObj = WeasyprintReport()
         printjob = self.createPrintJob()
         if printjob != None:
-            showPreview(printjob)
+            self.reportObj.showPreview(printjob)
     
     def printReport(self, sender):
+        self.reportObj = WeasyprintReport()
         printjob = self.createPrintJob()
         if printjob != None:
-            doPrint(printjob)
+            self.reportObj.doPrint(printjob)
         
     def exportToCSV(self, sender):
         report = self.createReport()

@@ -6,6 +6,9 @@ from gi.repository import GLib, Gtk, Poppler
 import subprocess
 import sys
 import time
+from share import share
+config = share.config
+
 class PrintingApp:
     def __init__(self, file_uri):
         self.operation = Gtk.PrintOperation()
@@ -40,20 +43,53 @@ class PrintingApp:
             dialog.destroy()
 
         Gtk.main_quit()
-        
-def doPrint(html):
-    HTML(string=html).write_pdf('report.pdf')
-    file_uri = GLib.filename_to_uri(os.path.abspath('report.pdf'))
-    main_window = Gtk.OffscreenWindow()
-    app = PrintingApp(file_uri)
-    GLib.idle_add(app.run, main_window)
-    Gtk.main()
-    os.remove('report.pdf');
-def showPreview(html):
-    HTML(string=html).write_pdf('report.pdf')
-    if sys.platform == 'linux2':
-        subprocess.call(["xdg-open", 'report.pdf'])
-    else:
-        os.startfile('report.pdf')
-    time.sleep(1)
-    os.remove('report.pdf');
+
+class WeasyprintReport:
+    def __init__(self):                  
+        self.subjectHeaderStyle = 'style="text-align:center;"'
+        if config.locale == 'en_US':
+            self.direction = 'left'
+        else:
+            self.direction = 'right'
+    def doPrint(self, html):
+        HTML(string=html).write_pdf('report.pdf')
+        file_uri = GLib.filename_to_uri(os.path.abspath('report.pdf'))
+        main_window = Gtk.OffscreenWindow()
+        app = PrintingApp(file_uri)
+        GLib.idle_add(app.run, main_window)
+        Gtk.main()
+        os.remove('report.pdf');
+    def showPreview(self, html):
+        HTML(string=html).write_pdf('report.pdf')
+        if sys.platform == 'linux2':
+            subprocess.call(["xdg-open", 'report.pdf'])
+        else:
+            os.startfile('report.pdf')
+        time.sleep(1)
+        os.remove('report.pdf');
+    def createTable(self,report_header,report_data):
+        if config.locale == 'en_US':
+            html = '<table style="width:100%"><tr>'
+            for header in report_header:
+                html += '<th>' + header + '</th>'
+            html += '</tr>'
+            for row in report_data:
+                html += '<tr>'
+                for data in row:
+                    html += '<td>' + data + '</td>'
+                html += '</tr>'
+            html += '</table>'
+        else:
+            html = '<table style="width:100%"><tr>'
+            report_header = report_header[::-1]
+            for header in report_header:
+                html += '<th>' + header + '</th>'
+            html += '</tr>'
+            for row in report_data:
+                row = row[::-1]
+                html += '<tr>'
+                for data in row:
+                    html += '<td>' + data + '</td>'
+                html += '</tr>'
+            html += '</table>'
+        return html
