@@ -287,7 +287,6 @@ class NotebookReport(PreviewReport):
                     html += '<p style="text-align:center;"><u>' + _("Sub-ledgers Notebook") + '</u></p><p style="text-align:center;">' + _("Subject Name") + ': ' + self.subname + '</p><p style="text-align:right; font-size:9px;">' + _("Subject Code") + ': ' + code +'</p>'
             html += '<table style="width:100%"><tr>'
             report_header = report_header[::-1]
-            report_data = report_data[::-1]
             for header in report_header:
                 html += '<th>' + header + '</th>'
             html += '</tr>'

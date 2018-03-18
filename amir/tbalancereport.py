@@ -16,6 +16,7 @@ from database import *
 from dateentry import *
 from share import share
 from helpers import get_builder
+from report import *
 
 config = share.config
 
@@ -116,43 +117,53 @@ class TBalanceReport:
             msgbox.destroy()
             return
         
-        printjob = printreport.PrintReport(report["data"], report["col-width"], report["heading"])
-        todaystr = dateToString(date.today())
-        printjob.setHeader(_("Trial Balance"), {_("Date"):todaystr})
-        printjob.setDrawFunction("drawTrialReport")
-        return printjob
-    
-    def createPreviewJob(self):
-        report = self.createReport()
-        if report == None:
-            return
-        if len(report["data"]) == 0:
-            msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.INFO, Gtk.ButtonsType.OK, 
-                                       _("No ledgers found."))
-            msgbox.set_title(_("Empty report"))
-            msgbox.run()
-            msgbox.destroy()
-            return
+        todaystr = dateToString(date.today())        
+        report_header = report['heading']
+        report_data = report['data']
+        if config.locale == 'en_US':
+            html = '<style>table{border-collapse: collapse;} table, th, td{padding: 10px;font-size:10px; text-align:center; border: 1px solid black }</style>'
+            todaystr = dateToString(date.today())
+            html += '<p style="text-align:center;"><u>' + _("Trial Balance") + '</u></p><p style="font-size:9px;">' + _("Date") + ': ' + todaystr +'</p>'
             
-        preview = previewreport.PreviewReport(report["data"], report["heading"])
-        #preview.setHeader(_("Accounting Document"), {_("Document Number"):docnumber, _("Date"):datestr})
-        #preview.setDrawFunction("drawDocument")
-        return preview
+            html += '<table style="width:100%"><tr>'
+            for header in report_header:
+                html += '<th>' + header + '</th>'
+            html += '</tr>'
+            for row in report_data:
+                html += '<tr>'
+                for data in row:
+                    html += '<td>' + data + '</td>'
+                html += '</tr>'
+            html += '</table>'
+        else:
+            html = '<style>table{border-collapse: collapse;} table, th, td{padding: 10px;font-size:10px; text-align:center; border: 1px solid black }</style>'
+            todaystr = dateToString(date.today())
+            html += '<p style="text-align:center;"><u>' + _("Trial Balance") + '</u></p><p style="text-align:right; font-size:9px;">' + _("Date") + ': ' + todaystr +'</p>'
+            html += '<table style="width:100%"><tr>'
+            report_header = report_header[::-1]
+            for header in report_header:
+                html += '<th>' + header + '</th>'
+            html += '</tr>'
+            for row in report_data:
+                row = row[::-1]
+                html += '<tr>'
+                for data in row:
+                    html += '<td>' + data + '</td>'
+                html += '</tr>'
+            html += '</table>'
+
+
+        return html
     
     def previewReport(self, sender):
-        if platform.system() == 'Windows':
-            printjob = self.createPreviewJob()
-            if printjob != None:
-                printjob.doPreviewJob()
-        else:
-            printjob = self.createPrintJob()
-            if printjob != None:
-                printjob.doPrintJob(Gtk.PrintOperationAction.PREVIEW)
+        printjob = self.createPrintJob()
+        if printjob != None:
+            showPreview(printjob)
     
     def printReport(self, sender):
         printjob = self.createPrintJob()
         if printjob != None:
-            printjob.doPrintJob(Gtk.PrintOperationAction.PREVIEW)
+            doPrint(printjob)
         
     def exportToCSV(self, sender):
         report = self.createReport()
