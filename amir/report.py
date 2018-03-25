@@ -8,41 +8,45 @@ import sys
 import time
 from share import share
 config = share.config
+import cairocffi
 
-class PrintingApp:
-    def __init__(self, file_uri):
+class Printo:
+    def __init__(self, url):
         self.operation = Gtk.PrintOperation()
 
-        self.operation.connect('begin-print', self.begin_print, None)
-        self.operation.connect('draw-page', self.draw_page, None)
+        document = HTML(string=url).render()
 
-        self.doc = Poppler.Document.new_from_file(file_uri)
+        self.operation.connect('begin-print', self.begin_print, document)
+        self.operation.connect('draw-page', self.draw_page, document)
 
-    def begin_print(self, operation, print_ctx, print_data):
-        operation.set_n_pages(self.doc.get_n_pages())
+        self.operation.set_use_full_page(False)
+        self.operation.set_unit(Gtk.Unit.POINTS)
+        self.operation.set_embed_page_setup(True)
 
-    def draw_page(self, operation, print_ctx, page_num, print_data):
-        cr = print_ctx.get_cairo_context()
-        page = self.doc.get_page(page_num)
-        page.render(cr)
+        settings = Gtk.PrintSettings()
 
-    def run(self, parent=None):
-        result = self.operation.run(Gtk.PrintOperationAction.PRINT_DIALOG,
-                                    parent)
+        directory = GLib.get_user_special_dir(
+            GLib.UserDirectory.DIRECTORY_DOCUMENTS) or GLib.get_home_dir()
+        ext = settings.get(Gtk.PRINT_SETTINGS_OUTPUT_FILE_FORMAT) or 'pdf'
+        uri = 'file://%s/weasyprint.%s' % (directory, ext)
+        settings.set(Gtk.PRINT_SETTINGS_OUTPUT_URI, uri)
+        self.operation.set_print_settings(settings)
 
-        if result == Gtk.PrintOperationResult.ERROR:
-            message = self.operation.get_error()
-
-            dialog = Gtk.MessageDialog(parent,
-                                       0,
-                                       Gtk.MessageType.ERROR,
-                                       Gtk.ButtonsType.CLOSE,
-                                       message)
-
-            dialog.run()
-            dialog.destroy()
-
+    def run(self):
+        self.operation.run(Gtk.PrintOperationAction.PRINT_DIALOG)
         Gtk.main_quit()
+
+    def begin_print(self, operation, print_ctx, document):
+        operation.set_n_pages(len(document.pages))
+
+    def draw_page(self, operation, print_ctx, page_num, document):
+        page = document.pages[page_num]
+        cairo_context = print_ctx.get_cairo_context()
+        cairocffi_context = cairocffi.Context._from_pointer(
+            cairocffi.ffi.cast(
+                'cairo_t **', id(cairo_context) + object.__basicsize__)[0],
+            incref=True)
+        page.paint(cairocffi_context, left_x=0, top_y=-40, scale=0.75)
 
 class WeasyprintReport:
     def __init__(self):                  
@@ -52,13 +56,7 @@ class WeasyprintReport:
         else:
             self.direction = 'right'
     def doPrint(self, html):
-        HTML(string=html).write_pdf('report.pdf')
-        file_uri = GLib.filename_to_uri(os.path.abspath('report.pdf'))
-        main_window = Gtk.OffscreenWindow()
-        app = PrintingApp(file_uri)
-        GLib.idle_add(app.run, main_window)
-        Gtk.main()
-        os.remove('report.pdf');
+        app = Printo(html).run()
     def showPreview(self, html):
         HTML(string=html).write_pdf('report.pdf')
         if sys.platform == 'linux2':
