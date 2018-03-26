@@ -55,9 +55,17 @@ class WeasyprintReport:
             self.direction = 'left'
         else:
             self.direction = 'right'
+
+    def prepareHtml(self, html):
+        html =  '<!DOCTYPE html> <html> <head> <style> @font-face {font-family: Vazir; src: url(data/font/Vazir.woff); } html {font-family: myFirstFont; } </style> <meta charset="UTF-8"> </head> <body>' + html + '</body> </html>'
+        return html
+
     def doPrint(self, html):
-        app = Printo(html).run()
+        html = self.prepareHtml(html)
+        Printo(html).run()
+        
     def showPreview(self, html):
+        html = self.prepareHtml(html)
         HTML(string=html).write_pdf('report.pdf')
         if sys.platform == 'linux2':
             subprocess.call(["xdg-open", 'report.pdf'])
