@@ -17,6 +17,7 @@ from database import *
 from dateentry import *
 from share import share
 from helpers import get_builder
+from weasyprintreport import *
 
 config = share.config
 
@@ -92,15 +93,15 @@ class DocumentReport:
                 index = 1
                 debt_sum = 0
                 credit_sum = 0
-            debt_sum += int(debt.replace(",", ""))
-            credit_sum += int(credit.replace(",", ""))
+            debt_sum += float(debt.replace(",", ""))
+            credit_sum += float(credit.replace(",", ""))
             strindex = utility.LN(str(index))
             doc_number0 = doc_number
             date = dateToString(b.date)
             report_data.append((strindex, code, s.name, desc, debt, credit, doc_number, date, debt_sum, credit_sum))
             index += 1
         
-        return {"data":report_data, "col-width":col_width ,"heading":report_header}
+        return {"data":report_data ,"heading":report_header}
     
     def createPrintJob(self):
         report = self.createReport()
@@ -112,10 +113,14 @@ class DocumentReport:
         if config.digittype == 1:
             docnumber = utility.convertToPersian(docnumber)
             
-        printjob = printreport.PrintReport(report["data"], report["col-width"], report["heading"])
-        printjob.setHeader(_("Accounting Document"), {_("Document Number"):docnumber, _("Date"):datestr})
-        printjob.setDrawFunction("drawDocument")
-        return printjob
+        # printjob.setHeader(_("Accounting Document"), {_("Document Number"):docnumber, _("Date"):datestr})        
+        report_header = report['heading']
+        report_data = report['data']
+        todaystr = dateToString(date.today())
+        html = '<p ' + self.reportObj.subjectHeaderStyle + '><u>' + _("Accounting Document") + '</u></p><p style="text-align:center;">' + _("Document Number") + ': ' + str(docnumber) + '</p><p ' + self.reportObj.detailHeaderStyle + '>' + _("Date") + ': ' + todaystr +'</p>'
+        html += self.reportObj.createTable(report_header,report_data)
+
+        return html
     
     def createPreviewJob(self):
         report = self.createReport()
@@ -133,19 +138,16 @@ class DocumentReport:
         return preview
     
     def previewReport(self, sender):
-        if platform.system() == 'Windows':
-            printjob = self.createPreviewJob()
-            if printjob != None:
-                printjob.doPreviewJob()
-        else:
-            printjob = self.createPrintJob()
-            if printjob != None:
-                printjob.doPrintJob(Gtk.PRINT_OPERATION_ACTION_PREVIEW)
-    
-    def printReport(self, sender):
+        self.reportObj = WeasyprintReport()
         printjob = self.createPrintJob()
         if printjob != None:
-            printjob.doPrintJob(Gtk.PRINT_OPERATION_ACTION_PRINT_DIALOG)
+            self.reportObj.showPreview(printjob)
+    
+    def printReport(self, sender):
+        self.reportObj = WeasyprintReport()
+        printjob = self.createPrintJob()
+        if printjob != None:
+            self.reportObj.doPrint(printjob)
     
     def exportToCSV(self, sender):
         report = self.createReport()

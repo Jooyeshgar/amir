@@ -16,7 +16,7 @@ from database import *
 from dateentry import *
 from share import share
 from helpers import get_builder
-from report import *
+from weasyprintreport import *
 
 config = share.config
 
@@ -117,12 +117,10 @@ class TBalanceReport:
             msgbox.destroy()
             return
         
-        todaystr = dateToString(date.today())        
         report_header = report['heading']
         report_data = report['data']
-        html = '<style>table{border-collapse: collapse;} table, th, td{padding: 10px;font-size:10px; text-align:center; border: 1px solid black }</style>'
         todaystr = dateToString(date.today())
-        html += '<p ' + self.reportObj.subjectHeaderStyle + '><u>' + _("Trial Balance") + '</u></p><p style="text-align:' + self.reportObj.direction + '; font-size:9px;">' + _("Date") + ': ' + todaystr +'</p>'
+        html = '<p ' + self.reportObj.subjectHeaderStyle + '><u>' + _("Trial Balance") + '</u></p><p ' + self.reportObj.detailHeaderStyle + '>' + _("Date") + ': ' + todaystr +'</p>'
         html += self.reportObj.createTable(report_header,report_data)
 
         return html

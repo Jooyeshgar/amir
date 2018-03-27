@@ -20,7 +20,7 @@ from dateentry import *
 from share import share
 from helpers import get_builder
 from previewreport import PreviewReport
-from report import *
+from weasyprintreport import *
 
 config = share.config
 
@@ -241,10 +241,9 @@ class NotebookReport(PreviewReport):
             return
         report_header = report['heading']
         report_data = report['data']
-        html = '<style>table{border-collapse: collapse;} table, th, td{padding: 10px;font-size:10px; text-align:center; border: 1px solid black }</style>'
         if self.type == self.__class__.DAILY:
             todaystr = dateToString(date.today())
-            html += '<p ' + self.reportObj.subjectHeaderStyle + '><u>' + _("Daily NoteBook") + '</u></p><p style="text-align:' + self.reportObj.direction + '; font-size:9px;">' + _("Date") + ': ' + todaystr +'</p>'
+            html = '<p ' + self.reportObj.subjectHeaderStyle + '><u>' + _("Daily NoteBook") + '</u></p><p ' + self.reportObj.detailHeaderStyle + '>' + _("Date") + ': ' + todaystr +'</p>'
         else:
             if config.digittype == 1:
                 code = utility.convertToPersian(self.subcode)
@@ -252,11 +251,9 @@ class NotebookReport(PreviewReport):
                 code = self.subcode
                 
             if self.type == self.__class__.LEDGER:
-                # printjob.setHeader(_("Ledgers Notebook"), {_("Subject Name"):self.subname, _("Subject Code"):code})
-                html += '<p style="text-align:center;"><u>' + _("Ledgers Notebook") + '</u></p><p style="text-align:center;">' + _("Subject Name") + ': ' + self.subname + '</p><p style="text-align:' + self.reportObj.direction + '; font-size:9px;">' + _("Subject Code") + ': ' + code +'</p>'
+                html = '<p ' + self.reportObj.subjectHeaderStyle + '><u>' + _("Ledgers Notebook") + '</u></p><p style="text-align:center;">' + _("Subject Name") + ': ' + self.subname + '</p><p ' + self.reportObj.detailHeaderStyle + '>' + _("Subject Code") + ': ' + code +'</p>'
             else:
-                # printjob.setHeader(_("Sub-ledgers Notebook"), {_("Subject Name"):self.subname, _("Subject Code"):code})
-                html += '<p style="text-align:center;"><u>' + _("Sub-ledgers Notebook") + '</u></p><p style="text-align:center;">' + _("Subject Name") + ': ' + self.subname + '</p><p style="text-align:' + self.reportObj.direction + '; font-size:9px;">' + _("Subject Code") + ': ' + code +'</p>'
+                html = '<p ' + self.reportObj.subjectHeaderStyle + '><u>' + _("Sub-ledgers Notebook") + '</u></p><p style="text-align:center;">' + _("Subject Name") + ': ' + self.subname + '</p><p ' + self.reportObj.detailHeaderStyle + '>' + _("Subject Code") + ': ' + code +'</p>'
         html += self.reportObj.createTable(report_header,report_data)
 
 

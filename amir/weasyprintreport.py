@@ -50,14 +50,15 @@ class Printo:
 
 class WeasyprintReport:
     def __init__(self):                  
-        self.subjectHeaderStyle = 'style="text-align:center;"'
         if config.locale == 'en_US':
             self.direction = 'left'
         else:
             self.direction = 'right'
+        self.subjectHeaderStyle = 'style="text-align:center;"'
+        self.detailHeaderStyle = 'style="text-align:' + self.direction + '; font-size:9px;"'
 
     def prepareHtml(self, html):
-        html =  '<!DOCTYPE html> <html> <head> <style> @font-face {font-family: Vazir; src: url(data/font/Vazir.woff); } html {font-family: myFirstFont; } </style> <meta charset="UTF-8"> </head> <body>' + html + '</body> </html>'
+        html =  '<!DOCTYPE html> <html> <head> <style> @font-face {font-family: Vazir; src: url(data/font/Vazir.woff); } html {font-family: myFirstFont; } table {border-collapse: collapse;} table, td, th {border: 2px solid black; padding: 10px;font-size:10px; text-align:center;}  </style> <meta charset="UTF-8"> </head> <body>' + html + '</body> </html>'
         return html
 
     def doPrint(self, html):
@@ -95,7 +96,7 @@ class WeasyprintReport:
                 row = row[::-1]
                 html += '<tr>'
                 for data in row:
-                    html += '<td>' + data + '</td>'
+                    html += '<td>' + str(data) + '</td>'
                 html += '</tr>'
             html += '</table>'
         return html
