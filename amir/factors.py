@@ -237,11 +237,11 @@ class Factor(Payments):
 
 		if transId:
 			sellsQuery  = self.session.query(FactorItems).select_from(FactorItems)
-			sellsQuery  = sellsQuery.filter(FactorItems.factorItemTransId==transId).order_by(FactorItems.factorItemNo.asc()).all()
+			sellsQuery  = sellsQuery.filter(FactorItems.factorId==transId).order_by(FactorItems.number.asc()).all()
 			for sell in sellsQuery:
-				ttl     = sell.factorItemUntPrc * sell.factorItemQnty
-				disc    = sell.factorItemUntDisc * sell.factorItemQnty
-				list    = (sell.factorItemNo,sell.factorItemProduct,sell.factorItemQnty,str(sell.factorItemUntPrc),str(ttl),str(sell.factorItemUntDisc),str(disc),sell.factorItemDesc)
+				ttl     = sell.untPrc * sell.qnty
+				disc    = sell.untDisc * sell.qnty
+				list    = (sell.number,sell.productId,sell.qnty,str(sell.untPrc),str(ttl),str(sell.untDisc),str(disc),sell.desc)
 				self.sellListStore.append(None,list)
 		
 		
@@ -268,18 +268,18 @@ class Factor(Payments):
 			self.sellerSelected(self, self.editTransaction.Cust,customer.custCode)	
 					
 			query=self.session.query(FactorItems).select_from(FactorItems)
-			factorItems = query.filter(FactorItems.factorItemTransId==self.editTransaction.Id).all()
+			factorItems = query.filter(FactorItems.factorId==self.editTransaction.Id).all()
 			self.oldProductList = factorItems
 			number=1
 			for factorItem in factorItems:							
 				query=self.session.query(Products).select_from(Products)
-				product = query.filter(Products.id==factorItem.factorItemProduct).first()
-				sellList = (str(number), product.name, str(factorItem.factorItemQnty), str(factorItem.factorItemUntPrc),
-						 str(factorItem.factorItemQnty*factorItem.factorItemUntPrc), str(factorItem.factorItemUntDisc),
-						 str(float(factorItem.factorItemQnty)*float(factorItem.factorItemUntDisc)), factorItem.factorItemDesc)
+				product = query.filter(Products.id==factorItem.productId).first()
+				sellList = (str(number), product.name, str(factorItem.qnty), str(factorItem.untPrc),
+						 str(factorItem.qnty*factorItem.untPrc), str(factorItem.untDisc),
+						 str(float(factorItem.qnty)*float(factorItem.untDisc)), factorItem.desc)
 				self.sellListStore.append(None,sellList)
-				self.appendPrice(factorItem.factorItemQnty*factorItem.factorItemUntPrc)
-				self.appendDiscount(float(factorItem.factorItemQnty)*float(factorItem.factorItemUntDisc))
+				self.appendPrice(factorItem.qnty*factorItem.untPrc)
+				self.appendDiscount(float(factorItem.qnty)*float(factorItem.untDisc))
 				self.valsChanged()
 				number+=1																
 			self.taxEntry.set_text(str(self.editTransaction.VAT))
@@ -331,11 +331,11 @@ class Factor(Payments):
 
 		if transId:
 			sellsQuery  = self.session.query(FactorItems).select_from(FactorItems)
-			sellsQuery  = sellsQuery.filter(FactorItems.factorItemTransId==transId).order_by(FactorItems.factorItemNo.asc()).all()
+			sellsQuery  = sellsQuery.filter(FactorItems.factorId==transId).order_by(FactorItems.number.asc()).all()
 			for sell in sellsQuery:
-				ttl     = sell.factorItemUntPrc * sell.factorItemQnty
-				disc    = sell.factorItemUntDisc * sell.factorItemQnty
-				list    = (sell.factorItemNo,sell.factorItemProduct,sell.factorItemQnty,str(sell.factorItemUntPrc),str(ttl),str(sell.factorItemUntDisc),str(disc),sell.factorItemDesc)
+				ttl     = sell.untPrc * sell.qnty
+				disc    = sell.untDisc * sell.qnty
+				list    = (sell.number,sell.productId,sell.qnty,str(sell.untPrc),str(ttl),str(sell.untDisc),str(disc),sell.desc)
 				self.sellListStore.append(None,list)
 		
 		
@@ -362,18 +362,18 @@ class Factor(Payments):
 			self.sellerSelected(self, self.editTransaction.Cust,customer.custCode)	
 					
 			query=self.session.query(FactorItems).select_from(FactorItems)
-			factorItems = query.filter(FactorItems.factorItemTransId==self.editTransaction.Id).all()
+			factorItems = query.filter(FactorItems.factorId==self.editTransaction.Id).all()
 			self.oldProductList = factorItems
 			number=1
 			for factorItem in factorItems:							
 				query=self.session.query(Products).select_from(Products)
-				product = query.filter(Products.id==factorItem.factorItemProduct).first()
-				sellList = (str(number), product.name, str(factorItem.factorItemQnty), str(factorItem.factorItemUntPrc),
-						 str(factorItem.factorItemQnty*factorItem.factorItemUntPrc), str(factorItem.factorItemUntDisc),
-						 str(float(factorItem.factorItemQnty)*float(factorItem.factorItemUntDisc)), factorItem.factorItemDesc)
+				product = query.filter(Products.id==factorItem.productId).first()
+				sellList = (str(number), product.name, str(factorItem.qnty), str(factorItem.untPrc),
+						 str(factorItem.qnty*factorItem.untPrc), str(factorItem.untDisc),
+						 str(float(factorItem.qnty)*float(factorItem.untDisc)), factorItem.desc)
 				self.sellListStore.append(None,sellList)
-				self.appendPrice(factorItem.factorItemQnty*factorItem.factorItemUntPrc)
-				self.appendDiscount(float(factorItem.factorItemQnty)*float(factorItem.factorItemUntDisc))
+				self.appendPrice(factorItem.qnty*factorItem.untPrc)
+				self.appendDiscount(float(factorItem.qnty)*float(factorItem.untDisc))
 				self.valsChanged()
 				number+=1																
 			self.taxEntry.set_text(str(self.editTransaction.VAT))
@@ -423,15 +423,15 @@ class Factor(Payments):
 		TransactionId=Transaction.Id
 		
 		factorItems=self.session.query(FactorItems).select_from(FactorItems)
-		factorItems=factorItems.filter(FactorItems.factorItemTransId==TransactionId).all()
+		factorItems=factorItems.filter(FactorItems.factorId==TransactionId).all()
 		
 		for factorItem in factorItems:
 			product=self.session.query(Products).select_from(Products)
-			product= product.filter(Products.id==factorItem.factorItemProduct).first()
+			product= product.filter(Products.id==factorItem.productId).first()
 			if self.sell:
-				product.quantity+=factorItem.factorItemQnty
+				product.quantity+=factorItem.qnty
 			else:
-				product.quantity-=factorItem.factorItemQnty
+				product.quantity-=factorItem.qnty
 		
 		query = config.db.session.query(Factors).select_from(Factors)
 		Transaction = query.filter(Factors.Id ==unicode(code) ).all()
@@ -1177,8 +1177,8 @@ class Factor(Payments):
 		
 	def registerFactorItems(self):	
 				
-		# FactorItems( self, factorItemNo, factorItemProduct, factorItemQnty,
-		#            factorItemUntPrc, factorItemUntDisc, factorItemTransId, factorItemDesc):
+		# FactorItems( self, number, productId, qnty,
+		#            untPrc, untDisc, factorId, desc):
 		if self.editFalg:								 
 			lasttransId = self.Id # Id of old factor
 			
@@ -1193,18 +1193,18 @@ class Factor(Payments):
 				for exch in self.sellListStore: # The new sell list store
 					query = self.session.query(Products).select_from(Products)
 					pid = query.filter(Products.name == unicode(exch[1])).first().id
-					if pid == oldProduct.factorItemProduct:
+					if pid == oldProduct.productId:
 						foundFlag = True
 						break
 				if not foundFlag:
-					query   = self.session.query(Products).select_from(Products).filter(Products.id == oldProduct.factorItemProduct)
+					query   = self.session.query(Products).select_from(Products).filter(Products.id == oldProduct.productId)
 					pro = query.first()
 					if self.sell:
-						pro.quantity += oldProduct.factorItemQnty
+						pro.quantity += oldProduct.qnty
 					else:
-						pro.quantity -= oldProduct.factorItemQnty
+						pro.quantity -= oldProduct.qnty
 					self.session.commit()
-				print oldProduct.factorItemProduct
+				print oldProduct.productId
 
 		
 		for exch in self.sellListStore: # The new sell list store
@@ -1216,9 +1216,9 @@ class Factor(Payments):
 
 			if self.editFalg:
 				factorItem1=self.session.query(FactorItems).select_from(FactorItems)
-				factorItem1=factorItem1.order_by(FactorItems.factorItemTransId.desc())
-				factorItem1=factorItem1.filter(FactorItems.factorItemProduct==pid)
-				factorItem1=factorItem1.filter(FactorItems.factorItemTransId==lasttransId).first()
+				factorItem1=factorItem1.order_by(FactorItems.factorId.desc())
+				factorItem1=factorItem1.filter(FactorItems.productId==pid)
+				factorItem1=factorItem1.filter(FactorItems.factorId==lasttransId).first()
 				
 				if (not factorItem1) or (self.editTransaction.Permanent == 0 and self.subPreInv == 0):
 					self.lastfactorItemquantity=utility.getFloat(str(0))
@@ -1237,7 +1237,7 @@ class Factor(Payments):
 						pro.quantity += self.nowfactorItemquantity
 					self.session.commit()										
 				else:
-					self.lastfactorItemquantity = utility.getFloat(str(factorItem1.factorItemQnty))
+					self.lastfactorItemquantity = utility.getFloat(str(factorItem1.qnty))
 					self.nowfactorItemquantity = utility.getFloat(exch[2])
 										
 					factorItem = FactorItems(utility.getInt(exch[0]), pid, utility.getFloat(exch[2]),
@@ -1319,11 +1319,11 @@ class Factor(Payments):
 		# self.editTransaction
 		k = 1;
 		sellsQuery  = self.session.query(FactorItems).select_from(FactorItems)
-		sellsQuery  = sellsQuery.filter(FactorItems.factorItemTransId==self.Id).order_by(FactorItems.factorItemNo.asc()).all()
+		sellsQuery  = sellsQuery.filter(FactorItems.factorId==self.Id).order_by(FactorItems.number.asc()).all()
 		for sell in sellsQuery:
-			ttl     = sell.factorItemUntPrc * sell.factorItemQnty
-			disc    = float(sell.factorItemUntDisc) * float(sell.factorItemQnty)
-			print sell.factorItemNo,sell.factorItemProduct,sell.factorItemQnty,str(sell.factorItemUntPrc),str(ttl),str(sell.factorItemUntDisc),str(disc),sell.factorItemDesc
+			ttl     = sell.untPrc * sell.qnty
+			disc    = float(sell.untDisc) * float(sell.qnty)
+			print sell.number,sell.productId,sell.qnty,str(sell.untPrc),str(ttl),str(sell.untDisc),str(disc),sell.desc
 			# $vat = 
 			# ($factoritems[$i]['official'] == 1) ? $factoritems[$i]['vat']  : 0;
 		# 	$discount = $factoritems[$i]['amount'] - $factoritems[$i]['discount']; 

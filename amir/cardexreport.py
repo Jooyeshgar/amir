@@ -152,7 +152,7 @@ class CardexReport:
             
             #Fill factor treeview
             query = config.db.session.query(FactorItems,Factors,Customers)
-            query = query.filter(bill.id == FactorItems.factorItemProduct, FactorItems.factorItemTransId == Factors.Id, Customers.custId == Factors.Cust)
+            query = query.filter(bill.id == FactorItems.productId, FactorItems.factorId == Factors.Id, Customers.custId == Factors.Cust)
             if factorType and factorType != 'All':
                 if factorType == 'Sell':
                     factorType = 1
@@ -194,9 +194,9 @@ class CardexReport:
             for factor in result:
                 if factor.Factors.Sell == True:
                     buy_quantity = '-'
-                    sell_quantity = str('{0:g}'.format(float(factor.FactorItems.factorItemQnty)))
+                    sell_quantity = str('{0:g}'.format(float(factor.FactorItems.qnty)))
                 else:
-                    buy_quantity = str('{0:g}'.format(float(factor.FactorItems.factorItemQnty)))
+                    buy_quantity = str('{0:g}'.format(float(factor.FactorItems.qnty)))
                     sell_quantity = '-'
                 if share.config.datetypes[share.config.datetype] == "jalali": 
                     year, month, day = str(factor.Factors.tDate).split("-")
@@ -206,7 +206,7 @@ class CardexReport:
                     year, month, day = str(factor.Factors.tDate).split("-")
                     date = str(day) + '-' + str(month) + '-' + str(year)
                 self.treestore.append(None, (str(factor.Factors.Code), str(factor.Customers.custCode), str(factor.Customers.custName), sell_quantity, buy_quantity,
-                 str('{0:g}'.format(float(factor.FactorItems.factorItemQnty * factor.FactorItems.factorItemUntPrc))), str(date)))
+                 str('{0:g}'.format(float(factor.FactorItems.qnty * factor.FactorItems.untPrc))), str(date)))
         else:
             statusbar = self.builder.get_object('statusbar3')
             context_id = statusbar.get_context_id('statusbar')

@@ -69,14 +69,14 @@ factors = Table('factors', meta,
 )
 
 factorItems = Table('factorItems', meta,
-    Column('factorItemId',          Integer,        primary_key = True                      ),
-    Column('factorItemNo',          Integer,        nullable = False                        ),
-    Column('factorItemProduct',     Integer,        ForeignKey('products.id')               ),
-    Column('factorItemQnty',        Float,          ColumnDefault(0),   nullable = False    ),
-    Column('factorItemUntPrc',      Float,          ColumnDefault(0),   nullable = False    ),
-    Column('factorItemUntDisc',     Unicode(30),    ColumnDefault("0"), nullable = False    ),
-    Column('factorItemTransId',     Integer,        ForeignKey('factors.Id')      ),
-    Column('factorItemDesc',        Unicode(200),   nullable = True                         ),
+    Column('id',          Integer,        primary_key = True                      ),
+    Column('number',          Integer,        nullable = False                        ),
+    Column('productId',     Integer,        ForeignKey('products.id')               ),
+    Column('qnty',        Float,          ColumnDefault(0),   nullable = False    ),
+    Column('untPrc',      Float,          ColumnDefault(0),   nullable = False    ),
+    Column('untDisc',     Unicode(30),    ColumnDefault("0"), nullable = False    ),
+    Column('factorId',     Integer,        ForeignKey('factors.Id')      ),
+    Column('desc',        Unicode(200),   nullable = True                         ),
 	mysql_charset='utf8'
 )
 
