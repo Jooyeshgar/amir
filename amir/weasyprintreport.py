@@ -57,16 +57,10 @@ class WeasyprintReport:
         self.subjectHeaderStyle = 'style="text-align:center;"'
         self.detailHeaderStyle = 'style="text-align:' + self.direction + '; font-size:9px;"'
 
-    def prepareHtml(self, html):
-        html =  '<!DOCTYPE html> <html> <head> <style> @font-face {font-family: Vazir; src: url(data/font/Vazir.woff); } html {font-family: myFirstFont; } table {border-collapse: collapse;} table, td, th {border: 2px solid black; padding: 10px;font-size:10px; text-align:center;}  </style> <meta charset="UTF-8"> </head> <body>' + html + '</body> </html>'
-        return html
-
     def doPrint(self, html):
-        html = self.prepareHtml(html)
         Printo(html).run()
         
     def showPreview(self, html):
-        html = self.prepareHtml(html)
         HTML(string=html).write_pdf('report.pdf')
         if sys.platform == 'linux2':
             subprocess.call(["xdg-open", 'report.pdf'])
@@ -99,4 +93,5 @@ class WeasyprintReport:
                     html += '<td>' + str(data) + '</td>'
                 html += '</tr>'
             html += '</table>'
+        html = '<!DOCTYPE html> <html> <head> <style> @font-face {font-family: Vazir; src: url(data/font/Vazir.woff); } html {font-family: myFirstFont; } table {border-collapse: collapse;} table, td, th {border: 2px solid black; padding: 10px;font-size:10px; text-align:center;}  </style> <meta charset="UTF-8"> </head> <body>' + html + '</body> </html>'
         return html

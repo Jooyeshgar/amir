@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 
 import  product
@@ -22,7 +23,7 @@ import	class_document
 from gi.repository import Gtk
 from gi.repository import Gdk
 from payments import Payments
-
+from weasyprintreport import *
 
 config = share.config
 
@@ -136,8 +137,8 @@ class Factor(Payments):
 		column = Gtk.TreeViewColumn(_("factor"), Gtk.CellRendererText(), text = 1)
 		column.set_spacing(5)
 		column.set_resizable(True)
- 		column.set_sort_column_id(0)
- 		column.set_sort_indicator(True)
+		column.set_sort_column_id(0)
+		column.set_sort_indicator(True)
 		self.treeview.append_column(column)
 		
 		column = Gtk.TreeViewColumn(_("Date"), Gtk.CellRendererText(), text = 2)
@@ -194,8 +195,8 @@ class Factor(Payments):
 				date = str(date[0]) + '-' + str(date[1]) + '-' + str(date[2])
 			else:
 				date = dateToString(date)
-	  		grouprow = self.treestore.append(None, (int(t.Id), t.Code, str(date), c.custName, str(t.PayableAmnt)))
-  			
+			grouprow = self.treestore.append(None, (int(t.Id), t.Code, str(date), c.custName, str(t.PayableAmnt)))
+			
 		self.window.show_all()
 		
 	def on_add_clicked(self,sender):
@@ -397,10 +398,10 @@ class Factor(Payments):
 		query = config.db.session.query(Factors, Customers)
 		query = query.select_from(outerjoin(Factors, Customers, Factors.Cust== Customers.custId))
 		result,result2 = query.filter(Factors.Id == code).first() 		
- 		self.editTransaction=result 	
- 		self.addNew() 		
+		self.editTransaction=result 	
+		self.addNew() 		
 
- 	def editBuying(self,transId=None):
+	def editBuying(self,transId=None):
 		self.editFalg=True		
 		selection = self.treeview.get_selection()
 		iter = selection.get_selected()[1]		
@@ -408,8 +409,8 @@ class Factor(Payments):
 		query = config.db.session.query(Factors, Customers)
 		query = query.select_from(outerjoin(Factors, Customers, Factors.Cust== Customers.custId))
 		result,result2 = query.filter(Factors.Id == code).first() 		
- 		self.editTransaction=result 	
- 		self.addNewBuy()
+		self.editTransaction=result 	
+		self.addNewBuy()
 																						
 	def removeFactor(self, sender):
 		selection = self.treeview.get_selection()
@@ -1306,21 +1307,131 @@ class Factor(Payments):
 		query = self.session.query(Cheque)#.select_from(Cheque)
 		query = query.filter(Cheque.chqTransId == self.Id)
 		query.update( {Cheque.chqBillId : bill_id } )
- 		self.session.commit()
- 		
- 		
+		self.session.commit()
+		
+		
 		query = self.session.query(Payment)#.select_from(Payment)
 		query = query.filter(Payment.paymntTransId == self.Code)
 		query =query.update( {Payment.paymntBillId : bill_id } )		
- 		self.session.commit()
- 			
-	
-# 	def RegisterBill(self):
-# 		print'test'
+		self.session.commit()
+			
+	def createPrintJob(self):
+		# self.editTransaction
+		k = 1;
+		sellsQuery  = self.session.query(FactorItems).select_from(FactorItems)
+		sellsQuery  = sellsQuery.filter(FactorItems.factorItemTransId==self.Id).order_by(FactorItems.factorItemNo.asc()).all()
+		for sell in sellsQuery:
+			ttl     = sell.factorItemUntPrc * sell.factorItemQnty
+			disc    = float(sell.factorItemUntDisc) * float(sell.factorItemQnty)
+			print sell.factorItemNo,sell.factorItemProduct,sell.factorItemQnty,str(sell.factorItemUntPrc),str(ttl),str(sell.factorItemUntDisc),str(disc),sell.factorItemDesc
+			# $vat = 
+			# ($factoritems[$i]['official'] == 1) ? $factoritems[$i]['vat']  : 0;
+		# 	$discount = $factoritems[$i]['amount'] - $factoritems[$i]['discount']; 
+		# 	$tax = $vat;
+		# 	$total = round($factoritems[$i]['amount'] - $factoritems[$i]['discount'] + $vat);
+		# 	$totalprice    += $factoritems[$i]['amount'];
+		# 	$totaldiscount += $factoritems[$i]['discount'];
+		# 	$totalwdisc    += $factoritems[$i]['amount'] - $factoritems[$i]['discount'];
+		# 	$totalwtax     += round($vat); 
+		# 	$finalprice    += round($factoritems[$i]['amount'] - $factoritems[$i]['discount'] + $vat);  
+		# 	  $description = 'توضیحات: <span>'.$factoritems[0]['description'].'</span>';
+		# 	$pattern.='<tr valign="top" style="text-align:center;">
+		# 		<td class="border center" style="border-right: none;" >
+		# 			<p align="right">'.((!empty($total)) ? num2fa(digit($total)) : '').'</p>
+		# 		</td>
+		# 		<td class="border center" style="border-right: none;" >
+		# 			<p align="right">'.((!empty($tax)) ? num2fa(digit($tax)) : '').'</p>
+		# 		</td>
+		# 		<td class="border center" style="border-right: none;" >
+		# 			<p align="right">'.((!empty($discount)) ? num2fa(digit($discount)) : '').'</p>
+		# 		</td>
+		# 		<td class="border center" style="border-right: none;" >
+		# 			<p align="right">'.num2fa(digit($factoritems[$i]['discount'])).'</p>
+		# 		</td>
+		# 		<td class="border center" style="border-right: none;" >
+		# 			<p align="right">'.num2fa(digit($factoritems[$i]['amount'])).'</p>
+		# 		</td>
+		# 		<td class="border center" style="border-right: none;" >
+		# 			<p align="right">'.num2fa(digit($factoritems[$i]['amount'])).'</p>
+		# 		</td>
+		# 		<td class="border center" style="border-right: none;" >
+		# 			<p align="right">'.$factoritems[$i][''].'</p>
+		# 		</td>
+		# 		<td class="border center" style="border-right: none;" >
+		# 			<p align="right">'.$factoritems[$i][''].'</p>
+		# 		</td>
+		# 		<td class="border center" style="border-right: none;" >
+		# 			<p align="right">'.$factoritems[$i]['desc'].'</p>
+		# 		</td>
+		# 		<td class="border center" style="border-right: none;" >
+		# 			<p style="margin-left: -0.25in" align="right"></p>
+		# 		</td>
+		# 		<td class="border">
+		# 			<p align="right" class="bold">'.num2fa($k++).'</p>
+		# 		</td>
+		# 	</tr>';
+		# }     
+		# 	html = '<html > <head> <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> <style> .none{border:none;} .border{border:1px solid #000;} .right{text-align:right;direction:rtl;} .center{text-align:center !important;direction:rtl;} .pink{background-color:#ffe0eb;} body,table {font-family: Vazir;font-size:15px; height:100%;} .bold{font-weight:bold; font-size:12px;} .lheight{line-height:1.7em;text-align:right;} </style> </head> <body> <table width="100%" cellspacing="2" cellpadding="8" style="table-layout:fixed;"> <tbody> <tr> <td class="border right pink" width="">شماره: <span style="color:#BB0000;">' + factorNumber +'</span></td> <td rowspan="2" class="none" width="850" style="text-align:center"><p style="font-weight:bold;font-size:20px;">' + factorName + '</p></td> </tr> <tr> <td class="border right pink" width="" >تاریخ: ' + $factorDate + '</td> </tr> </tbody> </table> </br> <table width="100%" cellspacing="0" cellpadding="8" style="margin-top:2px;margin-left:2px;table-layout:fixed;" class="mytable"> <tbody> <tr> <td colspan="4" class="border center pink"> <p align="center" class="bold" style="font-size:12px;">مشخصات فروشنده</p> </td> </tr> <tr class="right"> <td class="right none lheight" width="33%" style="border-left:1px solid #000;" dir="rtl"> شماره ملی: ' + factorSellerNationalCode +'<br /> شماره تلفن: <bdo dir="ltr"> ' + factorSellerPhoneNumber + '</bdo> </td> <td class="right none lheight" width="33%" > شماره اقتصادی: ' + factorSellerEconomicalCode + '<br /> کد پستی ۱۰ رقمی: ' + factorSellerPostalCode + '</td> <td class="right none lheight"  width="27%"> شرکت مهندسی جویشگر پردیس ارم<br /> دفتر مرکزی: اصفهان میدان امام حسین ارگ جهان نما فاز ۴ طبقه ۴ واحد ۱۶ </td> <td class="right none" width="6%" style="border-right:1px solid #000;"><img src="/../img/Logo.svg" name="Image1" width="90" height="80" align="left" > <p style="margin-left: 4.19in"><br> </td> </tr> <tr> <td class="pink center border" colspan="4" width="100%" valign="top"><p align="center" class="bold" style="font-size:12px;">مشخصات خریدار</p></td> </tr> <tr class="right"> <td class="right none lheight" width="33%" style="border-left:1px solid #000;" > ' + factorBuyerNationalNum + '<br /> شماره تلفن: <bdo dir="ltr">' + factorBuyerPhonenumber + '</bdo> </td> <td class="right none lheight" width="33%" > شماره اقتصادی: ' + factorBuyerEconomicalCode + '<br /> کد پستی ۱۰ رقمی: ' + factorBuyerPostalCode + '</td> <td class="right none lheight" width="27%"> ' + factorBuyerName + '<br /> ' + factorBuyerAddress + '</td> <td class="right none" width="6%" style="border-right:1px solid #000;"> <img src="/../img/Empty.png" name="Image1" width="90" height="80" align="left" > <p style="margin-left: 4.19in"><br> </td> </tr> </tbody></table> <table width="100%" cellspacing="0" cellpadding="8" style="text-align:right;table-layout:fixed;margin-left:2px;"> <tbody> <tr valign="top"> <td class="border center" style="border-right: none;" width="15%"> <p align="center" class="bold">جمع مبلغ کل</p> <p align="center" class="bold">بعلاوه جمع مالیات و عوارض (ریال)</p> </td> <td class="border center" style="border-right: none;" width="8%"> <p align="center" class="bold">جمع مالیات و عوارض</p> <p align="center" class="bold">(ریال)</p> </td> <td class="border center" style="border-right: none;" width="7%"> <p align="center" class="bold">مبلغ کل پس از تخفیف</p> <p align="center" class="bold">(ریال)</p> </td> <td class="border center" style="border-right: none;" width="9%"> <p align="center" class="bold">مبلغ</p> <p align="center" class="bold">تخفیف</p> </td> <td class="border center" style="border-right: none;" width="11%"> <p align="center" class="bold">مبلغ کل</p> <p align="center" class="bold">(ریال)</p> </td> <td class="border center" style="border-right: none;" width="11%"> <p align="center" class="bold">مبلغ واحد</p> <p align="center" class="bold">(ریال)</p> </td> <td class="border center" style="border-right: none;" width="5%"> <p align="center" class="bold">واحد</p> <p align="center" class="bold">اندازه گیری</p> </td> <td class="border center" style="border-right: none;" width="5%"> <p align="center" class="bold">تعداد</p> <p align="center" class="bold">مقدار</p> </td> <td class="border center" style="border-right: none;" width="26%"> <p align="center" class="bold">شرح کالا یا خدمات</p> </td> <td class="border" style="border-right: none;" width="2%"> <p align="center" class="bold">کد</p> <p align="center" class="bold">کالا</p> </td> <td class="border" width="1%"> <div style="position: relative"> <p class="vertical bold" style="position: absolute; right: 7mm; top: -3mm; rotate: -90;  width: 100mm;font-size:10px;">ردیف</p> </div> </td> </tr>'
 
-	def printTransaction(self,sender=0):
-		print "main page \"PRINT button\" is pressed!", sender
-	
+	#     $pattern.='<tr valign="top">
+	#         <td class="border center" style="border-right: none;" width="9%">
+	#             <p align="right">'.num2fa(digit($finalprice)).'</p>
+	#         </td>
+	#         <td class="border center" style="border-right: none;" width="15%">
+	#             <p align="right">'.num2fa(digit($totalwtax)).'</p>
+	#         </td>
+	#         <td class="border center" style="border-right: none;" width="13%">
+	#             <p align="right">'.num2fa(digit($totalwdisc)).'</p>
+	#         </td>
+	#         <td class="border center" style="border-right: none;" width="7%">
+	#             <p align="right">'.(($totaldiscount !=0) ? num2fa(digit($totaldiscount)) : '').'</p>
+	#         </td>
+	#         <td class="border center" style="border-right: none;" width="7%">
+	#             <p align="right">'.num2fa(digit($totalprice)).'</p>
+	#         </td>
+	#         <td colspan="6" class="border pink center" width="49%">
+	#             <p align="center">جمع کل (ریال): '.num2fa(digit($finalprice)).'</p>
+	#         </td>
+	#     </tr>
+	#     <tr valign="top">
+	#         <td colspan="2" style="border: none; " width="24%">
+	#             <p align="right">مهر و امضاء خریدار</p>
+	#         </td>
+	#         <td colspan="3" style="border: none; " width="32%">
+	#             <p align="right">مهر و امضای فروشنده</p>
+	#         </td>
+	#         <td class="border" style="border-right: none;" width="9%">
+	#             <p align="right">غیر نقدی</p>
+	#             <input type="checkbox"/>
+	#         </td>
+	#         <td colspan="2" class="border" style="border-right: none;border-left:none;" width="17%">
+	#             <p align="right">نقدی</p>
+	#             <input type="checkbox" checked="checked"/>
+	#         </td>
+	#         <td colspan="3" class="border" width="18%" style="border-left:none;">
+	#             <p align="right">:شرایط و نحوه فروش</p>
+	#         </td>
+	#     </tr>
+	#     <tr valign="top">
+	#         <td colspan="5" style="border: none; " width="56%">
+	#             <p align="right"><br>
+	#             </p>
+	#         </td>
+	#         <td colspan="6" class="border" width="44%">
+	#             '.$description.'
+	#         </td>
+	#     </tr>
+	# </tbody>
+	# </table>
+	# </body>
+	# </html>'
+
+	def printTransaction(self, sender):
+		self.reportObj = WeasyprintReport()
+		printjob = self.createPrintJob()
+		if printjob != None:
+			self.reportObj.doPrint(printjob)
+
 	def setNonCashPayments(self, sender, str_value):
 		self.nonCashPymntsEntry.set_text(str_value)
 
@@ -1377,7 +1488,7 @@ class Factor(Payments):
 				self.Document.add_notebook(dbconf.get_int("buy-vat"), -(self.VAT), _("VAT for invoice number %s") % trans_code)
 			if self.fee:
 				self.Document.add_notebook(dbconf.get_int("buy-fee"), -(self.fee), _("Fee for invoice number %s") % trans_code)
-  		
+		
 		# Create a row for each sold product
 		for exch in self.sellListStore:
 			query = self.session.query(ProductGroups.sellId)
@@ -1389,7 +1500,7 @@ class Factor(Payments):
 			#TODO Use unit name specified for each product
 			if self.sell:
 				self.Document.add_notebook(sellid, exch_totalAmnt, _("Selling %s units, invoice number %s") % (exch[2], trans_code))
-  			else:
+			else:
 				self.Document.add_notebook(sellid, -exch_totalAmnt, _("Buying %s units, invoice number %s") % (exch[2], trans_code))
 
 # 		# Create rows for payments
@@ -1405,9 +1516,9 @@ class Factor(Payments):
 # 		               _("Non-cash Payment for invoice number %s") % trans_code)
 # 		self.session.add(row)
 # 		# doc_rows.append(row)
-  		
+		
 # 		#TODO Add rows for customer introducer's commision
-  		
+		
 # 		# self.session.add_all(doc_rows)
 # 		self.session.commit()
 		docnum = self.Document.save()
