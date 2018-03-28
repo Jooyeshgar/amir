@@ -907,7 +907,7 @@ class Factor(Payments):
 						if self.sell:
 							self.discountEntry.set_text(discstr)
 							self.stnrdDisc.set_text(discstr)
-							self.calcTotalDiscount(sellPrc - discval)
+							self.calcTotalDiscount(discval)
 					else:
 						# if discount be expressed in percent, total discount is changed
 						# by changing quantity.
@@ -1005,7 +1005,7 @@ class Factor(Payments):
 			
 			self.addStBar.push(1,stMsg)
 			if not severe:
-				if untPrc - discval < purcPrc:
+				if untPrc < discval:
 					self.discountEntry.modify_base(Gtk.StateType.NORMAL,self.redClr)
 					errMess  = "Applying discount decreases product price below its purchase price!"
 					self.discountEntry.set_tooltip_text(errMess)

@@ -1352,7 +1352,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="xpad">10</property>
-                <property name="label" translatable="yes">Discount:</property>
+                <property name="label" translatable="yes">Unit Discount:</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
