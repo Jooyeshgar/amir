@@ -11,7 +11,7 @@ config = share.config
 import cairocffi
 
 class Printo:
-    def __init__(self, url):
+    def __init__(self, url, landscape = False):
         self.operation = Gtk.PrintOperation()
 
         document = HTML(string=url).render()
@@ -22,7 +22,11 @@ class Printo:
         self.operation.set_use_full_page(False)
         self.operation.set_unit(Gtk.Unit.POINTS)
         self.operation.set_embed_page_setup(True)
-
+        if landscape == True:
+            pageSetup = Gtk.PageSetup()
+            pageSetup.set_orientation(Gtk.PageOrientation.LANDSCAPE)
+            self.operation.set_default_page_setup(pageSetup)
+            
         settings = Gtk.PrintSettings()
 
         directory = GLib.get_user_special_dir(
@@ -57,10 +61,10 @@ class WeasyprintReport:
         self.subjectHeaderStyle = 'style="text-align:center;"'
         self.detailHeaderStyle = 'style="text-align:' + self.direction + '; font-size:9px;"'
 
-    def doPrint(self, html):
-        Printo(html).run()
+    def doPrint(self, html, landscape = False):
+        Printo(html, landscape).run()
         
-    def showPreview(self, html):
+    def showPreview(self, html, landscape = False):
         HTML(string=html).write_pdf('report.pdf')
         if sys.platform == 'linux2':
             subprocess.call(["xdg-open", 'report.pdf'])
