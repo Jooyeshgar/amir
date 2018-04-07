@@ -189,12 +189,7 @@ class Factor(Payments):
 		self.cal = calverter()
 		for t ,c in reversed(result):		
 			date = t.tDate
-			if share.config.datetypes[share.config.datetype] == "jalali":
-				jd = self.cal.gregorian_to_jd(date.year, date.month, date.day)
-				date = self.cal.jd_to_jalali(jd)
-				date = str(date[0]) + '-' + str(date[1]) + '-' + str(date[2])
-			else:
-				date = dateToString(date)
+			date = dateToString(date)
 			grouprow = self.treestore.append(None, (int(t.Id), t.Code, str(date), c.custName, str(t.PayableAmnt)))
 			
 		self.window.show_all()
@@ -398,7 +393,8 @@ class Factor(Payments):
 		query = config.db.session.query(Factors, Customers)
 		query = query.select_from(outerjoin(Factors, Customers, Factors.Cust== Customers.custId))
 		result,result2 = query.filter(Factors.Id == code).first() 		
-		self.editTransaction=result 	
+		self.editTransaction=result
+		self.customer=result2
 		self.addNew() 		
 
 	def editBuying(self,transId=None):
@@ -409,7 +405,8 @@ class Factor(Payments):
 		query = config.db.session.query(Factors, Customers)
 		query = query.select_from(outerjoin(Factors, Customers, Factors.Cust== Customers.custId))
 		result,result2 = query.filter(Factors.Id == code).first() 		
-		self.editTransaction=result 	
+		self.editTransaction=result 
+		self.customer=result2	
 		self.addNewBuy()
 																						
 	def removeFactor(self, sender):
@@ -1316,14 +1313,34 @@ class Factor(Payments):
 		self.session.commit()
 			
 	def createPrintJob(self):
-		# self.editTransaction
 		date = self.editTransaction.tDate
-		if share.config.datetypes[share.config.datetype] == "jalali":
-			jd = self.cal.gregorian_to_jd(date.year, date.month, date.day)
-			date = self.cal.jd_to_jalali(jd)
-			date = str(date[0]) + '-' + str(date[1]) + '-' + str(date[2])
+		date = dateToString(date)
+		if self.sell:
+			factorSellerName = 'factorSellerName'
+			factorSellerAddress = 'factorSellerAddress'
+			factorSellerEconomicalCode = 'factorSellerEconomicalCode'
+			factorSellerPostalCode = 'factorSellerPostalCode'
+			factorSellerNationalCode = 'factorSellerNationalCode'
+			factorSellerPhoneNumber = 'factorSellerPhoneNumber'
+			factorBuyerName = self.customer.custName
+			factorBuyerAddress = self.customer.custAddress
+			factorBuyerEconomicalCode =self.customer.custEcnmcsCode
+			factorBuyerPostalCode = self.customer.custPostalCode
+			factorBuyerNationalNum = self.customer.custPersonalCode
+			factorBuyerPhoneNumber = self.customer.custPhone
 		else:
-			date = dateToString(date)
+			factorSellerName = self.customer.custName
+			factorSellerAddress = self.customer.custAddress
+			factorSellerEconomicalCode =self.customer.custEcnmcsCode
+			factorSellerPostalCode = self.customer.custPostalCode
+			factorSellerNationalCode = self.customer.custPersonalCode
+			factorSellerPhoneNumber = self.customer.custPhone
+			factorBuyerName = 'factorBuyerName'
+			factorBuyerAddress = 'factorBuyerAddress'
+			factorBuyerEconomicalCode = 'factorBuyerEconomicalCode'
+			factorBuyerPostalCode = 'factorBuyerPostalCode'
+			factorBuyerNationalNum = 'factorBuyerNationalNum'
+			factorBuyerPhoneNumber = 'factorBuyerPhoneNumber'
 		html = '<html> \
 					<head> \
 						<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> \
@@ -1337,7 +1354,7 @@ class Factor(Payments):
 						<table style="table-layout:fixed; width:100%; height: 1px" class="date-number"> \
 							<tbody> \
 								<tr> \
-									<td class="border right pink" style="width:19%;"><span style="color:#BB0000;">' + utility.convertToPersian(self.editTransaction.Code) +'</span>شماره: \
+									<td class="border right pink" style="width:19%;"><span style="color:#BB0000;">' + utility.LN(self.editTransaction.Code) +'</span>شماره: \
 									</td> \
 									<td rowspan="2" class="none" width="850" style="text-align:center"> \
 										<p style="font-weight:bold;font-size:20px;">' + 'factorName' + '</p> \
@@ -1356,14 +1373,15 @@ class Factor(Payments):
 									</td> \
 								</tr> \
 								<tr class="right"> \
-									<td class="right none lheight" width="33%" style="border-left:1px solid #000;" dir="rtl"> \
-										شماره ملی: ' + 'factorSellerNationalCode' +'<br /> شماره تلفن: <bdo dir="ltr"> ' + 'factorSellerPhoneNumber' + '</bdo> \
+									<td class="right none lheight" style="border-left:1px solid #000;"> \
+										شماره ملی: ' + factorSellerNationalCode +'<br /> شماره تلفن: <bdo dir="ltr"> ' + factorSellerPhoneNumber + '</bdo> \
 									</td> \
-									<td class="right none lheight" width="33%" > \
-									 شماره اقتصادی: ' + 'factorSellerEconomicalCode' + '<br /> کد پستی ۱۰ رقمی: ' + 'factorSellerPostalCode' + ' \
+									<td class="right none lheight" > \
+									 شماره اقتصادی: ' + factorSellerEconomicalCode + '<br /> کد پستی ۱۰ رقمی: ' + factorSellerPostalCode + ' \
 									</td> \
 									<td class="right none lheight"  width="27%"> \
-										شرکت مهندسی جویشگر پردیس ارم<br /> دفتر مرکزی: اصفهان میدان امام حسین ارگ جهان نما فاز ۴ طبقه ۴ واحد ۱۶ </td> \
+										' + factorSellerAddress + ' \
+									</td> \
 									<td class="right none" width="6%" style="border-right:1px solid #000;"> \
 										<img src="/../img/Logo.svg" name="Image1" width="90" height="80" align="left" > <p style="margin-left: 4.19in"><br> \
 									</td> \
@@ -1375,13 +1393,13 @@ class Factor(Payments):
 								</tr> \
 								<tr class="right"> \
 									<td class="right none lheight" width="33%" style="border-left:1px solid #000;" > \
-										' + 'factorBuyerNationalNum' + '<br /> شماره تلفن: <bdo dir="ltr">' + 'factorBuyerPhonenumber' + '</bdo> \
+										شماره ملی: ' + factorBuyerNationalNum + '<br /> شماره تلفن: ' + factorBuyerPhoneNumber + ' \
 									</td> \
 									<td class="right none lheight" width="33%" > \
-										شماره اقتصادی: ' + 'factorBuyerEconomicalCode' + '<br /> کد پستی ۱۰ رقمی: ' + 'factorBuyerPostalCode' + '\
+										شماره اقتصادی: ' + factorBuyerEconomicalCode + '<br /> کد پستی ۱۰ رقمی: ' + factorBuyerPostalCode + '\
 									</td> \
 									<td class="right none lheight" width="27%"> \
-										' + 'factorBuyerName' + '<br /> ' + 'factorBuyerAddress' + ' \
+										' + factorBuyerName + '<br /> ' + factorBuyerAddress + ' \
 									</td> \
 									<td class="right none" style="border-right:1px solid #000;width: 6%;"> \
 										<img src="/../img/Empty.png" name="Image1" width="90" height="80" align="left" > \
@@ -1551,9 +1569,6 @@ class Factor(Payments):
 						</table> \
 					</body> \
 				</html>'
-		print html
-		with open('somefile.html', 'a') as the_file:
-			the_file.write(html)
 		return html
 	def printTransaction(self, sender):
 		self.reportObj = WeasyprintReport()
