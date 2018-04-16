@@ -1483,119 +1483,119 @@ class Factor(Payments):
 			sumFinalPrice += finalPrice
 			html +='<tr style="text-align:center; vertical-align: top;"> \
 						<td class="border center" style="border-right: none;" > \
-							<p>' + str(finalPrice) + '</p> \
+							<span>' + str(finalPrice) + '</span> \
 						</td> \
 						<td class="border center" style="border-right: none;" >\
-							<p>' + str(totalVat) + '</p> \
+							<span>' + str(totalVat) + '</span> \
 						</td> \
 						<td class="border center" style="border-right: none;" > \
-							<p>' + str(totalAfterDiscount) + '</p> \
+							<span>' + str(totalAfterDiscount) + '</span> \
 						</td> \
 						<td class="border center" style="border-right: none;" > \
-							<p>' + str(totalDiscount) + '</p> \
+							<span>' + str(totalDiscount) + '</span> \
 						</td> \
 						<td class="border center" style="border-right: none;" > \
-							<p>' + str(totalPrice) + '</p> \
+							<span>' + str(totalPrice) + '</span> \
 						</td> \
 						<td class="border center" style="border-right: none;" > \
-							<p>' + str(unitPrice) + '</p> \
+							<span>' + str(unitPrice) + '</span> \
 						</td> \
 						<td class="border center" style="border-right: none;" > \
-							<p style="text-align: right;"></p> \
+							<span style="text-align: right;"></span> \
 						</td> \
 						<td class="border center" style="border-right: none;" > \
-							<p >' + str(quantity) + '</p> \
+							<span>' + str(quantity) + '</span> \
 						</td> \
 						<td class="border center" style="border-right: none;" > \
-							<p>' + str(productName) + '</p> \
+							<span>' + str(productName) + '</span> \
 						</td> \
 						<td class="border center" style="border-right: none;" > \
-							<p >' + str(productId) + '</p> \
+							<span>' + str(productId) + '</span> \
 						</td> \
 						<td class="border"> \
-							<p style="text-align: right;" class="bold"> ' + str(utility.convertToPersian(k)) + ' </p> \
+							<span style="text-align: right;" class="bold"> ' + str(utility.convertToPersian(k)) + ' </span> \
 						</td> \
 					</tr>'
 			k += 1
 		for k in range(k, 7):
 			html +='<tr style="text-align:center; vertical-align: top;"> \
 						<td class="border center" style="border-right: none;" > \
-							<p></p> \
+							<span></span> \
 						</td> \
 						<td class="border center" style="border-right: none;" >\
-							<p></p> \
+							<span></span> \
 						</td> \
 						<td class="border center" style="border-right: none;" > \
-							<p></p> \
+							<span></span> \
 						</td> \
 						<td class="border center" style="border-right: none;" > \
-							<p></p> \
+							<span></span> \
 						</td> \
 						<td class="border center" style="border-right: none;" > \
-							<p></p> \
+							<span></span> \
 						</td> \
 						<td class="border center" style="border-right: none;" > \
-							<p></p> \
+							<span></span> \
 						</td> \
 						<td class="border center" style="border-right: none;" > \
-							<p style="text-align: right;"></p> \
+							<span style="text-align: right;"></span> \
 						</td> \
 						<td class="border center" style="border-right: none;" > \
-							<p ></p> \
+							<span></span> \
 						</td> \
 						<td class="border center" style="border-right: none;" > \
-							<p></p> \
+							<span></span> \
 						</td> \
 						<td class="border center" style="border-right: none;" > \
-							<p ></p> \
+							<span></span> \
 						</td> \
 						<td class="border"> \
-							<p style="text-align: right;" class="bold"> ' + str(utility.convertToPersian(k)) + ' </p> \
+							<span style="text-align: right;" class="bold"> ' + str(utility.convertToPersian(k)) + ' </span> \
 						</td> \
 					</tr>'
 			k += 1
 		html += '				<tr style="vertical-align: top;"> \
 	        						<td class="border center" style="border-right: none;" width="9%"> \
-	            						<p >' + str(sumTotalPrice) + '</p> \
+	            						<span>' + str(sumTotalPrice) + '</span> \
         							</td> \
 	        						<td class="border center" style="border-right: none;" width="15%"> \
-	            						<p align="right">' + str(sumTotalDiscount) + '</p> \
+	            						<span align="right">' + str(sumTotalDiscount) + '</span> \
 	        						</td> \
 	        						<td class="border center" style="border-right: none;" width="13%"> \
-	            						<p align="right">' + str(sumTotalAfterDiscount) + '</p> \
+	            						<span align="right">' + str(sumTotalAfterDiscount) + '</span> \
 	        						</td> \
 	        						<td class="border center" style="border-right: none;" width="7%"> \
-	            						<p align="right">' + str(sumTotalVat) + '</p> \
+	            						<span align="right">' + str(sumTotalVat) + '</span> \
 	        						</td> \
 	        						<td class="border center" style="border-right: none;" width="7%"> \
-	            						<p align="right">' + str(sumFinalPrice) + '</p> \
+	            						<span align="right">' + str(sumFinalPrice) + '</span> \
 	        						</td> \
 	        						<td colspan="6" class="border pink center" width="49%"> \
-	            						<p align="center">جمع کل (ریال): ' + str(sumTotalPrice) + '</p> \
+	            						<span align="center">جمع کل (ریال): ' + str(sumTotalPrice) + '</span> \
 	        						</td> \
 	    						</tr> \
 	    						<tr valign="top"> \
 	        						<td colspan="2" style="border: none; " width="24%"> \
-	            						<p align="right">مهر و امضاء خریدار</p> \
+	            						<span align="right">مهر و امضاء خریدار</span> \
 	        						</td> \
 	        						<td colspan="3" style="border: none; " width="32%"> \
-	            						<p align="right">مهر و امضای فروشنده</p> \
+	            						<span align="right">مهر و امضای فروشنده</span> \
 	        						</td> \
 	        						<td class="border" style="border-right: none;" width="9%"> \
-	            						<p align="right">غیر نقدی</p> \
+	            						<span align="right">غیر نقدی</span> \
 							            <input type="checkbox"/> \
 	        						</td> \
 	        						<td colspan="2" class="border" style="border-right: none;border-left:none;" width="17%"> \
-	            						<p align="right">نقدی</p> \
+	            						<span align="right">نقدی</span> \
 	            						<input type="checkbox" checked="checked"/> \
 	        						</td> \
 	        						<td colspan="3" class="border" width="18%" style="border-left:none;"> \
-	            						<p align="right">:شرایط و نحوه فروش</p> \
+	            						<span align="right">:شرایط و نحوه فروش</span> \
 	        						</td> \
 	    						</tr> \
 	    						<tr valign="top"> \
 	        						<td colspan="5" style="border: none; " width="56%"> \
-	            						<p align="right"><br></p> \
+	            						<span align="right"><br></span> \
 	        						</td> \
 	        						<td colspan="6" class="border" width="44%"> \
 	            						توضیحات \
