@@ -1319,29 +1319,29 @@ class Factor(Payments):
 		if self.sell:
 			factorSellerName = dbconf.get_value('co-name')
 			factorSellerAddress = dbconf.get_value('co-address')
-			factorSellerEconomicalCode = dbconf.get_value('co-economical-code')
+			factorSellerEconomicalCode = utility.convertToPersian(dbconf.get_value('co-economical-code'))
 			factorSellerPostalCode = dbconf.get_value('co-name')
-			factorSellerNationalCode = dbconf.get_value('co-national-code')
-			factorSellerPhoneNumber = dbconf.get_value('co-phone-number')
+			factorSellerNationalCode = utility.convertToPersian(dbconf.get_value('co-national-code'))
+			factorSellerPhoneNumber = utility.convertToPersian(dbconf.get_value('co-phone-number'))
 			factorBuyerName = self.customer.custName
 			factorBuyerAddress = self.customer.custAddress
-			factorBuyerEconomicalCode =self.customer.custEcnmcsCode
-			factorBuyerPostalCode = self.customer.custPostalCode
-			factorBuyerNationalNum = self.customer.custPersonalCode
-			factorBuyerPhoneNumber = self.customer.custPhone
+			factorBuyerEconomicalCode = utility.convertToPersian(self.customer.custEcnmcsCode)
+			factorBuyerPostalCode = utility.convertToPersian(self.customer.custPostalCode)
+			factorBuyerNationalNum = utility.convertToPersian(self.customer.custPersonalCode)
+			factorBuyerPhoneNumber = utility.convertToPersian(self.customer.custPhone)
 		else:
-			factorSellerName = self.customer.custName
-			factorSellerAddress = self.customer.custAddress
-			factorSellerEconomicalCode =self.customer.custEcnmcsCode
-			factorSellerPostalCode = self.customer.custPostalCode
-			factorSellerNationalCode = self.customer.custPersonalCode
-			factorSellerPhoneNumber = self.customer.custPhone
-			factorBuyerName = dbconf.get_value('co-name')
-			factorBuyerAddress = dbconf.get_value('co-address')
-			factorBuyerEconomicalCode = dbconf.get_value('co-economical-code')
-			factorBuyerPostalCode = dbconf.get_value('co-name')
-			factorBuyerNationalNum = dbconf.get_value('co-national')
-			factorBuyerPhoneNumber = dbconf.get_value('co-phone-number')
+			factorSellerName = utility.convertToPersian(self.customer.custName)
+			factorSellerAddress = utility.convertToPersian(self.customer.custAddress)
+			factorSellerEconomicalCode = utility.convertToPersian(self.customer.custEcnmcsCode)
+			factorSellerPostalCode = utility.convertToPersian(self.customer.custPostalCode)
+			factorSellerNationalCode = utility.convertToPersian(self.customer.custPersonalCode)
+			factorSellerPhoneNumber = utility.convertToPersian(self.customer.custPhone)
+			factorBuyerName = utility.convertToPersian(dbconf.get_value('co-name'))
+			factorBuyerAddress = utility.convertToPersian(dbconf.get_value('co-address'))
+			factorBuyerEconomicalCode = utility.convertToPersian(dbconf.get_value('co-economical-code'))
+			factorBuyerPostalCode = utility.convertToPersian(dbconf.get_value('co-name'))
+			factorBuyerNationalNum = utility.convertToPersian(dbconf.get_value('co-national'))
+			factorBuyerPhoneNumber = utility.convertToPersian(dbconf.get_value('co-phone-number'))
 		html = '<html> \
 					<head> \
 						<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> \
@@ -1450,7 +1450,7 @@ class Factor(Payments):
 									</td> \
 									<td class="border" width="1%"> \
 										<div style="position: relative"> \
-											<p class="vertical bold" style="position: absolute; right: 7mm; top: -3mm; rotate: -90;  width: 100mm;font-size:10px;">ردیف</p> \
+											<p style="text-align: center;" class="bold" style="width: 10px;">ردیف</p> \
 										</div> \
 									</td> \
 								</tr>'
@@ -1483,37 +1483,37 @@ class Factor(Payments):
 			sumFinalPrice += finalPrice
 			html +='<tr style="text-align:center; vertical-align: top;"> \
 						<td class="border center" style="border-right: none;" > \
-							<span>' + str(finalPrice) + '</span> \
+							<span>' + utility.convertToPersian(str(finalPrice)) + '</span> \
 						</td> \
 						<td class="border center" style="border-right: none;" >\
-							<span>' + str(totalVat) + '</span> \
+							<span>' + utility.convertToPersian(str(totalVat)) + '</span> \
 						</td> \
 						<td class="border center" style="border-right: none;" > \
-							<span>' + str(totalAfterDiscount) + '</span> \
+							<span>' + utility.convertToPersian(str(totalAfterDiscount)) + '</span> \
 						</td> \
 						<td class="border center" style="border-right: none;" > \
-							<span>' + str(totalDiscount) + '</span> \
+							<span>' + utility.convertToPersian(str(totalDiscount)) + '</span> \
 						</td> \
 						<td class="border center" style="border-right: none;" > \
-							<span>' + str(totalPrice) + '</span> \
+							<span>' + utility.convertToPersian(str(totalPrice)) + '</span> \
 						</td> \
 						<td class="border center" style="border-right: none;" > \
-							<span>' + str(unitPrice) + '</span> \
+							<span>' + utility.convertToPersian(str(unitPrice)) + '</span> \
 						</td> \
 						<td class="border center" style="border-right: none;" > \
 							<span style="text-align: right;"></span> \
 						</td> \
 						<td class="border center" style="border-right: none;" > \
-							<span>' + str(quantity) + '</span> \
+							<span>' + utility.convertToPersian(str(quantity)) + '</span> \
 						</td> \
 						<td class="border center" style="border-right: none;" > \
-							<span>' + str(productName) + '</span> \
+							<span>' + utility.convertToPersian(str(productName)) + '</span> \
 						</td> \
 						<td class="border center" style="border-right: none;" > \
-							<span>' + str(productId) + '</span> \
+							<span>' + utility.convertToPersian(str(productId)) + '</span> \
 						</td> \
 						<td class="border"> \
-							<span style="text-align: right;" class="bold"> ' + str(utility.convertToPersian(k)) + ' </span> \
+							<span style="text-align: right;" class="bold" style="width: 10px;"> ' + utility.convertToPersian(str(utility.convertToPersian(k))) + ' </span> \
 						</td> \
 					</tr>'
 			k += 1
@@ -1550,7 +1550,7 @@ class Factor(Payments):
 							<span></span> \
 						</td> \
 						<td class="border"> \
-							<span style="text-align: right;" class="bold"> ' + str(utility.convertToPersian(k)) + ' </span> \
+							<span style="text-align: right;" class="bold" style="width: 10px;"> ' + utility.convertToPersian(str(utility.convertToPersian(k))) + ' </span> \
 						</td> \
 					</tr>'
 			k += 1
@@ -1589,23 +1589,22 @@ class Factor(Payments):
 	            						<span align="right">نقدی</span> \
 	            						<input type="checkbox" checked="checked"/> \
 	        						</td> \
-	        						<td colspan="3" class="border" width="18%" style="border-left:none;"> \
-	            						<span align="right">:شرایط و نحوه فروش</span> \
+	        						<td colspan="3" class="border" width="18%" style="border-left:none;height: 25px;"> \
+	            						<span align="right" style="padding-right: 5px">شرایط و نحوه فروش:</span> \
 	        						</td> \
 	    						</tr> \
 	    						<tr valign="top"> \
 	        						<td colspan="5" style="border: none; " width="56%"> \
 	            						<span align="right"><br></span> \
 	        						</td> \
-	        						<td colspan="6" class="border" width="44%"> \
-	            						توضیحات \
+	        						<td colspan="6" class="border" width="44%" style="height: 25px;"> \
+	            						<span style="padding-right: 5px">توضیحات</span> \
 	        						</td> \
 	    						</tr> \
 							</tbody> \
 						</table> \
 					</body> \
 				</html>'
-		print html
 		return html
 	def printTransaction(self, sender):
 		self.reportObj = WeasyprintReport()
