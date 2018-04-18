@@ -98,7 +98,7 @@ def convertToPersian (input_string):
     """
     
     en_numbers = '0123456789.%'
-    fa_numbers = u'۰۱۲۳۴۵۶۷۸۹/٪'
+    fa_numbers = u'۰۱۲۳۴۵۶۷۸۹,٪'
     
     output_string = u''
     for c in unicode(input_string):

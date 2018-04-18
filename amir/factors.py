@@ -1342,10 +1342,16 @@ class Factor(Payments):
 			factorBuyerPostalCode = utility.convertToPersian(dbconf.get_value('co-name'))
 			factorBuyerNationalNum = utility.convertToPersian(dbconf.get_value('co-national'))
 			factorBuyerPhoneNumber = utility.convertToPersian(dbconf.get_value('co-phone-number'))
+		if self.editTransaction.Permanent:
+			title = 'صورتحساب فروش کالا و خدمات'
+			factorNumber = utility.LN(self.editTransaction.Code)
+		else:
+			title = 'پیش فاکتور'
+			factorNumber = ''
 		html = '<html> \
 					<head> \
 						<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> \
-						<style> .none{border:none;} .border{border:1px solid #000;} .right{text-align:right;direction:rtl;} .center{text-align:center !important;direction:rtl;} .pink{background-color:#ffe0eb;} body,table {font-family: Vazir;font-size:15px; height:100%;} .bold{font-weight:bold; font-size:12px;} .lheight{line-height:1.7em;text-align:right;} \
+						<style> .none{border:none;} .border{border:1px solid #000;} .right{text-align:right;direction:rtl;} .center{text-align:center !important;direction:rtl;} .pink{background-color:#ffe0eb;} body,table {font-family: Vazir;font-size:15px; height:100%;} .bold{font-weight:bold; font-size:11px;} .lheight{line-height:1.7em;text-align:right;} \
 							.date-number td{padding: 10px;} \
 							.date-number {border-collapse: separate;}\
 							@page {size: A4 landscape;margin: 3mm 3mm 3mm 3mm;} \
@@ -1355,10 +1361,10 @@ class Factor(Payments):
 						<table style="table-layout:fixed; width:100%; height: 1px" class="date-number"> \
 							<tbody> \
 								<tr> \
-									<td class="border right pink" style="width:19%;line-height: 0.9em;"><span style="color:#BB0000;">' + utility.LN(self.editTransaction.Code) +'</span>شماره: \
+									<td class="border right pink" style="width:19%;line-height: 0.9em;"><span style="color:#BB0000;">' + factorNumber +'</span>شماره: \
 									</td> \
 									<td rowspan="2" class="none" width="850" style="text-align:center"> \
-										<p style="font-weight:bold;font-size:20px;">صورتحساب فروش کالا و خدمات</p> \
+										<p style="font-weight:bold;font-size:16px;">' + title + '</p> \
 									</td> \
 								</tr> \
 								<tr> \
@@ -1406,49 +1412,49 @@ class Factor(Payments):
 								</tr> \
 							</tbody> \
 						</table> \
-						<table cellspacing="0" cellpadding="8" style="text-align:right;table-layout:fixed;margin-left:2px;width:100%"> \
+						<table cellspacing="0" cellpadding="8" style="text-align:right;width:100%;border-collapse: collapse;"> \
 							<tbody> \
 								<tr valign="top" style="height: 4px;"> \
-									<td class="border center" style="border-right: none;width="15%"> \
-										<p align="center" class="bold">جمع مبلغ کل</p> \
-										<p align="center" class="bold">بعلاوه جمع مالیات و عوارض (ریال)</p> \
+									<td class="border center" style="border-right: none;width:11%"> \
+										<p align="center" class="bold">جمع مبلغ کل<br> \
+										(ریال)</p> \
 									</td> \
-									<td class="border center" style="border-right: none;width="8%"> \
-										<p align="center" class="bold">جمع مالیات و عوارض</p> \
-										<p align="center" class="bold">(ریال)</p> \
+									<td class="border center" style="border-right: none;width:10%"> \
+										<p align="center" class="bold">جمع مالیات و عوارض<br> \
+										(ریال)</p> \
 									</td> \
-									<td class="border center" style="border-right: none;width="7%"> \
-										<p align="center" class="bold">مبلغ کل پس از تخفیف</p> \
-										<p align="center" class="bold">(ریال)</p> \
+									<td class="border center" style="border-right: none;width:9%"> \
+										<p align="center" class="bold">مبلغ کل پس از تخفیف<br> \
+										(ریال)</p> \
 									</td> \
-										<td class="border center" style="border-right: none;width="9%"> \
-										<p align="center" class="bold">مبلغ</p> \
-										<p align="center" class="bold">تخفیف</p> \
+										<td class="border center" style="border-right: none;width:9%"> \
+										<p align="center" class="bold">مبلغ<br> \
+										تخفیف</p> \
 									</td> \
-									<td class="border center" style="border-right: none;width="11%"> \
-										<p align="center" class="bold">مبلغ کل</p> \
-										<p align="center" class="bold">(ریال)</p> \
+									<td class="border center" style="border-right: none;width:11%"> \
+										<p align="center" class="bold">مبلغ کل<br> \
+										(ریال)</p> \
 									</td> \
-									<td class="border center" style="border-right: none;width="11%"> \
-										<p align="center" class="bold">مبلغ واحد</p> \
-										<p align="center" class="bold">(ریال)</p> \
+									<td class="border center" style="border-right: none;width:11%"> \
+										<p align="center" class="bold">مبلغ واحد<br> \
+										(ریال)</p> \
 									</td> \
-									<td class="border center" style="border-right: none;width="5%"> \
-										<p align="center" class="bold">واحد</p> \
-										<p align="center" class="bold">اندازه گیری</p> \
+									<td class="border center" style="border-right: none;width:5%"> \
+										<p align="center" class="bold">واحد<br> \
+										اندازه گیری</p> \
 									</td> \
-									<td class="border center" style="border-right: none;width="5%"> \
-										<p align="center" class="bold">تعداد</p> \
-										<p align="center" class="bold">مقدار</p> \
+									<td class="border center" style="border-right: none;width:5%"> \
+										<p align="center" class="bold">تعداد<br> \
+										مقدار</p> \
 									</td> \
-									<td class="border center" style="border-right: none;width="26%"> \
+									<td class="border center" style="border-right: none;width:26%"> \
 										<p align="center" class="bold">شرح کالا یا خدمات</p> \
 									</td> \
-									<td class="border" style="border-right: none;width="2%"> \
-										<p align="center" class="bold">کد</p> \
-										<p align="center" class="bold">کالا</p> \
+									<td class="border" style="border-right: none;width:2%"> \
+										<p align="center" class="bold">کد<br> \
+										کالا</p> \
 									</td> \
-									<td class="border" width="1%"> \
+									<td class="border"> \
 										<div style="position: relative"> \
 											<p style="text-align: center;" class="bold" style="width: 10px;">ردیف</p> \
 										</div> \
@@ -1556,22 +1562,22 @@ class Factor(Payments):
 			k += 1
 		html += '				<tr style="vertical-align: top;"> \
 	        						<td class="border center" style="border-right: none;" width="9%"> \
-	            						<span>' + str(sumTotalPrice) + '</span> \
+	            						<span>' + utility.convertToPersian(str(sumTotalPrice)) + '</span> \
         							</td> \
 	        						<td class="border center" style="border-right: none;" width="15%"> \
-	            						<span align="right">' + str(sumTotalDiscount) + '</span> \
+	            						<span align="right">' + utility.convertToPersian(str(sumTotalDiscount)) + '</span> \
 	        						</td> \
 	        						<td class="border center" style="border-right: none;" width="13%"> \
-	            						<span align="right">' + str(sumTotalAfterDiscount) + '</span> \
+	            						<span align="right">' + utility.convertToPersian(str(sumTotalAfterDiscount)) + '</span> \
 	        						</td> \
 	        						<td class="border center" style="border-right: none;" width="7%"> \
-	            						<span align="right">' + str(sumTotalVat) + '</span> \
+	            						<span align="right">' + utility.convertToPersian(str(sumTotalVat)) + '</span> \
 	        						</td> \
 	        						<td class="border center" style="border-right: none;" width="7%"> \
-	            						<span align="right">' + str(sumFinalPrice) + '</span> \
+	            						<span align="right">' + utility.convertToPersian(str(sumFinalPrice)) + '</span> \
 	        						</td> \
 	        						<td colspan="6" class="border pink center" width="49%"> \
-	            						<span align="center">جمع کل (ریال): ' + str(sumTotalPrice) + '</span> \
+	            						<span align="center">جمع کل (ریال): ' + utility.convertToPersian(str(sumTotalPrice)) + '</span> \
 	        						</td> \
 	    						</tr> \
 	    						<tr valign="top"> \
@@ -1582,12 +1588,8 @@ class Factor(Payments):
 	            						<span align="right">مهر و امضای فروشنده</span> \
 	        						</td> \
 	        						<td class="border" style="border-right: none;" width="9%"> \
-	            						<span align="right">غیر نقدی</span> \
-							            <input type="checkbox"/> \
 	        						</td> \
 	        						<td colspan="2" class="border" style="border-right: none;border-left:none;" width="17%"> \
-	            						<span align="right">نقدی</span> \
-	            						<input type="checkbox" checked="checked"/> \
 	        						</td> \
 	        						<td colspan="3" class="border" width="18%" style="border-left:none;height: 25px;"> \
 	            						<span align="right" style="padding-right: 5px">شرایط و نحوه فروش:</span> \
@@ -1605,6 +1607,7 @@ class Factor(Payments):
 						</table> \
 					</body> \
 				</html>'
+		print html;
 		return html
 	def printTransaction(self, sender):
 		self.reportObj = WeasyprintReport()
