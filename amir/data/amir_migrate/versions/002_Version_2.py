@@ -220,12 +220,9 @@ chequehistory = Table('ChequeHistory', meta,
 )
 user = Table('users', meta,
     Column('id',		Integer, primary_key=True),
-    Column('code',		String(20), unique=True),
-    Column('name',		Unicode(60), nullable=False),
-    Column('parent_id',		Integer, ColumnDefault(0), ForeignKey('users.id'), nullable=False),
-    Column('lft',		Integer, nullable=False),
-    Column('rgt',		Integer, nullable=False),
-    Column('type',		Integer),      # 0 for Debtor, 1 for Creditor, 2 for both
+    Column('name',		Unicode(60), nullable=True),
+    Column('username',      Unicode(60), nullable=False),
+    Column('password',      String(300), nullable=False),
 	mysql_charset='utf8'
 )
 

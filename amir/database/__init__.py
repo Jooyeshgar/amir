@@ -30,7 +30,7 @@ from ProductGroups import ProductGroups
 from Products import Products
 from Subject import Subject
 from Factors import Factors
-from User import User
+from User import Users
 import re
 
 class Database:
