@@ -52,6 +52,7 @@ from gi.repository import Gtk
 from gi.repository import GObject
 import gettext
 import locale
+from amir.database import *
 # import glib
 
 if sys.platform == 'win32':
@@ -143,9 +144,9 @@ class MainWindow(GObject.GObject):
         reportwin = cardexreport.CardexReport()
 
     def aboutAmir(self, sender):
-    	aboutwin = self.builder.get_object("aboutdialog")
-    	aboutwin.run()
-    	aboutwin.hide()
+        aboutwin = self.builder.get_object("aboutdialog")
+        aboutwin.run()
+        aboutwin.hide()
 
     def manageSubjects(self, sender):
         dialog = subjects.Subjects()
@@ -234,27 +235,7 @@ class MainWindow(GObject.GObject):
         config.updateConfigFile()
         Gtk.main_quit()
 
-    def __init__(self):
-        GObject.GObject.__init__(self)
-
-        if config.directionlist[config.localelist.index(config.locale)] == "rtl" :
-            Gtk.Widget.set_default_direction(Gtk.TextDirection.RTL)
-        else:
-            Gtk.Widget.set_default_direction(Gtk.TextDirection.LTR)
-
-        icondir = os.path.join(config.data_path, "media", "icon")
-
-        # try:
-        # 	icon16 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "16.png"))
-        # 	icon22 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "22.png"))
-        # 	icon32 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "32.png"))
-        # 	icon48 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "48.png"))
-        # 	icon64 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "64.png"))
-        # 	icon128 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "128.png"))
-        # 	Gtk.window_set_default_icon_list(icon16, icon22, icon32, icon48, icon64, icon128)
-        # except GObject.GError:
-        # 	pass
-
+    def loggedIn(self):
         self.builder = helpers.get_builder("mainwin")
         self.window = self.builder.get_object("window1")
         self.numentry = numberentry.NumberEntry()
@@ -284,23 +265,62 @@ class MainWindow(GObject.GObject):
         initial = self.builder.get_object("menubar2")
         initial.hide()
 
-        self.builder.connect_signals(self)
-
         self.window.connect("delete_event", self.delete_event)
         self.window.connect("destroy", self.destroy)
         #self.window.set_border_width(10)
+        self.builder.connect_signals(self)
         self.window.show()
 
+    def __init__(self):
+        GObject.GObject.__init__(self)
+
+        if config.directionlist[config.localelist.index(config.locale)] == "rtl" :
+            Gtk.Widget.set_default_direction(Gtk.TextDirection.RTL)
+        else:
+            Gtk.Widget.set_default_direction(Gtk.TextDirection.LTR)
+
+        icondir = os.path.join(config.data_path, "media", "icon")
+
+        # try:
+        #   icon16 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "16.png"))
+        #   icon22 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "22.png"))
+        #   icon32 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "32.png"))
+        #   icon48 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "48.png"))
+        #   icon64 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "64.png"))
+        #   icon128 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "128.png"))
+        #   Gtk.window_set_default_icon_list(icon16, icon22, icon32, icon48, icon64, icon128)
+        # except GObject.GError:
+        #   pass
+
+        self.builder = helpers.get_builder("mainwin")
+        # self.loggedIn()
+        self.window = self.builder.get_object("login")
+        self.window.show()
+        self.builder.connect_signals(self)
+
         if config.repair_atstart == True:
-        	msg = _("Repairing database, Please wait...")
-        	self.msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.INFO, Gtk.ButtonsType.NONE, msg)
-        	self.msgbox.set_title(_("Repairing database"))
-        	self.msgbox.show_all()
+            msg = _("Repairing database, Please wait...")
+            self.msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.INFO, Gtk.ButtonsType.NONE, msg)
+            self.msgbox.set_title(_("Repairing database"))
+            self.msgbox.show_all()
 
-        	while Gtk.events_pending():
-        		Gtk.main_iteration_do(False)
+            while Gtk.events_pending():
+                Gtk.main_iteration_do(False)
 
-       		GObject.timeout_add(1000, self.repairDbFunc)
+            GObject.timeout_add(1000, self.repairDbFunc)
+
+    def loginProcess(self,sender=0):
+        username = self.builder.get_object("username")
+        password = self.builder.get_object("password")
+        loginUser = config.db.session.query(Users).filter(Users.username == username.get_text()).first()
+
+        if loginUser and loginUser.validate_password(password.get_text()):
+            self.window.hide()
+            self.loggedIn()
+        else:
+            statusbar = self.builder.get_object('statusbar1')
+            context_id = statusbar.get_context_id('statusbar')
+            statusbar.push(context_id,_('Username or password is incorrect'))
 
     def repairDbFunc(self):
         config.db.rebuild_nested_set(0, 0)
