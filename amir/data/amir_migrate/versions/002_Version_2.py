@@ -226,6 +226,13 @@ user = Table('users', meta,
 	mysql_charset='utf8'
 )
 
+permission = Table('permissions', meta,
+    Column('id',        Integer, primary_key=True),
+    Column('name',      Unicode(60), nullable=True),
+    Column('value',      String(20), nullable=False),
+    mysql_charset='utf8'
+)
+
 def upgrade(migrate_engine):
     # Upgrade operations go here. Don't create your own engine; bind migrate_engine
     # to your metadata
@@ -245,6 +252,7 @@ def upgrade(migrate_engine):
     notebook.create(checkfirst=True)
     chequehistory.create(checkfirst=True)
     user.create(checkfirst=True)
+    permission.create(checkfirst=True)
     logging.debug("upgrade to 2")
 
     op = config.insert()

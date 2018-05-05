@@ -9,15 +9,14 @@ Base = get_declarative_base()
 ## \defgroup DataBase
 ## @{
 
-class Permission(Base):
+class Permissions(Base):
     __tablename__ = 'permissions'
     id = Column(Integer, primary_key=True)
     name = Column(Unicode(60), nullable=False)
-    permissions = Column(String(20), unique=True)
+    value = Column(String(20), nullable=False)
 
-    def __init__(self, code, name, permissions):
-        self.code = code
+    def __init__(self, name, value):
         self.name = name
-        self.permissions = permissions
+        self.value = value
 
 ## @}

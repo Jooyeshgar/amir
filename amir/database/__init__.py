@@ -31,6 +31,7 @@ from Products import Products
 from Subject import Subject
 from Factors import Factors
 from User import Users
+from Permission import Permissions
 import re
 
 class Database:
