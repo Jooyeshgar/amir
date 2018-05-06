@@ -312,15 +312,20 @@ class MainWindow(GObject.GObject):
     def loginProcess(self,sender=0):
         username = self.builder.get_object("username")
         password = self.builder.get_object("password")
+
+        if config.db.session.query(Users).count() == 0:
+            user = Users('root', 'root', '')
+            config.db.session.add(user)
+            config.db.session.commit()
         self.loginUser = config.db.session.query(Users).filter(Users.username == unicode(username.get_text())).first()
 
-        # if self.loginUser and self.loginUser.validate_password(password.get_text()):
-        self.window.hide()
-        self.loggedIn()
-        # else:
-        #     statusbar = self.builder.get_object('statusbar1')
-        #     context_id = statusbar.get_context_id('statusbar')
-        #     statusbar.push(context_id,_('Username or password is incorrect'))
+        if self.loginUser and self.loginUser.validate_password(password.get_text()):
+            self.window.hide()
+            self.loggedIn()
+        else:
+            statusbar = self.builder.get_object('statusbar1')
+            context_id = statusbar.get_context_id('statusbar')
+            statusbar.push(context_id,_('Username or password is incorrect'))
 
     def repairDbFunc(self):
         config.db.rebuild_nested_set(0, 0)
