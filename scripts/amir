@@ -314,7 +314,7 @@ class MainWindow(GObject.GObject):
         password = self.builder.get_object("password")
 
         if config.db.session.query(Users).count() == 0:
-            user = Users('root', 'root', '')
+            user = Users('root', 'root', '', 1)
             config.db.session.add(user)
             config.db.session.commit()
         self.loginUser = config.db.session.query(Users).filter(Users.username == unicode(username.get_text())).first()

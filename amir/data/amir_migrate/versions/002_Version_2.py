@@ -223,6 +223,7 @@ user = Table('users', meta,
     Column('name',		Unicode(60), nullable=True),
     Column('username',      Unicode(60), nullable=False),
     Column('password',      String(300), nullable=False),
+    Column('permission',      Integer, nullable=False),
 	mysql_charset='utf8'
 )
 

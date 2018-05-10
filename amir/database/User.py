@@ -16,11 +16,13 @@ class Users(Base):
     name = Column(Unicode(60), nullable=False)
     username = Column(Unicode(60), nullable=False)
     password = Column(String(300), nullable=False)
+    permission = Column(Integer, nullable=False)
 
-    def __init__(self, name, username, password):
+    def __init__(self, name, username, password, permission):
     	self.name = name
         self.username = username
         self.password = bcrypt.encrypt(password)
+        self.permission = permission
 
     def validate_password(self, password):
         return bcrypt.verify(password, self.password)

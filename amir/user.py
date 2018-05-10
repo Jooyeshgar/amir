@@ -28,11 +28,10 @@ class User(GObject.GObject):
         self.builder = get_builder("user")
         
         self.window = self.builder.get_object("viewUsers")
-        self.window.set_modal(True)
         
         self.userTreeview = self.builder.get_object("usersTreeview")
             
-        self.userTreestore = Gtk.TreeStore(int, str, str)
+        self.userTreestore = Gtk.TreeStore(int, str, str, str)
         column = Gtk.TreeViewColumn(_("ID"), Gtk.CellRendererText(), text=0)
 
         column.set_spacing(5)
@@ -48,12 +47,18 @@ class User(GObject.GObject):
         column.set_spacing(5)
         column.set_resizable(True)
         self.userTreeview.append_column(column)
+        column = Gtk.TreeViewColumn(_("Permission"), Gtk.CellRendererText(), text=3)
+
+        column.set_spacing(5)
+        column.set_resizable(True)
+        self.userTreeview.append_column(column)
         
         #Find top level ledgers (with parent_id equal to 0)
-        result = config.db.session.query(Users.id, Users.name, Users.username).all()
+        result = config.db.session.query(Users.id, Users.name, Users.username, Users.permission).all()
 
-        for a in result :            
-            iter = self.userTreestore.append(None, (a.id, a.name, a.username))
+        for a in result :   
+            permissionName = config.db.session.query(Permissions.name).filter(Permissions.id == a.permission).first()         
+            iter = self.userTreestore.append(None, (a.id, a.name, a.username, permissionName[0]))
         
         if ledgers_only == True:
             btn = self.builder.get_object("addsubtoolbutton")
@@ -72,25 +77,26 @@ class User(GObject.GObject):
         else:
             self.builder.get_object('hbox5').hide()
         self.numberOfCheckboxes = 8
+
+    def on_cancel_clicked(self, sender):
+        self.window.hide()
         
     def addUser(self, sender):
-        dialog = self.builder.get_object("dialog1")
-        dialog.set_title(_("Add User"))
-        hbox = self.builder.get_object("hbox3")
-        hbox.hide()
+        self.window = self.builder.get_object("newUserWindow")
+        self.builder.connect_signals(self)
+        self.window.show_all()
+        self.window.set_title(_("Add User"))
 
-        username = self.builder.get_object("username")
-        username.set_text("")
-        password = self.builder.get_object("password")
-        password.set_text("")
-        name = self.builder.get_object("name")
-        name.set_text("")
-        
-        result = dialog.run()
-        if result == 1 :             
-            self.saveNewUser(unicode(name.get_text()),unicode(username.get_text()), unicode(password.get_text()), type, None, dialog)
-        dialog.hide()
-        
+    def addUserSubmit(self, sender):
+        username = self.builder.get_object("username").get_text()
+        self.builder.get_object("username").set_text("")
+        password = self.builder.get_object("password").get_text()
+        self.builder.get_object("password").set_text("")
+        name = self.builder.get_object("name").get_text()
+        self.builder.get_object("name").set_text("")
+        self.window.hide()
+        self.saveNewUser(unicode(name),unicode(username), unicode(password), type, None)
+
     def selectGroup(self,sender=0,edit=None):
         self.session = config.db.session    
         # self.Document = class_document.Document()
@@ -235,35 +241,34 @@ class User(GObject.GObject):
         self.window.show_all()
 
     def addGroup(self, sender):
-        self.window = self.builder.get_object("permission")
+        self.window = self.builder.get_object("permissionWindow")
         self.builder.connect_signals(self)  
         self.window.show_all()
 
     def editUser(self, sender):
-        dialog = self.builder.get_object("dialog1")
-        dialog.set_title(_("Edit User"))
+        self.editUserFlag = True
+        self.window = self.builder.get_object("editUserWindow")
+        self.builder.connect_signals(self)
+        self.window.show_all()
+        self.window.set_title(_("Edit User"))
         selection = self.userTreeview.get_selection()
         iter = selection.get_selected()[1]
         id = convertToLatin(self.userTreestore.get(iter, 0)[0])
+        self.idEdit = id
         name = self.userTreestore.get(iter, 1)[0]
         username = self.userTreestore.get(iter, 2)[0]
-        
-        if iter != None :
-            entry = self.builder.get_object("name")
-            entry.set_text(name)
-            
-            entry = self.builder.get_object("username")
-            entry.set_text(username)
+        entry = self.builder.get_object("nameEdit")
+        entry.set_text(name)        
+        entry = self.builder.get_object("usernameEdit")
+        entry.set_text(username)
 
-            result = dialog.run()
-            
-            if result == 1:
-                userId = convertToLatin(self.userTreestore.get(iter, 0)[0])
-                username = self.builder.get_object("username")
-                password = self.builder.get_object("password")
-                name = self.builder.get_object("name")
-                self.saveEditUser(userId, unicode(name.get_text()),unicode(username.get_text()), unicode(password.get_text()), type, None, dialog)
-            dialog.hide()
+    def editUserSubmit(self, sender):
+        userId = self.idEdit
+        username = self.builder.get_object("usernameEdit")
+        password = self.builder.get_object("password")
+        name = self.builder.get_object("nameEdit")
+        self.saveEditUser(userId, unicode(name.get_text()),unicode(username.get_text()), unicode(password.get_text()), type, None)
+        self.window.hide()
     
     def deleteUser(self, sender):
         selection = self.userTreeview.get_selection()
@@ -288,25 +293,25 @@ class User(GObject.GObject):
             config.db.session.commit()
             self.groupTreestore.remove(iter)
     
-    def saveNewUser(self, name, username, password, type, iter, widget):
-        #Now create new subject:
-        user = Users(name, username, password)
+    def saveNewUser(self, name, username, password, type, iter):
+        user = Users(name, username, password, self.groupId)
         config.db.session.add(user)
         
         config.db.session.commit()
         
-        child = self.userTreestore.append(iter, (user.id, name, username))
+        child = self.userTreestore.append(iter, (user.id, name, username, self.groupName))
         
         self.temppath = self.userTreestore.get_path(child)
         self.userTreeview.scroll_to_cell(self.temppath, None, False, 0, 0)
         self.userTreeview.set_cursor(self.temppath, None, False)
 
-    def saveEditUser(self, userId, name, username, password, type, iter, widget):
+    def saveEditUser(self, userId, name, username, password, type, iter):
         result = config.db.session.query(Users)
         result = result.filter(Users.id == userId)
         result[0].name = name
         result[0].username = username
         result[0].password = password
+        result[0].permission =  self.groupId
         config.db.session.commit()
         
         # self.userTreestore.set( ('Name','Username'), (name, username))
@@ -338,14 +343,15 @@ class User(GObject.GObject):
         config.db.session.commit()
 
         child = self.groupTreestore.append(None, (int(permission.id), str(permission.name)))
+        self.window.hide()
         
         self.temppath = self.userTreestore.get_path(child)
-        self.builder.get_object("permission").hide()
+        self.window.hide()
         # self.groupTreeview.scroll_to_cell(self.temppath, None, False, 0, 0)
         # self.groupTreeview.set_cursor(self.temppath, None, False)
 
     def editGroup(self, sender):
-        dialog = self.builder.get_object("permission")
+        dialog = self.builder.get_object("permissionWindow")
         dialog.set_title(_("Edit Permission"))
         selection = self.groupTreeview.get_selection()
         iter = selection.get_selected()[1]
@@ -458,15 +464,12 @@ class User(GObject.GObject):
         if selection.get_mode() == Gtk.SelectionMode.MULTIPLE:
             return
 
-        iter = self.treestore.get_iter(path)
-        code = convertToLatin(self.treestore.get(iter, 0)[0])
-        name = self.treestore.get(iter, 1)[0]
-        
-        query = config.db.session.query(Subject).select_from(Subject)
-        query = query.filter(Subject.code == code)
-        sub_id = query.first().id
-        self.emit("subject-selected", sub_id, code, name)
-
+        iter = self.groupTreestore.get_iter(path)
+        self.groupId = convertToLatin(self.groupTreestore.get(iter, 0)[0])
+        self.groupName = self.groupTreestore.get(iter, 1)[0]
+        self.builder.get_object("permissionEdit").set_text(self.groupName)
+        self.builder.get_object("permissionNew").set_text(self.groupName)
+        self.window.hide()
     def dbChanged(self, sender, active_dbpath):
         self.window.destroy()
 
@@ -486,7 +489,7 @@ class User(GObject.GObject):
         self.emit("subject-multi-selected", items)
 
 GObject.type_register(User)
-GObject.signal_new("subject-selected", User, GObject.SignalFlags.RUN_LAST,
+GObject.signal_new("group-selected", User, GObject.SignalFlags.RUN_LAST,
                    None, (GObject.TYPE_INT, GObject.TYPE_STRING, GObject.TYPE_STRING))
 GObject.signal_new("subject-multi-selected", User, GObject.SignalFlags.RUN_LAST,
                    None, (GObject.TYPE_PYOBJECT,))
