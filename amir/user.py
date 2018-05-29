@@ -11,7 +11,7 @@ from    dateentry       import  *
 import  decimalentry
 
 import numberentry
-from utility import LN,convertToLatin
+from utility import LN,convertToLatin,checkPermission
 from database import *
 from share import share
 from helpers import get_builder
@@ -19,7 +19,7 @@ from amir.share import Share
 from passlib.hash import bcrypt
 
 config = share.config
-# Users:
+# Users and permissions:
 #       create: 2
 #       read:   4
 #       update: 8
@@ -107,6 +107,13 @@ class User(GObject.GObject):
         self.window.show_all()
         self.builder.connect_signals(self)
 
+        if checkPermission(2):
+            self.builder.get_object("addUserButton").hide()
+        if checkPermission(8):
+            self.builder.get_object("editUserButton").hide()
+        if checkPermission(16):
+            self.builder.get_object("deleteUserBtn").hide()
+
         if multiselect:
             self.userTreeview.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
             self.groupTreestore.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
@@ -167,6 +174,12 @@ class User(GObject.GObject):
         self.builder.connect_signals(self)
 
         self.window1.show_all()
+        if checkPermission(2):
+            self.builder.get_object("addPermissionButton").hide()
+        if checkPermission(8):
+            self.builder.get_object("editPermissionButton").hide()
+        if checkPermission(16):
+            self.builder.get_object("deletePermissionButton").hide()
 
     def addPermission(self, sender):
         self.window = self.builder.get_object("permissionWindow")

@@ -8,6 +8,7 @@
     <property name="margin_right">15</property>
     <property name="margin_top">10</property>
     <property name="margin_bottom">15</property>
+    <property name="destroy_with_parent">True</property>
     <child>
       <object class="GtkBox" id="dialog-vbox1">
         <property name="visible">True</property>
@@ -283,6 +284,7 @@
   </object>
   <object class="GtkWindow" id="newUserWindow">
     <property name="can_focus">False</property>
+    <property name="destroy_with_parent">True</property>
     <child>
       <object class="GtkBox" id="dialog-vbox2">
         <property name="visible">True</property>
@@ -568,6 +570,7 @@
   <object class="GtkWindow" id="permissionWindow">
     <property name="can_focus">False</property>
     <property name="window_position">center-always</property>
+    <property name="destroy_with_parent">True</property>
     <child>
       <object class="GtkFrame" id="frame1">
         <property name="visible">True</property>
@@ -1203,6 +1206,7 @@
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Groups</property>
     <property name="window_position">center-always</property>
+    <property name="destroy_with_parent">True</property>
     <child>
       <object class="GtkVBox" id="vbox4">
         <property name="visible">True</property>
@@ -1215,7 +1219,7 @@
             <property name="can_focus">False</property>
             <property name="toolbar_style">both</property>
             <child>
-              <object class="GtkToolButton" id="addPermission">
+              <object class="GtkToolButton" id="addPermissionButton">
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -1240,7 +1244,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="editGroupsBtn">
+              <object class="GtkToolButton" id="editPermissionButton">
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -1255,7 +1259,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="deleteGroupBtn">
+              <object class="GtkToolButton" id="deletePermissionButton">
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -1350,7 +1354,7 @@
             <property name="can_focus">False</property>
             <property name="toolbar_style">both</property>
             <child>
-              <object class="GtkToolButton" id="addtoolbutton">
+              <object class="GtkToolButton" id="addUserButton">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="has_tooltip">True</property>
@@ -1365,7 +1369,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="edittoolbutton">
+              <object class="GtkToolButton" id="editUserButton">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Edit</property>
@@ -1379,7 +1383,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="deletetoolbutton">
+              <object class="GtkToolButton" id="deleteUserBtn">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="has_tooltip">True</property>

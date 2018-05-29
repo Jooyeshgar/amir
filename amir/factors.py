@@ -176,7 +176,6 @@ class Factor(Payments):
 
 		self.redClr = Gdk.color_parse("#FFCCCC")
 		self.whiteClr = Gdk.color_parse("#FFFFFF")
-		
 	
 	def viewSells(self,sender=0):
 		query = config.db.session.query(Factors,Customers)
@@ -193,6 +192,21 @@ class Factor(Payments):
 			grouprow = self.treestore.append(None, (int(t.Id), t.Code, str(date), c.custName, str(t.PayableAmnt)))
 			
 		self.window.show_all()
+
+		if self.sell:
+			if utility.checkPermission(32):
+				self.builder.get_object("addSelltn").hide()
+			if utility.checkPermission(128):
+				self.builder.get_object("editGroupsBtn").hide()
+			if utility.checkPermission(256):
+				self.builder.get_object("deleteGroupBtn").hide()
+		else:
+			if utility.checkPermission(32):
+				self.builder.get_object("addBuyButton").hide()
+			if utility.checkPermission(128):
+				self.builder.get_object("editBuyButton").hide()
+			if utility.checkPermission(256):
+				self.builder.get_object("deleteBuyButton").hide()
 		
 	def on_add_clicked(self,sender):
 		self.addNew()

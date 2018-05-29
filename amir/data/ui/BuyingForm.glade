@@ -2193,7 +2193,6 @@
                       <object class="GtkComboBoxText" id="bank_names_combo">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="row_span_column">0</property>
                       </object>
                       <packing>
                         <property name="expand">True</property>
@@ -2743,7 +2742,7 @@
             <property name="can_focus">False</property>
             <property name="toolbar_style">both</property>
             <child>
-              <object class="GtkToolButton" id="addBuytn">
+              <object class="GtkToolButton" id="addBuyButton">
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -2768,7 +2767,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="editGroupsBtn">
+              <object class="GtkToolButton" id="editBuyButton">
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -2783,7 +2782,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="deleteGroupBtn">
+              <object class="GtkToolButton" id="deleteBuyButton">
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>

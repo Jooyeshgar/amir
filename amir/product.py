@@ -121,7 +121,14 @@ class Product(productgroup.ProductGroup):
 		# 		self.treestore.append(grouprow, (p.code, p.name, utility.LN(p.quantity), 
 		# 								utility.LN(p.purchacePrice), utility.LN(p.sellingPrice)))
 		
-		self.window.show_all()    
+		self.window.show_all()
+		if utility.checkPermission(32):
+			self.builder.get_object("addProductBtn").hide()
+			self.builder.get_object("addGroupBtn").hide()
+		if utility.checkPermission(128):
+			self.builder.get_object("editBtn").hide()
+		if utility.checkPermission(256):
+			self.builder.get_object("deleteBtn").hide()
 
 	##Fill groups treeview
 	def fillTreeview(self):

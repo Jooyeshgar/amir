@@ -112,7 +112,7 @@ gettext.textdomain('amir')
 gettext.install('amir', config.locale_path, unicode=1)
 
 from amir import subjects, addeditdoc, database, numberentry, notebookreport, docreport, tbalancereport, notebookutils, \
-setting, helpers, customers, customergroup, product, productgroup, factors, cardexreport, user
+setting, helpers, customers, customergroup, product, productgroup, factors, cardexreport, user, utility
 from amir import automaticaccounting
 from amir import bankaccountsui
 
@@ -218,7 +218,6 @@ class MainWindow(GObject.GObject):
 		obj = factors.Factor(False)
 		obj.viewSells()
 
-
 	def delete_event(self, widget, event, data=None):
 #         msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL, _("Are you sure to close the app?"))
 #         msgbox.set_title(_("Are you sure?"))
@@ -235,27 +234,25 @@ class MainWindow(GObject.GObject):
 		config.updateConfigFile()
 		Gtk.main_quit()
 
-	def checkPermission(self, value):
-		permissionValue = self.permissionValue
-		for x in range(24, 0, -1):
-			if  permissionValue >= 2**x:
-				if value == 2**x:
-					return False
-				permissionValue = permissionValue - 2**x
-		return True
-
 	def loggedIn(self):
 		self.builder = helpers.get_builder("mainwin")
 
 		# Hide inaccessible menues
-		if self.checkPermission(4):
+		if utility.checkPermission(4):
 			self.builder.get_object("usermenuitem").hide()
-		if self.checkPermission(64):
+		if utility.checkPermission(32):
+			self.builder.get_object("addProductMenuItem").hide()
+			self.builder.get_object("addAPurchaseMenuItem").hide()
+			self.builder.get_object("addABuyMenuItem").hide()
+		if utility.checkPermission(64):
 			self.builder.get_object("warehousingMenuItem").hide()
-		if self.checkPermission(16384):
+		if utility.checkPermission(16384):
 			self.builder.get_object("reportsMenuItem").hide()
-		if self.checkPermission(4194304):
+		if utility.checkPermission(4194304):
 			self.builder.get_object("settingmenuitem").hide()
+		if utility.checkPermission(1024):
+			self.builder.get_object("Automatic Accounting").hide()
+			self.builder.get_object("manualmenuitem").hide()
 
 
 		self.window = self.builder.get_object("window1")
@@ -338,9 +335,13 @@ class MainWindow(GObject.GObject):
 			user = Users('root', 'root', '', 1)
 			config.db.session.add(user)
 			config.db.session.commit()
+			user = Permissions('root', '33554430')
+			config.db.session.add(user)
+			config.db.session.commit()
 		self.loginUser = config.db.session.query(Users).filter(Users.username == unicode(username.get_text())).first()
 		permission = config.db.session.query(Permissions).filter(Permissions.id == self.loginUser.id).first()
-		self.permissionValue = long(permission.value)
+		# self.permissionValue = long(permission.value)
+		utility.setPermissionValue(long(permission.value))
 		if self.loginUser and self.loginUser.validate_password(password.get_text()):
 			self.window.hide()
 			self.loggedIn()
@@ -375,10 +376,6 @@ class MainWindow(GObject.GObject):
 				self.silent_daialog(_("Database changed successfully."))
 			else:
 				combo.set_active(config.currentdb - 1)
-
-#    def showNewDatabase(self, sender, active_dbpath):
-#        active_index = config.dblist.index(active_dbpath)
-#        self.dblist.set_active(active_index)
 
 	def reloadDatabases(self, sender, active_dbpath):
 		helpers.comboInsertItems(self.dblist, config.dbnames)

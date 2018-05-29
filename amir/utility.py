@@ -127,4 +127,17 @@ def is_numeric(var):
     except ValueError:
         return False
 
+def setPermissionValue(permissionValue):
+    global globalPrmissionValue
+    globalPrmissionValue = permissionValue
+
+def checkPermission(value):
+        permissionValueTemp = globalPrmissionValue
+        for x in range(24, 0, -1):
+            if  permissionValueTemp >= 2**x:
+                if value == 2**x:
+                    return False
+                permissionValueTemp = permissionValueTemp - 2**x
+        return True
+
 ## @}
