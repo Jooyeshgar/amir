@@ -16,8 +16,46 @@ from database import *
 from share import share
 from helpers import get_builder
 from amir.share import Share
+from passlib.hash import bcrypt
 
 config = share.config
+# Users:
+#       create: 2
+#       read:   4
+#       update: 8
+#       delete: 16
+#       
+# Warehouse:
+#       create: 32
+#       read:   64
+#       update: 128
+#       delete: 256
+#       
+# Accounting:
+#       create: 512
+#       read:   1024
+#       update: 2048
+#       delete: 4096
+#       
+# Reports:
+#       create: 8192
+#       read:   16384
+#       update: 32768
+#       delete: 65536
+#       
+# Checque:
+#       create: 131072
+#       read:   262144
+#       update: 524288
+#       delete: 1048576
+#       
+# Config:
+#       create: 2097152
+#       read:   4194304
+#       update: 8388608
+#       delete: 16777216
+
+
 
 class User(GObject.GObject):
     subjecttypes = ["Debtor", "Creditor", "Both"]
@@ -26,7 +64,6 @@ class User(GObject.GObject):
         GObject.GObject.__init__(self)
 
         self.builder = get_builder("user")
-        
         self.window = self.builder.get_object("viewUsers")
         
         self.userTreeview = self.builder.get_object("usersTreeview")
@@ -57,8 +94,9 @@ class User(GObject.GObject):
         result = config.db.session.query(Users.id, Users.name, Users.username, Users.permission).all()
 
         for a in result :   
-            permissionName = config.db.session.query(Permissions.name).filter(Permissions.id == a.permission).first()         
-            iter = self.userTreestore.append(None, (a.id, a.name, a.username, permissionName[0]))
+            permissionName = config.db.session.query(Permissions.name).filter(Permissions.id == a.permission).first()   
+            if permissionName:
+                iter = self.userTreestore.append(None, (a.id, a.name, a.username, permissionName[0]))
         
         if ledgers_only == True:
             btn = self.builder.get_object("addsubtoolbutton")
@@ -76,7 +114,7 @@ class User(GObject.GObject):
             self.builder.get_object('statusbar1').hide()
         else:
             self.builder.get_object('hbox5').hide()
-        self.numberOfCheckboxes = 8
+        self.numberOfCheckboxes = 24
 
     def on_cancel_clicked(self, sender):
         self.window.hide()
@@ -108,125 +146,15 @@ class User(GObject.GObject):
         else:
             lastId  = lastId.Id
         self.Id = lastId + 1
-                
-        self.window = self.builder.get_object("viewGroups")
-        
-        
-#         ###editing
-        
-#         self.factorDate = DateEntry()
-#         self.builder.get_object("datebox").add(self.factorDate)
-#         self.factorDate.show()
-        
-#         self.shippedDate = DateEntry()
-#         self.builder.get_object("shippedDateBox").add(self.shippedDate)
-#         self.shippedDate.show()
-        
-        
-#         #edit date
-#         self.editDate = DateEntry().getDateObject()
-        
-#         self.additionsEntry = decimalentry.DecimalEntry()
-#         self.builder.get_object("additionsbox").add(self.additionsEntry)
-#         self.additionsEntry.set_alignment(0.95)
-#         #self.additionsEntry.show()
-#         # self.additionsEntry.connect("changed", self.valsChanged)
-        
-#         self.subsEntry = decimalentry.DecimalEntry()
-#         self.builder.get_object("subsbox").add(self.subsEntry)
-#         self.subsEntry.set_alignment(0.95)
-#         #self.subsEntry.show()
-#         # self.subsEntry.set_sensitive(False)
-#         # self.subsEntry.connect("changed", self.valsChanged)
-        
-#         self.cashPymntsEntry = decimalentry.DecimalEntry()
-#         self.builder.get_object("cashbox").add(self.cashPymntsEntry)
-#         self.cashPymntsEntry.set_alignment(0.95)
-#         #self.cashPymntsEntry.show()
-#         self.cashPymntsEntry.set_text("0")
-#         self.cashPymntsEntry.connect("changed", self.paymentsChanged)
-        
-#         self.qntyEntry = decimalentry.DecimalEntry()
-#         self.builder.get_object("qntyBox").add(self.qntyEntry)
-#         #self.qntyEntry.show()
-#         self.qntyEntry.connect("focus-out-event", self.validateQnty)
-        
-#         self.unitPriceEntry = decimalentry.DecimalEntry()
-#         self.builder.get_object("unitPriceBox").add(self.unitPriceEntry)
-#         #self.unitPriceEntry.show()
-#         self.unitPriceEntry.connect("focus-out-event", self.validatePrice)
-        
-#         self.customerEntry      = self.builder.get_object("customerCodeEntry")
-#         self.totalEntry         = self.builder.get_object("subtotalEntry")
-#         self.totalDiscsEntry    = self.builder.get_object("totalDiscsEntry")
-#         self.payableAmntEntry   = self.builder.get_object("payableAmntEntry")
-#         self.totalPaymentsEntry = self.builder.get_object("totalPaymentsEntry")
-#         self.remainedAmountEntry= self.builder.get_object("remainedAmountEntry")
-#         self.nonCashPymntsEntry = self.builder.get_object("nonCashPymntsEntry")
-#         self.customerNameEntry  = self.builder.get_object("customerNameEntry")
-#         self.taxEntry           = self.builder.get_object("taxEntry")
-#         self.feeEntry           = self.builder.get_object("feeEntry")
-        
-#         self.treeview = self.builder.get_object("TreeView")
-#         self.treestore = Gtk.TreeStore(int, str, str, str, str)
-#         self.treestore.clear()
-#         self.treeview.set_model(self.treestore)
-        
-                    
-#         column = Gtk.TreeViewColumn(_("Id"), Gtk.CellRendererText(), text = 0)
-#         column.set_spacing(5)
-#         column.set_resizable(True)
-#         #column.set_sort_column_id(0)
-#         #column.set_sort_indicator(True)
-#         self.treeview.append_column(column)
-        
-        
-#         column = Gtk.TreeViewColumn(_("factor"), Gtk.CellRendererText(), text = 1)
-#         column.set_spacing(5)
-#         column.set_resizable(True)
-#         column.set_sort_column_id(0)
-#         column.set_sort_indicator(True)
-#         self.treeview.append_column(column)
-        
-#         column = Gtk.TreeViewColumn(_("Date"), Gtk.CellRendererText(), text = 2)
-#         column.set_spacing(5)
-#         column.set_resizable(True)
-# #       column.set_sort_column_id(1)
-# #       column.set_sort_indicator(True)
-#         self.treeview.append_column(column)     
-        
-#         column = Gtk.TreeViewColumn(_("Customer"), Gtk.CellRendererText(), text = 3)
-#         column.set_spacing(5)
-#         column.set_resizable(True)
-#         self.treeview.append_column(column) 
-        
-#         column = Gtk.TreeViewColumn(_("Total"), Gtk.CellRendererText(), text = 4)
-#         column.set_spacing(5)
-#         column.set_resizable(True)
-#         self.treeview.append_column(column)     
-
-#         column = Gtk.TreeViewColumn(_("Permanent"), Gtk.CellRendererText(), text = 5)
-#         column.set_spacing(5)
-#         column.set_resizable(True)
-#         self.treeview.append_column(column) 
-        
-#         self.treeview.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
-#         #self.treestore.set_sort_func(0, self.sortGroupIds)
-#         self.treestore.set_sort_column_id(1, Gtk.SortType.ASCENDING)
-        self.builder.connect_signals(self)  
-#         ###editing      
-        
-
+        self.window1 = self.builder.get_object("viewPermissions")
+        self.builder.connect_signals(self)
         self.groupTreeview = self.builder.get_object("groupsTreeView")
-            
         self.groupTreestore = Gtk.TreeStore(int, str)
         column = Gtk.TreeViewColumn(_("ID"), Gtk.CellRendererText(), text=0)
-
         column.set_spacing(5)
         column.set_resizable(True)
         self.groupTreeview.append_column(column)
         column = Gtk.TreeViewColumn(_("Name"), Gtk.CellRendererText(), text=1)
-
         column.set_spacing(5)
         column.set_resizable(True)
         self.groupTreeview.append_column(column)
@@ -238,11 +166,13 @@ class User(GObject.GObject):
         self.groupTreestore.set_sort_column_id(0, Gtk.SortType.ASCENDING)
         self.builder.connect_signals(self)
 
-        self.window.show_all()
+        self.window1.show_all()
 
-    def addGroup(self, sender):
+    def addPermission(self, sender):
         self.window = self.builder.get_object("permissionWindow")
-        self.builder.connect_signals(self)  
+        self.builder.connect_signals(self)
+        okButton = self.builder.get_object("okButton")
+        okButton.connect("clicked", self.saveNewPermission)
         self.window.show_all()
 
     def editUser(self, sender):
@@ -257,16 +187,23 @@ class User(GObject.GObject):
         self.idEdit = id
         name = self.userTreestore.get(iter, 1)[0]
         username = self.userTreestore.get(iter, 2)[0]
+        permission = self.userTreestore.get(iter, 3)[0]
+
         entry = self.builder.get_object("nameEdit")
         entry.set_text(name)        
         entry = self.builder.get_object("usernameEdit")
         entry.set_text(username)
+        entry = self.builder.get_object("permissionEdit")
+        entry.set_text(permission)
 
     def editUserSubmit(self, sender):
         userId = self.idEdit
         username = self.builder.get_object("usernameEdit")
-        password = self.builder.get_object("password")
+        password = self.builder.get_object("passwordEdit")
         name = self.builder.get_object("nameEdit")
+        permission = self.builder.get_object("permissionEdit").get_text()
+        permissionId = config.db.session.query(Permissions.id).filter(Permissions.name == permission).first()
+        self.groupId = permissionId[0]
         self.saveEditUser(userId, unicode(name.get_text()),unicode(username.get_text()), unicode(password.get_text()), type, None)
         self.window.hide()
     
@@ -310,15 +247,11 @@ class User(GObject.GObject):
         result = result.filter(Users.id == userId)
         result[0].name = name
         result[0].username = username
-        result[0].password = password
+        if password:
+            result[0].password = bcrypt.encrypt(password)
         result[0].permission =  self.groupId
         config.db.session.commit()
-        
-        # self.userTreestore.set( ('Name','Username'), (name, username))
-        
-        # self.temppath = self.userTreestore.get_path(child)
-        # self.treeview.scroll_to_cell(self.temppath, None, False, 0, 0)
-        # self.treeview.set_cursor(self.temppath, None, False)
+
     def getPermission(self):
         permissionResult = 0;
         for x in range(1, self.numberOfCheckboxes + 1):
@@ -334,7 +267,8 @@ class User(GObject.GObject):
             if  permissionResult >= 2**x:
                 self.builder.get_object("checkbutton" + str(x)).set_active(True)
                 permissionResult = permissionResult - 2**x
-    def submitNewPermission(self, sender):
+
+    def saveNewPermission(self, sender):
         permissionResult = self.getPermission();
         name = self.builder.get_object("nameEntry")
         permission = Permissions(unicode(name.get_text()), str(permissionResult))
@@ -347,32 +281,34 @@ class User(GObject.GObject):
         
         self.temppath = self.userTreestore.get_path(child)
         self.window.hide()
-        # self.groupTreeview.scroll_to_cell(self.temppath, None, False, 0, 0)
-        # self.groupTreeview.set_cursor(self.temppath, None, False)
 
-    def editGroup(self, sender):
+    def editPermission(self, sender):
         dialog = self.builder.get_object("permissionWindow")
         dialog.set_title(_("Edit Permission"))
         selection = self.groupTreeview.get_selection()
         iter = selection.get_selected()[1]
         id = convertToLatin(self.groupTreestore.get(iter, 0)[0])
-        name = self.groupTreestore.get(iter, 1)[0]
+        permissionName = self.groupTreestore.get(iter, 1)[0]
+        permissionId = config.db.session.query(Permissions.id).filter(Permissions.name == permissionName).first()
+        self.groupId = permissionId[0]
         self.setPermission(id)
-        self.window = self.builder.get_object("permission")
+        self.window = self.builder.get_object("permissionWindow")
         self.builder.connect_signals(self)  
         entry = self.builder.get_object("nameEntry")
-        entry.set_text(name)
+        entry.set_text(permissionName)
+        okButton = self.builder.get_object("okButton")
+        okButton.connect("clicked", self.saveEditPermission)
         self.window.show_all()
-        # if iter != None :
 
-        #     result = dialog.run()
-            
-        #     if result == 1:
-        #         groupId = convertToLatin(self.userTreestore.get(iter, 0)[0])
-        #         name = self.builder.get_object("nameEntry")
-        #         permission = self.getPermission()
-        #         #self.saveEditUser(userId, unicode(name.get_text()),unicode(username.get_text()), unicode(password.get_text()), type, None, dialog)
-        #     dialog.hide()
+    def saveEditPermission(self, sender):
+        permissionResult = self.getPermission();
+        name = self.builder.get_object("nameEntry").get_text()
+        result = config.db.session.query(Permissions).filter(Permissions.id == self.groupId)
+        result[0].name = name
+        result[0].value = permissionResult
+        config.db.session.commit()
+        child = self.groupTreestore.append(None, (int(result[0].id), str(name)))
+        self.window.hide()
 
     def match_func(self, iter, data):
         (column, key) = data   # data is a tuple containing column number, key
@@ -457,7 +393,6 @@ class User(GObject.GObject):
                         self.treeview.set_cursor(path, None, False)
                         self.treeview.grab_focus()
                 return
-#            if Gdk.keyval_name(event.keyval) == Ri:
             
     def selectGroupFromList(self, treeview, path, view_column):
         selection = self.groupTreeview.get_selection()
@@ -469,7 +404,8 @@ class User(GObject.GObject):
         self.groupName = self.groupTreestore.get(iter, 1)[0]
         self.builder.get_object("permissionEdit").set_text(self.groupName)
         self.builder.get_object("permissionNew").set_text(self.groupName)
-        self.window.hide()
+        self.window1.hide()
+
     def dbChanged(self, sender, active_dbpath):
         self.window.destroy()
 
@@ -487,6 +423,9 @@ class User(GObject.GObject):
             sub_id = query.first().id
             items.append((sub_id, code, name))
         self.emit("subject-multi-selected", items)
+    def window_close(self, *args):
+        self.window1.hide()
+        return True
 
 GObject.type_register(User)
 GObject.signal_new("group-selected", User, GObject.SignalFlags.RUN_LAST,
