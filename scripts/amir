@@ -162,6 +162,77 @@ class MainWindow(GObject.GObject):
 				dialog = addeditdoc.AddEditDoc(self.numentry.get_int())
 				self.connect("database-changed", dialog.dbChanged)
 
+	def backupRestore(self, sender):
+		self.dialog = self.builder.get_object("backupRestoreWindow")
+		self.numentry.set_activates_default(True)
+		self.builder.connect_signals(self)
+		res = self.dialog.run()
+		self.dialog.hide()
+		if res == Gtk.ResponseType.OK:
+			if self.numentry.get_text() != "":
+				self.dialog = addeditdoc.AddEditDoc(self.numentry.get_int())
+				self.connect("database-changed", self.dialog.dbChanged)
+
+	def backup(self, sender):
+		self.dialog.hide()
+		self.dialog = self.builder.get_object("backupWindow")
+		self.numentry.set_activates_default(True)
+		res = self.dialog.run()
+		self.dialog.hide()
+		if res == Gtk.ResponseType.OK:
+			if self.numentry.get_text() != "":
+				self.dialog = addeditdoc.AddEditDoc(self.numentry.get_int())
+				self.connect("database-changed", self.dialog.dbChanged)
+
+	def doBackup(self, sender):
+		self.dialog.hide()
+		location = self.builder.get_object("backupfilechooserbutton")
+		# from sqlalchemy.ext.serializer import loads, dumps
+		# q = config.db.session.query(BankNames)
+		# serialized_data = dumps(q.all())
+		# file = open(location.get_filename() + "/backup.amir","w")
+		# file.write(serialized_data)
+		# file.close()
+
+		dbFile = config.dbfile.split('///')
+		file = open(dbFile[1], "r") 
+		data = file.read()
+		file = open(location.get_filename() + "/backup.amir","w")
+		file.write(data)
+		file.close()
+
+	def restore(self, sender):
+		self.dialog.hide()
+		self.dialog = self.builder.get_object("restoreWindow")
+		self.numentry.set_activates_default(True)
+		res = self.dialog.run()
+		self.dialog.hide()
+		if res == Gtk.ResponseType.OK:
+			if self.numentry.get_text() != "":
+				self.dialog = addeditdoc.AddEditDoc(self.numentry.get_int())
+				self.connect("database-changed", self.dialog.dbChanged)
+
+	def doRestore(self, sernder):
+		self.dialog.hide()
+		location = self.builder.get_object("resotrefilechooserbutton")
+
+		# from sqlalchemy.ext.serializer import loads, dumps
+		# file = open(location.get_filename(), "r") 
+		# serialized_data = file.read()
+
+		# restore_q = loads(serialized_data, config.db, config.db.session)
+		# print restore_q
+		# for x in restore_q:
+		# 	config.db.session.merge(x)
+		# config.db.session.commit()
+
+		file = open(location.get_filename(), "r") 
+		data = file.read()
+		dbFile = config.dbfile.split('///')
+		file = open(dbFile[1],"w")
+		file.write(data)
+		file.close()
+
 	def arrangeDocments(self, sender):
 		notebookutils.arrangeDocuments(self.window)
 

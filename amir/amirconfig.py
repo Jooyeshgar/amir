@@ -167,6 +167,7 @@ class AmirConfig:
             self.dbnames = dbnames.split(',')
             self.currentdb = self.sconfig.getint('General', 'current_database')
             dbfile = self.dblist[self.currentdb - 1]
+            self.dbfile = dbfile
         except ConfigParser.NoOptionError:
             dbfile = ''
         if self.options.database != None:
