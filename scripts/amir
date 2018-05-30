@@ -200,6 +200,7 @@ class MainWindow(GObject.GObject):
 		file = open(location.get_filename() + "/backup.amir","w")
 		file.write(data)
 		file.close()
+		share.mainwin.silent_daialog(_("Backup saved successfully"))
 
 	def restore(self, sender):
 		self.dialog.hide()
@@ -232,6 +233,7 @@ class MainWindow(GObject.GObject):
 		file = open(dbFile[1],"w")
 		file.write(data)
 		file.close()
+		share.mainwin.silent_daialog(_("Backup restored successfully"))
 
 	def arrangeDocments(self, sender):
 		notebookutils.arrangeDocuments(self.window)
@@ -317,14 +319,15 @@ class MainWindow(GObject.GObject):
 			self.builder.get_object("addABuyMenuItem").hide()
 		if utility.checkPermission(64):
 			self.builder.get_object("warehousingMenuItem").hide()
+		if utility.checkPermission(1024):
+			self.builder.get_object("Automatic Accounting").hide()
+			self.builder.get_object("manualmenuitem").hide()
 		if utility.checkPermission(16384):
 			self.builder.get_object("reportsMenuItem").hide()
 		if utility.checkPermission(4194304):
 			self.builder.get_object("settingmenuitem").hide()
-		if utility.checkPermission(1024):
-			self.builder.get_object("Automatic Accounting").hide()
-			self.builder.get_object("manualmenuitem").hide()
-
+		if utility.checkPermission(4194304):
+			self.builder.get_object("backupRestore").hide()
 
 		self.window = self.builder.get_object("window1")
 		self.numentry = numberentry.NumberEntry()

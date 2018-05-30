@@ -50,7 +50,7 @@ class Subjects():
             if code == None :
                 code = "01"
             else :
-                code = "%02d" % (int(code[0][-2:]) + 1)
+                code = "%03d" % (int(code[0][-3:]) + 1)
 
         code = parent[0] + code
 
@@ -95,7 +95,7 @@ class Subjects():
     ## chek customer code is valid and exist.
     # @return: -1 for invalid, 1 for valid, 2 for exist
     def chek_code(self, code):
-        if len(code)%2 == 1:
+        if len(code)%3 == 1:
             return -1
         query = config.db.session.query(Subject.id).select_from(Subject).filter(Subject.code == code).all()
         if len(query)==0:

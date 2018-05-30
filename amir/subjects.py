@@ -125,9 +125,9 @@ class Subjects(GObject.GObject):
         query = config.db.session.query(Subject.code).select_from(Subject).order_by(Subject.id.desc())
         code = query.filter(Subject.parent_id == 0).first()
         if code == None :
-            lastcode = "01"
+            lastcode = "001"
         else:
-            lastcode = "%02d" % (int(code[0][-2:]) + 1)
+            lastcode = "%03d" % (int(code[0][-3:]) + 1)
             
         lastcode = LN(lastcode, False)
         self.code.set_text(lastcode)
@@ -173,9 +173,9 @@ class Subjects(GObject.GObject):
             query = config.db.session.query(Subject.code).select_from(Subject).order_by(Subject.id.desc())
             code = query.filter(Subject.parent_id == psub.id).first()
             if code == None :
-                lastcode = "01"
+                lastcode = "001"
             else :
-                lastcode = "%02d" % (int(code[0][-2:]) + 1)
+                lastcode = "%03d" % (int(code[0][-3:]) + 1)
                 
             lastcode = LN(lastcode, False) 
             self.code.set_text(lastcode)
@@ -208,8 +208,8 @@ class Subjects(GObject.GObject):
         if iter != None :
 
             code = convertToLatin(self.treestore.get(iter, 0)[0])
-            pcode = LN(code[0:-2], False)
-            ccode = LN(code[-2:], False)
+            pcode = LN(code[0:-3], False)
+            ccode = LN(code[-3:], False)
 
             self.builder.get_object("parentcode").set_text(pcode)
             self.code.set_text(ccode)
@@ -320,7 +320,7 @@ class Subjects(GObject.GObject):
                     iter_id = sub.id
                     parent_id = sub.parent_id
                     temp_code = iter_code
-                    iter_code = iter_code[0:-2]
+                    iter_code = iter_code[0:-3]
                     parent_right = sub.rgt
                     parent_left = sub.lft
                 else : 
@@ -343,7 +343,7 @@ class Subjects(GObject.GObject):
                 return
             
             #TODO pass code through function parameters
-            lastcode = convertToLatin(self.code.get_text())[0:2]
+            lastcode = convertToLatin(self.code.get_text())[0:3]
             if lastcode == '':
                 msgbox = Gtk.MessageDialog(widget, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.CLOSE,
                                         _("Ledger Code field is empty"))
@@ -352,7 +352,7 @@ class Subjects(GObject.GObject):
                 msgbox.destroy()
                 return
             
-            lastcode = iter_code + lastcode[0:2]
+            lastcode = iter_code + lastcode[0:3]
             query = config.db.session.query(count(Subject.id)).select_from(Subject)
             query = query.filter(and_(Subject.parent_id == parent_id, Subject.code == lastcode))
             if edit== True:
@@ -534,7 +534,7 @@ class Subjects(GObject.GObject):
             return 1
 
     def highlightSubject(self, code):
-        i = 2
+        i = 3
         code = code.decode('utf-8')
         part = code[0:i]
         iter = self.treestore.get_iter_first()
