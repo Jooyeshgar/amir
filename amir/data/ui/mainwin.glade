@@ -338,6 +338,15 @@
                         <signal name="activate" handler="cardexReport" swapped="no"/>
                       </object>
                     </child>
+                    <child>
+                      <object class="GtkMenuItem" id="menuitem13">
+                        <property name="use_action_appearance">False</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Cheques</property>
+                        <signal name="activate" handler="chequeReport" swapped="no"/>
+                      </object>
+                    </child>
                   </object>
                 </child>
               </object>

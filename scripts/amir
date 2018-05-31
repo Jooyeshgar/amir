@@ -112,7 +112,7 @@ gettext.textdomain('amir')
 gettext.install('amir', config.locale_path, unicode=1)
 
 from amir import subjects, addeditdoc, database, numberentry, notebookreport, docreport, tbalancereport, notebookutils, \
-setting, helpers, customers, customergroup, product, productgroup, factors, cardexreport, user, utility
+setting, helpers, customers, customergroup, product, productgroup, factors, cardexreport, user, utility, chequereport
 from amir import automaticaccounting
 from amir import bankaccountsui
 
@@ -142,6 +142,9 @@ class MainWindow(GObject.GObject):
 
 	def cardexReport(self, sender):
 		reportwin = cardexreport.CardexReport()
+
+	def chequeReport(self, sender):
+		reportwin = chequereport.ChequeReport()
 
 	def aboutAmir(self, sender):
 		aboutwin = self.builder.get_object("aboutdialog")

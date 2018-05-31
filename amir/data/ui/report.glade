@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.18.3 -->
 <interface>
-  <requires lib="gtk+" version="2.16"/>
-  <!-- interface-naming-policy project-wide -->
+  <requires lib="gtk+" version="3.0"/>
   <object class="GtkAdjustment" id="adjustment1">
     <property name="lower">1</property>
     <property name="upper">100</property>
@@ -37,10 +37,10 @@
             <child>
               <object class="GtkButton" id="button8">
                 <property name="label" translatable="yes">Previous</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <property name="image">image4</property>
                 <property name="image_position">top</property>
                 <signal name="clicked" handler="showPreviousPage" swapped="no"/>
@@ -55,11 +55,11 @@
             <child>
               <object class="GtkButton" id="button12">
                 <property name="label" translatable="yes">Next</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="has_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <property name="image">image5</property>
                 <property name="image_position">top</property>
                 <signal name="clicked" handler="showNextPage" swapped="no"/>
@@ -90,8 +90,6 @@
                 <property name="invisible_char">●</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">False</property>
-                <property name="primary_icon_sensitive">True</property>
-                <property name="secondary_icon_sensitive">True</property>
                 <property name="adjustment">adjustment1</property>
                 <property name="snap_to_ticks">True</property>
                 <property name="numeric">True</property>
@@ -150,8 +148,6 @@
           <object class="GtkScrolledWindow" id="previewscroll">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="hscrollbar_policy">automatic</property>
-            <property name="vscrollbar_policy">automatic</property>
             <property name="shadow_type">in</property>
             <child>
               <object class="GtkTreeView" id="previewBox">
@@ -160,6 +156,9 @@
                 <property name="rules_hint">True</property>
                 <property name="show_expanders">False</property>
                 <property name="enable_grid_lines">vertical</property>
+                <child internal-child="selection">
+                  <object class="GtkTreeSelection" id="treeview-selection1"/>
+                </child>
               </object>
             </child>
           </object>
@@ -234,10 +233,10 @@
                     <child>
                       <object class="GtkButton" id="button3">
                         <property name="label" translatable="yes">Select</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="use_action_appearance">False</property>
                         <signal name="clicked" handler="selectSubject" swapped="no"/>
                       </object>
                       <packing>
@@ -293,10 +292,11 @@
                         <child>
                           <object class="GtkRadioButton" id="allcontent">
                             <property name="label" translatable="yes">Show the whole content</property>
+                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="use_action_appearance">False</property>
+                            <property name="xalign">0.5</property>
                             <property name="active">True</property>
                             <property name="draw_indicator">True</property>
                           </object>
@@ -314,10 +314,11 @@
                             <child>
                               <object class="GtkRadioButton" id="atdate">
                                 <property name="label" translatable="yes">Show content at date: </property>
+                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="use_action_appearance">False</property>
+                                <property name="xalign">0.5</property>
                                 <property name="draw_indicator">True</property>
                                 <property name="group">allcontent</property>
                                 <signal name="toggled" handler="atdate_toggled" swapped="no"/>
@@ -380,11 +381,12 @@
                         <child>
                           <object class="GtkRadioButton" id="betweendates">
                             <property name="label" translatable="yes">Show content between dates: </property>
+                            <property name="use_action_appearance">False</property>
                             <property name="width_request">250</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="use_action_appearance">False</property>
+                            <property name="xalign">0.5</property>
                             <property name="draw_indicator">True</property>
                             <property name="group">allcontent</property>
                             <signal name="toggled" handler="betweendates_toggled" swapped="no"/>
@@ -479,10 +481,11 @@
                         <child>
                           <object class="GtkRadioButton" id="betweendocs">
                             <property name="label" translatable="yes">Show content between document numbers</property>
+                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="use_action_appearance">False</property>
+                            <property name="xalign">0.5</property>
                             <property name="draw_indicator">True</property>
                             <property name="group">allcontent</property>
                             <signal name="toggled" handler="betweendocs_toggled" swapped="no"/>
@@ -614,8 +617,6 @@
                         <property name="invisible_char">●</property>
                         <property name="primary_icon_activatable">False</property>
                         <property name="secondary_icon_activatable">False</property>
-                        <property name="primary_icon_sensitive">True</property>
-                        <property name="secondary_icon_sensitive">True</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -651,12 +652,12 @@
             <child>
               <object class="GtkButton" id="button4">
                 <property name="label" translatable="yes">Export to CSV format</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
-                <accelerator key="f" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
                 <signal name="clicked" handler="exportToCSV" swapped="no"/>
+                <accelerator key="f" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -668,11 +669,10 @@
             </child>
             <child>
               <object class="GtkButton" id="button1">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
-                <accelerator key="p" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
                 <signal name="clicked" handler="printReport" swapped="no"/>
                 <child>
                   <object class="GtkHBox" id="hbox7">
@@ -705,6 +705,7 @@
                     </child>
                   </object>
                 </child>
+                <accelerator key="p" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -717,12 +718,12 @@
             <child>
               <object class="GtkButton" id="button2">
                 <property name="label" translatable="yes">Preview</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
                 <property name="has_default">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <signal name="clicked" handler="previewReport" swapped="no"/>
               </object>
               <packing>
@@ -752,9 +753,9 @@
               <object class="GtkLabel" id="label13">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="xalign">0</property>
                 <property name="xpad">5</property>
                 <property name="label" translatable="yes">Ctrl+P: Print    Enter: Preview    Ctrl+F: Export to CSV</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -863,12 +864,12 @@
             <child>
               <object class="GtkButton" id="button7">
                 <property name="label" translatable="yes">Export to CSV format</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
-                <accelerator key="f" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
                 <signal name="clicked" handler="exportToCSV" swapped="no"/>
+                <accelerator key="f" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -880,11 +881,10 @@
             </child>
             <child>
               <object class="GtkButton" id="button6">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
-                <accelerator key="p" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
                 <signal name="clicked" handler="printReport" swapped="no"/>
                 <child>
                   <object class="GtkHBox" id="hbox11">
@@ -917,6 +917,7 @@
                     </child>
                   </object>
                 </child>
+                <accelerator key="p" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -929,12 +930,12 @@
             <child>
               <object class="GtkButton" id="button5">
                 <property name="label" translatable="yes">Preview</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
                 <property name="has_default">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <signal name="clicked" handler="previewReport" swapped="no"/>
               </object>
               <packing>
@@ -965,9 +966,9 @@
               <object class="GtkLabel" id="label12">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="xalign">0</property>
                 <property name="xpad">5</property>
                 <property name="label" translatable="yes">Ctrl+P: Print    Enter: Preview    Ctrl+F: Export to CSV</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -1022,10 +1023,11 @@
                         <child>
                           <object class="GtkRadioButton" id="allcontent1">
                             <property name="label" translatable="yes">Show the whole content</property>
+                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="use_action_appearance">False</property>
+                            <property name="xalign">0.5</property>
                             <property name="active">True</property>
                             <property name="draw_indicator">True</property>
                           </object>
@@ -1043,10 +1045,11 @@
                             <child>
                               <object class="GtkRadioButton" id="atdate1">
                                 <property name="label" translatable="yes">Show content at date: </property>
+                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="use_action_appearance">False</property>
+                                <property name="xalign">0.5</property>
                                 <property name="draw_indicator">True</property>
                                 <property name="group">allcontent1</property>
                                 <signal name="toggled" handler="atdate_toggled" swapped="no"/>
@@ -1109,11 +1112,12 @@
                         <child>
                           <object class="GtkRadioButton" id="betweendates1">
                             <property name="label" translatable="yes">Show content between dates: </property>
+                            <property name="use_action_appearance">False</property>
                             <property name="width_request">250</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="use_action_appearance">False</property>
+                            <property name="xalign">0.5</property>
                             <property name="draw_indicator">True</property>
                             <property name="group">allcontent1</property>
                             <signal name="toggled" handler="betweendates_toggled" swapped="no"/>
@@ -1214,12 +1218,12 @@
             <child>
               <object class="GtkButton" id="button11">
                 <property name="label" translatable="yes">Export to CSV format</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
-                <accelerator key="f" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
                 <signal name="clicked" handler="exportToCSV" swapped="no"/>
+                <accelerator key="f" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1231,11 +1235,10 @@
             </child>
             <child>
               <object class="GtkButton" id="button10">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
-                <accelerator key="p" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
                 <signal name="clicked" handler="printReport" swapped="no"/>
                 <child>
                   <object class="GtkHBox" id="hbox23">
@@ -1268,6 +1271,7 @@
                     </child>
                   </object>
                 </child>
+                <accelerator key="p" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1280,12 +1284,12 @@
             <child>
               <object class="GtkButton" id="button9">
                 <property name="label" translatable="yes">Preview</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
                 <property name="has_default">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <signal name="clicked" handler="previewReport" swapped="no"/>
               </object>
               <packing>
@@ -1315,9 +1319,9 @@
               <object class="GtkLabel" id="label22">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="xalign">0</property>
                 <property name="xpad">5</property>
                 <property name="label" translatable="yes">Ctrl+P: Print    Enter: Preview    Ctrl+F: Export to CSV</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="expand">True</property>
