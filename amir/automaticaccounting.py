@@ -292,7 +292,6 @@ class AutomaticAccounting:
         mod = self.builder.get_object('mod')
         if float(mod.get_text()) != 0:
             return
-
         save_button.set_sensitive(True)
 
     def on_non_cash_payment_button_clicked(self, button):
@@ -362,7 +361,7 @@ class AutomaticAccounting:
                 cl_cheque.add_cheque(cheque['amount'], cheque['write_date'], cheque['due_date'],
                                      cheque['serial'], cheque['status'],
                                      customer_id, cheque['bank_account_id'],
-                                     result, notebook_id, cheque['desc'])
+                                     0, notebook_id, cheque['desc'], result, 0)
             cl_cheque.save()
             cl_cheque.save_cheque_history(self.current_time)
             self.on_destroy(self.builder.get_object('general'))

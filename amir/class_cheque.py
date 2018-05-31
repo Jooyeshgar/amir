@@ -64,9 +64,9 @@ class ClassCheque:
     # @return cheque id
 
     ## Add Cheque to db
-    def add_cheque(self, amount, write_date, due_date, serial, status, customer_id, account_id, trans_id, notebook_id, desc):
+    def add_cheque(self, amount, write_date, due_date, serial, status, customer_id, account_id, trans_id, notebook_id, desc, bill_id, cheque_order):
         serial = unicode(serial) 
-        ch = Cheque(amount, write_date, due_date, serial, status, customer_id, account_id, trans_id, notebook_id, desc, None)
+        ch = Cheque(amount, write_date, due_date, serial, status, customer_id, account_id, trans_id, notebook_id, desc, None, bill_id, cheque_order)
         self.new_cheques.append(ch)
     
     ## update cheque status
