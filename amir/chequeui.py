@@ -127,7 +127,7 @@ class ChequeUI:
                 iter = model.append()
                 model.set(iter, 0, 'Customer Name', 1, info['bank_account_name'],
                                 2, '%s/%s' % (info['bank_name'], info['branch_name']) ,
-                                3, info['serial'], 4, info['amount'], 5, info['due_date'])
+                                3, info['serial'], 4, str(info['amount']), 5, str(info['due_date']))
 
         w = self.builder.get_object('list_cheque_window')
         w.set_position(Gtk.WindowPosition.CENTER)
@@ -305,7 +305,7 @@ class ChequeUI:
         info['status'] = 1 if self.mode == 'our' else 4
 
         buf = self.builder.get_object('desc').get_buffer()
-        info['desc'] = buf.get_text(buf.get_start_iter(), buf.get_end_iter())
+        info['desc'] = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
         combo = self.builder.get_object('bank_accounts')
         if self.mode == 'our' and combo.get_active() != -1:
             model = combo.get_model()
@@ -343,11 +343,10 @@ class ChequeUI:
         self.new_cheques.append(info)
 
         model = self.builder.get_object('list_cheque_treeview').get_model()
-
         iter = model.append()
         model.set(iter, 0, 'customer_name', 1, info['bank_account_name'],
                         2, '%s/%s' % (info['bank_name'], info['branch_name']) ,
-                        3, info['serial'], 4, info['amount'], 5, info['due_date'])
+                        3, info['serial'], 4, str(info['amount']), 5, str(info['due_date']))
         self.update_non_cash_payment_label()
         self.builder.get_object('add_cheque_window').emit('delete_event', None)
         print self.new_cheques

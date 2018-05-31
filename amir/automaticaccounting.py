@@ -289,7 +289,6 @@ class AutomaticAccounting:
 
         if self.total_credit_entry.get_float() == 0:
             return
-
         mod = self.builder.get_object('mod')
         if float(mod.get_text()) != 0:
             return
