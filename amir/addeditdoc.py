@@ -170,6 +170,11 @@ class AddEditDoc:
     
     ##Show add_row dialog and call saveRow() to save row to list store'   
     def addRow(self, sender):
+        selection = self.treeview.get_selection()
+        iter = selection.get_selected()[1]
+        if iter != None :
+            code    = self.liststore.get(iter, 1)[0]
+            print code
         dialog = self.builder.get_object("dialog1")
         dialog.set_title(_("Add new row"))
         self.code.set_text("")
@@ -183,6 +188,8 @@ class AddEditDoc:
             code = self.code.get_text()
             amount = self.amount.get_text()
             if code != '' and amount != '':
+
+
                 self.saveRow(utility.convertToLatin(code), int(unicode(amount)), type, desc.get_text())
         dialog.hide()
     
@@ -291,7 +298,7 @@ class AddEditDoc:
             msgbox.set_title(_("Are you sure?"))
             result = msgbox.run();
             if result == Gtk.ResponseType.OK :
-                id     = int(unicode(self.liststore.get(iter, 6)[0]))
+                id     = int(unicode(self.liststore.get(iter, 0)[0]))
                 code   = int(unicode(self.liststore.get(iter, 1)[0]))
                 debt   = int(unicode(self.liststore.get(iter, 3)[0].replace(",", "")))
                 credit = int(unicode(self.liststore.get(iter, 4)[0].replace(",", "")))
