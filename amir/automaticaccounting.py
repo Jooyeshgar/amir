@@ -156,6 +156,13 @@ class AutomaticAccounting:
             query = query.first()
             self.to_id =  query.id
             self.to_entry.set_text(query.name)
+        elif self.type_index == 0:
+            self.builder.get_object('to-button').set_sensitive(False)
+            query = share.config.db.session.query(Subject).select_from(Subject)
+            query = query.filter(Subject.id == dbconf.get_int('cash'))
+            query = query.first()
+            self.to_id =  query.id
+            self.to_entry.set_text(query.name)
         else:
             self.builder.get_object('to-button').set_sensitive(True)
 
