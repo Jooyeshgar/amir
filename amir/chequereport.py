@@ -12,6 +12,7 @@ from share import share
 from helpers import get_builder
 from gi.repository import Gdk
 from converter import *
+from datetime import datetime, timedelta
 
 config = share.config
 
@@ -215,38 +216,109 @@ class ChequeReport:
         # self.treestore.set_sort_column_id(0, Gtk.SortType.ASCENDING)
         self.window.show_all()
         self.builder.connect_signals(self)
-        self.session = config.db.session  
+        self.session = config.db.session
+
+        self.dateFromEntry = self.builder.get_object("incomingDateFromSearchentry")
+        self.dateToEntry = self.builder.get_object("incomingDateToSearchentry")
+        if share.config.datetypes[share.config.datetype] == "jalali":
+            self.dateToEntry.set_placeholder_text("1396:1:1")
+            self.dateFromEntry.set_placeholder_text("1396:1:1")
+        else:
+            self.dateToEntry.set_placeholder_text("1:1:2018")
+            self.dateFromEntry.set_placeholder_text("1:1:2018")
+
+        self.dateFromEntry = self.builder.get_object("outgoingDateFromSearchentry")
+        self.dateToEntry = self.builder.get_object("outgoingDateToSearchentry")
+        if share.config.datetypes[share.config.datetype] == "jalali":
+            self.dateToEntry.set_placeholder_text("1396:1:1")
+            self.dateFromEntry.set_placeholder_text("1396:1:1")
+        else:
+            self.dateToEntry.set_placeholder_text("1:1:2018")
+            self.dateFromEntry.set_placeholder_text("1:1:2018")
+
         self.showResult()
 
-    def IncomingSearchId(self, sender):
+    def incomingSearchFilter(self, sender):
         box = self.builder.get_object("incomingIdSearchentry")
         chequeId = box.get_text()
-        self.showResult(chequeId)
 
-    def IncomingSearchSerial(self, sender):
         box = self.builder.get_object("incomingSerialSearchentry")
         chqSerial = box.get_text()
-        self.showResult(None, chqSerial)
 
-    def outgoingSearchId(self, sender):
+        box = self.builder.get_object("incomingAmountFromSearchentry")
+        amountFrom = box.get_text()
+
+        box = self.builder.get_object("incomingAmountToSearchentry")
+        amountTo = box.get_text()
+
+        box = self.builder.get_object("incomingDateFromSearchentry")
+        dateFrom = box.get_text()
+
+        box = self.builder.get_object("incomingDateToSearchentry")
+        dateTo = box.get_text()
+        self.showResult(None, chqSerial, amountFrom, amountTo, dateFrom, dateTo)
+
+    def outgoingSearchFilter(self, sender):
         box = self.builder.get_object("outgoingIdSearchentry")
         chequeId = box.get_text()
-        self.showResult(chequeId)
 
-    def outgoingSearchSerial(self, sender):
         box = self.builder.get_object("outgoingSerialSearchentry")
         chqSerial = box.get_text()
-        self.showResult(None, chqSerial)
 
-    def showResult(self, chequeId=None, chqSerial=None):
+        box = self.builder.get_object("outgoingAmountFromSearchentry")
+        amountFrom = box.get_text()
+
+        box = self.builder.get_object("outgoingAmountToSearchentry")
+        amountTo = box.get_text()
+
+        box = self.builder.get_object("outgoingDateFromSearchentry")
+        dateFrom = box.get_text()
+
+        box = self.builder.get_object("outgoingDateToSearchentry")
+        dateTo = box.get_text()
+        self.showResult(None, chqSerial, amountFrom, amountTo, dateFrom, dateTo)
+
+
+    def showResult(self, chequeId=None, chqSerial=None, amountFrom=None, amountTo=None, dateFrom=None, dateTo=None):
         self.treestoreIncoming.clear()
         self.treestoreOutgoing.clear()
         result = config.db.session.query(Cheque, Customers)
         result = result.filter(Customers.custId==Cheque.chqCust)
+
+        # Apply filters
         if chequeId:
             result = result.filter(Cheque.chqId == chequeId)
         if chqSerial:
             result = result.filter(Cheque.chqSerial == chqSerial)
+        if amountFrom:
+            result = result.filter(Cheque.chqAmount >= amountFrom)
+        if amountTo:
+            result = result.filter(Cheque.chqAmount <= amountTo)
+        if share.config.datetypes[share.config.datetype] == "jalali":
+            if dateTo:
+                year, month, day = str(dateTo).split(":")
+                e=jalali_to_gregorian(int(year),int(month),int(day))
+                dateTo = datetime(e[0], e[1], e[2])
+            if dateFrom:
+                year, month, day = dateFrom.split(":")
+                e=jalali_to_gregorian(int(year),int(month),int(day))
+                dateFrom = datetime(e[0], e[1], e[2])
+        else:
+            if dateTo:
+                year, month, day = str(dateTo).split(":")
+                dateTo = datetime(int(day),int(month),int(year))
+            if dateFrom:
+                year, month, day = dateFrom.split(":")
+                dateFrom = datetime(int(day),int(month),int(year))
+
+        if dateTo:
+            result = result.filter(Cheque.chqDueDate <= dateTo)
+        if dateFrom:
+            DD = timedelta(days=1)
+            dateFrom -= DD
+            result = result.filter(Cheque.chqDueDate >= dateFrom)
+
+        # Show
         for cheque,customer in result:
             if share.config.datetypes[share.config.datetype] == "jalali": 
                 year, month, day = str(cheque.chqWrtDate).split("-")
