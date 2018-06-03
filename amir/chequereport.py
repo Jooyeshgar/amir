@@ -105,13 +105,13 @@ class ChequeReport:
         column.set_sort_indicator(True)
         self.treeviewOutgoing.append_column(column)
         
-        column = Gtk.TreeViewColumn(_("Customer ID"), Gtk.CellRendererText(), text = 6)
+        column = Gtk.TreeViewColumn(_("Customer Name"), Gtk.CellRendererText(), text = 6)
         column.set_spacing(5)
         column.set_resizable(True)
         column.set_sort_column_id(1)
         column.set_sort_indicator(True)
         self.treeviewIncoming.append_column(column)
-        column = Gtk.TreeViewColumn(_("Customer ID"), Gtk.CellRendererText(), text = 6)
+        column = Gtk.TreeViewColumn(_("Customer Name"), Gtk.CellRendererText(), text = 6)
         column.set_spacing(5)
         column.set_resizable(True)
         column.set_sort_column_id(1)
@@ -218,9 +218,36 @@ class ChequeReport:
         self.session = config.db.session  
         self.showResult()
 
-    def showResult(self):
-        result = config.db.session.query(Cheque)
-        for cheque in result:
+    def IncomingSearchId(self, sender):
+        box = self.builder.get_object("incomingIdSearchentry")
+        chequeId = box.get_text()
+        self.showResult(chequeId)
+
+    def IncomingSearchSerial(self, sender):
+        box = self.builder.get_object("incomingSerialSearchentry")
+        chqSerial = box.get_text()
+        self.showResult(None, chqSerial)
+
+    def outgoingSearchId(self, sender):
+        box = self.builder.get_object("outgoingIdSearchentry")
+        chequeId = box.get_text()
+        self.showResult(chequeId)
+
+    def outgoingSearchSerial(self, sender):
+        box = self.builder.get_object("outgoingSerialSearchentry")
+        chqSerial = box.get_text()
+        self.showResult(None, chqSerial)
+
+    def showResult(self, chequeId=None, chqSerial=None):
+        self.treestoreIncoming.clear()
+        self.treestoreOutgoing.clear()
+        result = config.db.session.query(Cheque, Customers)
+        result = result.filter(Customers.custId==Cheque.chqCust)
+        if chequeId:
+            result = result.filter(Cheque.chqId == chequeId)
+        if chqSerial:
+            result = result.filter(Cheque.chqSerial == chqSerial)
+        for cheque,customer in result:
             if share.config.datetypes[share.config.datetype] == "jalali": 
                 year, month, day = str(cheque.chqWrtDate).split("-")
                 chqWrtDate = gregorian_to_jalali(int(year),int(month),int(day))
@@ -243,9 +270,9 @@ class ChequeReport:
                 clear = 'Not Cleared'
 
             if (cheque.chqStatus == 3) or (cheque.chqStatus == 4):
-                self.treestoreIncoming.append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(cheque.chqCust), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqNoteBookId), str(cheque.chqDesc), str(cheque.chqHistoryId), str(cheque.chqBillId), str(cheque.chqOrder)))
+                self.treestoreIncoming.append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(customer.custName), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqNoteBookId), str(cheque.chqDesc), str(cheque.chqHistoryId), str(cheque.chqBillId), str(cheque.chqOrder)))
             else:
-                self.treestoreOutgoing.append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(cheque.chqCust), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqNoteBookId), str(cheque.chqDesc), str(cheque.chqHistoryId), str(cheque.chqBillId), str(cheque.chqOrder)))
+                self.treestoreOutgoing.append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(customer.custName), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqNoteBookId), str(cheque.chqDesc), str(cheque.chqHistoryId), str(cheque.chqBillId), str(cheque.chqOrder)))
 
         self.window.show_all()
 
