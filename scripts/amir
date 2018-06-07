@@ -53,7 +53,9 @@ from gi.repository import GObject
 import gettext
 import locale
 from amir.database import *
+from sqlalchemy import or_
 from sqlalchemy.sql import func
+import datetime
 # import glib
 
 if sys.platform == 'win32':
@@ -371,6 +373,14 @@ class MainWindow(GObject.GObject):
 		cashSum = config.db.session.query(func.sum(Notebook.value)).filter(Notebook.subject_id == 14).first()
 		if cashSum[0] < 0:
 			self.alert_dialog(_("Cash is negative"))
+
+		chqDueDate = config.db.session.query(Cheque.chqDueDate).filter(or_(Cheque.chqStatus == 1, Cheque.chqStatus == 4))
+		for dueDate in chqDueDate:
+			result = datetime.datetime.now().date() - dueDate[0]
+			if result.days < 7:
+				self.alert_dialog(_("Check the due date of cheques"))
+
+
 
 	def __init__(self):
 		GObject.GObject.__init__(self)
