@@ -217,7 +217,6 @@ class ChequeReport:
         # self.treestore.set_sort_column_id(0, Gtk.SortType.ASCENDING)
         self.window.show_all()
         self.builder.connect_signals(self)
-        self.session = config.db.session
 
         self.dateFromEntry = self.builder.get_object("incomingDateFromSearchentry")
         self.dateToEntry = self.builder.get_object("incomingDateToSearchentry")
@@ -286,7 +285,7 @@ class ChequeReport:
         self.treestoreIncoming.clear()
         self.treestoreOutgoing.clear()
         result = config.db.session.query(Cheque, Customers)
-        result = result.filter(Customers.custId==Cheque.chqCust)
+        result = result.filter(Customers.custId == Cheque.chqCust)
         # Apply filters
         if chequeId:
             result = result.filter(Cheque.chqId == chequeId)
@@ -348,13 +347,6 @@ class ChequeReport:
             else:
                 self.treestoreOutgoing.append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(customer.custName), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqNoteBookId), str(cheque.chqDesc), str(cheque.chqHistoryId), str(cheque.chqBillId), str(cheque.chqOrder)))
 
-        self.window.show_all()
-
-    # def searchProduct(self,sender):
-    #     # Get data from DB
-    #     box = self.builder.get_object("productCodeSearchEntry")
-    #     productCode = box.get_text()
-    #     self.showResult(productCode,0,0,0,0)
     def changeStatusIncoming(self, sender):
         selection = self.treeviewIncoming.get_selection()
         iter = selection.get_selected()[1]
@@ -425,3 +417,160 @@ class ChequeReport:
 
     def on_dialog_destroy(self, sender):
         self.dialog.hide()
+
+    def selectChequeFromListIncoming(self, treeview, path, view_column):
+        selection = self.treeviewIncoming.get_selection()
+        iter = selection.get_selected()[1]
+        
+        if iter != None :
+            self.code = convertToLatin(self.treestoreIncoming.get(iter, 0)[0])
+            self.showHistory(self.code)
+
+    def selectChequeFromListOutgoing(self, treeview, path, view_column):
+        selection = self.treeviewOutgoing.get_selection()
+        iter = selection.get_selected()[1]
+        
+        if iter != None :
+            self.code = convertToLatin(self.treestoreOutgoing.get(iter, 0)[0])
+            self.showHistory(self.code)
+
+    def showHistory(self, code):
+        self.window = self.builder.get_object("window1")
+        
+        self.treeviewHistory = self.builder.get_object("treeviewHistory")
+        self.treestoreHistory = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str)
+        self.treeviewHistory.set_model(self.treestoreHistory)
+
+        column = Gtk.TreeViewColumn(_("ID"), Gtk.CellRendererText(), text = 0)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        column.set_sort_column_id(0)
+        column.set_sort_indicator(True)
+        self.treeviewHistory.append_column(column)
+
+        column = Gtk.TreeViewColumn(_("Amount"), Gtk.CellRendererText(), text = 1)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        column.set_sort_column_id(4)
+        column.set_sort_indicator(True)
+        self.treeviewHistory.append_column(column)
+
+        column = Gtk.TreeViewColumn(_("Write Date"), Gtk.CellRendererText(), text = 2)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        column.set_sort_column_id(5)
+        column.set_sort_indicator(True)
+        self.treeviewHistory.append_column(column)
+
+        column = Gtk.TreeViewColumn(_("Due Date"), Gtk.CellRendererText(), text = 3)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        column.set_sort_column_id(5)
+        column.set_sort_indicator(True)
+        self.treeviewHistory.append_column(column)
+
+        column = Gtk.TreeViewColumn(_("Serial"), Gtk.CellRendererText(), text = 4)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        column.set_sort_column_id(1)
+        column.set_sort_indicator(True)
+        self.treeviewHistory.append_column(column)
+
+        column = Gtk.TreeViewColumn(_("Clear"), Gtk.CellRendererText(), text = 5)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        column.set_sort_column_id(1)
+        column.set_sort_indicator(True)
+        self.treeviewHistory.append_column(column)
+        
+        column = Gtk.TreeViewColumn(_("Customer Name"), Gtk.CellRendererText(), text = 6)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        column.set_sort_column_id(1)
+        column.set_sort_indicator(True)
+        self.treeviewHistory.append_column(column)
+
+        column = Gtk.TreeViewColumn(_("Account"), Gtk.CellRendererText(), text = 7)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        column.set_sort_column_id(1)
+        column.set_sort_indicator(True)
+        self.treeviewHistory.append_column(column)
+
+        column = Gtk.TreeViewColumn(_("Transaction ID"), Gtk.CellRendererText(), text = 8)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        column.set_sort_column_id(1)
+        column.set_sort_indicator(True)
+        self.treeviewHistory.append_column(column)
+
+        column = Gtk.TreeViewColumn(_("Note Book ID"), Gtk.CellRendererText(), text = 9)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        column.set_sort_column_id(2)
+        column.set_sort_indicator(True)
+        self.treeviewHistory.append_column(column)
+
+        column = Gtk.TreeViewColumn(_("Description"), Gtk.CellRendererText(), text = 10)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        column.set_sort_column_id(3)
+        column.set_sort_indicator(True)
+        self.treeviewHistory.append_column(column)
+
+        column = Gtk.TreeViewColumn(_("History ID"), Gtk.CellRendererText(), text = 11)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        column.set_sort_column_id(3)
+        column.set_sort_indicator(True)
+        self.treeviewHistory.append_column(column)
+
+        column = Gtk.TreeViewColumn(_("Bill ID"), Gtk.CellRendererText(), text = 12)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        column.set_sort_column_id(3)
+        column.set_sort_indicator(True)
+        self.treeviewHistory.append_column(column)
+        
+        column = Gtk.TreeViewColumn(_("Order"), Gtk.CellRendererText(), text = 13)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        column.set_sort_column_id(3)
+        column.set_sort_indicator(True)
+        self.treeviewHistory.append_column(column)
+        
+        self.treeviewHistory.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
+        #self.treestore.set_sort_func(0, self.sortGroupIds)
+        # self.treestore.set_sort_column_id(0, Gtk.SortType.ASCENDING)
+        self.window.show_all()
+        self.builder.connect_signals(self)
+
+        self.treestoreHistory.clear()
+        result = config.db.session.query(ChequeHistory, Customers)
+        result = result.filter(ChequeHistory.ChequeId == code)
+        result = result.filter(Customers.custId == ChequeHistory.Cust)
+
+        # Show
+        for cheque,customer in result:
+            if share.config.datetypes[share.config.datetype] == "jalali": 
+                year, month, day = str(cheque.WrtDate).split("-")
+                chqWrtDate = gregorian_to_jalali(int(year),int(month),int(day))
+                chqWrtDate = str(chqWrtDate[0]) + '-' + str(chqWrtDate[1]) + '-' + str(chqWrtDate[2])
+
+                year, month, day = str(cheque.DueDate).split("-")
+                DueDate = gregorian_to_jalali(int(year),int(month),int(day))
+                chqDueDate = str(DueDate[0]) + '-' + str(DueDate[1]) + '-' + str(DueDate[2])
+
+            else:
+                year, month, day = str(cheque.WrtDate).split("-")
+                chqWrtDate = str(day) + '-' + str(month) + '-' + str(year)
+
+                year, month, day = str(cheque.DueDate).split("-")
+                chqDueDate = str(day) + '-' + str(month) + '-' + str(year)
+
+            if (cheque.Status == 2) or (cheque.Status == 3):
+                clear = 'Cleared'
+            else:
+                clear = 'Not Cleared'
+
+            self.treestoreHistory.append(None, (str(cheque.ChequeId), str(cheque.Amount), str(chqWrtDate), str(chqDueDate), str(cheque.Serial), str(clear), str(customer.custName), str(cheque.Account), str(cheque.TransId), str(cheque.TransId), str(cheque.Desc)))
