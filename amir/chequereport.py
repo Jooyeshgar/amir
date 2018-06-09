@@ -353,3 +353,53 @@ class ChequeReport:
     #     box = self.builder.get_object("productCodeSearchEntry")
     #     productCode = box.get_text()
     #     self.showResult(productCode,0,0,0,0)
+    def changeStatus(self, sender):
+        selection = self.treeviewIncoming.get_selection()
+        iter = selection.get_selected()[1]
+        
+        if iter != None :
+            self.code = convertToLatin(self.treestoreIncoming.get(iter, 0)[0])
+            self.dialog = self.builder.get_object("dialog1")
+            self.dialog.run()
+    def odatAzMoshtari(self, sender):
+        result = config.db.session.query(Cheque)
+        result = result.filter(Cheque.chqId == self.code).first()
+        result.chqStatus = 6
+        config.db.session.commit()
+        self.dialog.hide()
+        share.mainwin.silent_daialog(_("The operation was completed successfully."))
+
+    def odatBeMoshtari(self, sender):
+        result = config.db.session.query(Cheque)
+        result = result.filter(Cheque.chqId == self.code).first()
+        result.chqStatus = 7
+        config.db.session.commit()
+        self.dialog.hide()
+        share.mainwin.silent_daialog(_("The operation was completed successfully."))
+
+    def Bargasht(self, sender):
+        result = config.db.session.query(Cheque)
+        result = result.filter(Cheque.chqId == self.code).first()
+        result.chqStatus = 8
+        config.db.session.commit()
+        self.dialog.hide()
+        share.mainwin.silent_daialog(_("The operation was completed successfully."))
+
+    def passShode(self, sender):
+        result = config.db.session.query(Cheque)
+        result = result.filter(Cheque.chqId == self.code).first()
+        result.chqStatus = 2
+        config.db.session.commit()
+        self.dialog.hide()
+        share.mainwin.silent_daialog(_("The operation was completed successfully."))
+
+    def vosulShode(self, sender):
+        result = config.db.session.query(Cheque)
+        result = result.filter(Cheque.chqId == self.code).first()
+        result.chqStatus = 4
+        config.db.session.commit()
+        self.dialog.hide()
+        share.mainwin.silent_daialog(_("The operation was completed successfully."))
+
+    def on_dialog_destroy(self, sender):
+        self.dialog.hide()

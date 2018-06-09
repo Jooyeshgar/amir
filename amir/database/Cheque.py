@@ -25,6 +25,10 @@ class Cheque(Base):
     # 3 Daryafti, Vosol shode
     # 4 Daryafti, Vosol nashode
     # 5 Kharj shode
+    # 6 Odat az moshtari shode
+    # 7 Odat be moshtari shode
+    # 8 Bargash shode
+    
     chqStatus     = Column(Integer,      ColumnDefault(0), nullable = False)
     #chqOwnerName  = Column(Unicode(200),  nullable=True)
     chqCust       = Column(Integer,      ForeignKey('customers.custId'), nullable=True)    
