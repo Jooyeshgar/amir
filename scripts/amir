@@ -371,7 +371,7 @@ class MainWindow(GObject.GObject):
 
 		# Alerts
 		cashSum = config.db.session.query(func.sum(Notebook.value)).filter(Notebook.subject_id == 14).first()
-		if cashSum[0] < 0:
+		if cashSum[0] < 0 and cashSum[0] != None:
 			self.alert_dialog(_("Cash is negative"))
 
 		chqDueDate = config.db.session.query(Cheque.chqDueDate).filter(or_(Cheque.chqStatus == 1, Cheque.chqStatus == 4))
