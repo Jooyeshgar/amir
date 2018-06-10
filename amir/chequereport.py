@@ -14,7 +14,10 @@ from gi.repository import Gdk
 from converter import *
 from datetime import datetime, timedelta
 import dateentry
+import class_document
+import dbconfig
 
+dbconf = dbconfig.dbConfig()
 config = share.config
 
 class ChequeReport:
@@ -376,21 +379,37 @@ class ChequeReport:
         share.mainwin.silent_daialog(_("The operation was completed successfully."))
 
     def odatBeMoshtari(self, sender):
-        result = config.db.session.query(Cheque)
+        result = config.db.session.query(Cheque, Customers)
+        result = result.filter(Customers.custId == Cheque.chqCust)
         result = result.filter(Cheque.chqId == self.code).first()
-        result.chqStatus = 7
-        ch_history = ChequeHistory(result.chqId, result.chqAmount, result.chqWrtDate, result.chqDueDate, result.chqSerial, result.chqStatus, result.chqCust, result.chqAccount, result.chqTransId, result.chqDesc, self.current_time)
+        result.Cheque.chqStatus = 7
+        ch_history = ChequeHistory(result.Cheque.chqId, result.Cheque.chqAmount, result.Cheque.chqWrtDate, result.Cheque.chqDueDate, result.Cheque.chqSerial, result.Cheque.chqStatus, result.Cheque.chqCust, result.Cheque.chqAccount, result.Cheque.chqTransId, result.Cheque.chqDesc, self.current_time)
         config.db.session.add(ch_history)
+        config.db.session.commit()
+
+        document = class_document.Document()
+        document.add_notebook(result.Customers.custSubj  , result.Cheque.chqAmount, _('Odat cheque'))
+        document.add_notebook(dbconf.get_int('other_cheque'), -result.Cheque.chqAmount, _('Odat cheque'))
+        document.save()
+
         config.db.session.commit()
         self.dialog.hide()
         share.mainwin.silent_daialog(_("The operation was completed successfully."))
 
     def Bargasht(self, sender):
-        result = config.db.session.query(Cheque)
+        result = config.db.session.query(Cheque, Customers)
+        result = result.filter(Customers.custId == Cheque.chqCust)
         result = result.filter(Cheque.chqId == self.code).first()
-        result.chqStatus = 8
-        ch_history = ChequeHistory(result.chqId, result.chqAmount, result.chqWrtDate, result.chqDueDate, result.chqSerial, result.chqStatus, result.chqCust, result.chqAccount, result.chqTransId, result.chqDesc, self.current_time)
+        result.Cheque.chqStatus = 8
+        ch_history = ChequeHistory(result.Cheque.chqId, result.Cheque.chqAmount, result.Cheque.chqWrtDate, result.Cheque.chqDueDate, result.Cheque.chqSerial, result.Cheque.chqStatus, result.Cheque.chqCust, result.Cheque.chqAccount, result.Cheque.chqTransId, result.Cheque.chqDesc, self.current_time)
         config.db.session.add(ch_history)
+        config.db.session.commit()
+
+        document = class_document.Document()
+        document.add_notebook(result.Customers.custSubj  , result.Cheque.chqAmount, _('Bargasht cheque'))
+        document.add_notebook(58, -result.Cheque.chqAmount, _('Bargasht cheque'))
+        document.save()
+
         config.db.session.commit()
         self.dialog.hide()
         share.mainwin.silent_daialog(_("The operation was completed successfully."))
