@@ -164,10 +164,9 @@ class Customer(customergroup.Group):
         query = config.db.session.query(Subject.code).select_from(Subject).order_by(Subject.id.desc())
         code = query.filter(Subject.parent_id == dbconf.get_int('custSubject')).first()
         if code == None :
-            lastcode = "01"
+            lastcode = "001"
         else :
-            lastcode = "%02d" % (int(code[0][-2:]) + 1)
-            
+            lastcode = "%03d" % (int(code[0][-2:]) + 1)
         self.builder.get_object("custCodeEntry").set_text(LN(lastcode))
         #self.custgrpentry.set_text("")
         self.builder.get_object("custNameEntry").set_text("")

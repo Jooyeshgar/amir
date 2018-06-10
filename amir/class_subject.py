@@ -48,7 +48,7 @@ class Subjects():
             #get customer code
             code = config.db.session.query(Subject.code).select_from(Subject).order_by(Subject.id.desc()).filter(Subject.parent_id == parentid).first()
             if code == None :
-                code = "01"
+                code = "001"
             else :
                 code = "%03d" % (int(code[0][-3:]) + 1)
 
