@@ -335,16 +335,16 @@ class AutomaticAccounting:
         if self.liststore == None:
             type(result['from'])
             document = class_document.Document()
-            document.add_notebook(result['from'],  result['total_value'], unicode(result['desc']))
-            document.add_notebook(result['to']  , -result['cash_payment'], unicode(result['desc']))
+            document.add_notebook(result['from'], -result['total_value'], unicode(result['desc']))
+            document.add_notebook(result['to']  ,  result['cash_payment'], unicode(result['desc']))
             if result['discount'] :
                 document.add_notebook(dbconf.get_int('sell-discount'), -result['discount'], result['desc'])
             cl_cheque = class_cheque.ClassCheque()
             for cheque in self.chequeui.new_cheques:
                 if self.mode == 'our':
-                    document.add_cheque(dbconf.get_int('our_cheque'), -cheque['amount'], cheque['desc'], cheque['serial'])
+                    document.add_cheque(dbconf.get_int('our_cheque'), cheque['amount'], cheque['desc'], cheque['serial'])
                 else:
-                    document.add_cheque(dbconf.get_int('other_cheque'), -cheque['amount'], cheque['desc'], cheque['serial'])
+                    document.add_cheque(dbconf.get_int('other_cheque'), cheque['amount'], cheque['desc'], cheque['serial'])
             #spendble cheque
             for sp_cheque in self.chequeui.spend_cheques:
                 cl_cheque.update_status(sp_cheque['serial'],5)
