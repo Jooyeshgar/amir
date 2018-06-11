@@ -6,13 +6,17 @@ extract:
 fa:
 	msgmerge  --backup=none -N -U po/fa.po po/amir.pot
 
-en:
-	msgmerge  --backup=none -N -U po/en.po po/amir.pot
+fr:
+	msgmerge  --backup=none -N -U po/fr.po po/amir.pot
 
-ar:
-	msgmerge  --backup=none -N -U po/ar.po po/amir.pot
+he:
+	msgmerge  --backup=none -N -U po/he.po po/amir.pot
+
+tr:
+	msgmerge  --backup=none -N -U po/tr.po po/amir.pot
 	
 compile:
 	msgfmt po/fa.po -o locale/fa/LC_MESSAGES/amir.mo
-	# msgfmt po/en.po -o locale/en/LC_MESSAGES/amir.mo
-	# msgfmt po/ar.po -o locale/ar/LC_MESSAGES/amir.mo
+	msgfmt po/fr.po -o locale/fr/LC_MESSAGES/amir.mo
+	msgfmt po/he.po -o locale/he/LC_MESSAGES/amir.mo
+	msgfmt po/tr.po -o locale/tr/LC_MESSAGES/amir.mo
