@@ -16,6 +16,7 @@ from datetime import datetime, timedelta
 import dateentry
 import class_document
 import dbconfig
+import subjects
 
 dbconf = dbconfig.dbConfig()
 config = share.config
@@ -415,13 +416,26 @@ class ChequeReport:
         share.mainwin.silent_daialog(_("The operation was completed successfully."))
 
     def passShode(self, sender):
-        result = config.db.session.query(Cheque)
+        sub = subjects.Subjects(parent_id=[1,14])
+        sub.connect('subject-selected', self.on_subject_selected)
+        share.mainwin.silent_daialog(_("The operation was completed successfully."))
+
+    def on_subject_selected(self, subject, id, code, name):
+        result = config.db.session.query(Cheque, Customers)
+        result = result.filter(Customers.custId == Cheque.chqCust)
         result = result.filter(Cheque.chqId == self.code).first()
-        result.chqStatus = 2
-        ch_history = ChequeHistory(result.chqId, result.chqAmount, result.chqWrtDate, result.chqDueDate, result.chqSerial, result.chqStatus, result.chqCust, result.chqAccount, result.chqTransId, result.chqDesc, self.current_time)
+        result.Cheque.chqStatus = 2
+        ch_history = ChequeHistory(result.Cheque.chqId, result.Cheque.chqAmount, result.Cheque.chqWrtDate, result.Cheque.chqDueDate, result.Cheque.chqSerial, result.Cheque.chqStatus, result.Cheque.chqCust, result.Cheque.chqAccount, result.Cheque.chqTransId, result.Cheque.chqDesc, self.current_time)
         config.db.session.add(ch_history)
         config.db.session.commit()
         self.dialog.hide()
+
+        document = class_document.Document()
+        document.add_notebook(result.Customers.custSubj  , result.Cheque.chqAmount, _('Pass shode'))
+        document.add_notebook(id, result.Cheque.chqAmount, _('Pass shode'))
+        document.add_notebook(dbconf.get_int('other_cheque'), -result.Cheque.chqAmount, _('Pass shode'))
+        document.save()
+        subject.window.destroy()
         share.mainwin.silent_daialog(_("The operation was completed successfully."))
 
     def vosulShode(self, sender):
