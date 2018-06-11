@@ -244,7 +244,7 @@ class ChequeReport:
         self.date_entry = dateentry.DateEntry()
         self.current_time = self.date_entry.getDateObject()
 
-    def searchFilter(self, sender):
+    def searchFilter(self, sender=None):
         box = self.builder.get_object("idSearchentry")
         chequeId = box.get_text()
 
@@ -330,35 +330,30 @@ class ChequeReport:
             else:
                 self.treestoreOutgoing.append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(customer.custName), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqNoteBookId), str(cheque.chqDesc), str(cheque.chqHistoryId), str(cheque.chqBillId), str(cheque.chqOrder)))
 
-    def changeStatusIncoming(self, sender):
-        selection = self.treeviewIncoming.get_selection()
-        iter = selection.get_selected()[1]
-        
-        if iter != None :
-            self.code = convertToLatin(self.treestoreIncoming.get(iter, 0)[0])
-            self.dialog = self.builder.get_object("dialog1")
-            self.dialog.run()
-
-    def changeStatusOutgoing(self, sender):
+    def changeStatus(self):
         selection = self.treeviewOutgoing.get_selection()
         iter = selection.get_selected()[1]
-        
         if iter != None :
             self.code = convertToLatin(self.treestoreOutgoing.get(iter, 0)[0])
-            self.dialog = self.builder.get_object("dialog1")
-            self.dialog.run()
+        else:
+            selection = self.treeviewIncoming.get_selection()
+            iter = selection.get_selected()[1]
+            if iter != None :
+                self.code = convertToLatin(self.treestoreIncoming.get(iter, 0)[0])
 
     def odatAzMoshtari(self, sender):
+        self.changeStatus()
         result = config.db.session.query(Cheque)
         result = result.filter(Cheque.chqId == self.code).first()
         result.chqStatus = 6
         ch_history = ChequeHistory(result.chqId, result.chqAmount, result.chqWrtDate, result.chqDueDate, result.chqSerial, result.chqStatus, result.chqCust, result.chqAccount, result.chqTransId, result.chqDesc, self.current_time)
         config.db.session.add(ch_history)
         config.db.session.commit()
-        self.dialog.hide()
         share.mainwin.silent_daialog(_("The operation was completed successfully."))
+        self.searchFilter()
 
     def odatBeMoshtari(self, sender):
+        self.changeStatus()
         result = config.db.session.query(Cheque, Customers)
         result = result.filter(Customers.custId == Cheque.chqCust)
         result = result.filter(Cheque.chqId == self.code).first()
@@ -373,10 +368,11 @@ class ChequeReport:
         document.save()
 
         config.db.session.commit()
-        self.dialog.hide()
         share.mainwin.silent_daialog(_("The operation was completed successfully."))
+        self.searchFilter()
 
     def bargasht(self, sender):
+        self.changeStatus()
         result = config.db.session.query(Cheque, Customers)
         result = result.filter(Customers.custId == Cheque.chqCust)
         result = result.filter(Cheque.chqId == self.code).first()
@@ -391,13 +387,15 @@ class ChequeReport:
         document.save()
 
         config.db.session.commit()
-        self.dialog.hide()
         share.mainwin.silent_daialog(_("The operation was completed successfully."))
+        self.searchFilter()
 
     def passShode(self, sender):
+        self.changeStatus()
         sub = subjects.Subjects(parent_id=[1,14])
         sub.connect('subject-selected', self.on_subject_selected)
         share.mainwin.silent_daialog(_("The operation was completed successfully."))
+        self.searchFilter()
 
     def on_subject_selected(self, subject, id, code, name):
         result = config.db.session.query(Cheque, Customers)
@@ -407,7 +405,6 @@ class ChequeReport:
         ch_history = ChequeHistory(result.Cheque.chqId, result.Cheque.chqAmount, result.Cheque.chqWrtDate, result.Cheque.chqDueDate, result.Cheque.chqSerial, result.Cheque.chqStatus, result.Cheque.chqCust, result.Cheque.chqAccount, result.Cheque.chqTransId, result.Cheque.chqDesc, self.current_time)
         config.db.session.add(ch_history)
         config.db.session.commit()
-        self.dialog.hide()
 
         document = class_document.Document()
         document.add_notebook(result.Customers.custSubj  , result.Cheque.chqAmount, _('Pass shode'))
@@ -415,16 +412,6 @@ class ChequeReport:
         document.add_notebook(dbconf.get_int('other_cheque'), -result.Cheque.chqAmount, _('Pass shode'))
         document.save()
         subject.window.destroy()
-        share.mainwin.silent_daialog(_("The operation was completed successfully."))
-
-    def vosulShode(self, sender):
-        result = config.db.session.query(Cheque)
-        result = result.filter(Cheque.chqId == self.code).first()
-        result.chqStatus = 4
-        ch_history = ChequeHistory(result.chqId, result.chqAmount, result.chqWrtDate, result.chqDueDate, result.chqSerial, result.chqStatus, result.chqCust, result.chqAccount, result.chqTransId, result.chqDesc, self.current_time)
-        config.db.session.add(ch_history)
-        config.db.session.commit()
-        self.dialog.hide()
         share.mainwin.silent_daialog(_("The operation was completed successfully."))
 
     def on_dialog_destroy(self, sender):
