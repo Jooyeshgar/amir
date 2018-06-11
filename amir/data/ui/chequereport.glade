@@ -176,9 +176,6 @@
                 <property name="top_attach">0</property>
               </packing>
             </child>
-            <child>
-              <placeholder/>
-            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -203,6 +200,7 @@
                   <object class="GtkTreeView" id="treeviewIncoming">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <signal name="cursor-changed" handler="on_select_cell" swapped="no"/>
                     <signal name="row-activated" handler="selectChequeFromListIncoming" swapped="no"/>
                     <child internal-child="selection">
                       <object class="GtkTreeSelection" id="treeview-selection"/>
@@ -283,7 +281,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
-              <object class="GtkButton" id="button2">
+              <object class="GtkButton" id="odatAsMoshtariButton">
                 <property name="label" translatable="yes">عودت از مشتری</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -296,7 +294,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="button3">
+              <object class="GtkButton" id="odatBeMoshtariButton">
                 <property name="label" translatable="yes">عودت به مشتری</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -309,7 +307,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="button4">
+              <object class="GtkButton" id="bargashtButton">
                 <property name="label" translatable="yes">برگشت</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -322,7 +320,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="button5">
+              <object class="GtkButton" id="passButton">
                 <property name="label" translatable="yes">پاس شده</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>

@@ -330,7 +330,7 @@ class ChequeReport:
             else:
                 self.treestoreOutgoing.append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(customer.custName), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqNoteBookId), str(cheque.chqDesc), str(cheque.chqHistoryId), str(cheque.chqBillId), str(cheque.chqOrder)))
 
-    def changeStatus(self):
+    def getSelection(self):
         selection = self.treeviewOutgoing.get_selection()
         iter = selection.get_selected()[1]
         if iter != None :
@@ -342,7 +342,7 @@ class ChequeReport:
                 self.code = convertToLatin(self.treestoreIncoming.get(iter, 0)[0])
 
     def odatAzMoshtari(self, sender):
-        self.changeStatus()
+        self.getSelection()
         result = config.db.session.query(Cheque)
         result = result.filter(Cheque.chqId == self.code).first()
         result.chqStatus = 6
@@ -353,7 +353,7 @@ class ChequeReport:
         self.searchFilter()
 
     def odatBeMoshtari(self, sender):
-        self.changeStatus()
+        self.getSelection()
         result = config.db.session.query(Cheque, Customers)
         result = result.filter(Customers.custId == Cheque.chqCust)
         result = result.filter(Cheque.chqId == self.code).first()
@@ -372,7 +372,7 @@ class ChequeReport:
         self.searchFilter()
 
     def bargasht(self, sender):
-        self.changeStatus()
+        self.getSelection()
         result = config.db.session.query(Cheque, Customers)
         result = result.filter(Customers.custId == Cheque.chqCust)
         result = result.filter(Cheque.chqId == self.code).first()
@@ -391,7 +391,7 @@ class ChequeReport:
         self.searchFilter()
 
     def passShode(self, sender):
-        self.changeStatus()
+        self.getSelection()
         sub = subjects.Subjects(parent_id=[1,14])
         sub.connect('subject-selected', self.on_subject_selected)
         share.mainwin.silent_daialog(_("The operation was completed successfully."))
@@ -538,7 +538,7 @@ class ChequeReport:
         column.set_sort_indicator(True)
         self.treeviewHistory.append_column(column)
         
-        self.treeviewHistory.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
+        # self.treeviewHistory.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
         #self.treestore.set_sort_func(0, self.sortGroupIds)
         # self.treestore.set_sort_column_id(0, Gtk.SortType.ASCENDING)
         self.window.show_all()
@@ -573,3 +573,27 @@ class ChequeReport:
                 clear = 'Not Cleared'
 
             self.treestoreHistory.append(None, (str(cheque.ChequeId), str(cheque.Amount), str(chqWrtDate), str(chqDueDate), str(cheque.Serial), str(clear), str(customer.custName), str(cheque.Account), str(cheque.TransId), str(cheque.TransId), str(cheque.Desc)))
+    def on_select_cell(self, sender):
+        my_button = self.builder.get_object("odatAsMoshtariButton")
+        my_button.set_sensitive(True)
+        my_button = self.builder.get_object("odatBeMoshtariButton")
+        my_button.set_sensitive(True)
+        my_button = self.builder.get_object("bargashtButton")
+        my_button.set_sensitive(True)
+        my_button = self.builder.get_object("passButton")
+        my_button.set_sensitive(True)
+        self.getSelection()
+        result = config.db.session.query(Cheque)
+        result = result.filter(Cheque.chqId == self.code).first()
+        if result.chqStatus in [2,3,4,5,6,7,8]:
+            my_button = self.builder.get_object("odatAsMoshtariButton")
+            my_button.set_sensitive(False)
+        if result.chqStatus in [1,2,3,5,6,7,8]:
+            my_button = self.builder.get_object("odatBeMoshtariButton")
+            my_button.set_sensitive(False)
+        if result.chqStatus in [1,2,3,5,6,7,8]:
+            my_button = self.builder.get_object("bargashtButton")
+            my_button.set_sensitive(False)
+        if result.chqStatus in [2,3,6,7,8]:
+            my_button = self.builder.get_object("passButton")
+            my_button.set_sensitive(False)
