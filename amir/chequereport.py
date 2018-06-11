@@ -392,16 +392,29 @@ class ChequeReport:
 
     def passShode(self, sender):
         self.getSelection()
-        sub = subjects.Subjects(parent_id=[1,14])
-        sub.connect('subject-selected', self.on_subject_selected)
-        share.mainwin.silent_daialog(_("The operation was completed successfully."))
-        self.searchFilter()
+        result = config.db.session.query(Cheque, Customers)
+        result = result.filter(Customers.custId == Cheque.chqCust)
+        result = result.filter(Cheque.chqId == self.code).first()
+        if result.Cheque.chqStatus == 4:
+            sub = subjects.Subjects(parent_id=[1,14])
+            sub.connect('subject-selected', self.on_subject_selected)
+        if result.Cheque.chqStatus == 1:
+            result.Cheque.chqStatus = 2
+            ch_history = ChequeHistory(result.Cheque.chqId, result.Cheque.chqAmount, result.Cheque.chqWrtDate, result.Cheque.chqDueDate, result.Cheque.chqSerial, result.Cheque.chqStatus, result.Cheque.chqCust, result.Cheque.chqAccount, result.Cheque.chqTransId, result.Cheque.chqDesc, self.current_time)
+            config.db.session.add(ch_history)
+            config.db.session.commit()
+            document = class_document.Document()
+            document.add_notebook(result.Customers.custSubj, -result.Cheque.chqAmount, _('Pass shode'))
+            document.add_notebook(dbconf.get_int('our_cheque'), -result.Cheque.chqAmount, _('Pass shode'))
+            document.save()
+            share.mainwin.silent_daialog(_("The operation was completed successfully."))
+            self.searchFilter()
 
     def on_subject_selected(self, subject, id, code, name):
         result = config.db.session.query(Cheque, Customers)
         result = result.filter(Customers.custId == Cheque.chqCust)
         result = result.filter(Cheque.chqId == self.code).first()
-        result.Cheque.chqStatus = 2
+        result.Cheque.chqStatus = 3
         ch_history = ChequeHistory(result.Cheque.chqId, result.Cheque.chqAmount, result.Cheque.chqWrtDate, result.Cheque.chqDueDate, result.Cheque.chqSerial, result.Cheque.chqStatus, result.Cheque.chqCust, result.Cheque.chqAccount, result.Cheque.chqTransId, result.Cheque.chqDesc, self.current_time)
         config.db.session.add(ch_history)
         config.db.session.commit()
