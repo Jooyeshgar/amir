@@ -222,8 +222,8 @@ class ChequeReport:
         self.window.show_all()
         self.builder.connect_signals(self)
 
-        self.dateFromEntry = self.builder.get_object("incomingDateFromSearchentry")
-        self.dateToEntry = self.builder.get_object("incomingDateToSearchentry")
+        self.dateFromEntry = self.builder.get_object("dateFromSearchentry")
+        self.dateToEntry = self.builder.get_object("dateToSearchentry")
         if share.config.datetypes[share.config.datetype] == "jalali":
             self.dateToEntry.set_placeholder_text("1396:1:1")
             self.dateFromEntry.set_placeholder_text("1396:1:1")
@@ -231,8 +231,8 @@ class ChequeReport:
             self.dateToEntry.set_placeholder_text("1:1:2018")
             self.dateFromEntry.set_placeholder_text("1:1:2018")
 
-        self.dateFromEntry = self.builder.get_object("outgoingDateFromSearchentry")
-        self.dateToEntry = self.builder.get_object("outgoingDateToSearchentry")
+        self.dateFromEntry = self.builder.get_object("dateFromSearchentry")
+        self.dateToEntry = self.builder.get_object("dateToSearchentry")
         if share.config.datetypes[share.config.datetype] == "jalali":
             self.dateToEntry.set_placeholder_text("1396:1:1")
             self.dateFromEntry.set_placeholder_text("1396:1:1")
@@ -244,46 +244,25 @@ class ChequeReport:
         self.date_entry = dateentry.DateEntry()
         self.current_time = self.date_entry.getDateObject()
 
-    def incomingSearchFilter(self, sender):
-        box = self.builder.get_object("incomingIdSearchentry")
+    def searchFilter(self, sender):
+        box = self.builder.get_object("idSearchentry")
         chequeId = box.get_text()
 
-        box = self.builder.get_object("incomingSerialSearchentry")
+        box = self.builder.get_object("serialSearchentry")
         chqSerial = box.get_text()
 
-        box = self.builder.get_object("incomingAmountFromSearchentry")
+        box = self.builder.get_object("amountFromSearchentry")
         amountFrom = box.get_text()
 
-        box = self.builder.get_object("incomingAmountToSearchentry")
+        box = self.builder.get_object("amountToSearchentry")
         amountTo = box.get_text()
 
-        box = self.builder.get_object("incomingDateFromSearchentry")
+        box = self.builder.get_object("dateFromSearchentry")
         dateFrom = box.get_text()
 
-        box = self.builder.get_object("incomingDateToSearchentry")
+        box = self.builder.get_object("dateToSearchentry")
         dateTo = box.get_text()
-        self.showResult(None, chqSerial, amountFrom, amountTo, dateFrom, dateTo)
-
-    def outgoingSearchFilter(self, sender):
-        box = self.builder.get_object("outgoingIdSearchentry")
-        chequeId = box.get_text()
-
-        box = self.builder.get_object("outgoingSerialSearchentry")
-        chqSerial = box.get_text()
-
-        box = self.builder.get_object("outgoingAmountFromSearchentry")
-        amountFrom = box.get_text()
-
-        box = self.builder.get_object("outgoingAmountToSearchentry")
-        amountTo = box.get_text()
-
-        box = self.builder.get_object("outgoingDateFromSearchentry")
-        dateFrom = box.get_text()
-
-        box = self.builder.get_object("outgoingDateToSearchentry")
-        dateTo = box.get_text()
-        self.showResult(None, chqSerial, amountFrom, amountTo, dateFrom, dateTo)
-
+        self.showResult(chequeId, chqSerial, amountFrom, amountTo, dateFrom, dateTo)
 
     def showResult(self, chequeId=None, chqSerial=None, amountFrom=None, amountTo=None, dateFrom=None, dateTo=None):
         self.treestoreIncoming.clear()
@@ -397,7 +376,7 @@ class ChequeReport:
         self.dialog.hide()
         share.mainwin.silent_daialog(_("The operation was completed successfully."))
 
-    def Bargasht(self, sender):
+    def bargasht(self, sender):
         result = config.db.session.query(Cheque, Customers)
         result = result.filter(Customers.custId == Cheque.chqCust)
         result = result.filter(Cheque.chqId == self.code).first()
