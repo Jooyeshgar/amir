@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.18.3 -->
 <interface>
-  <requires lib="gtk+" version="2.16"/>
-  <!-- interface-naming-policy toplevel-contextual -->
+  <requires lib="gtk+" version="3.0"/>
   <object class="GtkWindow" id="general">
     <property name="can_focus">False</property>
     <property name="border_width">10</property>
     <property name="resizable">False</property>
     <property name="window_position">center-on-parent</property>
-    <property name="type_hint">dialog</property>
     <child>
       <object class="GtkVBox" id="box">
         <property name="can_focus">False</property>
@@ -184,6 +183,18 @@
                     <property name="n_rows">3</property>
                     <property name="n_columns">3</property>
                     <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
                       <object class="GtkLabel" id="label3">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -214,10 +225,10 @@
                     <child>
                       <object class="GtkButton" id="from-button">
                         <property name="label" translatable="yes">Select</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="use_action_appearance">False</property>
                         <signal name="clicked" handler="on_from_clicked" swapped="no"/>
                       </object>
                       <packing>
@@ -230,10 +241,10 @@
                     <child>
                       <object class="GtkButton" id="to-button">
                         <property name="label" translatable="yes">Select</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="use_action_appearance">False</property>
                         <signal name="clicked" handler="on_to_clicked" swapped="no"/>
                       </object>
                       <packing>
@@ -260,18 +271,6 @@
                         <property name="y_options">GTK_SHRINK</property>
                       </packing>
                     </child>
-                    <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
                   </object>
                 </child>
               </object>
@@ -297,11 +296,14 @@
                 <property name="n_columns">3</property>
                 <property name="column_spacing">10</property>
                 <child>
+                  <placeholder/>
+                </child>
+                <child>
                   <object class="GtkLabel" id="label5">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="xalign">0</property>
                     <property name="label" translatable="yes">Cash Payment</property>
+                    <property name="xalign">0</property>
                   </object>
                   <packing>
                     <property name="y_options">GTK_SHRINK</property>
@@ -311,8 +313,8 @@
                   <object class="GtkLabel" id="label6">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="xalign">0</property>
                     <property name="label" translatable="yes">Non-Cash Payment</property>
+                    <property name="xalign">0</property>
                   </object>
                   <packing>
                     <property name="top_attach">1</property>
@@ -324,8 +326,8 @@
                   <object class="GtkLabel" id="non-cash-payment-label">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="xalign">0.039999999105930328</property>
                     <property name="label" translatable="yes">0</property>
+                    <property name="xalign">0.039999999105930328</property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -339,8 +341,8 @@
                   <object class="GtkLabel" id="label10">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="xalign">0</property>
                     <property name="label" translatable="yes">discount</property>
+                    <property name="xalign">0</property>
                   </object>
                   <packing>
                     <property name="top_attach">3</property>
@@ -351,8 +353,8 @@
                   <object class="GtkLabel" id="label11">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="xalign">0</property>
                     <property name="label" translatable="yes">Spend Cheque</property>
+                    <property name="xalign">0</property>
                   </object>
                   <packing>
                     <property name="top_attach">2</property>
@@ -363,8 +365,8 @@
                   <object class="GtkLabel" id="spend-cheque-label">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="xalign">0.039999999105930328</property>
                     <property name="label" translatable="yes">0</property>
+                    <property name="xalign">0.039999999105930328</property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -375,12 +377,15 @@
                   </packing>
                 </child>
                 <child>
+                  <placeholder/>
+                </child>
+                <child>
                   <object class="GtkButton" id="discount-button">
                     <property name="label" translatable="yes">%</property>
+                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="use_action_appearance">False</property>
                     <signal name="clicked" handler="on_discount_clicked" swapped="no"/>
                   </object>
                   <packing>
@@ -394,10 +399,10 @@
                 <child>
                   <object class="GtkButton" id="list-cheque-button">
                     <property name="label" translatable="yes">List</property>
+                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="use_action_appearance">False</property>
                     <signal name="clicked" handler="on_spend_cheque_buttun_clicked" swapped="no"/>
                   </object>
                   <packing>
@@ -411,10 +416,10 @@
                 <child>
                   <object class="GtkButton" id="non_cash_payment_button">
                     <property name="label" translatable="yes">Add</property>
+                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="use_action_appearance">False</property>
                     <signal name="clicked" handler="on_non_cash_payment_button_clicked" swapped="no"/>
                   </object>
                   <packing>
@@ -424,12 +429,6 @@
                     <property name="bottom_attach">2</property>
                     <property name="y_options">GTK_SHRINK</property>
                   </packing>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
-                <child>
-                  <placeholder/>
                 </child>
                 <child>
                   <placeholder/>
@@ -464,11 +463,14 @@
                     <property name="n_rows">3</property>
                     <property name="n_columns">3</property>
                     <child>
+                      <placeholder/>
+                    </child>
+                    <child>
                       <object class="GtkLabel" id="label7">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="xalign">0</property>
                         <property name="label" translatable="yes">Total:</property>
+                        <property name="xalign">0</property>
                       </object>
                       <packing>
                         <property name="y_options">GTK_SHRINK</property>
@@ -478,8 +480,8 @@
                       <object class="GtkLabel" id="label9">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="xalign">0</property>
                         <property name="label" translatable="yes">Mod:</property>
+                        <property name="xalign">0</property>
                       </object>
                       <packing>
                         <property name="top_attach">1</property>
@@ -517,8 +519,8 @@
                       <object class="GtkLabel" id="label12">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="xalign">0</property>
                         <property name="label" translatable="yes">Desc</property>
+                        <property name="xalign">0</property>
                       </object>
                       <packing>
                         <property name="top_attach">2</property>
@@ -533,8 +535,6 @@
                         <property name="invisible_char">●</property>
                         <property name="primary_icon_activatable">False</property>
                         <property name="secondary_icon_activatable">False</property>
-                        <property name="primary_icon_sensitive">True</property>
-                        <property name="secondary_icon_sensitive">True</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
@@ -543,9 +543,6 @@
                         <property name="bottom_attach">3</property>
                         <property name="y_options">GTK_SHRINK</property>
                       </packing>
-                    </child>
-                    <child>
-                      <placeholder/>
                     </child>
                     <child>
                       <placeholder/>
@@ -577,10 +574,10 @@
             <child>
               <object class="GtkButton" id="save-button">
                 <property name="label">gtk-save</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
                 <signal name="clicked" handler="on_save_button_clicked" swapped="no"/>
               </object>
