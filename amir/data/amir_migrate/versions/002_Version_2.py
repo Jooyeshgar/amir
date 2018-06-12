@@ -122,6 +122,7 @@ cheque = Table('Cheque', meta,
     Column('chqHistoryId',   Integer,      nullable = True                         ),
     Column('chqBillId',      Integer,      ColumnDefault(0)                        ),
     Column('chqOrder',       Integer,      nullable = False                        ),
+    Column('chqDelete',      Boolean,                                              ),
 	mysql_charset='utf8'
 )
     
@@ -216,6 +217,7 @@ chequehistory = Table('ChequeHistory', meta,
     Column('TransId',	Integer,    ColumnDefault(0)), #Transaction id is zero for non-invoice cheques.
     Column('Desc',		Unicode(200),nullable = True),
     Column('Date',		Date, 		nullable=False),
+    Column('Delete',    Boolean,                  ),
 	mysql_charset='utf8'
 )
 user = Table('users', meta,

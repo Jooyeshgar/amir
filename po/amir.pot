@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-11 15:23+0430\n"
+"POT-Creation-Date: 2018-06-12 09:54+0430\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -687,24 +687,32 @@ msgstr ""
 msgid "Incoming"
 msgstr ""
 
-#: amir/data/ui/chequereport.glade:259
+#: amir/data/ui/chequereport.glade:260
 msgid "Outgoing"
 msgstr ""
 
-#: amir/data/ui/chequereport.glade:285
+#: amir/data/ui/chequereport.glade:302
+msgid "Deleted"
+msgstr ""
+
+#: amir/data/ui/chequereport.glade:328
 msgid "عودت از مشتری"
 msgstr ""
 
-#: amir/data/ui/chequereport.glade:298
+#: amir/data/ui/chequereport.glade:341
 msgid "عودت به مشتری"
 msgstr ""
 
-#: amir/data/ui/chequereport.glade:311
+#: amir/data/ui/chequereport.glade:354
 msgid "برگشت"
 msgstr ""
 
-#: amir/data/ui/chequereport.glade:324
+#: amir/data/ui/chequereport.glade:367
 msgid "پاس شده"
+msgstr ""
+
+#: amir/data/ui/chequereport.glade:380
+msgid "حذف"
 msgstr ""
 
 #: amir/data/ui/customers.glade:89 amir/data/ui/warehousing.glade:560

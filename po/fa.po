@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: amir\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-11 13:19+0430\n"
+"POT-Creation-Date: 2018-06-12 09:54+0430\n"
 "PO-Revision-Date: 2018-06-11 15:20+0430\n"
 "Last-Translator: Golnaz Nilieh <g382nilieh@gmail.com>\n"
 "Language-Team: persian <info@jooyeshgar.com>\n"
@@ -67,7 +67,8 @@ msgstr "مجموع پرداخت:"
 #: amir/data/ui/BuyingForm.glade:806 amir/data/ui/PurchasingForm.glade:398
 #: amir/data/ui/PurchasingForm.glade:412 amir/data/ui/PurchasingForm.glade:427
 #: amir/data/ui/PurchasingForm.glade:624 amir/data/ui/PurchasingForm.glade:654
-#: amir/data/ui/PurchasingForm.glade:1318 amir/data/ui/PurchasingForm.glade:1350
+#: amir/data/ui/PurchasingForm.glade:1318
+#: amir/data/ui/PurchasingForm.glade:1350
 #: amir/data/ui/PurchasingForm.glade:1383 amir/data/ui/SellingForm.glade:207
 #: amir/data/ui/SellingForm.glade:791 amir/data/ui/SellingForm.glade:806
 #: amir/data/ui/automaticaccounting.glade:328
@@ -420,7 +421,8 @@ msgstr "مجموع تخفیفات:"
 msgid "Standard Selling Price:"
 msgstr "قیمت فروش"
 
-#: amir/data/ui/PurchasingForm.glade:1400 amir/data/ui/PurchasingForm.glade:1427
+#: amir/data/ui/PurchasingForm.glade:1400
+#: amir/data/ui/PurchasingForm.glade:1427
 #: amir/data/ui/PurchasingForm.glade:1439
 msgid "             "
 msgstr "             "
@@ -688,24 +690,32 @@ msgstr "تاریخ تا:"
 msgid "Incoming"
 msgstr "دریافتی"
 
-#: amir/data/ui/chequereport.glade:259
+#: amir/data/ui/chequereport.glade:260
 msgid "Outgoing"
 msgstr "پرداختی"
 
-#: amir/data/ui/chequereport.glade:285
+#: amir/data/ui/chequereport.glade:302
+msgid "Deleted"
+msgstr "حذف شده"
+
+#: amir/data/ui/chequereport.glade:328
 msgid "عودت از مشتری"
 msgstr ""
 
-#: amir/data/ui/chequereport.glade:298
+#: amir/data/ui/chequereport.glade:341
 msgid "عودت به مشتری"
 msgstr ""
 
-#: amir/data/ui/chequereport.glade:311
+#: amir/data/ui/chequereport.glade:354
 msgid "برگشت"
 msgstr ""
 
-#: amir/data/ui/chequereport.glade:324
+#: amir/data/ui/chequereport.glade:367
 msgid "پاس شده"
+msgstr ""
+
+#: amir/data/ui/chequereport.glade:380
+msgid "حذف"
 msgstr ""
 
 #: amir/data/ui/customers.glade:89 amir/data/ui/warehousing.glade:560
@@ -1151,8 +1161,9 @@ msgid ""
 "version.\n"
 "\n"
 "Amir is distributed in the hope that it will be useful, but WITHOUT ANY "
-"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR "
-"A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n"
+"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
+"FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
+"details.\n"
 "\n"
 "You should have received a copy of the GNU General Public License along with "
 "Amir; if not, write to the Free Software Foundation, Inc., 51 Franklin "
@@ -1164,8 +1175,9 @@ msgstr ""
 "version.\n"
 "\n"
 "Amir is distributed in the hope that it will be useful, but WITHOUT ANY "
-"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR "
-"A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n"
+"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
+"FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
+"details.\n"
 "\n"
 "You should have received a copy of the GNU General Public License along with "
 "Amir; if not, write to the Free Software Foundation, Inc., 51 Franklin "
@@ -2093,7 +2105,8 @@ msgstr ""
 #~ msgstr "کد خرید"
 
 #~ msgid ""
-#~ "Group can not be deleted, Because there are some products registered in it."
+#~ "Group can not be deleted, Because there are some products registered in "
+#~ "it."
 #~ msgstr "گروه قابل حذف کردن نیست،‌چون طرف حسایهایی در آن ثبت شده است."
 
 #~ msgid "Group code should not be empty.\n"
@@ -2134,8 +2147,8 @@ msgstr ""
 #~ "و یا پایگاه داده‌ي از نوع sqlite نباشد."
 
 #~ msgid ""
-#~ "The selected file is compatible with older versions of Amir. First convert "
-#~ "it to the new version."
+#~ "The selected file is compatible with older versions of Amir. First "
+#~ "convert it to the new version."
 #~ msgstr ""
 #~ "فایل انتخاب شده با نسخه‌های قبلی امیر سازگار است. برای استفاده لطفا آن را "
 #~ "به نسخه جدید تبدیل کنید."
@@ -2435,8 +2448,8 @@ msgstr ""
 #~ "Can not connect to the database. The selected file for convert may not be "
 #~ "a sqlite database or be corrupt."
 #~ msgstr ""
-#~ "امکان اتصال به پایگاه داده وجود ندارد. فایل انتخاب شده برای تبدیل ممکن است "
-#~ "خراب بوده و یا پایگاه داده‌ي از نوع sqlite نباشد."
+#~ "امکان اتصال به پایگاه داده وجود ندارد. فایل انتخاب شده برای تبدیل ممکن "
+#~ "است خراب بوده و یا پایگاه داده‌ي از نوع sqlite نباشد."
 
 #~ msgid "The selected file is not compatible with older versions of Amir."
 #~ msgstr "فایل انتخاب شده با نسخه‌های قدیمی امیر سازگاری ندارد."

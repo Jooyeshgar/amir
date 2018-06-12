@@ -28,10 +28,13 @@ class ChequeReport:
         
         self.treeviewIncoming = self.builder.get_object("treeviewIncoming")
         self.treeviewOutgoing = self.builder.get_object("treeviewOutgoing")
+        self.treeviewDeleted = self.builder.get_object("treeviewDeleted")
         self.treestoreIncoming = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str, str, str, str)
         self.treestoreOutgoing = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str, str, str, str)
+        self.treestoreDeleted = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str, str, str, str)
         self.treeviewIncoming.set_model(self.treestoreIncoming)
         self.treeviewOutgoing.set_model(self.treestoreOutgoing)
+        self.treeviewDeleted.set_model(self.treestoreDeleted)
 
         column = Gtk.TreeViewColumn(_("ID"), Gtk.CellRendererText(), text = 0)
         column.set_spacing(5)
@@ -45,6 +48,12 @@ class ChequeReport:
         column.set_sort_column_id(0)
         column.set_sort_indicator(True)
         self.treeviewOutgoing.append_column(column)
+        column = Gtk.TreeViewColumn(_("ID"), Gtk.CellRendererText(), text = 0)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        column.set_sort_column_id(0)
+        column.set_sort_indicator(True)
+        self.treeviewDeleted.append_column(column)
 
         column = Gtk.TreeViewColumn(_("Amount"), Gtk.CellRendererText(), text = 1)
         column.set_spacing(5)
@@ -58,6 +67,12 @@ class ChequeReport:
         column.set_sort_column_id(4)
         column.set_sort_indicator(True)
         self.treeviewOutgoing.append_column(column)
+        column = Gtk.TreeViewColumn(_("Amount"), Gtk.CellRendererText(), text = 1)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        column.set_sort_column_id(4)
+        column.set_sort_indicator(True)
+        self.treeviewDeleted.append_column(column)
 
         column = Gtk.TreeViewColumn(_("Write Date"), Gtk.CellRendererText(), text = 2)
         column.set_spacing(5)
@@ -71,6 +86,12 @@ class ChequeReport:
         column.set_sort_column_id(5)
         column.set_sort_indicator(True)
         self.treeviewOutgoing.append_column(column)
+        column = Gtk.TreeViewColumn(_("Write Date"), Gtk.CellRendererText(), text = 2)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        column.set_sort_column_id(5)
+        column.set_sort_indicator(True)
+        self.treeviewDeleted.append_column(column)
 
         column = Gtk.TreeViewColumn(_("Due Date"), Gtk.CellRendererText(), text = 3)
         column.set_spacing(5)
@@ -84,6 +105,12 @@ class ChequeReport:
         column.set_sort_column_id(5)
         column.set_sort_indicator(True)
         self.treeviewOutgoing.append_column(column)
+        column = Gtk.TreeViewColumn(_("Due Date"), Gtk.CellRendererText(), text = 3)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        column.set_sort_column_id(5)
+        column.set_sort_indicator(True)
+        self.treeviewDeleted.append_column(column)
 
         column = Gtk.TreeViewColumn(_("Serial"), Gtk.CellRendererText(), text = 4)
         column.set_spacing(5)
@@ -97,6 +124,12 @@ class ChequeReport:
         column.set_sort_column_id(1)
         column.set_sort_indicator(True)
         self.treeviewOutgoing.append_column(column)
+        column = Gtk.TreeViewColumn(_("Serial"), Gtk.CellRendererText(), text = 4)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        column.set_sort_column_id(1)
+        column.set_sort_indicator(True)
+        self.treeviewDeleted.append_column(column)
 
         column = Gtk.TreeViewColumn(_("Clear"), Gtk.CellRendererText(), text = 5)
         column.set_spacing(5)
@@ -110,6 +143,12 @@ class ChequeReport:
         column.set_sort_column_id(1)
         column.set_sort_indicator(True)
         self.treeviewOutgoing.append_column(column)
+        column = Gtk.TreeViewColumn(_("Clear"), Gtk.CellRendererText(), text = 5)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        column.set_sort_column_id(1)
+        column.set_sort_indicator(True)
+        self.treeviewDeleted.append_column(column)
         
         column = Gtk.TreeViewColumn(_("Customer Name"), Gtk.CellRendererText(), text = 6)
         column.set_spacing(5)
@@ -123,6 +162,12 @@ class ChequeReport:
         column.set_sort_column_id(1)
         column.set_sort_indicator(True)
         self.treeviewOutgoing.append_column(column)
+        column = Gtk.TreeViewColumn(_("Customer Name"), Gtk.CellRendererText(), text = 6)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        column.set_sort_column_id(1)
+        column.set_sort_indicator(True)
+        self.treeviewDeleted.append_column(column)
 
         column = Gtk.TreeViewColumn(_("Account"), Gtk.CellRendererText(), text = 7)
         column.set_spacing(5)
@@ -136,6 +181,12 @@ class ChequeReport:
         column.set_sort_column_id(1)
         column.set_sort_indicator(True)
         self.treeviewOutgoing.append_column(column)
+        column = Gtk.TreeViewColumn(_("Account"), Gtk.CellRendererText(), text = 7)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        column.set_sort_column_id(1)
+        column.set_sort_indicator(True)
+        self.treeviewDeleted.append_column(column)
 
         column = Gtk.TreeViewColumn(_("Transaction ID"), Gtk.CellRendererText(), text = 8)
         column.set_spacing(5)
@@ -149,6 +200,12 @@ class ChequeReport:
         column.set_sort_column_id(1)
         column.set_sort_indicator(True)
         self.treeviewOutgoing.append_column(column)
+        column = Gtk.TreeViewColumn(_("Transaction ID"), Gtk.CellRendererText(), text = 8)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        column.set_sort_column_id(1)
+        column.set_sort_indicator(True)
+        self.treeviewDeleted.append_column(column)
 
         column = Gtk.TreeViewColumn(_("Note Book ID"), Gtk.CellRendererText(), text = 9)
         column.set_spacing(5)
@@ -162,6 +219,12 @@ class ChequeReport:
         column.set_sort_column_id(2)
         column.set_sort_indicator(True)
         self.treeviewOutgoing.append_column(column)
+        column = Gtk.TreeViewColumn(_("Note Book ID"), Gtk.CellRendererText(), text = 9)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        column.set_sort_column_id(2)
+        column.set_sort_indicator(True)
+        self.treeviewDeleted.append_column(column)
 
         column = Gtk.TreeViewColumn(_("Description"), Gtk.CellRendererText(), text = 10)
         column.set_spacing(5)
@@ -175,6 +238,12 @@ class ChequeReport:
         column.set_sort_column_id(3)
         column.set_sort_indicator(True)
         self.treeviewOutgoing.append_column(column)
+        column = Gtk.TreeViewColumn(_("Description"), Gtk.CellRendererText(), text = 10)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        column.set_sort_column_id(3)
+        column.set_sort_indicator(True)
+        self.treeviewDeleted.append_column(column)
 
         column = Gtk.TreeViewColumn(_("History ID"), Gtk.CellRendererText(), text = 11)
         column.set_spacing(5)
@@ -188,6 +257,12 @@ class ChequeReport:
         column.set_sort_column_id(3)
         column.set_sort_indicator(True)
         self.treeviewOutgoing.append_column(column)
+        column = Gtk.TreeViewColumn(_("History ID"), Gtk.CellRendererText(), text = 11)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        column.set_sort_column_id(3)
+        column.set_sort_indicator(True)
+        self.treeviewDeleted.append_column(column)
 
         column = Gtk.TreeViewColumn(_("Bill ID"), Gtk.CellRendererText(), text = 12)
         column.set_spacing(5)
@@ -201,6 +276,12 @@ class ChequeReport:
         column.set_sort_column_id(3)
         column.set_sort_indicator(True)
         self.treeviewOutgoing.append_column(column)
+        column = Gtk.TreeViewColumn(_("Bill ID"), Gtk.CellRendererText(), text = 12)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        column.set_sort_column_id(3)
+        column.set_sort_indicator(True)
+        self.treeviewDeleted.append_column(column)
         
         column = Gtk.TreeViewColumn(_("Order"), Gtk.CellRendererText(), text = 13)
         column.set_spacing(5)
@@ -214,9 +295,16 @@ class ChequeReport:
         column.set_sort_column_id(3)
         column.set_sort_indicator(True)
         self.treeviewOutgoing.append_column(column)
+        column = Gtk.TreeViewColumn(_("Order"), Gtk.CellRendererText(), text = 13)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        column.set_sort_column_id(3)
+        column.set_sort_indicator(True)
+        self.treeviewDeleted.append_column(column)
         
         self.treeviewIncoming.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
         self.treeviewOutgoing.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
+        self.treeviewDeleted.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
         #self.treestore.set_sort_func(0, self.sortGroupIds)
         # self.treestore.set_sort_column_id(0, Gtk.SortType.ASCENDING)
         self.window.show_all()
@@ -325,10 +413,13 @@ class ChequeReport:
             else:
                 clear = 'Not Cleared'
 
-            if (cheque.chqStatus == 3) or (cheque.chqStatus == 4) or (cheque.chqStatus == 7):
-                self.treestoreIncoming.append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(customer.custName), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqNoteBookId), str(cheque.chqDesc), str(cheque.chqHistoryId), str(cheque.chqBillId), str(cheque.chqOrder)))
+            if cheque.chqDelete == False:
+                if (cheque.chqStatus == 3) or (cheque.chqStatus == 4) or (cheque.chqStatus == 7):
+                    self.treestoreIncoming.append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(customer.custName), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqNoteBookId), str(cheque.chqDesc), str(cheque.chqHistoryId), str(cheque.chqBillId), str(cheque.chqOrder)))
+                else:
+                    self.treestoreOutgoing.append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(customer.custName), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqNoteBookId), str(cheque.chqDesc), str(cheque.chqHistoryId), str(cheque.chqBillId), str(cheque.chqOrder)))
             else:
-                self.treestoreOutgoing.append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(customer.custName), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqNoteBookId), str(cheque.chqDesc), str(cheque.chqHistoryId), str(cheque.chqBillId), str(cheque.chqOrder)))
+                self.treestoreDeleted.append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(customer.custName), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqNoteBookId), str(cheque.chqDesc), str(cheque.chqHistoryId), str(cheque.chqBillId), str(cheque.chqOrder)))
 
     def getSelection(self):
         selection = self.treeviewOutgoing.get_selection()
@@ -340,6 +431,11 @@ class ChequeReport:
             iter = selection.get_selected()[1]
             if iter != None :
                 self.code = convertToLatin(self.treestoreIncoming.get(iter, 0)[0])
+            else:
+                selection = self.treeviewDeleted.get_selection()
+                iter = selection.get_selected()[1]
+                if iter != None :
+                    self.code = convertToLatin(self.treestoreDeleted.get(iter, 0)[0])
 
     def odatAzMoshtari(self, sender):
         self.getSelection()
@@ -439,6 +535,14 @@ class ChequeReport:
             self.showHistory(self.code)
 
     def selectChequeFromListOutgoing(self, treeview, path, view_column):
+        selection = self.treeviewOutgoing.get_selection()
+        iter = selection.get_selected()[1]
+        
+        if iter != None :
+            self.code = convertToLatin(self.treestoreOutgoing.get(iter, 0)[0])
+            self.showHistory(self.code)
+
+    def selectChequeFromListDeleted(self, treeview, path, view_column):
         selection = self.treeviewOutgoing.get_selection()
         iter = selection.get_selected()[1]
         
@@ -610,3 +714,20 @@ class ChequeReport:
         if result.chqStatus in [2,3,6,7,8]:
             my_button = self.builder.get_object("passButton")
             my_button.set_sensitive(False)
+        if result.chqDelete == True:
+            my_button = self.builder.get_object("deleteButton")
+            my_button.set_sensitive(False)
+    def on_delete(self, sender):
+        self.getSelection()
+        result = config.db.session.query(Cheque)
+        result = result.filter(Cheque.chqId == self.code).first()
+        result.chqDelete = True
+        ch_history = ChequeHistory(result.chqId, result.chqAmount, result.chqWrtDate, result.chqDueDate, result.chqSerial, result.chqStatus, result.chqCust, result.chqAccount, result.chqTransId, result.chqDesc, self.current_time, result.chqDelete)
+        config.db.session.add(ch_history)
+        config.db.session.commit()
+
+        share.mainwin.silent_daialog(_("The operation was completed successfully."))
+        self.searchFilter()
+
+    def on_outgoing(self, sender):
+        print 'Test'
