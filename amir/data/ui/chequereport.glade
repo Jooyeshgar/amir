@@ -258,8 +258,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Outgoing</property>
-                <signal name="activate-current-link" handler="on_outgoing" swapped="no"/>
-                <signal name="activate-link" handler="on_outgoing" swapped="no"/>
               </object>
               <packing>
                 <property name="position">1</property>
