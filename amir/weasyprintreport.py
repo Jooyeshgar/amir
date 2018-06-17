@@ -1,14 +1,15 @@
-from weasyprint import HTML
 import os
 import gi
-gi.require_version('Poppler', '0.18')
-from gi.repository import GLib, Gtk, Poppler
+from gi.repository import GLib, Gtk
 import subprocess
 import sys
 import time
 from share import share
 config = share.config
 import cairocffi
+dir_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.insert(0, dir_path + '/data/')
+from weasyprint import HTML
 
 class Printo:
     def __init__(self, url, landscape = False):
