@@ -16,7 +16,7 @@ subject = Table('subject', meta,
     Column('lft', Integer, nullable=False),
     Column('rgt', Integer, nullable=False),
     Column('type', Integer),
-	mysql_charset='utf8'
+    mysql_charset='utf8'
 )
 
 #New tables (version 2):
@@ -33,7 +33,7 @@ products = Table('products', meta,
     Column('sellingPrice',    Float,          ColumnDefault(0),   nullable    = False     ),
     Column('discountFormula', Unicode(100),                       nullable    = True      ),
     Column('productDesc',     Unicode(200),                       nullable    = True      ),
-	mysql_charset='utf8'
+    mysql_charset='utf8'
 )
 
 productGroups = Table('productGroups', meta,
@@ -42,42 +42,39 @@ productGroups = Table('productGroups', meta,
     Column('name',         Unicode(60),    nullable    = False     ),
     Column('buyId',        Integer,        ForeignKey('subject.id')),
     Column('sellId',       Integer,        ForeignKey('subject.id')),
-	mysql_charset='utf8'
+    mysql_charset='utf8'
 )
     
-factors = Table('factors', meta,
-    Column('Id'         , Integer     , primary_key = True ),
-    Column('Code'       , Unicode(50) , nullable = False ),
-    Column('tDate'      , Date        , nullable = False ),
-    Column('Bill'       , Integer     , ColumnDefault(0) ),
-    Column('Cust'       , Integer     , ForeignKey('customers.custId') ),
-    Column('Addition'   , Float       , ColumnDefault(0), nullable = False),
-    Column('Subtraction', Float       , ColumnDefault(0), nullable = False),
-    Column('VAT'        , Float       , ColumnDefault(0), nullable = False),
-    Column('Fee'        , Float       , ColumnDefault(0), nullable = False),
-    Column('PayableAmnt', Float       , ColumnDefault(0), nullable = False),
-    Column('CashPayment', Float       , ColumnDefault(0), nullable = False),
-    Column('ShipDate'   , Date        , nullable = True ),
-    Column('Delivery'   , Unicode(50) , nullable = True ),
-    Column('ShipVia'    , Unicode(100), nullable = True ),
-    Column('Permanent'  , Boolean     , ColumnDefault(0)),
-    Column('Desc'       , Unicode(200), nullable = True),
-    Column('Sell'       , Boolean     , ColumnDefault(0)),
-    Column('LastEdit'   , Date        , nullable = True),
-    Column('Acivated'   , Boolean     , ColumnDefault(0), nullable = False),
-	mysql_charset='utf8'
+transactions = Table('transactions', meta,
+    Column('transId',            Integer,      primary_key = True                      ),
+    Column('transCode',          Unicode(50),       nullable = False                        ),
+    Column('transDate',          Date,         nullable = False                        ),
+    Column('transBill',          Integer,      ColumnDefault(0)                        ),
+    Column('transCust',          Integer,      ForeignKey('customers.custId')          ),
+    Column('transAddition',      Float,        ColumnDefault(0),   nullable = False    ),
+    Column('transSubtraction',   Float,        ColumnDefault(0),   nullable = False    ),
+    Column('transTax',           Float,        ColumnDefault(0),   nullable = False    ),
+    Column('transCashPayment',   Float,        ColumnDefault(0),   nullable = False    ),
+    Column('transShipDate',      Date,         nullable = True                         ),
+    Column('transFOB',           Unicode(50),  nullable = True                         ),
+    Column('transShipVia',       Unicode(100), nullable = True                         ),
+    Column('transPermanent',     Boolean,      ColumnDefault(0)                        ),
+    Column('transDesc',          Unicode(200), nullable = True                         ),
+    Column('transSell',          Boolean,      ColumnDefault(0)                        ),
+#    Column('transLastEdit',      Date,         nullable = True                         )
+    mysql_charset='utf8'
 )
 
-factorItems = Table('factorItems', meta,
-    Column('id',          Integer,        primary_key = True                      ),
-    Column('number',          Integer,        nullable = False                        ),
-    Column('productId',     Integer,        ForeignKey('products.id')               ),
-    Column('qnty',        Float,          ColumnDefault(0),   nullable = False    ),
-    Column('untPrc',      Float,          ColumnDefault(0),   nullable = False    ),
-    Column('untDisc',     Unicode(30),    ColumnDefault("0"), nullable = False    ),
-    Column('factorId',     Integer,        ForeignKey('factors.Id')      ),
-    Column('desc',        Unicode(200),   nullable = True                         ),
-	mysql_charset='utf8'
+exchanges = Table('exchanges', meta,
+    Column('exchngId',          Integer,        primary_key = True                      ),
+    Column('exchngNo',          Integer,        nullable = False                        ),
+    Column('exchngProduct',     Integer,        ForeignKey('products.id')               ),
+    Column('exchngQnty',        Float,          ColumnDefault(0),   nullable = False    ),
+    Column('exchngUntPrc',      Float,          ColumnDefault(0),   nullable = False    ),
+    Column('exchngUntDisc',     Unicode(30),    ColumnDefault("0"), nullable = False    ),
+    Column('exchngTransId',     Integer,        ForeignKey('transactions.transId')      ),
+    Column('exchngDesc',        Unicode(200),   nullable = True                         ),
+    mysql_charset='utf8'
 )
 
 payments = Table('payment', meta,
@@ -87,8 +84,7 @@ payments = Table('payment', meta,
     Column('paymntBank',        Unicode(100), nullable = True                         ),
     Column('paymntSerial',      Unicode(50),  nullable = True                         ),
     Column('paymntAmount',      Float,        ColumnDefault(0),   nullable = False    ),
-    # Column('paymntPayer',       Integer,      ForeignKey('customers.custId')          ),
-    Column('paymntNamePayer',   Unicode(50),  nullable = True                         ),
+    Column('paymntPayer',       Integer,      ForeignKey('customers.custId')          ),
     Column('paymntWrtDate',     Date,         nullable = True                         ),
     Column('paymntDesc',        Unicode(200), nullable = True                         ),
     Column('paymntTransId',     Integer,      ColumnDefault(0)                        ),
@@ -96,7 +92,7 @@ payments = Table('payment', meta,
     Column('paymntTrckCode',    Unicode(50),  nullable = True                         ),
     Column('paymntOrder',       Integer,      ColumnDefault(0),   nullable = False    ),
 #    Column('paymntChq',         Unicode,      nullable = True                         )
-	mysql_charset='utf8'
+    mysql_charset='utf8'
 )
 
 notebook = Table("notebook", meta,
@@ -105,7 +101,7 @@ notebook = Table("notebook", meta,
     Column('bill_id', Integer, ForeignKey('bill.id')),
     Column('desc', Unicode, ColumnDefault("")),
     Column('value', Integer, ColumnDefault(0), nullable = False),
-	mysql_charset='utf8'
+    mysql_charset='utf8'
 )
 cheque = Table('Cheque', meta,
     Column('chqId',          Integer,      primary_key = True                      ),
@@ -120,10 +116,7 @@ cheque = Table('Cheque', meta,
     Column('chqNoteBookId', Integer, ColumnDefault(0), ForeignKey('notebook.id')),
     Column('chqDesc',        Unicode(200), nullable = True                         ),
     Column('chqHistoryId',   Integer,      nullable = True                         ),
-    Column('chqBillId',      Integer,      ColumnDefault(0)                        ),
-    Column('chqOrder',       Integer,      nullable = False                        ),
-    Column('chqDelete',      Boolean,                                              ),
-	mysql_charset='utf8'
+    mysql_charset='utf8'
 )
     
 custGroups = Table('custGroups', meta,
@@ -131,7 +124,7 @@ custGroups = Table('custGroups', meta,
     Column('custGrpCode',    Unicode(50),  nullable = False    ),
     Column('custGrpName',    Unicode(50),  nullable = False    ),
     Column('custGrpDesc',    Unicode(200), nullable = True     ),
-	mysql_charset='utf8'
+    mysql_charset='utf8'
 )
 
 customers = Table('customers', meta,
@@ -170,7 +163,7 @@ customers = Table('customers', meta,
     Column('custMarked',       Boolean,      ColumnDefault(False),  nullable = False  ),
     Column('custReason',       Unicode(200), nullable = True     ),
     Column('custDiscRate',     Unicode(14),  nullable = True     ),
-	mysql_charset='utf8'
+    mysql_charset='utf8'
 )
 
 config = Table("config", meta,
@@ -180,13 +173,13 @@ config = Table("config", meta,
     Column('cfgDesc' , Unicode(100), nullable = True),
     Column('cfgType' , Integer     , nullable = True),
     Column('cfgCat'  , Integer     , nullable = True),
-	mysql_charset='utf8'
+    mysql_charset='utf8'
 )
 
 banknames = Table("BankNames", meta,
     Column('Id'  , Integer    , primary_key=True),
     Column('Name', Unicode(50), nullable=False),
-	mysql_charset='utf8'
+    mysql_charset='utf8'
 )
 
 bankAccounts = Table('bankAccounts', meta,
@@ -201,38 +194,32 @@ bankAccounts = Table('bankAccounts', meta,
     Column('accBankPhone',    Unicode(40),       nullable = True     ),
     Column('accBankWebPage',  Unicode(100),       nullable = True     ), #TODO change to unicode
     Column('accDesc',         Unicode(200), nullable = True     ),
-	mysql_charset='utf8'
+    mysql_charset='utf8'
 )
 
 chequehistory = Table('ChequeHistory', meta,
-    Column('Id',		Integer, 	primary_key = True),
-    Column('ChequeId',	Integer,	ForeignKey('Cheque.chqId')),
-    Column('Amount',	Float,		ColumnDefault(0), nullable = False),
-    Column('WrtDate',	Date,       nullable = False),
-    Column('DueDate',	Date,       nullable = False),
-    Column('Serial',	Unicode(50),nullable = False),
-    Column('Status',	Integer,    ColumnDefault(0), nullable = False),
-    Column('Cust',		Integer,    ForeignKey('customers.custId')),
-    Column('Account',	Integer,    ForeignKey('bankAccounts.accId'), nullable = True),
-    Column('TransId',	Integer,    ColumnDefault(0)), #Transaction id is zero for non-invoice cheques.
-    Column('Desc',		Unicode(200),nullable = True),
-    Column('Date',		Date, 		nullable=False),
-    Column('Delete',    Boolean,                  ),
-	mysql_charset='utf8'
+    Column('Id',        Integer,    primary_key = True),
+    Column('ChequeId',  Integer,    ForeignKey('Cheque.chqId')),
+    Column('Amount',    Float,      ColumnDefault(0), nullable = False),
+    Column('WrtDate',   Date,       nullable = False),
+    Column('DueDate',   Date,       nullable = False),
+    Column('Serial',    Unicode(50),nullable = False),
+    Column('Status',    Integer,    ColumnDefault(0), nullable = False),
+    Column('Cust',      Integer,    ForeignKey('customers.custId')),
+    Column('Account',   Integer,    ForeignKey('bankAccounts.accId'), nullable = True),
+    Column('TransId',   Integer,    ColumnDefault(0)), #Transaction id is zero for non-invoice cheques.
+    Column('Desc',      Unicode(200),nullable = True),
+    Column('Date',      Date,       nullable=False),
+    mysql_charset='utf8'
 )
 user = Table('users', meta,
-    Column('id',		Integer, primary_key=True),
-    Column('name',		Unicode(60), nullable=True),
-    Column('username',      Unicode(60), nullable=False),
-    Column('password',      String(300), nullable=False),
-    Column('permission',      Integer, nullable=False),
-	mysql_charset='utf8'
-)
-
-permission = Table('permissions', meta,
     Column('id',        Integer, primary_key=True),
-    Column('name',      Unicode(60), nullable=True),
-    Column('value',      String(20), nullable=False),
+    Column('code',      String(20), unique=True),
+    Column('name',      Unicode(60), nullable=False),
+    Column('parent_id',     Integer, ColumnDefault(0), ForeignKey('users.id'), nullable=False),
+    Column('lft',       Integer, nullable=False),
+    Column('rgt',       Integer, nullable=False),
+    Column('type',      Integer),      # 0 for Debtor, 1 for Creditor, 2 for both
     mysql_charset='utf8'
 )
 
@@ -243,8 +230,8 @@ def upgrade(migrate_engine):
 
     products.create(checkfirst=True)
     productGroups.create(checkfirst=True)
-    factors.create(checkfirst=True)
-    factorItems.create(checkfirst=True)
+    transactions.create(checkfirst=True)
+    exchanges.create(checkfirst=True)
     payments.create(checkfirst=True)
     cheque.create(checkfirst=True)
     custGroups.create(checkfirst=True)
@@ -255,7 +242,6 @@ def upgrade(migrate_engine):
     notebook.create(checkfirst=True)
     chequehistory.create(checkfirst=True)
     user.create(checkfirst=True)
-    permission.create(checkfirst=True)
     logging.debug("upgrade to 2")
 
     op = config.insert()
@@ -270,35 +256,42 @@ def upgrade(migrate_engine):
         # 1 : Entry
         # 2 : Entry (Single Int from Subjects)
         # 3 : Entry (Multi  Int from Subjects)
-        {'cfgId' : 1, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-name'       , 'cfgValue' : u'Enter Company Name', 'cfgDesc' : u'Enter Company name here'},
-        {'cfgId' : 2, 'cfgType' : 0, 'cfgCat' : 0, 'cfgKey' : u'co-logo'       , 'cfgValue' : u'', 'cfgDesc' : u'Select Company logo'},
-        {'cfgId' : 3, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'custSubject'   , 'cfgValue' : u'4',  'cfgDesc' : u'Enter here'},
-        {'cfgId' : 4, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'bank'          , 'cfgValue' : u'1',  'cfgDesc' : u'Enter here'},
-        {'cfgId' : 5, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'cash'          , 'cfgValue' : u'3',  'cfgDesc' : u'Enter here'},
-        {'cfgId' : 6, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'buy'           , 'cfgValue' : u'17', 'cfgDesc':u'Enter here'},
-        {'cfgId' : 7, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'buy-discount'  , 'cfgValue' : u'53', 'cfgDesc':u'Enter here'},
-        {'cfgId' : 8, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'sell'          , 'cfgValue' : u'18', 'cfgDesc':u'Enter here'},
-        {'cfgId' : 9, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'sell-discount' , 'cfgValue' : u'55', 'cfgDesc':u'Enter here'},
-        {'cfgId' :10, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'sell-vat'      , 'cfgValue' : u'41', 'cfgDesc':u'Accounting code of sell VAT'},
-        {'cfgId' :11, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'buy-vat'       , 'cfgValue' : u'40', 'cfgDesc':u'Accounting code of buy VAT'},
-        {'cfgId' :12, 'cfgType' : 1, 'cfgCat' : 1, 'cfgKey' : u'vat-rate'      , 'cfgValue' : u'6',  'cfgDesc':u'Percentage of VAT'},
-        {'cfgId' :13, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'sell-fee'      , 'cfgValue' : u'57', 'cfgDesc':u'Accounting code of sell fee'},
-        {'cfgId' :14, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'buy-fee'       , 'cfgValue' : u'56', 'cfgDesc':u'Accounting code of buy fee'},
-        {'cfgId' :15, 'cfgType' : 1, 'cfgCat' : 1, 'cfgKey' : u'fee-rate'      , 'cfgValue' : u'3',  'cfgDesc':u'Percentage of fee'},
-        {'cfgId' :16, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'partners'      , 'cfgValue' : u'8',  'cfgDesc':u'Enter here'},
-        {'cfgId' :17, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'cost'          , 'cfgValue' : u'2',  'cfgDesc':u'Enter here'},
-        {'cfgId' :18, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'bank-wage'     , 'cfgValue' : u'31', 'cfgDesc':u'Enter here'},
-        {'cfgId' :19, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'our_cheque'    , 'cfgValue' : u'22', 'cfgDesc':u'Enter here'},
-        {'cfgId' :20, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'other_cheque'  , 'cfgValue' : u'6',  'cfgDesc':u'Enter here'},
-        {'cfgId' :21, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'income'        , 'cfgValue' : u'83', 'cfgDesc':u'Enter here'},
-        {'cfgId' :22, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-address'    , 'cfgValue' : u'Enter your company address',  'cfgDesc':u'Enter here'},
-        {'cfgId' :23, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-economical-code'    , 'cfgValue' : u'Enter your economical code',  'cfgDesc':u'Enter here'},
-        {'cfgId' :24, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-national-code'    , 'cfgValue' : u'Enter your national code',  'cfgDesc':u'Enter here'},
-        {'cfgId' :25, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-postal-code'    , 'cfgValue' : u'Enter your postal code',  'cfgDesc':u'Enter here'},
-        {'cfgId' :26, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-phone-number'    , 'cfgValue' : u'Enter your phone number',  'cfgDesc':u'Enter here'}
-        #{'cfgId' :11, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'fund'          , 'cfgValue' : u'??', 'cfgDesc':u'Enter here'},  #TODO cfgKey
-        #{'cfgId' :12, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'acc-receivable', 'cfgValue' : u'??', 'cfgDesc':u'Enter here',}, #TODO cfgKey
-        #{'cfgId' :13, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' :u'commission'     , 'cfgValue' : u'??', 'cfgDesc':u'Enter here'}   #TODO cfgKey
+        {'cfgId' : 1, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-name'       , 'cfgValue' : u'Enter Company Name',
+            'cfgDesc' : u'Enter Company name here'},
+        {'cfgId' : 2, 'cfgType' : 0, 'cfgCat' : 0, 'cfgKey' : u'co-logo'       , 'cfgValue' : u'',
+            'cfgDesc' : u'Select Colpany logo'},
+        {'cfgId' : 3, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'custSubject'   , 'cfgValue' : u'4',
+            'cfgDesc' : u'Enter here'},
+        {'cfgId' : 4, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'bank'          , 'cfgValue' : u'1',
+            'cfgDesc' : u'Enter here'},
+        {'cfgId' : 5, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'cash'          , 'cfgValue' : u'3',
+            'cfgDesc' : u'Enter here'},
+        {'cfgId' : 6, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'buy'           , 'cfgValue' : u'17',
+            'cfgDesc':u'Enter here'},
+        {'cfgId' : 7, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'sell'          , 'cfgValue' : u'18',
+            'cfgDesc':u'Enter here'},
+        {'cfgId' : 8, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'sell-discount' , 'cfgValue' : u'25',
+            'cfgDesc':u'Enter here'},
+        {'cfgId' : 9, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'tax'           , 'cfgValue' : u'33',
+            'cfgDesc':u'Enter here'},
+        {'cfgId' :10, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'partners'      , 'cfgValue' : u'8',
+            'cfgDesc':u'Enter here'},
+        {'cfgId' :11, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'cost'          , 'cfgValue' : u'2',
+            'cfgDesc':u'Enter here'},
+        {'cfgId' :12, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'bank-wage'     , 'cfgValue' : u'31',
+            'cfgDesc':u'Enter here'},
+        {'cfgId' :13, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'our_cheque'    , 'cfgValue' : u'22',
+            'cfgDesc' :u'Enter here'},
+        {'cfgId' :14, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'other_cheque'    , 'cfgValue' : u'6',
+            'cfgDesc' :u'Enter here'},
+        {'cfgId' :15, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'income'     , 'cfgValue' : u'83',
+            'cfgDesc':u'Enter here'}
+        #{'cfgId' :11, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'fund'          , 'cfgValue' : u'??',
+        #    'cfgDesc':u'Enter here'},  #TODO cfgKey
+        #{'cfgId' :12, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'acc-receivable', 'cfgValue' : u'??',
+        #    'cfgDesc':u'Enter here',}, #TODO cfgKey
+        #{'cfgId' :13, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' :u'commission'     , 'cfgValue' : u'??',
+        #    'cfgDesc':u'Enter here'}   #TODO cfgKey
      )
                
     op = banknames.insert()
@@ -322,17 +315,17 @@ def downgrade(migrate_engine):
     # Operations to reverse the above upgrade go here.
     meta.bind = migrate_engine
 
-    # products.drop()
-    # productGroups.drop()
-    # factors.drop()
-    # factorItems.drop()
-    # payments.drop()
+    products.drop()
+    productGroups.drop()
+    transactions.drop()
+    exchanges.drop()
+    payments.drop()
 
-    # cheques.drop()
-    # custGroups.drop()
-    # customers.drop()
-    # bankAccounts.drop()
-    # config.drop()
+    cheques.drop()
+    custGroups.drop()
+    customers.drop()
+    bankAccounts.drop()
+    config.drop()
     print("downgrade to 1")
     
 

@@ -41,7 +41,7 @@ class Database:
         if re.match('^\w+://', file) == None:
             file = 'sqlite:///'+file   
         
-        self.version = 2
+        self.version = 3
         self.dbfile = file
         self.repository = repository
         
