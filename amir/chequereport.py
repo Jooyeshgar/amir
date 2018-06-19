@@ -336,8 +336,7 @@ class ChequeReport:
     def showResult(self, chequeId=None, chqSerial=None, amountFrom=None, amountTo=None, dateFrom=None, dateTo=None):
         self.treestoreIncoming.clear()
         self.treestoreOutgoing.clear()
-        result = config.db.session.query(Cheque, Customers)
-        result = result.filter(Customers.custId == Cheque.chqCust)
+        result = config.db.session.query(Cheque).outerjoin(Customers, Customers.custId == Cheque.chqCust).all()
         # Apply filters
         if chequeId:
             result = result.filter(Cheque.chqId == chequeId)
@@ -372,7 +371,9 @@ class ChequeReport:
             result = result.filter(Cheque.chqDueDate >= dateFrom)
 
         # Show
-        for cheque,customer in result:
+        for cheque in result:
+            if not hasattr(cheque, 'custName'):
+                cheque.custName = ''
             if share.config.datetypes[share.config.datetype] == "jalali": 
                 year, month, day = str(cheque.chqWrtDate).split("-")
                 chqWrtDate = gregorian_to_jalali(int(year),int(month),int(day))
@@ -396,11 +397,11 @@ class ChequeReport:
 
             if cheque.chqDelete == False:
                 if (cheque.chqStatus == 3) or (cheque.chqStatus == 4) or (cheque.chqStatus == 7):
-                    self.treestoreIncoming.append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(customer.custName), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqNoteBookId), str(cheque.chqDesc), str(cheque.chqBillId), str(cheque.chqOrder)))
+                    self.treestoreIncoming.append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(cheque.custName), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqNoteBookId), str(cheque.chqDesc), str(cheque.chqBillId), str(cheque.chqOrder)))
                 else:
-                    self.treestoreOutgoing.append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(customer.custName), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqNoteBookId), str(cheque.chqDesc), str(cheque.chqBillId), str(cheque.chqOrder)))
+                    self.treestoreOutgoing.append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(cheque.custName), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqNoteBookId), str(cheque.chqDesc), str(cheque.chqBillId), str(cheque.chqOrder)))
             else:
-                self.treestoreDeleted.append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(customer.custName), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqNoteBookId), str(cheque.chqDesc), str(cheque.chqBillId), str(cheque.chqOrder)))
+                self.treestoreDeleted.append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(cheque.custName), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqNoteBookId), str(cheque.chqDesc), str(cheque.chqBillId), str(cheque.chqOrder)))
 
     def getSelection(self):
         selection = self.treeviewOutgoing.get_selection()
@@ -643,12 +644,13 @@ class ChequeReport:
         self.builder.connect_signals(self)
 
         self.treestoreHistory.clear()
-        result = config.db.session.query(ChequeHistory, Customers)
-        result = result.filter(ChequeHistory.ChequeId == code)
-        result = result.filter(Customers.custId == ChequeHistory.Cust)
+        result = config.db.session.query(ChequeHistory).outerjoin(Customers, Customers.custId == ChequeHistory.Cust)
+        result = result.filter(ChequeHistory.ChequeId == code).all()
 
         # Show
-        for cheque,customer in result:
+        for cheque in result:
+            if not hasattr(cheque, 'custName'):
+                cheque.custName = ''
             if share.config.datetypes[share.config.datetype] == "jalali": 
                 year, month, day = str(cheque.WrtDate).split("-")
                 chqWrtDate = gregorian_to_jalali(int(year),int(month),int(day))
@@ -670,7 +672,8 @@ class ChequeReport:
             else:
                 clear = 'Not Cleared'
 
-            self.treestoreHistory.append(None, (str(cheque.ChequeId), str(cheque.Amount), str(chqWrtDate), str(chqDueDate), str(cheque.Serial), str(clear), str(customer.custName), str(cheque.Account), str(cheque.TransId), str(cheque.TransId), str(cheque.Desc)))
+            self.treestoreHistory.append(None, (str(cheque.ChequeId), str(cheque.Amount), str(chqWrtDate), str(chqDueDate), str(cheque.Serial), str(clear), str(cheque.custName), str(cheque.Account), str(cheque.TransId), str(cheque.TransId), str(cheque.Desc)))
+
     def on_select_cell(self, sender):
         my_button = self.builder.get_object("odatAsMoshtariButton")
         my_button.set_sensitive(True)
