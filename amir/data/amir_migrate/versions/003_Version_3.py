@@ -25,18 +25,51 @@ user = Table('users', meta,
 def upgrade(migrate_engine):
     # meta = MetaData(bind=migrate_engine)
     meta.bind = migrate_engine
-    permissions.create(checkfirst=True)
-    
-
     from sqlalchemy.orm import sessionmaker, scoped_session
     Session = scoped_session(sessionmaker(bind=migrate_engine))
     s = Session()
-
     s.execute('ALTER TABLE `transactions` RENAME TO `factors`')
+    s.commit()
     s.execute('ALTER TABLE `factors` ADD COLUMN `Acivated` Boolean DEFAULT 0;')
-    s.execute('ALTER TABLE `factors` ADD COLUMN `transPayableAmnt` Float DEFAULT 0;')
+    s.commit()
+    s.execute('ALTER TABLE `factors` ADD COLUMN `Fee` Float DEFAULT 0;')
+    s.commit()
     s.execute('ALTER TABLE `factors` ADD COLUMN `PayableAmnt` Float DEFAULT 0;')
+    s.commit()
     s.execute('ALTER TABLE `factors` ADD COLUMN `LastEdit` Date;')
+    s.commit()
+    s.execute('CREATE TABLE factorItems ( \
+                "exchngId" INTEGER NOT NULL, \
+                "exchngNo" INTEGER NOT NULL, \
+                "exchngProduct" INTEGER, \
+                "exchngQnty" FLOAT NOT NULL, \
+                "exchngUntPrc" FLOAT NOT NULL, \
+                "exchngUntDisc" VARCHAR(30) NOT NULL, \
+                "exchngTransId" INTEGER, \
+                "exchngDesc" VARCHAR(200), \
+                PRIMARY KEY ("exchngId"), \
+                FOREIGN KEY("exchngProduct") REFERENCES products (id), \
+                FOREIGN KEY("exchngTransId") REFERENCES factors ("Id")\
+            );')
+    s.commit()
+    s.execute('INSERT INTO factorItems (exchngId, exchngNo, exchngProduct, exchngQnty, exchngUntPrc, exchngUntDisc, exchngTransId, exchngDesc)\
+               SELECT exchngId, exchngNo, exchngProduct, exchngQnty, exchngUntPrc, exchngUntDisc, exchngTransId, exchngDesc FROM exchanges;')
+    s.execute('DROP TABLE exchanges;')
+    s.commit()
+    s.execute('ALTER TABLE `payment` ADD COLUMN `paymntNamePayer` Text;')
+    s.commit()
+    s.execute('ALTER TABLE `Cheque` ADD COLUMN `chqBillId` Integer;')
+    s.commit()
+    s.execute('ALTER TABLE `Cheque` ADD COLUMN `chqOrder` Integer;')
+    s.commit()
+    s.execute('ALTER TABLE `Cheque` ADD COLUMN `chqDelete` Boolean;')
+    s.commit()
+    s.execute('ALTER TABLE `chequehistory` ADD COLUMN `Delete` Boolean;')
+    s.commit()
+    s.execute('DROP TABLE users;')
+    s.commit()
+    s.execute('DELETE FROM config')
+    s.commit()
 
     factors = Table('factors', meta, autoload=True)
     factors.c.transId.alter(name='Id')
@@ -53,27 +86,7 @@ def upgrade(migrate_engine):
     factors.c.transPermanent.alter(name='Permanent')
     factors.c.transDesc.alter(name='Desc')
     factors.c.transSell.alter(name='Sell')
-    factors.c.transPayableAmnt.alter(name='Fee')
     factors.c.transFOB.alter(name='Delivery')
-
-    s.execute('CREATE TABLE factorItems ( \
-                "exchngId" INTEGER NOT NULL, \
-                "exchngNo" INTEGER NOT NULL, \
-                "exchngProduct" INTEGER, \
-                "exchngQnty" FLOAT NOT NULL, \
-                "exchngUntPrc" FLOAT NOT NULL, \
-                "exchngUntDisc" VARCHAR(30) NOT NULL, \
-                "exchngTransId" INTEGER, \
-                "exchngDesc" VARCHAR(200), \
-                PRIMARY KEY ("exchngId"), \
-                FOREIGN KEY("exchngProduct") REFERENCES products (id), \
-                FOREIGN KEY("exchngTransId") REFERENCES factors ("Id")\
-            );')
-    s.execute('INSERT INTO factorItems (exchngId, exchngNo, exchngProduct, exchngQnty, exchngUntPrc, exchngUntDisc, exchngTransId, exchngDesc)\
-               SELECT exchngId, exchngNo, exchngProduct, exchngQnty, exchngUntPrc, exchngUntDisc, exchngTransId, exchngDesc FROM exchanges;')
-    s.execute('DROP TABLE exchanges;')
-
-
     factorItems = Table('factorItems', meta, autoload=True)
     factorItems.c.exchngId.alter(name='id')
     factorItems.c.exchngNo.alter(name='number')
@@ -83,27 +96,10 @@ def upgrade(migrate_engine):
     factorItems.c.exchngUntDisc.alter(name='untDisc')
     factorItems.c.exchngTransId.alter(name='factorId')
     factorItems.c.exchngDesc.alter(name='desc')
-
-    s.execute('ALTER TABLE `payment` ADD COLUMN `paymntNamePayer` Text;')
-
-    s.execute('ALTER TABLE `Cheque` ADD COLUMN `chqBillId` Integer;')
-    s.execute('ALTER TABLE `Cheque` ADD COLUMN `chqOrder` Integer;')
-    s.execute('ALTER TABLE `Cheque` ADD COLUMN `chqDelete` Boolean;')
-
-    s.execute('ALTER TABLE `chequehistory` ADD COLUMN `Delete` Boolean;')
-
-
     factorItems = Table('factorItems', meta, autoload=True)
     factorItems.c.exchngId.alter(name='id')
     factorItems.c.exchngNo.alter(name='number')
-
     permissions.create(checkfirst=True)
-
-    s.execute('DROP TABLE users;')
-    permissions.create(checkfirst=True)
-
-    s.execute('DELETE FROM config')
-    s.commit()
     config = Table('config', meta, autoload=True)
     op = config.insert()
     op.execute(
