@@ -432,9 +432,10 @@ class MainWindow(GObject.GObject):
 			config.db.session.add(user)
 			config.db.session.commit()
 		self.loginUser = config.db.session.query(Users).filter(Users.username == unicode(username.get_text())).first()
-		permission = config.db.session.query(Permissions).filter(Permissions.id == self.loginUser.id).first()
-		# self.permissionValue = long(permission.value)
-		utility.setPermissionValue(long(permission.value))
+		if self.loginUser:
+			permission = config.db.session.query(Permissions).filter(Permissions.id == self.loginUser.id).first()
+			# self.permissionValue = long(permission.value)
+			utility.setPermissionValue(long(permission.value))
 		if self.loginUser and self.loginUser.validate_password(password.get_text()):
 			self.window.hide()
 			self.loggedIn()
