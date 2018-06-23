@@ -45,6 +45,8 @@ Run `amir` command in terminal.
 amir
 ```
 
+Default username is `root` and password should be empty.
+
 ## Development
 
 To start development and contributing install with below commands:
