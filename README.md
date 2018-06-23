@@ -6,16 +6,17 @@ Amir is an accounting software mostly focused on businesses based in Iran.
 
 ## Requirements
 
-* python (2.7)
-* pip
+* python2.7
+* pip (python-pip)
 * setuptools
-* python-glade2
+* python-glade2 gettext python-passlib python-cairocffi python-cairosvg python-pdfrw
 
-to install other requirements simply run below commands:
+to install requirements simply run below commands:
 
 ```bash
+sudo apt install python-pip
 pip install -r requirements.txt
-sudo apt-get install python-glade2
+sudo apt install python-setuptools python-glade2 gettext python-passlib python-cairocffi python-cairosvg python-pdfrw
 ```
 
 ## Installation
