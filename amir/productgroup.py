@@ -4,7 +4,7 @@ import  subjects
 import  utility
 
 import  gobject
-import  pygtk
+
 
 from    sqlalchemy.orm              import  sessionmaker, join
 from    sqlalchemy.orm.util         import  outerjoin

@@ -5,7 +5,7 @@ import  subjects
 import  utility
 
 # import  gobject
-# import  pygtk
+# 
 # import  gtk
 
 

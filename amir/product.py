@@ -1,7 +1,7 @@
 import  sys
 import  os
 import  gobject
-import  pygtk
+
 import  re
 
 import  numberentry

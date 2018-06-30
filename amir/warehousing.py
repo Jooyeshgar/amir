@@ -1,6 +1,6 @@
 import  numberentry
 import  subjects
-import  pygtk
+
 
 from    sqlalchemy.orm              import  sessionmaker, join
 from    helpers                     import  get_builder

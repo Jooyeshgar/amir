@@ -1,5 +1,4 @@
 import  gobject
-import  pygtk
 
 #import  warehousing
 import  class_subject
