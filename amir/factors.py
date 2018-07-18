@@ -181,7 +181,7 @@ class Factor(Payments):
 		query = config.db.session.query(Factors,Customers)
 		query = query.select_from(outerjoin(Factors,Customers, Factors.Cust == Customers.custId))
 		query = query.order_by(Factors.Code.asc())
-		query =	query.filter(Factors.Sell==self.sell).filter(Factors.Acivated==1)
+		query =	query.filter(Factors.Sell==self.sell).filter(Factors.Activated==1)
 		result = query.all()
 
 		from pprint import pprint
@@ -430,7 +430,7 @@ class Factor(Payments):
 		print code
 		query = config.db.session.query(Factors).select_from(Factors)
 		Transaction = query.filter(Factors.Id ==unicode(code) )
-		Transaction = Transaction.filter(Factors.Acivated==1).first()
+		Transaction = Transaction.filter(Factors.Activated==1).first()
 		TransactionId=Transaction.Id
 		
 		factorItems=self.session.query(FactorItems).select_from(FactorItems)
@@ -447,7 +447,7 @@ class Factor(Payments):
 		query = config.db.session.query(Factors).select_from(Factors)
 		Transaction = query.filter(Factors.Id ==unicode(code) ).all()
 		for trans in Transaction:
-			trans.Acivated=0
+			trans.Activated=0
 		config.db.session.commit()
 		self.treestore.remove(iter1)	
 
@@ -1171,7 +1171,7 @@ class Factor(Payments):
 			query=self.session.query(Factors).select_from(Factors)
 			query=query.filter(Factors.Code==self.subCode).all()
 			for trans in query:
-				trans.Acivated=0
+				trans.Activated=0
 			sell = Factors( self.subCode, self.subDate, 0, self.custId, self.subAdd, self.subSub, self.VAT, self.fee, self.totalFactor, self.cashPayment,
 								self.subShpDate, self.subFOB, self.subShipVia, permanent, self.subDesc, self.sell, self.editDate, 1)
 

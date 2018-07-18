@@ -32,11 +32,11 @@ class Factors (Base):
     Desc = Column(Unicode(200), nullable=True)
     Sell = Column(Boolean, ColumnDefault(0), nullable=False)
     LastEdit = Column(Date, nullable=True)
-    Acivated = Column(Boolean, ColumnDefault(0), nullable=False)
+    Activated = Column(Boolean, ColumnDefault(0), nullable=False)
 
     def __init__(self, Code, Date, Bill, Cust, Add, Sub, VAT, Fee, 
                  PayableAmnt, Cash, ShpDate, Delivery, ShipVia, Prmnt,
-                 Desc, Sell, LastEdit, Acivated):
+                 Desc, Sell, LastEdit, Activated):
 
         self.Code = Code
         self.tDate = Date
@@ -55,6 +55,6 @@ class Factors (Base):
         self.Desc = Desc
         self.Sell = Sell
         self.LastEdit = LastEdit
-        self.Acivated = Acivated
+        self.Activated = Activated
 
 # @}

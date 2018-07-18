@@ -28,16 +28,39 @@ def upgrade(migrate_engine):
     from sqlalchemy.orm import sessionmaker, scoped_session
     Session = scoped_session(sessionmaker(bind=migrate_engine))
     s = Session()
-    s.execute('ALTER TABLE `transactions` RENAME TO `factors`')
+
+    s.execute('CREATE TABLE factors (\
+                "Id" INTEGER NOT NULL, \
+                "Code" VARCHAR(50) NOT NULL, \
+                "tDate" DATE NOT NULL, \
+                "Bill" INTEGER, \
+                "Cust" INTEGER, \
+                "Addition" FLOAT NOT NULL, \
+                "Subtraction" FLOAT NOT NULL, \
+                "VAT" FLOAT NOT NULL, \
+                "CashPayment" FLOAT NOT NULL, \
+                "ShipDate" DATE, \
+                "Delivery" VARCHAR(50), \
+                "ShipVia" VARCHAR(100), \
+                "Permanent" BOOLEAN, \
+                "Desc" VARCHAR(200), \
+                "Sell" BOOLEAN, \
+                "Activated" BOOLEAN DEFAULT 0, \
+                "Fee" FLOAT DEFAULT 0, \
+                "PayableAmnt" FLOAT DEFAULT 0, \
+                "LastEdit" DATE, \
+                PRIMARY KEY ("Id"), \
+                CHECK ("Permanent" IN (0, 1)), \
+                CHECK ("Sell" IN (0, 1)), \
+                CHECK ("Activated" IN (0, 1)), \
+                FOREIGN KEY("Cust") REFERENCES customers ("custId") \
+            );')
     s.commit()
-    s.execute('ALTER TABLE `factors` ADD COLUMN `Acivated` Boolean DEFAULT 0;')
+    s.execute('INSERT INTO factors (Id, Code, tDate, Bill, Cust, Addition, Subtraction, VAT, CashPayment, ShipDate, Permanent, `Desc`, Sell, Activated, Fee, PayableAmnt, LastEdit)\
+               SELECT transId, transCode, transDate, transBill, transCust, transAddition, transSubtraction, transTax, transCashPayment, transShipDate, transPermanent,  transDesc, transSell, 0, 0, 0, 0 FROM transactions;')
+    s.execute('DROP TABLE transactions;')
     s.commit()
-    s.execute('ALTER TABLE `factors` ADD COLUMN `Fee` Float DEFAULT 0;')
-    s.commit()
-    s.execute('ALTER TABLE `factors` ADD COLUMN `PayableAmnt` Float DEFAULT 0;')
-    s.commit()
-    s.execute('ALTER TABLE `factors` ADD COLUMN `LastEdit` Date;')
-    s.commit()
+
     s.execute('CREATE TABLE factorItems ( \
                 "exchngId" INTEGER NOT NULL, \
                 "exchngNo" INTEGER NOT NULL, \
@@ -56,6 +79,7 @@ def upgrade(migrate_engine):
                SELECT exchngId, exchngNo, exchngProduct, exchngQnty, exchngUntPrc, exchngUntDisc, exchngTransId, exchngDesc FROM exchanges;')
     s.execute('DROP TABLE exchanges;')
     s.commit()
+
     s.execute('ALTER TABLE `payment` ADD COLUMN `paymntNamePayer` Text;')
     s.commit()
     s.execute('ALTER TABLE `Cheque` ADD COLUMN `chqBillId` Integer;')
@@ -71,22 +95,7 @@ def upgrade(migrate_engine):
     s.execute('DELETE FROM config')
     s.commit()
 
-    factors = Table('factors', meta, autoload=True)
-    factors.c.transId.alter(name='Id')
-    factors.c.transCode.alter(name='Code')
-    factors.c.transDate.alter(name='tDate')
-    factors.c.transBill.alter(name='Bill')
-    factors.c.transCust.alter(name='Cust')
-    factors.c.transAddition.alter(name='Addition')
-    factors.c.transSubtraction.alter(name='Subtraction')
-    factors.c.transTax.alter(name='VAT')
-    factors.c.transCashPayment.alter(name='CashPayment')
-    factors.c.transShipDate.alter(name='ShipDate')
-    factors.c.transShipVia.alter(name='ShipVia')
-    factors.c.transPermanent.alter(name='Permanent')
-    factors.c.transDesc.alter(name='Desc')
-    factors.c.transSell.alter(name='Sell')
-    factors.c.transFOB.alter(name='Delivery')
+
     factorItems = Table('factorItems', meta, autoload=True)
     factorItems.c.exchngId.alter(name='id')
     factorItems.c.exchngNo.alter(name='number')
