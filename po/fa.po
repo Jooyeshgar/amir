@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: amir\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-12 09:54+0430\n"
-"PO-Revision-Date: 2018-06-11 15:20+0430\n"
+"POT-Creation-Date: 2018-08-21 15:44+0430\n"
+"PO-Revision-Date: 2018-08-21 15:46+0430\n"
 "Last-Translator: Golnaz Nilieh <g382nilieh@gmail.com>\n"
 "Language-Team: persian <info@jooyeshgar.com>\n"
 "Language: fa\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2010-05-11 04:48+0000\n"
-"X-Generator: Poedit 1.8.7.1\n"
+"X-Generator: Poedit 2.0.6\n"
 "Generated-By: pygettext.py 1.5\n"
 
 #: amir/data/ui/BuyingForm.glade:7 amir/data/ui/PurchasingForm.glade:6
@@ -67,14 +67,13 @@ msgstr "مجموع پرداخت:"
 #: amir/data/ui/BuyingForm.glade:806 amir/data/ui/PurchasingForm.glade:398
 #: amir/data/ui/PurchasingForm.glade:412 amir/data/ui/PurchasingForm.glade:427
 #: amir/data/ui/PurchasingForm.glade:624 amir/data/ui/PurchasingForm.glade:654
-#: amir/data/ui/PurchasingForm.glade:1318
-#: amir/data/ui/PurchasingForm.glade:1350
+#: amir/data/ui/PurchasingForm.glade:1318 amir/data/ui/PurchasingForm.glade:1350
 #: amir/data/ui/PurchasingForm.glade:1383 amir/data/ui/SellingForm.glade:207
 #: amir/data/ui/SellingForm.glade:791 amir/data/ui/SellingForm.glade:806
-#: amir/data/ui/automaticaccounting.glade:328
-#: amir/data/ui/automaticaccounting.glade:367
-#: amir/data/ui/automaticaccounting.glade:494
-#: amir/data/ui/automaticaccounting.glade:506
+#: amir/data/ui/automaticaccounting.glade:329
+#: amir/data/ui/automaticaccounting.glade:368
+#: amir/data/ui/automaticaccounting.glade:496
+#: amir/data/ui/automaticaccounting.glade:508
 msgid "0"
 msgstr "۰"
 
@@ -151,11 +150,11 @@ msgstr "(کسورات):"
 
 #: amir/data/ui/BuyingForm.glade:653 amir/data/ui/SellingForm.glade:653
 msgid "VAT"
-msgstr ""
+msgstr "ارزش افزوده"
 
 #: amir/data/ui/BuyingForm.glade:673 amir/data/ui/SellingForm.glade:673
 msgid "Fee:"
-msgstr ""
+msgstr "عوارض"
 
 #: amir/data/ui/BuyingForm.glade:687 amir/data/ui/SellingForm.glade:687
 msgid "Buyer discount:"
@@ -183,8 +182,8 @@ msgstr "خرید از"
 
 #: amir/data/ui/BuyingForm.glade:977 amir/data/ui/PurchasingForm.glade:59
 #: amir/data/ui/PurchasingForm.glade:1286 amir/data/ui/SellingForm.glade:977
-#: amir/data/ui/automaticaccounting.glade:216
-#: amir/data/ui/automaticaccounting.glade:232 amir/data/ui/cardex.glade:407
+#: amir/data/ui/automaticaccounting.glade:227
+#: amir/data/ui/automaticaccounting.glade:243 amir/data/ui/cardex.glade:407
 #: amir/data/ui/cardex.glade:421 amir/data/ui/cheque.glade:405
 #: amir/data/ui/document.glade:61 amir/data/ui/report.glade:235
 #: amir/data/ui/setting.glade:225 amir/data/ui/user.glade:185
@@ -210,7 +209,7 @@ msgstr "----"
 
 #: amir/data/ui/BuyingForm.glade:1115 amir/data/ui/PurchasingForm.glade:21
 #: amir/data/ui/SellingForm.glade:1115
-#: amir/data/ui/automaticaccounting.glade:119 amir/data/ui/document.glade:528
+#: amir/data/ui/automaticaccounting.glade:118 amir/data/ui/document.glade:528
 msgid "Date:"
 msgstr "تاریخ:"
 
@@ -320,7 +319,7 @@ msgstr "کد رهگیری:"
 
 #: amir/data/ui/BuyingForm.glade:2205 amir/data/ui/PurchasingForm.glade:1483
 #: amir/data/ui/SellingForm.glade:2206
-#: amir/data/ui/automaticaccounting.glade:413 amir/data/ui/cheque.glade:255
+#: amir/data/ui/automaticaccounting.glade:418 amir/data/ui/cheque.glade:255
 #: amir/data/ui/cheque.glade:321
 msgid "Add"
 msgstr "اضافه کردن"
@@ -371,11 +370,11 @@ msgid "Buying"
 msgstr "خریدن"
 
 #: amir/data/ui/BuyingForm.glade:2789 amir/data/ui/SellingForm.glade:2792
-#: amir/data/ui/cheque.glade:349 amir/data/ui/customers.glade:1798
-#: amir/data/ui/customers.glade:1946 amir/data/ui/notebook.glade:338
-#: amir/data/ui/user.glade:689 amir/data/ui/user.glade:1266
-#: amir/data/ui/user.glade:1392 amir/data/ui/warehousing.glade:773
-#: amir/data/ui/warehousing.glade:907
+#: amir/data/ui/cheque.glade:349 amir/data/ui/chequereport.glade:384
+#: amir/data/ui/customers.glade:1798 amir/data/ui/customers.glade:1946
+#: amir/data/ui/notebook.glade:338 amir/data/ui/user.glade:689
+#: amir/data/ui/user.glade:1266 amir/data/ui/user.glade:1392
+#: amir/data/ui/warehousing.glade:773 amir/data/ui/warehousing.glade:907
 msgid "Delete"
 msgstr "حذف"
 
@@ -421,8 +420,7 @@ msgstr "مجموع تخفیفات:"
 msgid "Standard Selling Price:"
 msgstr "قیمت فروش"
 
-#: amir/data/ui/PurchasingForm.glade:1400
-#: amir/data/ui/PurchasingForm.glade:1427
+#: amir/data/ui/PurchasingForm.glade:1400 amir/data/ui/PurchasingForm.glade:1427
 #: amir/data/ui/PurchasingForm.glade:1439
 msgid "             "
 msgstr "             "
@@ -464,55 +462,55 @@ msgstr "جستجو"
 msgid "Filter : "
 msgstr "فیلتر: "
 
-#: amir/data/ui/automaticaccounting.glade:44
+#: amir/data/ui/automaticaccounting.glade:43
 msgid "Type:"
 msgstr "نوع :"
 
-#: amir/data/ui/automaticaccounting.glade:192
+#: amir/data/ui/automaticaccounting.glade:203
 msgid "From: "
 msgstr "از :"
 
-#: amir/data/ui/automaticaccounting.glade:205
+#: amir/data/ui/automaticaccounting.glade:216
 msgid "To"
 msgstr "به"
 
-#: amir/data/ui/automaticaccounting.glade:254
+#: amir/data/ui/automaticaccounting.glade:265
 msgid "Value:"
 msgstr "مقدار:"
 
-#: amir/data/ui/automaticaccounting.glade:304
+#: amir/data/ui/automaticaccounting.glade:305
 msgid "Cash Payment"
 msgstr "پرداخت نقدی"
 
-#: amir/data/ui/automaticaccounting.glade:315
+#: amir/data/ui/automaticaccounting.glade:316
 msgid "Non-Cash Payment"
 msgstr "پرداخت غیر نقدی"
 
-#: amir/data/ui/automaticaccounting.glade:343
+#: amir/data/ui/automaticaccounting.glade:344
 msgid "discount"
 msgstr "تخفیف"
 
-#: amir/data/ui/automaticaccounting.glade:355
+#: amir/data/ui/automaticaccounting.glade:356
 msgid "Spend Cheque"
 msgstr "خرج چک"
 
-#: amir/data/ui/automaticaccounting.glade:379
+#: amir/data/ui/automaticaccounting.glade:384
 msgid "%"
 msgstr "٪"
 
-#: amir/data/ui/automaticaccounting.glade:396
+#: amir/data/ui/automaticaccounting.glade:401
 msgid "List"
 msgstr "لیست"
 
-#: amir/data/ui/automaticaccounting.glade:471
+#: amir/data/ui/automaticaccounting.glade:472
 msgid "Total:"
 msgstr "مجموع :"
 
-#: amir/data/ui/automaticaccounting.glade:482
+#: amir/data/ui/automaticaccounting.glade:483
 msgid "Mod:"
 msgstr "مانده:"
 
-#: amir/data/ui/automaticaccounting.glade:521
+#: amir/data/ui/automaticaccounting.glade:522
 #: amir/data/ui/bankaccounts.glade:152 amir/data/ui/cheque.glade:226
 msgid "Desc"
 msgstr "توضیح"
@@ -604,7 +602,7 @@ msgstr "مقدار"
 
 #: amir/data/ui/cardex.glade:163
 msgid "Oversell"
-msgstr ""
+msgstr "بیش فروشی"
 
 #: amir/data/ui/cardex.glade:175
 msgid "Purchace Price"
@@ -662,61 +660,57 @@ msgstr "تاریخ سررسید"
 msgid "Bank Account"
 msgstr "حساب بانکی"
 
-#: amir/data/ui/chequereport.glade:33
+#: amir/data/ui/chequereport.glade:39
 msgid "ID:"
 msgstr "شناسه:"
 
-#: amir/data/ui/chequereport.glade:44
+#: amir/data/ui/chequereport.glade:50
 msgid "Serial:"
 msgstr "سریال:"
 
-#: amir/data/ui/chequereport.glade:83
+#: amir/data/ui/chequereport.glade:89
 msgid "Amount From:"
 msgstr "مبلغ از:"
 
-#: amir/data/ui/chequereport.glade:108
+#: amir/data/ui/chequereport.glade:114
 msgid "Amount To:"
 msgstr "مبلغ تا:"
 
-#: amir/data/ui/chequereport.glade:119
+#: amir/data/ui/chequereport.glade:125
 msgid "Date From:"
 msgstr "تاریخ از:"
 
-#: amir/data/ui/chequereport.glade:144
+#: amir/data/ui/chequereport.glade:150
 msgid "Date To:"
 msgstr "تاریخ تا:"
 
-#: amir/data/ui/chequereport.glade:221
+#: amir/data/ui/chequereport.glade:227
 msgid "Incoming"
 msgstr "دریافتی"
 
-#: amir/data/ui/chequereport.glade:260
+#: amir/data/ui/chequereport.glade:266
 msgid "Outgoing"
 msgstr "پرداختی"
 
-#: amir/data/ui/chequereport.glade:302
+#: amir/data/ui/chequereport.glade:306
 msgid "Deleted"
 msgstr "حذف شده"
 
-#: amir/data/ui/chequereport.glade:328
-msgid "عودت از مشتری"
-msgstr ""
+#: amir/data/ui/chequereport.glade:332
+msgid "Return from customer"
+msgstr "عودت از مشتری"
 
-#: amir/data/ui/chequereport.glade:341
-msgid "عودت به مشتری"
-msgstr ""
+#: amir/data/ui/chequereport.glade:345
+msgid "Return to customer"
+msgstr "عودت به مشتری"
 
-#: amir/data/ui/chequereport.glade:354
-msgid "برگشت"
-msgstr ""
+#: amir/data/ui/chequereport.glade:358
+msgid "Bounced check"
+msgstr "برگشت"
 
-#: amir/data/ui/chequereport.glade:367
-msgid "پاس شده"
-msgstr ""
-
-#: amir/data/ui/chequereport.glade:380
-msgid "حذف"
-msgstr ""
+#: amir/data/ui/chequereport.glade:371
+msgid "Passed"
+msgstr "پاس"
 
 #: amir/data/ui/customers.glade:89 amir/data/ui/warehousing.glade:560
 msgid "Group Code:"
@@ -1161,9 +1155,8 @@ msgid ""
 "version.\n"
 "\n"
 "Amir is distributed in the hope that it will be useful, but WITHOUT ANY "
-"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
-"FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
-"details.\n"
+"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR "
+"A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n"
 "\n"
 "You should have received a copy of the GNU General Public License along with "
 "Amir; if not, write to the Free Software Foundation, Inc., 51 Franklin "
@@ -1175,9 +1168,8 @@ msgstr ""
 "version.\n"
 "\n"
 "Amir is distributed in the hope that it will be useful, but WITHOUT ANY "
-"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
-"FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
-"details.\n"
+"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR "
+"A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n"
 "\n"
 "You should have received a copy of the GNU General Public License along with "
 "Amir; if not, write to the Free Software Foundation, Inc., 51 Franklin "
@@ -1650,6 +1642,9 @@ msgstr ""
 "Insert: اضافه کردن محصول    Ctrl+G: اضافه کردن گروه   Ctrl+E: ویرایش    Del: "
 "حذف"
 
+#~ msgid "Check back"
+#~ msgstr "برگشت"
+
 #~ msgid "Register new document"
 #~ msgstr "ثبت سند جدید"
 
@@ -2105,8 +2100,7 @@ msgstr ""
 #~ msgstr "کد خرید"
 
 #~ msgid ""
-#~ "Group can not be deleted, Because there are some products registered in "
-#~ "it."
+#~ "Group can not be deleted, Because there are some products registered in it."
 #~ msgstr "گروه قابل حذف کردن نیست،‌چون طرف حسایهایی در آن ثبت شده است."
 
 #~ msgid "Group code should not be empty.\n"
@@ -2147,8 +2141,8 @@ msgstr ""
 #~ "و یا پایگاه داده‌ي از نوع sqlite نباشد."
 
 #~ msgid ""
-#~ "The selected file is compatible with older versions of Amir. First "
-#~ "convert it to the new version."
+#~ "The selected file is compatible with older versions of Amir. First convert "
+#~ "it to the new version."
 #~ msgstr ""
 #~ "فایل انتخاب شده با نسخه‌های قبلی امیر سازگار است. برای استفاده لطفا آن را "
 #~ "به نسخه جدید تبدیل کنید."
@@ -2448,8 +2442,8 @@ msgstr ""
 #~ "Can not connect to the database. The selected file for convert may not be "
 #~ "a sqlite database or be corrupt."
 #~ msgstr ""
-#~ "امکان اتصال به پایگاه داده وجود ندارد. فایل انتخاب شده برای تبدیل ممکن "
-#~ "است خراب بوده و یا پایگاه داده‌ي از نوع sqlite نباشد."
+#~ "امکان اتصال به پایگاه داده وجود ندارد. فایل انتخاب شده برای تبدیل ممکن است "
+#~ "خراب بوده و یا پایگاه داده‌ي از نوع sqlite نباشد."
 
 #~ msgid "The selected file is not compatible with older versions of Amir."
 #~ msgstr "فایل انتخاب شده با نسخه‌های قدیمی امیر سازگاری ندارد."
