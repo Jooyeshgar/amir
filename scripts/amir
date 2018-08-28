@@ -495,8 +495,8 @@ class MainWindow(GObject.GObject):
 	def localeChanged(self, sender, new_locale):
 		os.environ['LANG'] = new_locale
 		locale.setlocale(locale.LC_ALL, '')
-		Gtk.glade.bindtextdomain('amir', config.locale_path)
-		Gtk.glade.textdomain('amir')
+		gettext.bindtextdomain('amir', config.locale_path)
+		gettext.textdomain('amir')
 		gettext.install('amir', config.locale_path, unicode=1)
 		logging.info('New locale: ' + new_locale)
 
