@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: amir\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-08-21 15:44+0430\n"
-"PO-Revision-Date: 2018-08-21 15:46+0430\n"
+"PO-Revision-Date: 2018-08-28 15:22+0430\n"
 "Last-Translator: Golnaz Nilieh <g382nilieh@gmail.com>\n"
 "Language-Team: persian <info@jooyeshgar.com>\n"
 "Language: fa\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2010-05-11 04:48+0000\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 1.8.7.1\n"
 "Generated-By: pygettext.py 1.5\n"
 
 #: amir/data/ui/BuyingForm.glade:7 amir/data/ui/PurchasingForm.glade:6
@@ -1057,7 +1057,7 @@ msgstr "_مدیریت"
 #: amir/data/ui/mainwin.glade:370 amir/data/ui/mainwin.glade:667
 #: amir/data/ui/notebook.glade:272
 msgid "Notebook Subjects"
-msgstr "دفتر معین"
+msgstr "سرفصل ها"
 
 #: amir/data/ui/mainwin.glade:380 amir/data/ui/mainwin.glade:677
 msgid "Customers"

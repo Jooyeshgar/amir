@@ -72,13 +72,15 @@ setuptools.setup(
 # Cleanup (remove /build, /mo, and *.pyc files:
 print "Cleaning up..."
 try:
+    pass
     removeall("build/")
     os.rmdir("build/")
 except:
     pass
 try:
-    removeall("mo/")
-    os.rmdir("mo/")
+    pass
+    removeall("locale/")
+    os.rmdir("locale/")
 except:
     pass
 try:
