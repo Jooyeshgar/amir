@@ -500,6 +500,13 @@ class MainWindow(GObject.GObject):
 		gettext.install('amir', config.locale_path, unicode=1)
 		logging.info('New locale: ' + new_locale)
 
+		msg = _("Please close Amir and start it again in order to apply changes")
+		self.msgbox = Gtk.MessageDialog(self.window,Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK , msg)
+		self.msgbox.set_title(_("Please restart Amir"))
+		self.msgbox.run()	
+		self.msgbox.destroy()
+
+
 	def automaticAccounting(self, sender):
 		obj = automaticaccounting.AutomaticAccounting()
 		obj.run()
