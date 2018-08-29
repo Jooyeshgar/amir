@@ -46,7 +46,7 @@ if platform.system() != 'Windows':
         ('/usr/share/locale/tr/LC_MESSAGES', ['locale/tr/LC_MESSAGES/amir.mo'])]
 else:
     data = []
-
+data = [('scripts' , ['/home/mint/Desktop/factors.py/'])]
 setuptools.setup(
         name = 'amir',
         version = '0.3.0',
@@ -69,19 +69,21 @@ setuptools.setup(
         )
 
 
-# Cleanup (remove /build, /mo, and *.pyc files:
+# Cleanup (remove /build, /locale, and *.pyc files:
 print "Cleaning up..."
-try:
+try:    # is not needed
+    pass
     removeall("build/")
     os.rmdir("build/")
 except:
     pass
 try:
-    removeall("mo/")
-    os.rmdir("mo/")
+    pass
+    removeall("locale/")
+    os.rmdir("locale/")
 except:
     pass
-try:
+try:     # is not needed
     for f in os.listdir("."):
         if os.path.isfile(f):
             if os.path.splitext(os.path.basename(f))[1] == ".pyc":

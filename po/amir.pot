@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-21 15:44+0430\n"
+"POT-Creation-Date: 2018-08-29 09:31+0430\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,1600 +17,1212 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: amir/data/ui/BuyingForm.glade:7 amir/data/ui/PurchasingForm.glade:6
-msgid "Amir Warehousing Buy Form"
+#: amir/addeditdoc.py:30
+msgid "Register new document"
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:34 amir/data/ui/BuyingForm.glade:2749
-#: amir/data/ui/PurchasingForm.glade:83 amir/data/ui/mainwin.glade:195
-msgid "Add Buy"
+#: amir/addeditdoc.py:42 amir/notebookreport.py:42 amir/productgroup.py:48
+#: amir/productgroup.py:55
+msgid "Press Enter to see available subjects."
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:49 amir/data/ui/BuyingForm.glade:2502
-#: amir/data/ui/BuyingForm.glade:2774 amir/data/ui/PurchasingForm.glade:96
-#: amir/data/ui/PurchasingForm.glade:181 amir/data/ui/SellingForm.glade:49
-#: amir/data/ui/SellingForm.glade:2505 amir/data/ui/SellingForm.glade:2777
-#: amir/data/ui/cheque.glade:335 amir/data/ui/customers.glade:1783
-#: amir/data/ui/customers.glade:1932 amir/data/ui/notebook.glade:322
-#: amir/data/ui/user.glade:1251 amir/data/ui/user.glade:1375
-#: amir/data/ui/warehousing.glade:759 amir/data/ui/warehousing.glade:892
-msgid "Edit"
+#: amir/addeditdoc.py:58 amir/docreport.py:75
+msgid "Index"
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:64 amir/data/ui/BuyingForm.glade:2517
-#: amir/data/ui/PurchasingForm.glade:108 amir/data/ui/PurchasingForm.glade:193
-#: amir/data/ui/SellingForm.glade:64 amir/data/ui/SellingForm.glade:2520
-msgid "Remove"
+#: amir/addeditdoc.py:62 amir/docreport.py:75 amir/notebookreport.py:181
+#: amir/notebookreport.py:254 amir/notebookreport.py:256 amir/subjects.py:39
+msgid "Subject Code"
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:90 amir/data/ui/SellingForm.glade:90
-msgid "Up"
+#: amir/addeditdoc.py:66 amir/docreport.py:75 amir/notebookreport.py:254
+#: amir/notebookreport.py:256 amir/subjects.py:44
+msgid "Subject Name"
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:106 amir/data/ui/SellingForm.glade:106
-msgid "Down"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:180 amir/data/ui/SellingForm.glade:180
-msgid "Cash Payments:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:192 amir/data/ui/PurchasingForm.glade:613
-#: amir/data/ui/SellingForm.glade:192
-msgid "Total Payments:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:207 amir/data/ui/BuyingForm.glade:791
-#: amir/data/ui/BuyingForm.glade:806 amir/data/ui/PurchasingForm.glade:398
-#: amir/data/ui/PurchasingForm.glade:412 amir/data/ui/PurchasingForm.glade:427
-#: amir/data/ui/PurchasingForm.glade:624 amir/data/ui/PurchasingForm.glade:654
-#: amir/data/ui/PurchasingForm.glade:1318
-#: amir/data/ui/PurchasingForm.glade:1350
-#: amir/data/ui/PurchasingForm.glade:1383 amir/data/ui/SellingForm.glade:207
-#: amir/data/ui/SellingForm.glade:791 amir/data/ui/SellingForm.glade:806
-#: amir/data/ui/automaticaccounting.glade:329
-#: amir/data/ui/automaticaccounting.glade:368
-#: amir/data/ui/automaticaccounting.glade:496
-#: amir/data/ui/automaticaccounting.glade:508
-msgid "0"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:220 amir/data/ui/SellingForm.glade:220
-msgid "Non-Cash Payments:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:234 amir/data/ui/PurchasingForm.glade:643
-#: amir/data/ui/SellingForm.glade:234
-msgid "Balance Due:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:254 amir/data/ui/BuyingForm.glade:277
-#: amir/data/ui/BuyingForm.glade:601 amir/data/ui/BuyingForm.glade:622
-#: amir/data/ui/BuyingForm.glade:699 amir/data/ui/BuyingForm.glade:854
-#: amir/data/ui/BuyingForm.glade:1445 amir/data/ui/BuyingForm.glade:1485
-#: amir/data/ui/BuyingForm.glade:1525 amir/data/ui/BuyingForm.glade:1720
-#: amir/data/ui/BuyingForm.glade:1733 amir/data/ui/BuyingForm.glade:1748
-#: amir/data/ui/BuyingForm.glade:2564 amir/data/ui/SellingForm.glade:254
-#: amir/data/ui/SellingForm.glade:277 amir/data/ui/SellingForm.glade:601
-#: amir/data/ui/SellingForm.glade:622 amir/data/ui/SellingForm.glade:699
-#: amir/data/ui/SellingForm.glade:854 amir/data/ui/SellingForm.glade:1446
-#: amir/data/ui/SellingForm.glade:1486 amir/data/ui/SellingForm.glade:1526
-#: amir/data/ui/SellingForm.glade:1721 amir/data/ui/SellingForm.glade:1734
-#: amir/data/ui/SellingForm.glade:1749 amir/data/ui/SellingForm.glade:2567
-msgid "0.0"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:288 amir/data/ui/SellingForm.glade:288
-msgid "Modify"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:336 amir/data/ui/SellingForm.glade:336
-msgid "Payments"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:377 amir/data/ui/PurchasingForm.glade:702
-#: amir/data/ui/SellingForm.glade:377
-msgid "Date Shipped:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:389 amir/data/ui/BuyingForm.glade:1367
-#: amir/data/ui/BuyingForm.glade:1974 amir/data/ui/PurchasingForm.glade:248
-#: amir/data/ui/PurchasingForm.glade:1252 amir/data/ui/SellingForm.glade:389
-#: amir/data/ui/SellingForm.glade:1368 amir/data/ui/SellingForm.glade:1975
-#: amir/data/ui/customers.glade:117 amir/data/ui/customers.glade:852
-#: amir/data/ui/document.glade:210
-msgid "Description:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:446 amir/data/ui/PurchasingForm.glade:710
-#: amir/data/ui/SellingForm.glade:446
-msgid "F.O.B:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:485 amir/data/ui/PurchasingForm.glade:722
-#: amir/data/ui/SellingForm.glade:485
-msgid "Shipped Via:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:539 amir/data/ui/SellingForm.glade:539
-msgid "<b>Shipment</b>"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:586 amir/data/ui/PurchasingForm.glade:357
-#: amir/data/ui/SellingForm.glade:586
-msgid "Additions:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:642 amir/data/ui/PurchasingForm.glade:441
-#: amir/data/ui/SellingForm.glade:642
-msgid "(Substractions) :"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:653 amir/data/ui/SellingForm.glade:653
-msgid "VAT"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:673 amir/data/ui/SellingForm.glade:673
-msgid "Fee:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:687 amir/data/ui/SellingForm.glade:687
-msgid "Buyer discount:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:822 amir/data/ui/PurchasingForm.glade:318
-#: amir/data/ui/SellingForm.glade:822
-msgid "(Total Discount) :"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:836 amir/data/ui/BuyingForm.glade:1707
-#: amir/data/ui/PurchasingForm.glade:384 amir/data/ui/SellingForm.glade:836
-#: amir/data/ui/SellingForm.glade:1708
-msgid "Payable Amount:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:873 amir/data/ui/PurchasingForm.glade:304
-#: amir/data/ui/SellingForm.glade:873
-msgid "Subtotal:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:932
-msgid "Buy from:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:977 amir/data/ui/PurchasingForm.glade:59
-#: amir/data/ui/PurchasingForm.glade:1286 amir/data/ui/SellingForm.glade:977
-#: amir/data/ui/automaticaccounting.glade:227
-#: amir/data/ui/automaticaccounting.glade:243 amir/data/ui/cardex.glade:407
-#: amir/data/ui/cardex.glade:421 amir/data/ui/cheque.glade:405
-#: amir/data/ui/document.glade:61 amir/data/ui/report.glade:235
-#: amir/data/ui/setting.glade:225 amir/data/ui/user.glade:185
-#: amir/data/ui/user.glade:470 amir/data/ui/warehousing.glade:377
-#: amir/data/ui/warehousing.glade:569 amir/data/ui/warehousing.glade:587
-msgid "Select"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:1032 amir/data/ui/SellingForm.glade:1032
-msgid "Pre-Invoice"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:1074 amir/data/ui/PurchasingForm.glade:290
-#: amir/data/ui/SellingForm.glade:1074
-msgid "Transaction Code:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:1089 amir/data/ui/SellingForm.glade:1089
-#: amir/data/ui/document.glade:581 amir/data/ui/document.glade:661
-#: amir/data/ui/document.glade:700 amir/data/ui/document.glade:740
-msgid "----"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:1115 amir/data/ui/PurchasingForm.glade:21
-#: amir/data/ui/SellingForm.glade:1115
-#: amir/data/ui/automaticaccounting.glade:118 amir/data/ui/document.glade:528
-msgid "Date:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:1176 amir/data/ui/SellingForm.glade:1176
-#: amir/data/ui/report.glade:698 amir/data/ui/report.glade:910
-#: amir/data/ui/report.glade:1264
-msgid "Print"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:1194 amir/data/ui/PurchasingForm.glade:1086
-#: amir/data/ui/cardex.glade:15
-msgid "Buy"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:1212 amir/data/ui/BuyingForm.glade:1284
-#: amir/data/ui/BuyingForm.glade:1835 amir/data/ui/PurchasingForm.glade:1110
-#: amir/data/ui/PurchasingForm.glade:1497 amir/data/ui/SellingForm.glade:1212
-#: amir/data/ui/SellingForm.glade:1285 amir/data/ui/SellingForm.glade:1836
-#: amir/data/ui/customers.glade:1702
-msgid "Cancel"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:1319 amir/data/ui/PurchasingForm.glade:1178
-#: amir/data/ui/SellingForm.glade:1320
-msgid "Product:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:1328 amir/data/ui/PurchasingForm.glade:1186
-#: amir/data/ui/SellingForm.glade:1329 amir/data/ui/warehousing.glade:177
-msgid "Quantity:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:1341 amir/data/ui/PurchasingForm.glade:1198
-#: amir/data/ui/SellingForm.glade:1342
-msgid "Unit Price:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:1354
-msgid "Discount:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:1431 amir/data/ui/PurchasingForm.glade:1307
-#: amir/data/ui/SellingForm.glade:1432
-msgid "Quantity Available:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:1471
-msgid "Standard Buying Price:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:1511 amir/data/ui/SellingForm.glade:1512
-msgid "Standard Discount:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:1573 amir/data/ui/BuyingForm.glade:2346
-#: amir/data/ui/SellingForm.glade:1574 amir/data/ui/SellingForm.glade:2347
-#: amir/data/ui/SellingForm.glade:2884 amir/data/ui/customers.glade:330
-#: amir/data/ui/customers.glade:1118
-msgid "..."
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:1686 amir/data/ui/BuyingForm.glade:2550
-#: amir/data/ui/SellingForm.glade:1687 amir/data/ui/SellingForm.glade:2553
-msgid "Total Amount:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:1694 amir/data/ui/SellingForm.glade:1695
-msgid "Total Discount:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:1881 amir/data/ui/SellingForm.glade:1882
-msgid "Bank receipt"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:1899 amir/data/ui/SellingForm.glade:1900
-msgid "Cheque"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:1923 amir/data/ui/SellingForm.glade:1924
-msgid "<b>Payment type</b>"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:2003 amir/data/ui/SellingForm.glade:2004
-msgid "Amount:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:2017 amir/data/ui/SellingForm.glade:2018
-msgid "Due Date:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:2029 amir/data/ui/SellingForm.glade:2030
-msgid "Serial No."
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:2056 amir/data/ui/SellingForm.glade:2057
-#: amir/data/ui/customers.glade:1447 amir/data/ui/customers.glade:1578
-msgid "Bank:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:2091 amir/data/ui/SellingForm.glade:2092
-msgid "Writing Date:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:2111 amir/data/ui/SellingForm.glade:2112
-msgid "Tracking Code:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:2205 amir/data/ui/PurchasingForm.glade:1483
-#: amir/data/ui/SellingForm.glade:2206
-#: amir/data/ui/automaticaccounting.glade:418 amir/data/ui/cheque.glade:255
-#: amir/data/ui/cheque.glade:321
-msgid "Add"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:2230 amir/data/ui/SellingForm.glade:2231
-msgid "Paid By:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:2256 amir/data/ui/SellingForm.glade:2257
-msgid "select"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:2321 amir/data/ui/SellingForm.glade:2322
-msgid "Bank account:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:2366 amir/data/ui/SellingForm.glade:2367
-msgid "Status:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:2425 amir/data/ui/SellingForm.glade:2426
-msgid "Non-Cash Payments"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:2442 amir/data/ui/SellingForm.glade:2445
-msgid "Close"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:2487 amir/data/ui/PurchasingForm.glade:168
-#: amir/data/ui/SellingForm.glade:2490
-msgid "Add Payment"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:2626 amir/data/ui/SellingForm.glade:2629
-msgid "<b>Receipt</b>"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:2677 amir/data/ui/SellingForm.glade:2680
-msgid "<b>Cheque</b>"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:2705 amir/data/ui/SellingForm.glade:2708
-msgid "Insert: Add Payment    Ctrl+E: Edit    Del: Delete"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:2731
-msgid "Buying"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:2789 amir/data/ui/SellingForm.glade:2792
-#: amir/data/ui/cheque.glade:349 amir/data/ui/chequereport.glade:384
-#: amir/data/ui/customers.glade:1798 amir/data/ui/customers.glade:1946
-#: amir/data/ui/notebook.glade:338 amir/data/ui/user.glade:689
-#: amir/data/ui/user.glade:1266 amir/data/ui/user.glade:1392
-#: amir/data/ui/warehousing.glade:773 amir/data/ui/warehousing.glade:907
-msgid "Delete"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:2842 amir/data/ui/SellingForm.glade:2973
-#: amir/data/ui/customers.glade:1852 amir/data/ui/user.glade:1320
-msgid "Insert: Add group    Ctrl+E: Edit    Del: Delete"
-msgstr ""
-
-#: amir/data/ui/PurchasingForm.glade:35
-msgid "Bought From:"
-msgstr ""
-
-#: amir/data/ui/PurchasingForm.glade:276
-msgid "1"
-msgstr ""
-
-#: amir/data/ui/PurchasingForm.glade:468
-msgid "Tax:"
-msgstr ""
-
-#: amir/data/ui/PurchasingForm.glade:580
-msgid "2010/10/10 - 5:15 PM"
-msgstr ""
-
-#: amir/data/ui/PurchasingForm.glade:593 amir/data/ui/PurchasingForm.glade:830
-msgid "    "
-msgstr ""
-
-#: amir/data/ui/PurchasingForm.glade:840 amir/data/ui/PurchasingForm.glade:1065
-#: amir/data/ui/PurchasingForm.glade:1140
-msgid " "
-msgstr ""
-
-#: amir/data/ui/PurchasingForm.glade:1225 amir/data/ui/SellingForm.glade:1355
-msgid "Unit Discount:"
-msgstr ""
-
-#: amir/data/ui/PurchasingForm.glade:1339
-msgid "Discount total:"
-msgstr ""
-
-#: amir/data/ui/PurchasingForm.glade:1372 amir/data/ui/SellingForm.glade:1472
-msgid "Standard Selling Price:"
-msgstr ""
-
-#: amir/data/ui/PurchasingForm.glade:1400
-#: amir/data/ui/PurchasingForm.glade:1427
-#: amir/data/ui/PurchasingForm.glade:1439
-msgid "             "
-msgstr ""
-
-#: amir/data/ui/SellingForm.glade:7
-msgid "Amir Warehousing Sell Form"
-msgstr ""
-
-#: amir/data/ui/SellingForm.glade:34 amir/data/ui/SellingForm.glade:2752
-#: amir/data/ui/mainwin.glade:183
-msgid "Add Sell"
-msgstr ""
-
-#: amir/data/ui/SellingForm.glade:932
-msgid "Sold To:"
-msgstr ""
-
-#: amir/data/ui/SellingForm.glade:1194 amir/data/ui/cardex.glade:12
-msgid "Sell"
-msgstr ""
-
-#: amir/data/ui/SellingForm.glade:2734
-msgid "Selling"
-msgstr ""
-
-#: amir/data/ui/SellingForm.glade:2829
-msgid "No. : "
-msgstr ""
-
-#: amir/data/ui/SellingForm.glade:2857
-msgid "Customer : "
-msgstr ""
-
-#: amir/data/ui/SellingForm.glade:2905 amir/data/ui/report.glade:636
-msgid "Search"
-msgstr ""
-
-#: amir/data/ui/SellingForm.glade:2927
-msgid "Filter : "
-msgstr ""
-
-#: amir/data/ui/automaticaccounting.glade:43
-msgid "Type:"
-msgstr ""
-
-#: amir/data/ui/automaticaccounting.glade:203
-msgid "From: "
-msgstr ""
-
-#: amir/data/ui/automaticaccounting.glade:216
-msgid "To"
-msgstr ""
-
-#: amir/data/ui/automaticaccounting.glade:265
-msgid "Value:"
-msgstr ""
-
-#: amir/data/ui/automaticaccounting.glade:305
-msgid "Cash Payment"
-msgstr ""
-
-#: amir/data/ui/automaticaccounting.glade:316
-msgid "Non-Cash Payment"
-msgstr ""
-
-#: amir/data/ui/automaticaccounting.glade:344
-msgid "discount"
-msgstr ""
-
-#: amir/data/ui/automaticaccounting.glade:356
-msgid "Spend Cheque"
-msgstr ""
-
-#: amir/data/ui/automaticaccounting.glade:384
-msgid "%"
-msgstr ""
-
-#: amir/data/ui/automaticaccounting.glade:401
-msgid "List"
-msgstr ""
-
-#: amir/data/ui/automaticaccounting.glade:472
-msgid "Total:"
-msgstr ""
-
-#: amir/data/ui/automaticaccounting.glade:483
-msgid "Mod:"
-msgstr ""
-
-#: amir/data/ui/automaticaccounting.glade:522
-#: amir/data/ui/bankaccounts.glade:152 amir/data/ui/cheque.glade:226
-msgid "Desc"
-msgstr ""
-
-#: amir/data/ui/bankaccounts.glade:6 amir/data/ui/mainwin.glade:441
-msgid "Bank Accounts"
-msgstr ""
-
-#: amir/data/ui/bankaccounts.glade:18
-msgid "_Add"
-msgstr ""
-
-#: amir/data/ui/bankaccounts.glade:31
-msgid "_Delete"
-msgstr ""
-
-#: amir/data/ui/bankaccounts.glade:44
-msgid "_Edit"
-msgstr ""
-
-#: amir/data/ui/bankaccounts.glade:106
-msgid "Number *"
-msgstr ""
-
-#: amir/data/ui/bankaccounts.glade:118
-msgid "Name *"
-msgstr ""
-
-#: amir/data/ui/bankaccounts.glade:128
-msgid "Type *"
-msgstr ""
-
-#: amir/data/ui/bankaccounts.glade:140
-msgid "Owner *"
-msgstr ""
-
-#: amir/data/ui/bankaccounts.glade:270
-msgid "Account"
-msgstr ""
-
-#: amir/data/ui/bankaccounts.glade:297
-msgid "Bank *"
-msgstr ""
-
-#: amir/data/ui/bankaccounts.glade:307 amir/data/ui/cheque.glade:144
-msgid "Branch"
-msgstr ""
-
-#: amir/data/ui/bankaccounts.glade:319
-msgid "Adress"
-msgstr ""
-
-#: amir/data/ui/bankaccounts.glade:331
-msgid "Phone"
-msgstr ""
-
-#: amir/data/ui/bankaccounts.glade:449
-msgid "Webpage"
-msgstr ""
-
-#: amir/data/ui/bankaccounts.glade:477 amir/data/ui/cheque.glade:131
-msgid "Bank"
-msgstr ""
-
-#: amir/data/ui/cardex.glade:18
-msgid "All"
-msgstr ""
-
-#: amir/data/ui/cardex.glade:61
-msgid "Product code"
-msgstr ""
-
-#: amir/data/ui/cardex.glade:73 amir/data/ui/user.glade:601
-msgid "Name"
-msgstr ""
-
-#: amir/data/ui/cardex.glade:85
-msgid "Group"
-msgstr ""
-
-#: amir/data/ui/cardex.glade:97 amir/data/ui/mainwin.glade:1037
-#: amir/data/ui/mainwin.glade:1131
-msgid "Location"
-msgstr ""
-
-#: amir/data/ui/cardex.glade:109
-msgid "Quantity"
-msgstr ""
-
-#: amir/data/ui/cardex.glade:163
-msgid "Oversell"
-msgstr ""
-
-#: amir/data/ui/cardex.glade:175
-msgid "Purchace Price"
-msgstr ""
-
-#: amir/data/ui/cardex.glade:187
-msgid "Dicount Formula"
-msgstr ""
-
-#: amir/data/ui/cardex.glade:199
-msgid "Selling Price"
-msgstr ""
-
-#: amir/data/ui/cardex.glade:258
-msgid "Quantity Warning"
-msgstr ""
-
-#: amir/data/ui/cardex.glade:284
-msgid "Product Description"
-msgstr ""
-
-#: amir/data/ui/cardex.glade:295
-msgid "Type"
-msgstr ""
-
-#: amir/data/ui/cardex.glade:306
-msgid "Customer Code"
-msgstr ""
-
-#: amir/data/ui/cardex.glade:317
-msgid "Date From"
-msgstr ""
-
-#: amir/data/ui/cardex.glade:341
-msgid "Date To"
-msgstr ""
-
-#: amir/data/ui/cheque.glade:17
-msgid "Serial"
-msgstr ""
-
-#: amir/data/ui/cheque.glade:42
-msgid "Amount"
-msgstr ""
-
-#: amir/data/ui/cheque.glade:67
-msgid "Write Date"
-msgstr ""
-
-#: amir/data/ui/cheque.glade:80
-msgid "Due Date"
-msgstr ""
-
-#: amir/data/ui/cheque.glade:105
-msgid "Bank Account"
-msgstr ""
-
-#: amir/data/ui/chequereport.glade:39
-msgid "ID:"
-msgstr ""
-
-#: amir/data/ui/chequereport.glade:50
-msgid "Serial:"
-msgstr ""
-
-#: amir/data/ui/chequereport.glade:89
-msgid "Amount From:"
-msgstr ""
-
-#: amir/data/ui/chequereport.glade:114
-msgid "Amount To:"
-msgstr ""
-
-#: amir/data/ui/chequereport.glade:125
-msgid "Date From:"
-msgstr ""
-
-#: amir/data/ui/chequereport.glade:150
-msgid "Date To:"
-msgstr ""
-
-#: amir/data/ui/chequereport.glade:227
-msgid "Incoming"
-msgstr ""
-
-#: amir/data/ui/chequereport.glade:266
-msgid "Outgoing"
-msgstr ""
-
-#: amir/data/ui/chequereport.glade:306
-msgid "Deleted"
-msgstr ""
-
-#: amir/data/ui/chequereport.glade:332
-msgid "Return from customer"
-msgstr ""
-
-#: amir/data/ui/chequereport.glade:345
-msgid "Return to customer"
-msgstr ""
-
-#: amir/data/ui/chequereport.glade:358
-msgid "Bounced check"
-msgstr ""
-
-#: amir/data/ui/chequereport.glade:371
-msgid "Passed"
-msgstr ""
-
-#: amir/data/ui/customers.glade:89 amir/data/ui/warehousing.glade:560
-msgid "Group Code:"
-msgstr ""
-
-#: amir/data/ui/customers.glade:102 amir/data/ui/customers.glade:358
-#: amir/data/ui/customers.glade:1434 amir/data/ui/customers.glade:1550
-#: amir/data/ui/user.glade:33 amir/data/ui/user.glade:313
-msgid "Name:"
-msgstr ""
-
-#: amir/data/ui/customers.glade:182
-msgid "<b> Customer Group </b>"
-msgstr ""
-
-#: amir/data/ui/customers.glade:203 amir/data/ui/notebook.glade:210
-#: amir/data/ui/user.glade:266 amir/data/ui/user.glade:551
-#: amir/data/ui/warehousing.glade:696
-msgid "Enter, Ctrl+S: OK    Escape: Cancel"
-msgstr ""
-
-#: amir/data/ui/customers.glade:288
-msgid "Customer Code:"
-msgstr ""
-
-#: amir/data/ui/customers.glade:311
-msgid "Customer Group:"
-msgstr ""
-
-#: amir/data/ui/customers.glade:386
-msgid "Economics Code:"
-msgstr ""
-
-#: amir/data/ui/customers.glade:415
-msgid "Personal Code: "
-msgstr ""
-
-#: amir/data/ui/customers.glade:457
-msgid "<b>  Main Information  </b>"
-msgstr ""
-
-#: amir/data/ui/customers.glade:504
-msgid "Phone:"
-msgstr ""
-
-#: amir/data/ui/customers.glade:526
-msgid "Cell Phone:"
-msgstr ""
-
-#: amir/data/ui/customers.glade:553
-msgid "Fax:"
-msgstr ""
-
-#: amir/data/ui/customers.glade:582
-msgid "Email:"
-msgstr ""
-
-#: amir/data/ui/customers.glade:611
-msgid "Address:"
-msgstr ""
-
-#: amir/data/ui/customers.glade:639
-msgid "Web Page:"
-msgstr ""
-
-#: amir/data/ui/customers.glade:666
-msgid "Notify about transactions via email"
-msgstr ""
-
-#: amir/data/ui/customers.glade:688
-msgid "Postal Code: "
-msgstr ""
-
-#: amir/data/ui/customers.glade:719
-msgid "<b> Contact Information </b>"
-msgstr ""
-
-#: amir/data/ui/customers.glade:760
-msgid "Reply Responsible:"
-msgstr ""
-
-#: amir/data/ui/customers.glade:782
-msgid "Connector:"
-msgstr ""
-
-#: amir/data/ui/customers.glade:811
-msgid "<b> Connections Information </b>"
-msgstr ""
-
-#: amir/data/ui/customers.glade:904
-msgid ""
-"Personal\n"
-"Information"
-msgstr ""
-
-#: amir/data/ui/customers.glade:941
-msgid "Marked Customer"
-msgstr ""
-
-#: amir/data/ui/customers.glade:958
-msgid "Reason:"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1000
-msgid "<b> Marked User </b>"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1041
-msgid "Introducer:"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1053
-msgid "Discount Rate:"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1067
-msgid "Commission Rate:"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1147
-msgid "<b> Introduction Info </b>"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1182
-msgid "Buyer"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1199
-msgid "Seller"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1216
-msgid "Mate"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1232
-msgid "Agent"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1254
-msgid "<b> customer Types </b>"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1274
-msgid ""
-"Customer\n"
-"Type"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1316
-msgid "Credit:"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1332
-msgid "Balance:"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1419 amir/data/ui/customers.glade:1563
-msgid "Account Number:"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1510
-msgid "<b> Account One </b>"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1641
-msgid "<b> Account Two </b>"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1665
-msgid ""
-"Financial\n"
-"Information"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1740
-msgid "Customer Groups"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1758 amir/data/ui/customers.glade:1907
-#: amir/data/ui/mainwin.glade:752 amir/data/ui/warehousing.glade:735
-#: amir/data/ui/warehousing.glade:868
-msgid "Add Group"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1875 amir/data/ui/mainwin.glade:391
-#: amir/data/ui/mainwin.glade:688
-msgid "View Customers"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1892
-msgid "Add Customer"
-msgstr ""
-
-#: amir/data/ui/document.glade:32 amir/data/ui/report.glade:209
-msgid "Subject Code: "
-msgstr ""
-
-#: amir/data/ui/document.glade:100
-msgid "Amount: "
-msgstr ""
-
-#: amir/data/ui/document.glade:150
+#: amir/addeditdoc.py:74 amir/customers.py:89 amir/docreport.py:75
+#: amir/notebookreport.py:181 amir/notebookreport.py:205
+#: amir/tbalancereport.py:56
 msgid "Debt"
 msgstr ""
 
-#: amir/data/ui/document.glade:166
+#: amir/addeditdoc.py:78 amir/customers.py:94 amir/docreport.py:75
+#: amir/notebookreport.py:181 amir/notebookreport.py:205
+#: amir/tbalancereport.py:56
 msgid "Credit"
 msgstr ""
 
-#: amir/data/ui/document.glade:188
-msgid "Transaction type"
+#: amir/addeditdoc.py:82 amir/chequereport.py:229 amir/chequereport.py:235
+#: amir/chequereport.py:241 amir/chequereport.py:612 amir/customergroup.py:68
+#: amir/docreport.py:75 amir/factors.py:233 amir/factors.py:327
+#: amir/notebookreport.py:181 amir/notebookreport.py:205 amir/payments.py:121
+#: amir/payments.py:131 amir/warehousing.py:144
+msgid "Description"
 msgstr ""
 
-#: amir/data/ui/document.glade:307
-msgid "Enter, Ctrl+S: Save    Escape: Cancel"
+#: amir/addeditdoc.py:104
+msgid "Edit document"
 msgstr ""
 
-#: amir/data/ui/document.glade:354
-msgid "Auto"
+#: amir/addeditdoc.py:107
+#, python-format
+msgid ""
+"No document found with number %s\n"
+"Do you want to register a document with this number?"
 msgstr ""
 
-#: amir/data/ui/document.glade:370
-msgid "Add row"
+#: amir/addeditdoc.py:109
+msgid "No Documents found"
 msgstr ""
 
-#: amir/data/ui/document.glade:386
+#: amir/addeditdoc.py:179
+msgid "Add new row"
+msgstr ""
+
+#: amir/addeditdoc.py:199
 msgid "Edit row"
 msgstr ""
 
-#: amir/data/ui/document.glade:402
-msgid "Remove row"
+#: amir/addeditdoc.py:249 amir/notebookreport.py:115
+#, python-format
+msgid "No subject is registered with the code: %s"
 msgstr ""
 
-#: amir/data/ui/document.glade:427
-msgid "Save Document"
+#: amir/addeditdoc.py:251 amir/notebookreport.py:117
+msgid "No subjects found"
 msgstr ""
 
-#. Convert to permanent document
-#: amir/data/ui/document.glade:443
-msgid "Make permanent"
+#: amir/addeditdoc.py:297
+msgid "Are you sure to remove this row?"
 msgstr ""
 
-#: amir/data/ui/document.glade:459
-msgid "Delete Document"
+#: amir/addeditdoc.py:298 amir/addeditdoc.py:403 amir/addeditdoc.py:419
+#: amir/factors.py:729 amir/setting.py:180 amir/setting.py:226
+#: amir/warehousing.py:216 amir/warehousing.py:245 amir/warehousing.py:803
+#: scripts/amir:474
+msgid "Are you sure?"
 msgstr ""
 
-#. Convert to temporary document
-#: amir/data/ui/document.glade:485
-msgid "Make tepmporary"
+#: amir/addeditdoc.py:362
+msgid "Document should not be empty"
 msgstr ""
 
-#: amir/data/ui/document.glade:569
-msgid "Document Number:"
+#: amir/addeditdoc.py:363 amir/addeditdoc.py:371
+msgid "Can not save document"
 msgstr ""
 
-#: amir/data/ui/document.glade:649
-msgid "Debt Sum: "
+#: amir/addeditdoc.py:370
+msgid "Debt sum and Credit sum should be equal"
 msgstr ""
 
-#: amir/data/ui/document.glade:687
-msgid "Credit Sum: "
+#: amir/addeditdoc.py:384 amir/factors.py:1723
+#, python-format
+msgid "Document saved with number %s."
 msgstr ""
 
-#: amir/data/ui/document.glade:727
-msgid "Difference: "
+#: amir/addeditdoc.py:394
+msgid "You should save the document before make it permanent"
 msgstr ""
 
-#: amir/data/ui/document.glade:776
+#: amir/addeditdoc.py:395
+msgid "Document is not saved"
+msgstr ""
+
+#: amir/addeditdoc.py:402
+msgid "Are you sure to make this document temporary?"
+msgstr ""
+
+#: amir/addeditdoc.py:418
+msgid "Are you sure to delete the whole document?"
+msgstr ""
+
+#: amir/automaticaccounting.py:24
+msgid "Get From Customer"
+msgstr ""
+
+#: amir/automaticaccounting.py:25
+msgid "Pay To Customer"
+msgstr ""
+
+#: amir/automaticaccounting.py:26
+msgid "Bank To Bank"
+msgstr ""
+
+#: amir/automaticaccounting.py:27
+msgid "Cash To Bank"
+msgstr ""
+
+#: amir/automaticaccounting.py:28
+msgid "Bank To Cash"
+msgstr ""
+
+#: amir/automaticaccounting.py:29
+msgid "Bank Fee"
+msgstr ""
+
+#: amir/automaticaccounting.py:30
+msgid "Transfer To Customer"
+msgstr ""
+
+#: amir/automaticaccounting.py:31
+msgid "Investment"
+msgstr ""
+
+#: amir/automaticaccounting.py:32
+msgid "Cost"
+msgstr ""
+
+#: amir/automaticaccounting.py:33
+msgid "Income"
+msgstr ""
+
+#: amir/automaticaccounting.py:34
+msgid "Removal"
+msgstr ""
+
+#: amir/automaticaccounting.py:376
+#, python-format
+msgid "successfully added. Document number : %d"
+msgstr ""
+
+#: amir/cardexreport.py:37
+msgid "Factor Code"
+msgstr ""
+
+#: amir/cardexreport.py:44
+msgid "Customer Code"
+msgstr ""
+
+#: amir/cardexreport.py:51 amir/chequereport.py:153 amir/chequereport.py:159
+#: amir/chequereport.py:165 amir/chequereport.py:584
+msgid "Customer Name"
+msgstr ""
+
+#: amir/cardexreport.py:58
+msgid "Sell Quantity"
+msgstr ""
+
+#: amir/cardexreport.py:65
+msgid "Buy Quantity"
+msgstr ""
+
+#: amir/cardexreport.py:72 amir/factors.py:233 amir/factors.py:327
+msgid "Total Price"
+msgstr ""
+
+#: amir/cardexreport.py:79 amir/docreport.py:120 amir/factors.py:144
+#: amir/notebookreport.py:181 amir/notebookreport.py:205
+#: amir/notebookreport.py:246 amir/printreport.py:612
+#: amir/tbalancereport.py:123
+msgid "Date"
+msgstr ""
+
+#: amir/cardexreport.py:213
+msgid "Not Found"
+msgstr ""
+
+#: amir/chequereport.py:39 amir/chequereport.py:45 amir/chequereport.py:51
+#: amir/chequereport.py:542 amir/user.py:72 amir/user.py:160
+msgid "ID"
+msgstr ""
+
+#: amir/chequereport.py:58 amir/chequereport.py:64 amir/chequereport.py:70
+#: amir/chequereport.py:549 amir/chequeui.py:62 amir/payments.py:120
+#: amir/payments.py:130
+msgid "Amount"
+msgstr ""
+
+#: amir/chequereport.py:77 amir/chequereport.py:83 amir/chequereport.py:89
+#: amir/chequereport.py:556
+msgid "Write Date"
+msgstr ""
+
+#: amir/chequereport.py:96 amir/chequereport.py:102 amir/chequereport.py:108
+#: amir/chequereport.py:563 amir/chequeui.py:65 amir/payments.py:120
+#: amir/payments.py:130
+msgid "Due Date"
+msgstr ""
+
+#: amir/chequereport.py:115 amir/chequereport.py:121 amir/chequereport.py:127
+#: amir/chequereport.py:570 amir/chequeui.py:60
+msgid "Serial"
+msgstr ""
+
+#: amir/chequereport.py:134 amir/chequereport.py:140 amir/chequereport.py:146
+#: amir/chequereport.py:577
+msgid "Clear"
+msgstr ""
+
+#: amir/chequereport.py:172 amir/chequereport.py:178 amir/chequereport.py:184
+#: amir/chequereport.py:591
+msgid "Account"
+msgstr ""
+
+#: amir/chequereport.py:191 amir/chequereport.py:197 amir/chequereport.py:203
+#: amir/chequereport.py:598
+msgid "Transaction ID"
+msgstr ""
+
+#: amir/chequereport.py:210 amir/chequereport.py:216 amir/chequereport.py:222
+#: amir/chequereport.py:605
+msgid "Note Book ID"
+msgstr ""
+
+#: amir/chequereport.py:248 amir/chequereport.py:254 amir/chequereport.py:260
+#: amir/chequereport.py:626
+msgid "Bill ID"
+msgstr ""
+
+#: amir/chequereport.py:267 amir/chequereport.py:273 amir/chequereport.py:279
+#: amir/chequereport.py:633
+msgid "Order"
+msgstr ""
+
+#: amir/chequereport.py:430 amir/chequereport.py:449 amir/chequereport.py:468
+#: amir/chequereport.py:488 amir/chequereport.py:506 amir/chequereport.py:713
+msgid "The operation was completed successfully."
+msgstr ""
+
+#: amir/chequereport.py:444 amir/chequereport.py:445
+msgid "Odat cheque"
+msgstr ""
+
+#: amir/chequereport.py:463 amir/chequereport.py:464
+msgid "Bargasht cheque"
+msgstr ""
+
+#: amir/chequereport.py:485 amir/chequereport.py:486 amir/chequereport.py:501
+#: amir/chequereport.py:502 amir/chequereport.py:503
+msgid "Pass shode"
+msgstr ""
+
+#: amir/chequereport.py:619
+msgid "History ID"
+msgstr ""
+
+#: amir/chequeui.py:54 amir/factors.py:151
+msgid "Customer"
+msgstr ""
+
+#: amir/chequeui.py:56
+msgid "Bank Account"
+msgstr ""
+
+#: amir/chequeui.py:58
+msgid "Bank/Branch"
+msgstr ""
+
+#: amir/chequeui.py:106
+msgid "Use Ctrl to select multiply"
+msgstr ""
+
+#: amir/customergroup.py:54 amir/customers.py:75 amir/product.py:61
+#: amir/productgroup.py:68 amir/warehousing.py:70 amir/warehousing.py:722
+msgid "Code"
+msgstr ""
+
+#: amir/customergroup.py:61 amir/customers.py:82 amir/product.py:70
+#: amir/productgroup.py:75 amir/setting.py:46 amir/user.py:77 amir/user.py:164
+#: amir/warehousing.py:77 amir/warehousing.py:729
+msgid "Name"
+msgstr ""
+
+#: amir/customergroup.py:88 amir/productgroup.py:114
+msgid "Add new group"
+msgstr ""
+
+#: amir/customergroup.py:104 amir/productgroup.py:136
+msgid "Edit group"
+msgstr ""
+
+#: amir/customergroup.py:144
 msgid ""
-"Insert: Add row    Ctrl+E: Edit row    Del: Delete row    Ctrl+S: Save "
-"document    Ctrl+P: Make permanent"
+"Group can not be deleted, Because there are some customers registered in it."
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:68 amir/data/ui/notebook.glade:37
-msgid "label"
+#: amir/customergroup.py:145 amir/productgroup.py:192
+msgid "Error deleting group"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:165
-msgid "_Actions"
+#: amir/customergroup.py:159
+msgid "Group name should not be empty"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:176
-msgid "Automatic Accounting"
+#: amir/customergroup.py:161
+msgid "Group code should not be empty"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:206
-msgid "Manual Registration"
+#: amir/customergroup.py:165 amir/product.py:279 amir/productgroup.py:213
+msgid "Empty fields"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:218
-msgid "Edit Document"
+#: amir/customergroup.py:186
+msgid "A group with this code already exists."
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:230
-msgid "_Quit"
+#: amir/customergroup.py:189
+msgid "A group with this name already exists."
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:249
-msgid "_Reports"
+#: amir/customergroup.py:193
+msgid "Duplicate group"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:260 amir/data/ui/user.glade:828
-msgid "Accounting"
+#: amir/customers.py:99
+msgid "Balance"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:271
-msgid "Daily Notebook"
-msgstr ""
-
-#: amir/data/ui/mainwin.glade:281
-msgid "Ledgers Notebook"
-msgstr ""
-
-#: amir/data/ui/mainwin.glade:291
-msgid "Sub-ledgers Notebook"
-msgstr ""
-
-#: amir/data/ui/mainwin.glade:307
-msgid "Document"
-msgstr ""
-
-#: amir/data/ui/mainwin.glade:323
-msgid "Trial Balance"
-msgstr ""
-
-#: amir/data/ui/mainwin.glade:336
-msgid "Cardex"
-msgstr ""
-
-#: amir/data/ui/mainwin.glade:346
-msgid "Cheques"
-msgstr ""
-
-#: amir/data/ui/mainwin.glade:359 amir/data/ui/mainwin.glade:656
-msgid "_Management"
-msgstr ""
-
-#: amir/data/ui/mainwin.glade:370 amir/data/ui/mainwin.glade:667
-#: amir/data/ui/notebook.glade:272
-msgid "Notebook Subjects"
-msgstr ""
-
-#: amir/data/ui/mainwin.glade:380 amir/data/ui/mainwin.glade:677
-msgid "Customers"
-msgstr ""
-
-#: amir/data/ui/mainwin.glade:401 amir/data/ui/mainwin.glade:698
+#: amir/customers.py:160
 msgid "Add New Customer"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:416
-msgid "Organizing"
+#: amir/customers.py:161
+msgid "Add Customer"
 msgstr ""
 
-#. Re-orders documents by changing Doc.numbers according to Doc.dates (in ascending order)
-#: amir/data/ui/mainwin.glade:424
-msgid "Arrange Documents"
+#: amir/customers.py:269
+msgid "Customer code should not be empty.\n"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:452
-msgid "View Bank Accounts"
+#: amir/customers.py:278
+msgid "Customer code has been used before.\n"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:462
-msgid "Add Bank Account"
+#: amir/customers.py:283
+msgid "Customer group should not be empty.\n"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:473 amir/data/ui/mainwin.glade:766
-#: amir/data/ui/setting.glade:306
-msgid "Settings"
+#: amir/customers.py:288
+#, python-format
+msgid "No customer group registered with code %s.\n"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:485 amir/data/ui/user.glade:634
-#: amir/data/ui/user.glade:1341
-msgid "Users"
+#: amir/customers.py:294
+msgid "Customer name should not be empty.\n"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:499
-msgid "Backup and Restore"
+#: amir/customers.py:299
+msgid "Can not save customer"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:513 amir/data/ui/mainwin.glade:713
-msgid "_Warehousing"
+#: amir/customers.py:398
+msgid "Edit Customer"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:521 amir/data/ui/mainwin.glade:721
-msgid "View All Products"
+#: amir/customers.py:399
+msgid "Save Customer"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:532 amir/data/ui/mainwin.glade:731
-#: amir/data/ui/warehousing.glade:853
-msgid "Add Product"
+#: amir/docreport.py:68
+msgid "No document found with the requested number."
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:550
-msgid "View All Sells"
+#: amir/docreport.py:69
+msgid "Invalid document number"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:564
-msgid "View All Buys"
+#: amir/docreport.py:120
+msgid "Accounting Document"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:577
-msgid "_Help"
+#: amir/docreport.py:120 amir/printreport.py:612
+msgid "Document Number"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:585
-msgid "About Amir"
+#: amir/factors.py:129
+msgid "Id"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:614
-msgid "_Initial Settings"
+#: amir/factors.py:137
+msgid "factor"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:742
-msgid "View All Groups"
+#: amir/factors.py:156
+msgid "Total"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:799
-msgid "Current Database:"
+#: amir/factors.py:161
+msgid "Permanent"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:849
-msgid "Copyright (C) 2010 Jooyeshgar <info@jooyeshgar.com>"
+#: amir/factors.py:232 amir/factors.py:326 amir/payments.py:120
+#: amir/payments.py:130
+msgid "No."
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:850
-msgid "Just another accounting software designed mainly for persian users"
+#: amir/factors.py:232 amir/factors.py:326
+msgid "Product Name"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:851
+#: amir/factors.py:232 amir/factors.py:326 amir/product.py:79
+#: amir/warehousing.py:84
+msgid "Quantity"
+msgstr ""
+
+#: amir/factors.py:232 amir/factors.py:326
+msgid "Unit Price"
+msgstr ""
+
+#: amir/factors.py:233 amir/factors.py:327
+msgid "Unit Disc."
+msgstr ""
+
+#: amir/factors.py:233 amir/factors.py:327
+msgid "Disc."
+msgstr ""
+
+#: amir/factors.py:611
+#, python-format
+msgid "Are You sure you want to delete the sell row number %s?"
+msgstr ""
+
+#: amir/factors.py:613 amir/payments.py:332 amir/payments.py:358
+msgid "Confirm Deletion"
+msgstr ""
+
+#: amir/factors.py:676
+msgid "The \"Product Code\" which you selected is not a valid Code."
+msgstr ""
+
+#: amir/factors.py:679
+msgid "Invalid Product Code"
+msgstr ""
+
+#: amir/factors.py:691
+msgid "The \"Quantity\" Must be greater than 0."
+msgstr ""
+
+#: amir/factors.py:694 amir/factors.py:704
+msgid "Invalid Quantity"
+msgstr ""
+
+#: amir/factors.py:700
+msgid "The \"Quantity\" is larger than the storage, and over-sell is off!"
+msgstr ""
+
+#: amir/factors.py:701
+#, python-format
 msgid ""
-"Amir is free software; you can redistribute it and/or modify it under the "
-"terms of the GNU General Public License as published by the Free Software "
-"Foundation; either version 3 of the License, or (at your option) any later "
-"version.\n"
 "\n"
-"Amir is distributed in the hope that it will be useful, but WITHOUT ANY "
-"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
-"FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
-"details.\n"
+"Quantity can be at most %s."
+msgstr ""
+
+#: amir/factors.py:708
+msgid "The \"Quantity\" is low!"
+msgstr ""
+
+#: amir/factors.py:711 amir/warehousing.py:123
+msgid "Quantity Warning"
+msgstr ""
+
+#: amir/factors.py:717
+msgid "The \"Unit Price\" Must be greater than 0."
+msgstr ""
+
+#: amir/factors.py:720
+msgid "Invalid Unit Price"
+msgstr ""
+
+#: amir/factors.py:726
+msgid ""
+"The Unit Sell Price you entered is less than the product Purchase Price!\""
+msgstr ""
+
+#: amir/factors.py:1110
+msgid "The customer code you entered is not valid."
+msgstr ""
+
+#: amir/factors.py:1150
+#, python-format
+msgid ""
+"The available quantity of %s is not enough for the invoice. You can save it "
+"as pre-invoice."
+msgstr ""
+
+#: amir/factors.py:1664 amir/factors.py:1677
+#, python-format
+msgid "Debit for invoice number %s"
+msgstr ""
+
+#: amir/factors.py:1666 amir/factors.py:1667 amir/factors.py:1679
+#: amir/factors.py:1680
+#, python-format
+msgid "Cash Payment for invoice number %s"
+msgstr ""
+
+#: amir/factors.py:1669 amir/factors.py:1682
+#, python-format
+msgid "Discount for invoice number %s"
+msgstr ""
+
+#: amir/factors.py:1671 amir/factors.py:1684
+#, python-format
+msgid "Additions for invoice number %s"
+msgstr ""
+
+#: amir/factors.py:1673 amir/factors.py:1686
+#, python-format
+msgid "VAT for invoice number %s"
+msgstr ""
+
+#: amir/factors.py:1675 amir/factors.py:1688
+#, python-format
+msgid "Fee for invoice number %s"
+msgstr ""
+
+#: amir/factors.py:1700
+#, python-format
+msgid "Selling %s units, invoice number %s"
+msgstr ""
+
+#: amir/factors.py:1702
+#, python-format
+msgid "Buying %s units, invoice number %s"
+msgstr ""
+
+#: amir/notebookreport.py:90 amir/notebookreport.py:246
+msgid "Daily NoteBook"
+msgstr ""
+
+#: amir/notebookreport.py:92
+msgid "Ledgers NoteBook"
+msgstr ""
+
+#: amir/notebookreport.py:94
+msgid "Sub-ledgers NoteBook"
+msgstr ""
+
+#: amir/notebookreport.py:150 amir/tbalancereport.py:78
+msgid "Second date value shouldn't precede the first one."
+msgstr ""
+
+#: amir/notebookreport.py:151 amir/tbalancereport.py:79
+msgid "Invalid date order"
+msgstr ""
+
+#: amir/notebookreport.py:160
+msgid "One of document numbers are empty."
+msgstr ""
+
+#: amir/notebookreport.py:161 amir/notebookreport.py:171
+msgid "Invalid document order"
+msgstr ""
+
+#: amir/notebookreport.py:170
+msgid "Second document number shouldn't be greater than the first one."
+msgstr ""
+
+#: amir/notebookreport.py:181 amir/notebookreport.py:205
+msgid "Doc. Number"
+msgstr ""
+
+#: amir/notebookreport.py:205
+msgid "Diagnosis"
+msgstr ""
+
+#: amir/notebookreport.py:205 amir/tbalancereport.py:56
+msgid "Remaining"
+msgstr ""
+
+#: amir/notebookreport.py:221 amir/previewreport.py:106
+#: amir/previewreport.py:111 amir/printreport.py:443 amir/printreport.py:448
+msgid "deb"
+msgstr ""
+
+#: amir/notebookreport.py:225 amir/previewreport.py:115 amir/printreport.py:452
+msgid "equ"
+msgstr ""
+
+#: amir/notebookreport.py:227 amir/previewreport.py:117 amir/printreport.py:454
+msgid "cre"
+msgstr ""
+
+#: amir/notebookreport.py:237 amir/notebookreport.py:268
+msgid "The requested notebook is empty."
+msgstr ""
+
+#: amir/notebookreport.py:238 amir/notebookreport.py:269
+msgid "Empty notebook"
+msgstr ""
+
+#: amir/notebookreport.py:254
+msgid "Ledgers Notebook"
+msgstr ""
+
+#: amir/notebookreport.py:256
+msgid "Sub-ledgers Notebook"
+msgstr ""
+
+#: amir/notebookutils.py:14
+msgid ""
+"This operation may change numbers of permanent documents too.\n"
 "\n"
-"You should have received a copy of the GNU General Public License along with "
-"Amir; if not, write to the Free Software Foundation, Inc., 51 Franklin "
-"Street, Fifth Floor, Boston, MA  02110-1301  USA"
+"Are you sure to continue?"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:934
-msgid "Backup"
+#: amir/notebookutils.py:16
+msgid "Changing document numbers"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:948
-msgid "Restore"
+#: amir/notebookutils.py:33
+msgid "Ordering documents completed successfully."
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:1164
-msgid "Select document to edit"
+#: amir/notebookutils.py:35
+msgid "Operation successfull"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:1227 amir/data/ui/report.glade:805
-msgid "Document Number: "
+#: amir/payments.py:32
+msgid "Pending"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:1299
-msgid "Username: "
+#: amir/payments.py:32
+msgid "In Account"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:1335
-msgid "Password: "
+#: amir/payments.py:32
+msgid "Refused"
 msgstr ""
 
-#: amir/data/ui/mainwin.glade:1423
-msgid "Login"
+#: amir/payments.py:32
+msgid "Paid"
 msgstr ""
 
-#: amir/data/ui/notebook.glade:7 amir/data/ui/notebook.glade:288
-msgid "Add ledger"
+#: amir/payments.py:32
+msgid "Spent"
 msgstr ""
 
-#: amir/data/ui/notebook.glade:25
-msgid "Sub-ledger from:"
+#: amir/payments.py:120 amir/payments.py:130
+msgid "Paid by"
 msgstr ""
 
-#: amir/data/ui/notebook.glade:56
-msgid "Ledger code:"
+#: amir/payments.py:120 amir/payments.py:130
+msgid "Writing date"
 msgstr ""
 
-#: amir/data/ui/notebook.glade:97
-msgid "Ledger name:"
+#: amir/payments.py:121 amir/payments.py:131
+msgid "Bank"
 msgstr ""
 
-#: amir/data/ui/notebook.glade:140
-msgid "Debtor"
+#: amir/payments.py:121 amir/payments.py:131
+msgid "Serial No."
 msgstr ""
 
-#: amir/data/ui/notebook.glade:153
-msgid "Creditor"
+#: amir/payments.py:121
+msgid "Track Code"
 msgstr ""
 
-#: amir/data/ui/notebook.glade:167
-msgid "Both"
+#: amir/payments.py:131
+msgid "Status"
 msgstr ""
 
-#: amir/data/ui/notebook.glade:186
-msgid "Ledger type"
+#: amir/payments.py:215
+msgid "Add Non-Cash Payment"
 msgstr ""
 
-#: amir/data/ui/notebook.glade:301
-msgid "Add sub-ledger"
+#: amir/payments.py:218
+msgid "Add payment to list"
 msgstr ""
 
-#: amir/data/ui/notebook.glade:337 amir/data/ui/user.glade:1391
-msgid "Ctrl+D"
+#: amir/payments.py:303
+msgid "Edit Non-Cash Payment"
 msgstr ""
 
-#: amir/data/ui/notebook.glade:366 amir/data/ui/user.glade:1419
-msgid "Use left/right arrow keys to expand/collapse subjects"
+#: amir/payments.py:304
+msgid "Save Changes..."
 msgstr ""
 
-#: amir/data/ui/notebook.glade:388 amir/data/ui/user.glade:1446
+#: amir/payments.py:329
+#, python-format
+msgid "Are you sure to delete the cheque number %d?"
+msgstr ""
+
+#: amir/payments.py:355
+#, python-format
+msgid "Are you sure to delete the receipt number %d?"
+msgstr ""
+
+#: amir/payments.py:563
+msgid "You must enter the due date for the non-cash payment.\n"
+msgstr ""
+
+#: amir/payments.py:568
+msgid "You must enter the Amount cheaue or reciep"
+msgstr ""
+
+#: amir/payments.py:581
+msgid "You must enter a writing date for the cheque.\n"
+msgstr ""
+
+#: amir/payments.py:586
+msgid "You must enter the serial number for the non-cash payment.\n"
+msgstr ""
+
+#: amir/payments.py:591
+msgid "You must enter the bank for the non-cash payment.\n"
+msgstr ""
+
+#: amir/payments.py:597
+#, python-format
 msgid ""
-"Ctrl+L: Add ledger    Insert: Add sub-ledger    Ctrl+E: Edit    Del: Delete"
+"The payment cannot be saved.\n"
+"\n"
+"%s"
 msgstr ""
 
-#: amir/data/ui/notebook.glade:406 amir/data/ui/user.glade:1469
-msgid "_Select"
+#: amir/payments.py:600
+msgid "Invalid data"
 msgstr ""
 
-#: amir/data/ui/report.glade:39
-msgid "Previous"
+#: amir/previewreport.py:94 amir/previewreport.py:122 amir/printreport.py:206
+#: amir/printreport.py:401
+msgid "Sum of previous page"
 msgstr ""
 
-#: amir/data/ui/report.glade:57
-msgid "Next"
+#: amir/previewreport.py:98 amir/previewreport.py:129 amir/previewreport.py:139
+#: amir/printreport.py:311 amir/printreport.py:545 amir/printreport.py:687
+#: amir/subjects.py:54
+msgid "Sum"
 msgstr ""
 
-#: amir/data/ui/report.glade:108
-msgid "of"
+#: amir/product.py:88 amir/warehousing.py:91
+msgid "Purchase Price"
 msgstr ""
 
-#: amir/data/ui/report.glade:256
-msgid "Subject"
+#: amir/product.py:95 amir/warehousing.py:98
+msgid "Selling Price"
 msgstr ""
 
-#: amir/data/ui/report.glade:294 amir/data/ui/report.glade:1025
-msgid "Show the whole content"
+#: amir/product.py:167
+msgid "Add New Product"
 msgstr ""
 
-#: amir/data/ui/report.glade:316 amir/data/ui/report.glade:1047
-msgid "Show content at date: "
+#: amir/product.py:214
+msgid "Edit Product"
 msgstr ""
 
-#: amir/data/ui/report.glade:383 amir/data/ui/report.glade:1114
-msgid "Show content between dates: "
+#: amir/product.py:271
+msgid "Product code should not be empty.\n"
 msgstr ""
 
-#: amir/data/ui/report.glade:424 amir/data/ui/report.glade:523
-#: amir/data/ui/report.glade:1155
-msgid "to"
+#: amir/product.py:273
+msgid "Product group should not be empty.\n"
 msgstr ""
 
-#: amir/data/ui/report.glade:483
-msgid "Show content between document numbers"
+#: amir/product.py:275
+msgid "Product name should not be empty.\n"
 msgstr ""
 
-#: amir/data/ui/report.glade:571 amir/data/ui/report.glade:1203
-msgid "Report parameters"
+#: amir/product.py:298
+msgid "A product with this code already exists.\n"
 msgstr ""
 
-#: amir/data/ui/report.glade:604
-msgid "Find documents which contain: "
+#: amir/product.py:303
+msgid "Group code is not valid.\n"
 msgstr ""
 
-#: amir/data/ui/report.glade:654 amir/data/ui/report.glade:866
-#: amir/data/ui/report.glade:1220
-msgid "Export to CSV format"
+#: amir/product.py:318 amir/product.py:328 amir/product.py:331
+#: amir/product.py:334
+msgid "Discount formula is not valid"
 msgstr ""
 
-#: amir/data/ui/report.glade:720 amir/data/ui/report.glade:932
-#: amir/data/ui/report.glade:1286
-msgid "Preview"
+#: amir/product.py:325
+msgid "Discount formula should be typed in ascending order."
 msgstr ""
 
-#: amir/data/ui/report.glade:757 amir/data/ui/report.glade:970
-#: amir/data/ui/report.glade:1323
-msgid "Ctrl+P: Print    Enter: Preview    Ctrl+F: Export to CSV"
+#: amir/product.py:338
+msgid "Invalid product properties"
 msgstr ""
 
-#: amir/data/ui/report.glade:779
-msgid "Select Document"
+#: amir/productgroup.py:82 amir/warehousing.py:736
+msgid "Buy ID"
 msgstr ""
 
-#: amir/data/ui/report.glade:833
-msgid "Eg: 1-15"
+#: amir/productgroup.py:87 amir/warehousing.py:743
+msgid "Sell ID"
 msgstr ""
 
-#: amir/data/ui/setting.glade:84
-msgid "Database name: "
-msgstr ""
-
-#: amir/data/ui/setting.glade:125
-msgid "Database path: "
-msgstr ""
-
-#: amir/data/ui/setting.glade:152
-msgid "Browse"
-msgstr ""
-
-#: amir/data/ui/setting.glade:343
-msgid "Choose language from the list: "
-msgstr ""
-
-#: amir/data/ui/setting.glade:370
-msgid "Language"
-msgstr ""
-
-#: amir/data/ui/setting.glade:414
-msgid "Date Format: "
-msgstr ""
-
-#: amir/data/ui/setting.glade:466
-msgid "Date Order: "
-msgstr ""
-
-#: amir/data/ui/setting.glade:502
-msgid "Separate by: "
-msgstr ""
-
-#: amir/data/ui/setting.glade:544
-msgid "Date Format"
-msgstr ""
-
-#: amir/data/ui/setting.glade:578
-msgid "Use latin characters for numbers."
-msgstr ""
-
-#: amir/data/ui/setting.glade:602
-msgid "Number Format"
-msgstr ""
-
-#: amir/data/ui/setting.glade:620
-msgid "Format"
-msgstr ""
-
-#: amir/data/ui/setting.glade:658
+#: amir/productgroup.py:191
 msgid ""
-"Before you change the database, Make sure you don't have any unsaved data."
+"Group can not be deleted, Because there are some products registered in it."
 msgstr ""
 
-#: amir/data/ui/setting.glade:675
-msgid "Current database: "
+#: amir/productgroup.py:206
+msgid "Group code should not be empty.\n"
 msgstr ""
 
-#: amir/data/ui/setting.glade:792
-msgid "Change database"
+#: amir/productgroup.py:208
+msgid "Group name should not be empty.\n"
 msgstr ""
 
-#: amir/data/ui/setting.glade:825
-msgid "Repair current database when amir starts up."
+#: amir/productgroup.py:238
+msgid "A group with this code already exists.\n"
 msgstr ""
 
-#: amir/data/ui/setting.glade:840
-msgid "Repair Now!"
+#: amir/productgroup.py:241
+msgid "A group with this name already exists.\n"
 msgstr ""
 
-#: amir/data/ui/setting.glade:861
-msgid "Repair database"
+#: amir/productgroup.py:249
+msgid "Buying code is not valid.\n"
 msgstr ""
 
-#: amir/data/ui/setting.glade:882
-msgid "Database"
+#: amir/productgroup.py:254
+msgid "Selling code is not valid.\n"
 msgstr ""
 
-#: amir/data/ui/setting.glade:934
-msgid "Top margin:"
+#: amir/productgroup.py:258
+msgid "Invalid group properties"
 msgstr ""
 
-#: amir/data/ui/setting.glade:946
-msgid "Bottom Margin:"
+#: amir/setting.py:41
+msgid "Current"
 msgstr ""
 
-#: amir/data/ui/setting.glade:959
-msgid "Right margin:"
+#: amir/setting.py:51
+msgid "Path"
 msgstr ""
 
-#: amir/data/ui/setting.glade:972
-msgid "Left margin:"
+#: amir/setting.py:152
+msgid "Add Database"
 msgstr ""
 
-#: amir/data/ui/setting.glade:985
-msgid "Paper size: "
+#: amir/setting.py:161
+msgid ""
+"Can not connect to the database. The selected database file may not be a "
+"sqlite database or be corrupt."
 msgstr ""
 
-#: amir/data/ui/setting.glade:1086
-msgid "---"
+#: amir/setting.py:163
+msgid ""
+"The selected file is compatible with older versions of Amir. First convert "
+"it to the new version."
 msgstr ""
 
-#: amir/data/ui/setting.glade:1121
-msgid "Paper setup"
+#: amir/setting.py:167
+msgid "Error opening new database"
 msgstr ""
 
-#: amir/data/ui/setting.glade:1152
-msgid "Page margins"
+#: amir/setting.py:179
+msgid "Are you sure to remove this database from the list?"
 msgstr ""
 
-#: amir/data/ui/setting.glade:1194
-msgid "Report name:"
+#: amir/setting.py:190
+msgid ""
+"All databases removed.\n"
+"The default database will be opened for use."
 msgstr ""
 
-#: amir/data/ui/setting.glade:1207
-msgid "Header:"
+#: amir/setting.py:191
+msgid "All databases removed"
 msgstr ""
 
-#: amir/data/ui/setting.glade:1220
-msgid "Content:"
+#: amir/setting.py:201
+msgid "Please wait..."
 msgstr ""
 
-#: amir/data/ui/setting.glade:1233
-msgid "Footer:"
+#: amir/setting.py:203 scripts/amir:428
+msgid "Repairing database"
 msgstr ""
 
-#: amir/data/ui/setting.glade:1345
-msgid "Font sizes"
+#: amir/setting.py:214 scripts/amir:463
+msgid "Repair Operation Completed!"
 msgstr ""
 
-#: amir/data/ui/setting.glade:1379 amir/data/ui/user.glade:839
-msgid "Reports"
+#: amir/setting.py:225 scripts/amir:473
+msgid ""
+"You have changed the current database, any unsaved data will be lost.\n"
+"Are you sure to continue?"
 msgstr ""
 
-#: amir/data/ui/setting.glade:1462
-msgid "Company"
+#: amir/subjects.py:49
+msgid "Debtor or Creditor"
 msgstr ""
 
-#: amir/data/ui/setting.glade:1534
-msgid "Subjects"
+#: amir/subjects.py:119
+msgid "Add Ledger"
 msgstr ""
 
-#: amir/data/ui/setting.glade:1606
-msgid "Other"
+#: amir/subjects.py:152
+msgid "Add Sub-ledger"
 msgstr ""
 
-#: amir/data/ui/setting.glade:1638
-msgid "Config Key"
+#: amir/subjects.py:197
+msgid "Please select an item from the list, to add subject for it."
 msgstr ""
 
-#: amir/data/ui/setting.glade:1649
-msgid "Config Desc"
+#: amir/subjects.py:198
+msgid "Select a subject"
 msgstr ""
 
-#: amir/data/ui/setting.glade:1662
-msgid "Config Model"
+#: amir/subjects.py:204
+msgid "Edit Ledger"
 msgstr ""
 
-#: amir/data/ui/setting.glade:1673
-msgid "FileChooser"
+#: amir/subjects.py:266
+msgid "Subject can not be deleted, because it has some child subjects."
 msgstr ""
 
-#: amir/data/ui/setting.glade:1690
-msgid "Entry"
+#: amir/subjects.py:267 amir/subjects.py:278
+msgid "Error deleting subject"
 msgstr ""
 
-#: amir/data/ui/setting.glade:1708
-msgid "Single Subject Selector"
+#: amir/subjects.py:277
+msgid ""
+"Subject can not be deleted, because there are some documents registered for "
+"it."
 msgstr ""
 
-#: amir/data/ui/setting.glade:1726
-msgid "Multiple subject selector"
+#: amir/subjects.py:303
+msgid "Subject name should not be empty."
 msgstr ""
 
-#: amir/data/ui/setting.glade:1880
-msgid "Custom Config"
+#: amir/subjects.py:304
+msgid "Empty subject name"
 msgstr ""
 
-#: amir/data/ui/setting.glade:1904 amir/data/ui/user.glade:888
-msgid "Config"
+#: amir/subjects.py:339
+msgid "A subject with this name already exists in the current level."
 msgstr ""
 
-#: amir/data/ui/setting.glade:1926
-msgid "_Defaults"
+#: amir/subjects.py:340
+msgid "Duplicate subject name"
 msgstr ""
 
-#: amir/data/ui/user.glade:91 amir/data/ui/user.glade:373
-msgid "Username:"
+#: amir/subjects.py:349
+msgid "Ledger Code field is empty"
 msgstr ""
 
-#: amir/data/ui/user.glade:127 amir/data/ui/user.glade:410
-msgid "Password:"
+#: amir/subjects.py:350
+msgid "Invalid subject code"
 msgstr ""
 
-#: amir/data/ui/user.glade:166 amir/data/ui/user.glade:450
-msgid "Permission: "
+#: amir/subjects.py:364
+msgid "A subject with this code already exists."
 msgstr ""
 
-#: amir/data/ui/user.glade:645
-msgid "Warehouse"
+#: amir/subjects.py:365
+msgid "Duplicate subject code"
 msgstr ""
 
-#: amir/data/ui/user.glade:656
-msgid "Create"
+#: amir/subjects.py:378
+#, python-format
+msgid ""
+"The type of this subject can not be changed to 'creditor', Because there "
+"are                             %d documents that use it as debtor."
 msgstr ""
 
-#: amir/data/ui/user.glade:667
-msgid "Read"
+#: amir/subjects.py:383
+#, python-format
+msgid ""
+"The type of this subject can not be changed to 'debtor', Because there "
+"are                             %d documents that use it as creditor."
 msgstr ""
 
-#: amir/data/ui/user.glade:678
-msgid "Update"
+#: amir/subjects.py:387
+msgid "Can not change subject type"
 msgstr ""
 
-#: amir/data/ui/user.glade:850
-msgid "Checque"
+#: amir/tbalancereport.py:56
+msgid "Ledger name"
 msgstr ""
 
-#: amir/data/ui/user.glade:1197
-msgid "Permissions"
+#: amir/tbalancereport.py:114
+msgid "No ledgers found."
 msgstr ""
 
-#: amir/data/ui/user.glade:1207
-msgid "Groups"
+#: amir/tbalancereport.py:115
+msgid "Empty report"
 msgstr ""
 
-#: amir/data/ui/user.glade:1226
-msgid "Add Permission"
+#: amir/tbalancereport.py:123
+msgid "Trial Balance"
 msgstr ""
 
-#: amir/data/ui/user.glade:1361
+#: amir/user.py:82
+msgid "Username"
+msgstr ""
+
+#: amir/user.py:87
+msgid "Permission"
+msgstr ""
+
+#: amir/user.py:133
 msgid "Add User"
 msgstr ""
 
-#: amir/data/ui/warehousing.glade:73
-msgid "Product Code:"
+#: amir/user.py:196
+msgid "Edit User"
 msgstr ""
 
-#: amir/data/ui/warehousing.glade:85
-msgid "Product Name:"
+#: amir/user.py:300
+msgid "Edit Permission"
 msgstr ""
 
-#: amir/data/ui/warehousing.glade:117
-msgid "Product Description:"
+#: amir/warehousing.py:109
+msgid "Accounting Group"
 msgstr ""
 
-#: amir/data/ui/warehousing.glade:131
-msgid "Accounting Group:"
+#: amir/warehousing.py:116
+msgid "Product Location"
 msgstr ""
 
-#: amir/data/ui/warehousing.glade:145
-msgid "Quantity Warning:"
+#: amir/warehousing.py:130
+msgid "Over-Sell"
 msgstr ""
 
-#: amir/data/ui/warehousing.glade:157
-msgid "OverSell?"
+#: amir/warehousing.py:137
+msgid "Discount Formula"
 msgstr ""
 
-#: amir/data/ui/warehousing.glade:191
-msgid "Product Location:"
+#: amir/warehousing.py:210
+#, python-format
+msgid "Are you sure you want to delete the product \"%s\""
 msgstr ""
 
-#: amir/data/ui/warehousing.glade:225
-msgid "Purchace Price:"
+#: amir/warehousing.py:229 amir/warehousing.py:787
+msgid "Selected Group has some related products and cannot be deleted."
 msgstr ""
 
-#: amir/data/ui/warehousing.glade:239
-msgid "Selling Price:"
+#: amir/warehousing.py:234 amir/warehousing.py:792
+msgid "Unable to Delete"
 msgstr ""
 
-#: amir/data/ui/warehousing.glade:255
-msgid "Discount Formula:"
+#: amir/warehousing.py:239 amir/warehousing.py:797
+#, python-format
+msgid "Are you sure you want to delete the group \"%s\""
 msgstr ""
 
-#: amir/data/ui/warehousing.glade:361
-msgid "Press Enter to see available groups."
+#: amir/warehousing.py:273
+#, python-format
+msgid "Edit Product:\t%(code)s - %(name)s"
 msgstr ""
 
-#: amir/data/ui/warehousing.glade:395
+#: amir/warehousing.py:370
+msgid "There must be a \"Code\" for each product."
+msgstr ""
+
+#: amir/warehousing.py:376 amir/warehousing.py:387 amir/warehousing.py:398
+msgid "Missing Data"
+msgstr ""
+
+#: amir/warehousing.py:381
+msgid "There is no \"Name\" mentioned for this product."
+msgstr ""
+
+#: amir/warehousing.py:392
+msgid "No \"Accounting Group\" is selected for this product."
+msgstr ""
+
+#: amir/warehousing.py:410
+msgid "\"Accounting Group\" which you selected does not exist."
+msgstr ""
+
+#: amir/warehousing.py:416
+msgid "Wrong Accounting Group ID"
+msgstr ""
+
+#: amir/warehousing.py:443 amir/warehousing.py:469
 msgid ""
-"Hint: From quantity - To quantity: Amount of discount for each product (The "
-"order is important)\n"
-"         Example:   1-30: 400 , 30-100: 360.7 , 100-170: 300"
+"Both the product \"Code\" and \"Name\" have already been used for other "
+"products."
 msgstr ""
 
-#: amir/data/ui/warehousing.glade:545
-msgid "Group Name:"
+#: amir/warehousing.py:446 amir/warehousing.py:472
+msgid "The product \"Code\" is used for another product before."
 msgstr ""
 
-#: amir/data/ui/warehousing.glade:609
-msgid "Selling Code:"
+#: amir/warehousing.py:449 amir/warehousing.py:475
+msgid "The product \"Name\" is used for another product before."
 msgstr ""
 
-#: amir/data/ui/warehousing.glade:624
-msgid "Buying Code:"
+#: amir/warehousing.py:457 amir/warehousing.py:482 amir/warehousing.py:986
+#: amir/warehousing.py:1015
+msgid "Used Data Selected"
 msgstr ""
 
-#: amir/data/ui/warehousing.glade:715
-msgid "Product Groups"
+#: amir/warehousing.py:519 amir/warehousing.py:600
+msgid "* \"Quantity\" is not entered or is set to 0. (Over-Sell is off)"
 msgstr ""
 
-#: amir/data/ui/warehousing.glade:834
-msgid "Products"
+#: amir/warehousing.py:526 amir/warehousing.py:607
+msgid "* \"Purchase Price\" is not entered or is set to 0."
 msgstr ""
 
-#: amir/data/ui/warehousing.glade:961
-msgid "Insert: Add product    Ctrl+G: Add Group   Ctrl+E: Edit    Del: Delete"
+#: amir/warehousing.py:533 amir/warehousing.py:614
+msgid "* \"Selling Price\" is not entered or is set to 0."
+msgstr ""
+
+#: amir/warehousing.py:547 amir/warehousing.py:628
+msgid "Warning: Missing Data"
+msgstr ""
+
+#: amir/warehousing.py:833
+#, python-format
+msgid "Edit Group: %s"
+msgstr ""
+
+#: amir/warehousing.py:915
+msgid "Data Missing!"
+msgstr ""
+
+#: amir/warehousing.py:923
+msgid "\"Selling Group ID\" which you selected is not a valid ID."
+msgstr ""
+
+#: amir/warehousing.py:929
+msgid "Invalid Selling ID"
+msgstr ""
+
+#: amir/warehousing.py:939
+msgid "\"Buying Group ID\" which you selected is not a valid ID."
+msgstr ""
+
+#: amir/warehousing.py:945
+msgid "Invalid Buying ID"
+msgstr ""
+
+#: amir/warehousing.py:972 amir/warehousing.py:1001
+msgid ""
+"Both the group \"Code\" and \"Name\" have already been used for other groups."
+msgstr ""
+
+#: amir/warehousing.py:975 amir/warehousing.py:1004
+msgid "The group \"Code\" is used for another group before."
+msgstr ""
+
+#: amir/warehousing.py:978 amir/warehousing.py:1007
+msgid "The group \"Name\" is used for another group before."
+msgstr ""
+
+#: scripts/amir:221
+msgid "Backup saved successfully"
+msgstr ""
+
+#: scripts/amir:254
+msgid "Backup restored successfully"
+msgstr ""
+
+#: scripts/amir:388
+msgid "Cash is negative"
+msgstr ""
+
+#: scripts/amir:394
+msgid "Check the due date of cheques"
+msgstr ""
+
+#: scripts/amir:426
+msgid "Repairing database, Please wait..."
+msgstr ""
+
+#: scripts/amir:483
+msgid "Database changed successfully."
+msgstr ""
+
+#: scripts/amir:503
+msgid "Please close Amir and start it again in order to apply changes"
+msgstr ""
+
+#: scripts/amir:505
+msgid "Please restart Amir"
 msgstr ""

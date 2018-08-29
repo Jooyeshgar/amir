@@ -42,18 +42,18 @@
   ; RequestExecutionLevel admin
   ;Name and file
   Name "${PROGRAM_NAME} ${PROGRAM_VERSION}"
-  OutFile "${PROGRAM_NAME}-${PROGRAM_VERSION}-win32-setup.exe"
+  OutFile "${PROGRAM_NAME}-${PROGRAM_VERSION}-win64-setup.exe"
   Icon "${icon}"
 
   SetCompressor lzma
   ;Default installation folder
-  InstallDir "$PROGRAMFILES\${PROGRAM_NAME}"
+  InstallDir "$PROGRAMFILES64\${PROGRAM_NAME}"
 
   ;Get installation folder from registry if available
   InstallDirRegKey HKCU "Software\${PROGRAM_NAME}" ""
 
   ;Request application privileges for Windows Vista
-  RequestExecutionLevel admin
+  ;RequestExecutionLevel admin
 
   # Branding text
   BrandingText "${PROGRAM_NAME} Windows Installer v${AMIR_INSTALLER_VERSION}"
@@ -82,8 +82,8 @@
   !insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
   !insertmacro MUI_PAGE_INSTFILES
 
-  #!define MUI_FINISHPAGE_TITLE "Completing Amir setup wizard"
-  #!define MUI_FINISHPAGE_TEXT "Congratulations! Setup has finished installing Amir 0.2.0 on your computer."
+  !define MUI_FINISHPAGE_TITLE "Completing Amir setup wizard"
+  !define MUI_FINISHPAGE_TEXT "Congratulations! Setup has finished installing Amir 0.2.0 on your computer."
   !define MUI_FINISHPAGE_RUN "$INSTDIR\Amir\amir.exe"
   !define MUI_FINISHPAGE_RUN_NOTCHECKED
   !define MUI_FINISHPAGE_RUN_TEXT "Launch Amir"

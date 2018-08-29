@@ -136,7 +136,7 @@ class AmirConfig:
         logging.debug('Reading configuration "%s"' % confpath)
 
         #A ConfigParser is defined with default configuration values
-        self.defaultConfig = {"current_database": "1", "repair_at_start": "yes", "language": "C", "dateformat": "jalali", "delimiter": ":",
+        self.defaultConfig = {"current_database": "1", "repair_at_start": "no", "language": "C", "dateformat": "jalali", "delimiter": ":",
                               "dateorder": "0", "use_latin_numbers": "yes", "name_font": "14", "header_font": "12",
                               "content_font": "9", "footer_font": "8", "paper_ppd_name": "A4", "paper_display_name": "A4",
                               "paper_width_points": "595", "paper_height_points": "841", "paper_orientation": "0",

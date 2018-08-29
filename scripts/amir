@@ -45,6 +45,19 @@
 
 import sys
 import os
+
+if sys.platform == 'win32':
+	#set path env to current directory to avoid GTK errors
+	if getattr(sys, 'frozen', False):
+		# we are running in a bundle        
+		bundle_dir = sys._MEIPASS
+	else:
+		# we are running in a normal Python environment
+		bundle_dir = os.path.dirname(os.path.abspath(__file__))
+	os.environ["PATH"] += ";"+ bundle_dir
+	file = open('stdout.log', 'w')
+	file.write(bundle_dir + "\r\n" + os.environ["PATH"] )
+	
 import logging
 import gi
 gi.require_version('Gtk', '3.0')
@@ -63,7 +76,7 @@ if sys.platform == 'win32':
 	sys.stderr = fsock
 	fsock = open('stdout.log', 'w')
 	sys.stdout = fsock
-
+	
 	# set windows theme
 	gtkrc = r'.\\gtkrc'
 	Gtk.rc_set_default_files([gtkrc])
@@ -123,10 +136,9 @@ class MainWindow(GObject.GObject):
 
 	def manualDocument(self, sender):
 		dialog = addeditdoc.AddEditDoc(0,self.background)
-		self.connect("database-changed", dialog.dbChanged)
-
-	def quitMainWindow(self, sender):
-		pass
+		self.connect("database-changed", dialog.dbChanged)		
+#def quitMainWindow(self, sender):
+	#	pass
 
 	def dailyNotebookReport(self, sender):
 		reportwin = notebookreport.NotebookReport()
@@ -365,6 +377,7 @@ class MainWindow(GObject.GObject):
 
 		self.window.connect("delete_event", self.delete_event)
 		self.window.connect("destroy", self.destroy)
+		
 		#self.window.set_border_width(10)
 		self.builder.connect_signals(self)
 		self.window.show()
@@ -407,7 +420,7 @@ class MainWindow(GObject.GObject):
 		# self.loggedIn()
 		self.window = self.builder.get_object("login")
 		self.window.show()
-		self.builder.connect_signals(self)
+		self.builder.connect_signals(self)		
 
 		if config.repair_atstart == True:
 			msg = _("Repairing database, Please wait...")
@@ -482,10 +495,17 @@ class MainWindow(GObject.GObject):
 	def localeChanged(self, sender, new_locale):
 		os.environ['LANG'] = new_locale
 		locale.setlocale(locale.LC_ALL, '')
-		Gtk.glade.bindtextdomain('amir', config.locale_path)
-		Gtk.glade.textdomain('amir')
+		gettext.bindtextdomain('amir', config.locale_path)
+		gettext.textdomain('amir')
 		gettext.install('amir', config.locale_path, unicode=1)
 		logging.info('New locale: ' + new_locale)
+
+		msg = _("Please close Amir and start it again in order to apply changes")
+		self.msgbox = Gtk.MessageDialog(self.window,Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK , msg)
+		self.msgbox.set_title(_("Please restart Amir"))
+		self.msgbox.run()	
+		self.msgbox.destroy()
+
 
 	def automaticAccounting(self, sender):
 		obj = automaticaccounting.AutomaticAccounting()
