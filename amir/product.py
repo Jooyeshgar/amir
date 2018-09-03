@@ -24,6 +24,7 @@ import gi
 from gi.repository import Gtk
 from gi.repository import GObject
 
+
 config = share.config
 
 gi.require_version('Gtk', '3.0')
@@ -48,13 +49,15 @@ class Product(productgroup.ProductGroup):
 		self.sellPriceEntry = decimalentry.DecimalEntry()
 		self.builder.get_object("sellPriceBox").add(self.sellPriceEntry)
 		self.sellPriceEntry.show()
-		
+
+		self.treeview = self.builder.get_object("productsTreeView")
+		self.treestore = Gtk.TreeStore(str, str, str, str, str)
 
 	def viewProducts(self):
 		self.window = self.builder.get_object("viewProductsWindow")
-		
-		self.treeview = self.builder.get_object("productsTreeView")
-		self.treestore = Gtk.TreeStore(str, str, str, str, str)
+#		 	 #		moved to __init__ function
+#		self.treeview = self.builder.get_object("productsTreeView")
+#		self.treestore = Gtk.TreeStore(str, str, str, str, str)  
 		self.treestore.clear()
 		self.treeview.set_model(self.treestore)
 
@@ -151,6 +154,9 @@ class Product(productgroup.ProductGroup):
 
 
 	def addProduct(self, sender, pcode = ""):
+		#self.treestore = Gtk.TreeStore(str, str, str, str, str)		
+		self.treestore.clear()
+		self.treeview.set_model(self.treestore)
 		
 		accgrp = ""
 		try:
@@ -202,8 +208,7 @@ class Product(productgroup.ProductGroup):
 
 	def editProductsAndGrps(self, sender):
 		selection = self.treeview.get_selection()
-		iter = selection.get_selected()[1]
-		
+		iter = selection.get_selected()[1]		
 		if iter != None:
 			if self.treestore.iter_parent(iter) == None:
 			#iter points to a product group
@@ -360,6 +365,7 @@ class Product(productgroup.ProductGroup):
 		config.db.session.commit()
 		
 		#Show new product in table
+
 		self.fillTreeview()
 		try:
 			parent_iter = self.treestore.get_iter_first()
