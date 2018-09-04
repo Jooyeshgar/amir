@@ -35,8 +35,8 @@ class Factor(Payments):
 
 	def __init__(self,sell = True, transId=None):
 		self.sell = sell 	#Sell or buy
-		self.addFalg = True
-		self.editFalg = False
+		#self.addFalg = True
+		self.editFlag = False   #  false means  adding
 		self.editTransaction = None
 		self.removeFlag = False
 		self.listTotalDiscount = 0.0
@@ -211,7 +211,7 @@ class Factor(Payments):
 	def on_add_clicked(self,sender):
 		self.addNew()
 							
-	def addNew(self,transId=None):
+	def addNew(self,transId=None):   # add sell
 		query   = self.session.query(Factors.Code).select_from(Factors).filter(Factors.Sell == self.sell)
 		lastCode  = query.order_by(Factors.Code.desc()).first()
 		if not lastCode:
@@ -254,7 +254,7 @@ class Factor(Payments):
 				self.sellListStore.append(None,list)
 		
 		
-		if self.editFalg:
+		if self.editFlag:
 			self.Id	= self.editTransaction.Id
 			self.Code 	= self.editTransaction.Code
 		
@@ -262,7 +262,7 @@ class Factor(Payments):
 			self.paymentManager = payments.Payments(transId=self.Id,transCode=self.Code)
 			self.paymentManager.connect("payments-changed", self.setNonCashPayments)
 			self.paymentManager.fillPaymentTables()
-			print self.Id
+		#	print self.Id
 			self.builder.get_object("fullFactorSellBtn").set_label("Save Changes ...")
 			
 			self.Codeentry = self.builder.get_object("transCode")
@@ -305,18 +305,19 @@ class Factor(Payments):
 			self.builder.get_object("preChkBx").set_active(self.editTransaction.Permanent ^ 1)
 		self.mainDlg.show_all()
 
-	def addNewBuy(self,transId=None):
-		query   = self.session.query(Factors.Code).select_from(Factors).filter(Factors.Sell == self.sell)
-		lastCode  = query.order_by(Factors.Code.desc()).first()
-		if not lastCode:
-			self.Code  = 1
-		else:
-			self.Code  = int(lastCode.Code) + 1
-
-		self.mainDlg = self.builder.get_object("FormWindow")
-
-		self.Codeentry = self.builder.get_object("transCode")
-		self.Codeentry.set_text(LN(self.Code))
+	def addNewBuy(self,transId=None):  # add buy 
+		if self.editFlag == False:
+			query   = self.session.query(Factors.Code).select_from(Factors).filter(Factors.Sell == self.sell)
+			lastCode  = query.order_by(Factors.Code.desc()).first()
+			if not lastCode:
+				self.Code  = 1
+			else:
+				self.Code  = int(lastCode.Code) + 1
+			self.paymentManager = payments.Payments(transId=self.Id,transCode=self.Code)
+			self.paymentManager.connect("payments-changed", self.setNonCashPayments)
+			self.paymentManager.fillPaymentTables()
+			self.Codeentry = self.builder.get_object("transCode")
+			self.Codeentry.set_text(LN(self.Code))
 		self.statusBar  = self.builder.get_object("FormStatusBar")	
 		self.factorTreeView = self.builder.get_object("FactorTreeView")
 		self.sellListStore = Gtk.TreeStore(str,str,str,str,str,str,str,str)
@@ -332,11 +333,7 @@ class Factor(Payments):
 			column.set_resizable(True)
 			self.factorTreeView.append_column(column)
 			txt += 1
-		#self.factorTreeView.get_selection().set_mode(  Gtk.SelectionMode.SINGLE    )
-		
-		self.paymentManager = payments.Payments(transId=self.Id,transCode=self.Code)
-		self.paymentManager.connect("payments-changed", self.setNonCashPayments)
-		self.paymentManager.fillPaymentTables()
+		#self.factorTreeView.get_selection().set_mode(  Gtk.SelectionMode.SINGLE    )				
 
 		if transId:
 			sellsQuery  = self.session.query(FactorItems).select_from(FactorItems)
@@ -348,16 +345,16 @@ class Factor(Payments):
 				self.sellListStore.append(None,list)
 		
 		
-		if self.editFalg:
+		if self.editFlag:  # function editBuying executed before
 			self.Id	= self.editTransaction.Id
 			self.Code 	= self.editTransaction.Code
-		
-			
+					
 			self.paymentManager = payments.Payments(transId=self.Id,transCode=self.Code)
 			self.paymentManager.connect("payments-changed", self.setNonCashPayments)
 			self.paymentManager.fillPaymentTables()
-			print self.Id
-			self.builder.get_object("fullFactorBuyBtn").set_label("Save Changes ...")
+		#	print self.Id
+			self.builder.get_object("fullFactorBuyBtn").set_label("Save Changes")
+			self.builder.get_object("printTransBtn").set_label("Save and Print")
 			
 			self.Codeentry = self.builder.get_object("transCode")
 			if config.digittype == 1:
@@ -387,7 +384,7 @@ class Factor(Payments):
 				number+=1																
 			self.taxEntry.set_text(str(self.editTransaction.VAT))
 			self.feeEntry.set_text(str(self.editTransaction.Fee))
-			self.additionsEntry.set_text(str(self.editTransaction.Addition))
+			#self.additionsEntry.set_text(str(self.editTransaction.Addition))
 			self.cashPymntsEntry.set_text(str(self.editTransaction.CashPayment))
 			self.builder.get_object("FOBEntry").set_text(str(self.editTransaction.Delivery))
 			self.builder.get_object("shipViaEntry").set_text(str(self.editTransaction.ShipVia))
@@ -397,10 +394,12 @@ class Factor(Payments):
 			self.shippedDate.set_text(str(self.editTransaction.ShipDate))			
 			self.shippedDate.showDateObject(self.editTransaction.ShipDate)
 			self.builder.get_object("preChkBx").set_active(self.editTransaction.Permanent ^ 1)
+
+		self.mainDlg = self.builder.get_object("FormWindow")
 		self.mainDlg.show_all()
 																	
 	def editSelling(self,transId=None):
-		self.editFalg=True		
+		self.editFlag=True		
 		selection = self.treeview.get_selection()
 		iter = selection.get_selected()[1]		
 		code = self.treestore.get_value(iter, 0) 		
@@ -412,7 +411,7 @@ class Factor(Payments):
 		self.addNew() 		
 
 	def editBuying(self,transId=None):
-		self.editFalg=True		
+		self.editFlag=True		
 		selection = self.treeview.get_selection()
 		iter = selection.get_selected()[1]		
 		code = self.treestore.get_value(iter, 0) 		
@@ -427,7 +426,7 @@ class Factor(Payments):
 		selection = self.treeview.get_selection()
 		iter1 = selection.get_selected()[1]	
 		code = self.treestore.get_value(iter1, 0)
-		print code
+	#	print code
 		query = config.db.session.query(Factors).select_from(Factors)
 		Transaction = query.filter(Factors.Id ==unicode(code) )
 		Transaction = Transaction.filter(Factors.Activated==1).first()
@@ -624,13 +623,13 @@ class Factor(Payments):
 			length  = len(self.sellsItersDict) -1
 			if len(self.sellsItersDict) > 1:
 				while No < length:
-					print No
+			#		print No
 					nextIter    = self.sellsItersDict[No+1]
 					self.sellListStore.set_value(nextIter,0,str(No))
 					self.sellsItersDict[No] = nextIter
 					del self.sellsItersDict[No+1]
 					No  += 1
-				print "--------------",length
+		#		print "--------------",length
 			else:
 				self.sellsItersDict = {}
 				
@@ -640,7 +639,7 @@ class Factor(Payments):
 		iter    = self.factorTreeView.get_selection().get_selected()[1]
 		if iter:
 			No   = utility.getInt(self.sellListStore.get(iter, 0)[0])
-			abvNo   = No - 1
+			abvNo   = No - 1			
 			if abvNo > 0:
 				aboveIter   = self.sellsItersDict[abvNo]
 				self.sellListStore.move_before(iter,aboveIter)
@@ -827,7 +826,7 @@ class Factor(Payments):
 
 		self.totalDiscsEntry.set_text(utility.LN(ttlDiscs))
 		self.totalFactor = subtotal + additions - subtracts - ttlDiscs
-		print self.totalFactor
+	#	print self.totalFactor
 		if self.vatCheck:
 			self.VAT = self.totalFactor * dbconf.get_int("vat-rate")/100
 			self.fee = self.totalFactor * dbconf.get_int("fee-rate")/100
@@ -855,7 +854,7 @@ class Factor(Payments):
 	def validatePCode(self, sender, event):
 		productCd   = unicode(self.proVal.get_text())
 		if self.product_code != productCd:
-			print "validateCode"
+		#	print "validateCode"
 			product = self.session.query(Products).select_from(Products).filter(Products.code==productCd).first()
 			if not product:
 				self.proVal.modify_base(Gtk.StateType.NORMAL,self.redClr)
@@ -884,7 +883,7 @@ class Factor(Payments):
 				qnty = self.qntyEntry.get_float()
 
 			if self.quantity != qnty:
-				print "validateQnty"
+		#		print "validateQnty"
 				qntyAvlble  = float(self.product.quantity)
 				over    = self.product.oversell
 				if qnty < 0:
@@ -912,7 +911,7 @@ class Factor(Payments):
 					code   = self.proVal.get_text()
 					sellPrc = self.product.sellingPrice
 					if self.product.discountFormula:
-						print "formula exists!"
+			#			print "formula exists!"
 						discval = self.calcDiscount(self.product.discountFormula, qnty, sellPrc)
 						discstr = utility.LN(discval)
 						if self.sell:
@@ -967,7 +966,7 @@ class Factor(Payments):
 				self.calcTotal()
 	
 	def validateDiscnt(self, sender=0, event=0):
-		print "validateDiscnt"
+	#	print "validateDiscnt"
 		if self.product:
 			stMsg = ""
 			severe = False
@@ -983,7 +982,7 @@ class Factor(Payments):
 				discval = 0
 
 				if disc != "":
-					print disc
+		#			print disc
 					pindex = disc.find(u'%')
 					if pindex == 0 or pindex == len(disc) - 1:
 						discp = float(disc.strip(u'%'))
@@ -1139,12 +1138,12 @@ class Factor(Payments):
 			
 			pro_str = ""
 			for (k, v) in pro_dic.items():
-				print "%s : %d" % (k, v)
+	#			print "%s : %d" % (k, v)
 				if v < 0:
 					pro_str += k + _(", ")
 					
 			pro_str.strip()
-			print pro_str
+		#	print pro_str
 			
 			if pro_str:
 				msg = _("The available quantity of %s is not enough for the invoice. You can save it as pre-invoice.") \
@@ -1167,7 +1166,7 @@ class Factor(Payments):
 
 	def registerTransaction(self):
 		permanent = self.subPreInv ^ 1
-		if self.editFalg:
+		if self.editFlag:
 			query=self.session.query(Factors).select_from(Factors)
 			query=query.filter(Factors.Code==self.subCode).all()
 			for trans in query:
@@ -1190,7 +1189,7 @@ class Factor(Payments):
 				
 		# FactorItems( self, number, productId, qnty,
 		#            untPrc, untDisc, factorId, desc):
-		if self.editFalg:								 
+		if self.editFlag:								 
 			lasttransId = self.Id # Id of old factor
 			
 			lasttrans=self.session.query(Factors).select_from(Factors)
@@ -1215,7 +1214,7 @@ class Factor(Payments):
 					else:
 						pro.quantity -= oldProduct.qnty
 					self.session.commit()
-				print oldProduct.productId
+		#		print oldProduct.productId
 
 		
 		for exch in self.sellListStore: # The new sell list store
@@ -1225,7 +1224,7 @@ class Factor(Payments):
 			self.lastfactorItemquantity=utility.getFloat(0)
 			self.nowfactorItemquantity=utility.getFloat(exch[2])
 
-			if self.editFalg:
+			if self.editFlag:
 				factorItem1=self.session.query(FactorItems).select_from(FactorItems)
 				factorItem1=factorItem1.order_by(FactorItems.factorId.desc())
 				factorItem1=factorItem1.filter(FactorItems.productId==pid)
@@ -1299,10 +1298,10 @@ class Factor(Payments):
 		cust = query.filter(Customers.custCode == cust_code).first()
 			
 		for pay in cheques:	
-			print pay.chqId
+	#		print pay.chqId
 			print pay.chqCust
 			pay.chqCust=cust.custId
-			print cust.custId
+	#		print cust.custId
 			self.session.add(pay)
 			self.session.commit()
 
@@ -1487,10 +1486,11 @@ class Factor(Payments):
 		items = ''
 		for sell in sellsQuery:
 			productId = sell.FactorItems.productId
+			productCode = sell.Products.code
 			productName = sell.Products.name 
 			quantity = sell.FactorItems.qnty
 			unitPrice = sell.FactorItems.untPrc
-			totalPrice = sell.FactorItems.untPrc * sell.FactorItems.qnty
+			totalPrice = unitPrice * quantity
 			totalDiscount = float(sell.FactorItems.untDisc) * float(sell.FactorItems.qnty)
 			totalAfterDiscount = totalPrice - totalDiscount
 			totalVat = 0  # TODO: Store it to database and use it here
@@ -1530,7 +1530,7 @@ class Factor(Payments):
 							<span>' + utility.convertToPersian(str(productName)) + '</span> \
 						</td> \
 						<td class="border center" style="border-right: none;" > \
-							<span>' + utility.convertToPersian(str(productId)) + '</span> \
+							<span>' + utility.convertToPersian(str(productCode)) + '</span> \
 						</td> \
 						<td class="border"> \
 							<span style="text-align: right;" class="bold" style="width: 10px;"> ' + utility.convertToPersian(str(utility.convertToPersian(k))) + ' </span> \
@@ -1621,9 +1621,21 @@ class Factor(Payments):
 						</table> \
 					</body> \
 				</html>'
-		print html;
+	#	print html;
 		return html
 	def printTransaction(self, sender):
+		
+		if self.editFlag == False:  # adding 
+			code = self.Code		
+			self.submitFactorPressed(sender)
+			query = config.db.session.query(Factors, Customers)
+			query = query.select_from(outerjoin(Factors, Customers, Factors.Cust== Customers.custId))
+			result,result2 = query.filter(Factors.Id == code).first() 		
+			self.editTransaction=result 
+			self.customer=result2	
+		else :
+			self.submitFactorPressed(sender)
+
 		self.reportObj = WeasyprintReport()
 		printjob = self.createPrintJob()
 		if printjob != None:
@@ -1635,9 +1647,9 @@ class Factor(Payments):
 
 	def close(self, sender=0):
 
-		print 'closing selling form'
-		print self.Id
-		if self.editFalg==False:			
+	#	print 'closing selling form'
+	#	print self.Id
+		if self.editFlag==False:			
 			query = self.session.query(Payment).select_from(Payment)
 			query = query.filter(Payment.paymntTransId == self.Id)			
 			payment = query.all()				

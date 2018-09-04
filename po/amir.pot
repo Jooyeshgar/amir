@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-29 09:31+0430\n"
+"POT-Creation-Date: 2018-09-04 11:25+0430\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -115,7 +115,7 @@ msgstr ""
 msgid "Debt sum and Credit sum should be equal"
 msgstr ""
 
-#: amir/addeditdoc.py:384 amir/factors.py:1723
+#: amir/addeditdoc.py:384 amir/factors.py:1725
 #, python-format
 msgid "Document saved with number %s."
 msgstr ""
@@ -284,16 +284,16 @@ msgid "The operation was completed successfully."
 msgstr ""
 
 #: amir/chequereport.py:444 amir/chequereport.py:445
-msgid "Odat cheque"
+msgid "Returned to Customer"
 msgstr ""
 
 #: amir/chequereport.py:463 amir/chequereport.py:464
-msgid "Bargasht cheque"
+msgid "Bounced cheque"
 msgstr ""
 
 #: amir/chequereport.py:485 amir/chequereport.py:486 amir/chequereport.py:501
 #: amir/chequereport.py:502 amir/chequereport.py:503
-msgid "Pass shode"
+msgid "Passed"
 msgstr ""
 
 #: amir/chequereport.py:619
@@ -316,12 +316,12 @@ msgstr ""
 msgid "Use Ctrl to select multiply"
 msgstr ""
 
-#: amir/customergroup.py:54 amir/customers.py:75 amir/product.py:61
+#: amir/customergroup.py:54 amir/customers.py:75 amir/product.py:64
 #: amir/productgroup.py:68 amir/warehousing.py:70 amir/warehousing.py:722
 msgid "Code"
 msgstr ""
 
-#: amir/customergroup.py:61 amir/customers.py:82 amir/product.py:70
+#: amir/customergroup.py:61 amir/customers.py:82 amir/product.py:73
 #: amir/productgroup.py:75 amir/setting.py:46 amir/user.py:77 amir/user.py:164
 #: amir/warehousing.py:77 amir/warehousing.py:729
 msgid "Name"
@@ -352,7 +352,7 @@ msgstr ""
 msgid "Group code should not be empty"
 msgstr ""
 
-#: amir/customergroup.py:165 amir/product.py:279 amir/productgroup.py:213
+#: amir/customergroup.py:165 amir/product.py:284 amir/productgroup.py:213
 msgid "Empty fields"
 msgstr ""
 
@@ -454,7 +454,7 @@ msgstr ""
 msgid "Product Name"
 msgstr ""
 
-#: amir/factors.py:232 amir/factors.py:326 amir/product.py:79
+#: amir/factors.py:232 amir/factors.py:326 amir/product.py:82
 #: amir/warehousing.py:84
 msgid "Quantity"
 msgstr ""
@@ -532,6 +532,10 @@ msgstr ""
 msgid "The customer code you entered is not valid."
 msgstr ""
 
+#: amir/factors.py:1144
+msgid ", "
+msgstr ""
+
 #: amir/factors.py:1150
 #, python-format
 msgid ""
@@ -539,43 +543,43 @@ msgid ""
 "as pre-invoice."
 msgstr ""
 
-#: amir/factors.py:1664 amir/factors.py:1677
+#: amir/factors.py:1666 amir/factors.py:1679
 #, python-format
 msgid "Debit for invoice number %s"
 msgstr ""
 
-#: amir/factors.py:1666 amir/factors.py:1667 amir/factors.py:1679
-#: amir/factors.py:1680
+#: amir/factors.py:1668 amir/factors.py:1669 amir/factors.py:1681
+#: amir/factors.py:1682
 #, python-format
 msgid "Cash Payment for invoice number %s"
 msgstr ""
 
-#: amir/factors.py:1669 amir/factors.py:1682
+#: amir/factors.py:1671 amir/factors.py:1684
 #, python-format
 msgid "Discount for invoice number %s"
 msgstr ""
 
-#: amir/factors.py:1671 amir/factors.py:1684
+#: amir/factors.py:1673 amir/factors.py:1686
 #, python-format
 msgid "Additions for invoice number %s"
 msgstr ""
 
-#: amir/factors.py:1673 amir/factors.py:1686
+#: amir/factors.py:1675 amir/factors.py:1688
 #, python-format
 msgid "VAT for invoice number %s"
 msgstr ""
 
-#: amir/factors.py:1675 amir/factors.py:1688
+#: amir/factors.py:1677 amir/factors.py:1690
 #, python-format
 msgid "Fee for invoice number %s"
 msgstr ""
 
-#: amir/factors.py:1700
+#: amir/factors.py:1702
 #, python-format
 msgid "Selling %s units, invoice number %s"
 msgstr ""
 
-#: amir/factors.py:1702
+#: amir/factors.py:1704
 #, python-format
 msgid "Buying %s units, invoice number %s"
 msgstr ""
@@ -785,52 +789,52 @@ msgstr ""
 msgid "Sum"
 msgstr ""
 
-#: amir/product.py:88 amir/warehousing.py:91
+#: amir/product.py:91 amir/warehousing.py:91
 msgid "Purchase Price"
 msgstr ""
 
-#: amir/product.py:95 amir/warehousing.py:98
+#: amir/product.py:98 amir/warehousing.py:98
 msgid "Selling Price"
 msgstr ""
 
-#: amir/product.py:167
+#: amir/product.py:173
 msgid "Add New Product"
 msgstr ""
 
-#: amir/product.py:214
+#: amir/product.py:219
 msgid "Edit Product"
 msgstr ""
 
-#: amir/product.py:271
+#: amir/product.py:276
 msgid "Product code should not be empty.\n"
 msgstr ""
 
-#: amir/product.py:273
+#: amir/product.py:278
 msgid "Product group should not be empty.\n"
 msgstr ""
 
-#: amir/product.py:275
+#: amir/product.py:280
 msgid "Product name should not be empty.\n"
 msgstr ""
 
-#: amir/product.py:298
+#: amir/product.py:303
 msgid "A product with this code already exists.\n"
 msgstr ""
 
-#: amir/product.py:303
+#: amir/product.py:308
 msgid "Group code is not valid.\n"
 msgstr ""
 
-#: amir/product.py:318 amir/product.py:328 amir/product.py:331
-#: amir/product.py:334
+#: amir/product.py:323 amir/product.py:333 amir/product.py:336
+#: amir/product.py:339
 msgid "Discount formula is not valid"
 msgstr ""
 
-#: amir/product.py:325
+#: amir/product.py:330
 msgid "Discount formula should be typed in ascending order."
 msgstr ""
 
-#: amir/product.py:338
+#: amir/product.py:343
 msgid "Invalid product properties"
 msgstr ""
 

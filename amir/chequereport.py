@@ -441,8 +441,8 @@ class ChequeReport:
         config.db.session.commit()
 
         document = class_document.Document()
-        document.add_notebook(result.Customers.custSubj  , result.Cheque.chqAmount, _('Odat cheque'))
-        document.add_notebook(dbconf.get_int('other_cheque'), -result.Cheque.chqAmount, _('Odat cheque'))
+        document.add_notebook(result.Customers.custSubj  , result.Cheque.chqAmount, _('Returned to Customer'))
+        document.add_notebook(dbconf.get_int('other_cheque'), -result.Cheque.chqAmount, _('Returned to Customer'))
         document.save()
 
         config.db.session.commit()
@@ -460,8 +460,8 @@ class ChequeReport:
         config.db.session.commit()
 
         document = class_document.Document()
-        document.add_notebook(result.Customers.custSubj  , result.Cheque.chqAmount, _('Bargasht cheque'))
-        document.add_notebook(58, -result.Cheque.chqAmount, _('Bargasht cheque'))
+        document.add_notebook(result.Customers.custSubj  , result.Cheque.chqAmount, _('Bounced cheque'))
+        document.add_notebook(58, -result.Cheque.chqAmount, _('Bounced cheque'))
         document.save()
 
         config.db.session.commit()
@@ -482,8 +482,8 @@ class ChequeReport:
             config.db.session.add(ch_history)
             config.db.session.commit()
             document = class_document.Document()
-            document.add_notebook(result.Customers.custSubj, -result.Cheque.chqAmount, _('Pass shode'))
-            document.add_notebook(dbconf.get_int('our_cheque'), -result.Cheque.chqAmount, _('Pass shode'))
+            document.add_notebook(result.Customers.custSubj, -result.Cheque.chqAmount, _('Passed'))
+            document.add_notebook(dbconf.get_int('our_cheque'), -result.Cheque.chqAmount, _('Passed'))
             document.save()
             share.mainwin.silent_daialog(_("The operation was completed successfully."))
             self.searchFilter()
@@ -498,9 +498,9 @@ class ChequeReport:
         config.db.session.commit()
 
         document = class_document.Document()
-        document.add_notebook(result.Customers.custSubj  , result.Cheque.chqAmount, _('Pass shode'))
-        document.add_notebook(id, result.Cheque.chqAmount, _('Pass shode'))
-        document.add_notebook(dbconf.get_int('other_cheque'), -result.Cheque.chqAmount, _('Pass shode'))
+        document.add_notebook(result.Customers.custSubj  , result.Cheque.chqAmount, _('Passed'))
+        document.add_notebook(id, result.Cheque.chqAmount, _('Passed'))
+        document.add_notebook(dbconf.get_int('other_cheque'), -result.Cheque.chqAmount, _('Passed'))
         document.save()
         subject.window.destroy()
         share.mainwin.silent_daialog(_("The operation was completed successfully."))

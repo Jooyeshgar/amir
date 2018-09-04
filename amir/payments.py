@@ -144,7 +144,7 @@ class Payments(GObject.GObject):
 	# signal hasn't connected to factor forms yet, So payment-sum can not be shown there
 	# even after the tables being filled.
 	def fillPaymentTables(self):
-		print 'fortest filpYMENT'
+	#	print 'fortest filpYMENT'
 		self.fillRecptTable()
 		self.fillChequeTable()
 	
@@ -172,7 +172,7 @@ class Payments(GObject.GObject):
 # 		# comment for test
 # 		query = self.session.query(Cheque, Customers.custName)
 # 		query = query.select_from(outerjoin(Cheque, Customers, Cheque.chqCust == Customers.custId))
-		print self.transId 
+	#	print self.transId 
 
 		query = self.session.query(Cheque).select_from(Cheque)
 
@@ -325,7 +325,7 @@ class Payments(GObject.GObject):
 				return
 			else:
 				number = utility.getInt(self.cheqListStore.get(iter, 0)[0])
-				print number
+			#	print number
 				msg = _("Are you sure to delete the cheque number %d?") % number
 				msgBox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, 
 				                           Gtk.MessageType.QUESTION, Gtk.ButtonsType.OK_CANCEL, msg)
@@ -393,7 +393,7 @@ class Payments(GObject.GObject):
 	def submitPayment(self, sender=0):
 		if self.validatePayment() == False:
 			return
-		print 'validate paymanet is true'
+	#	print 'validate paymanet is true'
 		pre_amnt 	= 0
 		pymntAmnt 	= self.pymntAmntEntry.get_float()
 		wrtDate 	= self.writeDateEntry.getDateObject()
@@ -669,7 +669,7 @@ class Payments(GObject.GObject):
 		
 	def activate_Cheque(self, sender=0):
 		self.cheque_clicked=True
-		print self.isCheque.get_active()
+	#	print self.isCheque.get_active()
 		self.builder.get_object("chequeInfoBox").set_sensitive(False)
 		self.builder.get_object("bankBox").set_sensitive(True)
 		self.builder.get_object("trackingCodeEntry").set_sensitive(False)
@@ -741,7 +741,7 @@ class Payments(GObject.GObject):
 		if code != '':
 			customer_win.highlightCust(code)
 		customer_win.connect("customer-selected",self.sellerSelected)
-		print code
+	#	print code
 	def sellerSelected(self, sender, id, code):
 		self.payerEntry.set_text(code)
 		sender.window.destroy()
@@ -750,10 +750,10 @@ class Payments(GObject.GObject):
 		customer = query.filter(Customers.custId == id).first()
 		if self.cheque_clicked:
 			self.payerEntry.set_text(customer.custId)
-			print 'hello2' 		
+	#		print 'hello2' 		
 		else:
 			self.payerEntry.set_text(customer.custName)
-			print 'hello'
+	#		print 'hello'
 				
 	def setSellerName(self,sender=0,ev=0):
 		payer   = self.payerEntry.get_text()

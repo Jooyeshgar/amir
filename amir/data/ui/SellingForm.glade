@@ -1173,11 +1173,13 @@
             </child>
             <child>
               <object class="GtkButton" id="printTransBtn">
-                <property name="label" translatable="yes">Print</property>
+                <property name="label" translatable="yes">save and print</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="relief">none</property>
                 <signal name="clicked" handler="printTransaction" swapped="no"/>
               </object>
               <packing>
