@@ -263,7 +263,11 @@ class Factor(Payments):
 			self.paymentManager.connect("payments-changed", self.setNonCashPayments)
 			self.paymentManager.fillPaymentTables()
 		#	print self.Id
-			self.builder.get_object("fullFactorSellBtn").set_label("Save Changes ...")
+			#self.builder.get_object("fullFactorSellBtn").set_label("Save Changes ...")
+			saveBtn = "fullFactorSellBtn" if self.sell else "fullFactorBuyBtn"
+		#	self.builder.get_object("fullFactorBuyBtn").set_label("Save Changes")
+			self.builder.get_object(saveBtn).set_label("Save Changes")
+			self.builder.get_object("printTransBtn").set_label("Save and Print")
 			
 			self.Codeentry = self.builder.get_object("transCode")
 			if config.digittype == 1:
@@ -305,99 +309,7 @@ class Factor(Payments):
 			self.builder.get_object("preChkBx").set_active(self.editTransaction.Permanent ^ 1)
 		self.mainDlg.show_all()
 
-	def addNewBuy(self,transId=None):  # add buy 
-		if self.editFlag == False:
-			query   = self.session.query(Factors.Code).select_from(Factors).filter(Factors.Sell == self.sell)
-			lastCode  = query.order_by(Factors.Code.desc()).first()
-			if not lastCode:
-				self.Code  = 1
-			else:
-				self.Code  = int(lastCode.Code) + 1
-			self.paymentManager = payments.Payments(transId=self.Id,transCode=self.Code)
-			self.paymentManager.connect("payments-changed", self.setNonCashPayments)
-			self.paymentManager.fillPaymentTables()
-			self.Codeentry = self.builder.get_object("transCode")
-			self.Codeentry.set_text(LN(self.Code))
-		self.statusBar  = self.builder.get_object("FormStatusBar")	
-		self.factorTreeView = self.builder.get_object("FactorTreeView")
-		self.sellListStore = Gtk.TreeStore(str,str,str,str,str,str,str,str)
-		self.sellListStore.clear()
-		self.factorTreeView.set_model(self.sellListStore)
-		
-		headers = (_("No."), _("Product Name"), _("Quantity"), _("Unit Price"), 
-				   _("Total Price"), _("Unit Disc."), _("Disc."), _("Description"))
-		txt = 0
-		for header in headers:
-			column = Gtk.TreeViewColumn(header,Gtk.CellRendererText(),text = txt)
-			column.set_spacing(5)
-			column.set_resizable(True)
-			self.factorTreeView.append_column(column)
-			txt += 1
-		#self.factorTreeView.get_selection().set_mode(  Gtk.SelectionMode.SINGLE    )				
-
-		if transId:
-			sellsQuery  = self.session.query(FactorItems).select_from(FactorItems)
-			sellsQuery  = sellsQuery.filter(FactorItems.factorId==transId).order_by(FactorItems.number.asc()).all()
-			for sell in sellsQuery:
-				ttl     = sell.untPrc * sell.qnty
-				disc    = sell.untDisc * sell.qnty
-				list    = (sell.number,sell.productId,sell.qnty,str(sell.untPrc),str(ttl),str(sell.untDisc),str(disc),sell.desc)
-				self.sellListStore.append(None,list)
-		
-		
-		if self.editFlag:  # function editBuying executed before
-			self.Id	= self.editTransaction.Id
-			self.Code 	= self.editTransaction.Code
-					
-			self.paymentManager = payments.Payments(transId=self.Id,transCode=self.Code)
-			self.paymentManager.connect("payments-changed", self.setNonCashPayments)
-			self.paymentManager.fillPaymentTables()
-		#	print self.Id
-			self.builder.get_object("fullFactorBuyBtn").set_label("Save Changes")
-			self.builder.get_object("printTransBtn").set_label("Save and Print")
-			
-			self.Codeentry = self.builder.get_object("transCode")
-			if config.digittype == 1:
-				self.Codeentry.set_text(utility.convertToPersian(str(self.editTransaction.Code)))				
-			else:
-				self.Codeentry.set_text(str(self.editTransaction.Code))			
-						
-			self.additionsEntry.set_text(str(self.editTransaction.Addition))	
-			query = self.session.query(Customers).select_from(Customers)
-			customer = query.filter(Customers.custId == self.editTransaction.Cust).first()						
-			self.sellerSelected(self, self.editTransaction.Cust,customer.custCode)	
-					
-			query=self.session.query(FactorItems).select_from(FactorItems)
-			factorItems = query.filter(FactorItems.factorId==self.editTransaction.Id).all()
-			self.oldProductList = factorItems
-			number=1
-			for factorItem in factorItems:							
-				query=self.session.query(Products).select_from(Products)
-				product = query.filter(Products.id==factorItem.productId).first()
-				sellList = (str(number), product.name, str(factorItem.qnty), str(factorItem.untPrc),
-						 str(factorItem.qnty*factorItem.untPrc), str(factorItem.untDisc),
-						 str(float(factorItem.qnty)*float(factorItem.untDisc)), factorItem.desc)
-				self.sellListStore.append(None,sellList)
-				self.appendPrice(factorItem.qnty*factorItem.untPrc)
-				self.appendDiscount(float(factorItem.qnty)*float(factorItem.untDisc))
-				self.valsChanged()
-				number+=1																
-			self.taxEntry.set_text(str(self.editTransaction.VAT))
-			self.feeEntry.set_text(str(self.editTransaction.Fee))
-			#self.additionsEntry.set_text(str(self.editTransaction.Addition))
-			self.cashPymntsEntry.set_text(str(self.editTransaction.CashPayment))
-			self.builder.get_object("FOBEntry").set_text(str(self.editTransaction.Delivery))
-			self.builder.get_object("shipViaEntry").set_text(str(self.editTransaction.ShipVia))
-			self.builder.get_object("transDescEntry").set_text(str(self.editTransaction.Desc))
-			self.factorDate.set_text(str(self.editTransaction.tDate))			
-			self.factorDate.showDateObject(self.editTransaction.tDate)	
-			self.shippedDate.set_text(str(self.editTransaction.ShipDate))			
-			self.shippedDate.showDateObject(self.editTransaction.ShipDate)
-			self.builder.get_object("preChkBx").set_active(self.editTransaction.Permanent ^ 1)
-
-		self.mainDlg = self.builder.get_object("FormWindow")
-		self.mainDlg.show_all()
-																	
+											
 	def editSelling(self,transId=None):
 		self.editFlag=True		
 		selection = self.treeview.get_selection()
@@ -420,7 +332,8 @@ class Factor(Payments):
 		result,result2 = query.filter(Factors.Id == code).first() 		
 		self.editTransaction=result 
 		self.customer=result2	
-		self.addNewBuy()
+		#self.addNewBuy()
+		self.addNew()
 																						
 	def removeFactor(self, sender):
 		selection = self.treeview.get_selection()
@@ -1198,6 +1111,7 @@ class Factor(Payments):
 			lasttrans=lasttrans.filter(Factors.Id!=lasttransId).first()
 			lasttransId1=lasttrans.Id   # Id of new factor
 
+			# restore sold/bought products count
 			for oldProduct in self.oldProductList: # The old product list
 				foundFlag = False
 				for exch in self.sellListStore: # The new sell list store
