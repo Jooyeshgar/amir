@@ -1067,16 +1067,9 @@ class Factor(Payments):
 	def registerTransaction(self):
 		permanent = self.subPreInv ^ 1
 		if self.editFlag:
-
-			'''query=self.session.query(Factors).select_from(Factors)
-				query=query.filter(Factors.Code==self.subCode).all()
-				for trans in query:
-					trans.Activated=0'''
 			query=self.session.query(Factors)
 			factor=query.filter(Factors.Code==self.subCode)
-			'''factor = Factors( self.subCode, self.subDate, 0, self.custId, self.subAdd, self.subSub, self.VAT, self.fee, self.totalFactor, self.cashPayment,
-																	self.subShpDate, self.subFOB, self.subShipVia, permanent, self.subDesc, self.sell, self.editDate, 1)			
-									'''
+			factor = factor.filter(Factors.Sell == self.sell)
 
 			factor.update({Factors.Bill : 0 , Factors.Cust : self.custId  , Factors.Addition : self.subAdd , Factors.Subtraction : self.subSub ,  Factors.VAT : self.VAT , Factors.CashPayment:self.cashPayment , Factors.ShipDate : self.subShpDate,
 				Factors.Delivery: self.subFOB  , Factors.ShipVia : self.subShipVia , Factors.Permanent : permanent , Factors.Desc:self.subDesc , Factors.Sell: self.sell, Factors.Fee: self.fee , Factors.PayableAmnt :self.totalFactor,
@@ -1095,17 +1088,8 @@ class Factor(Payments):
 		
 	def registerFactorItems(self):	
 				
-		# FactorItems( self, number, productId, qnty,
-		#            untPrc, untDisc, factorId, desc):
 		if self.editFlag:								 
-			lasttransId1 = lasttransId = self.Id # Id of old factor
-			
-			lasttrans=self.session.query(Factors)
-			lasttrans=lasttrans.order_by(Factors.Id.desc())				
-			lasttrans=lasttrans.filter(Factors.Code==self.Code)
-			lasttrans=lasttrans.filter(Factors.Id!=lasttransId).first()
-			#lasttransId1=lasttrans.Id   # Id of new factor
-			#lasttransId1 = self.Id ########################################3
+			lasttransId1 = lasttransId = self.Id # Id of editing  factor
 
 			# restore sold/bought products count
 			for oldProduct in self.oldProductList: # The old product list
@@ -1123,8 +1107,7 @@ class Factor(Payments):
 						pro.quantity += oldProduct.qnty
 					else:
 						pro.quantity -= oldProduct.qnty
-					self.session.commit()
-		#		print oldProduct.productId
+					self.session.commit()		
 
 		
 		for exch in self.sellListStore: # The new sell list store
@@ -1162,10 +1145,7 @@ class Factor(Payments):
 					
 					Item.update({FactorItems.number: utility.getInt(exch[0]) , FactorItems.productId : pid ,FactorItems.qnty: utility.getFloat(exch[2]) , 
 						FactorItems.untPrc :utility.getFloat(exch[3]), 	 FactorItems.untDisc : utility.convertToLatin(exch[5]) , FactorItems.desc : unicode(exch[7]) })
-					'''factorItem = FactorItems(utility.getInt(exch[0]), pid, utility.getFloat(exch[2]),
-																									 utility.getFloat(exch[3]), utility.convertToLatin(exch[5]),
-																									 lasttransId1, unicode(exch[7]))
-					self.session.add( factorItem )'''
+
 					self.session.commit()
 					if self.lastfactorItemquantity != self.nowfactorItemquantity:
 						query   = self.session.query(Products).filter(Products.id == pid)

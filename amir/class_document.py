@@ -80,27 +80,19 @@ class Document:
             self.notebooks = []
             return -1
 
-        '''sum = 0
-                                for notebook in self.notebooks:
-                                    sum += notebook[1]
-                                for cheque in self.cheques:
-                                    sum += cheque[1]'''
-        # if sum != 0:
-        #     self.notebooks = []
-        #     return -2
-        
         if self.number > 0:
-            bill = share.config.db.session.query(Bill)
-            notebooks = share.config.db.session.query(Notebook)
+          #  print ("if self.number")
+            bill = share.config.db.session.query(Bill)            
             bill = bill.filter(Bill.number == self.number).first()
             bill.lastedit_date = date.today()
-            bill.date = self.date
-            notebook_ides = []
-            for notbook in self.notebooks:
-                
-                if notbook[3] == 0:
+            bill.date = self.date            
+            #notebook_ides = []
+            notebooks = share.config.db.session.query(Notebook)
+            for notbook in self.notebooks:                
+                if notbook[3] == 0:  # notebook id == 0 
                     share.config.db.session.add(Notebook(notbook[0], self.id, notbook[1], notbook[2]))
                 else:
+               #     print ("else 2")
                     temp = None
                     temp = notebooks.filter(Notebook.id == notbook[3]).first()                    
                     temp.subject_id = notbook[0]
@@ -117,8 +109,9 @@ class Document:
             for deletes in delete_items:
                 share.config.db.session.query(Notebook).filter(Notebook.id == deletes).delete()
         else:
+           # print ("else 1")
             query = share.config.db.session.query(Bill.number)
-            last = query.order_by(Bill.number.desc()).first()
+            last = query.order_by(Bill.number.desc()).first()  # get latest bill 
             if last != None:
                 self.number = last[0] + 1
             else:
