@@ -2775,7 +2775,7 @@
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Edit</property>
                 <property name="stock_id">gtk-edit</property>
-                <signal name="clicked" handler="editBuying" swapped="no"/>
+                <signal name="clicked" handler="editSelling" swapped="no"/>
                 <accelerator key="e" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
               </object>
               <packing>

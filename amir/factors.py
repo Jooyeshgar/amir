@@ -310,7 +310,7 @@ class Factor(Payments):
 		self.mainDlg.show_all()
 
 											
-	def editSelling(self,transId=None):
+	def editSelling(self,transId=None):  # both sell and buy
 		self.editFlag=True		
 		selection = self.treeview.get_selection()
 		iter = selection.get_selected()[1]		
@@ -321,19 +321,6 @@ class Factor(Payments):
 		self.editTransaction=result
 		self.customer=result2
 		self.addNew() 		
-
-	def editBuying(self,transId=None):
-		self.editFlag=True		
-		selection = self.treeview.get_selection()
-		iter = selection.get_selected()[1]		
-		code = self.treestore.get_value(iter, 0) 		
-		query = config.db.session.query(Factors, Customers)
-		query = query.select_from(outerjoin(Factors, Customers, Factors.Cust== Customers.custId))
-		result,result2 = query.filter(Factors.Id == code).first() 		
-		self.editTransaction=result 
-		self.customer=result2	
-		#self.addNewBuy()
-		self.addNew()
 																						
 	def removeFactor(self, sender):
 		selection = self.treeview.get_selection()
@@ -1080,18 +1067,26 @@ class Factor(Payments):
 	def registerTransaction(self):
 		permanent = self.subPreInv ^ 1
 		if self.editFlag:
-			query=self.session.query(Factors).select_from(Factors)
-			query=query.filter(Factors.Code==self.subCode).all()
-			for trans in query:
-				trans.Activated=0
-			sell = Factors( self.subCode, self.subDate, 0, self.custId, self.subAdd, self.subSub, self.VAT, self.fee, self.totalFactor, self.cashPayment,
-								self.subShpDate, self.subFOB, self.subShipVia, permanent, self.subDesc, self.sell, self.editDate, 1)
+
+			'''query=self.session.query(Factors).select_from(Factors)
+				query=query.filter(Factors.Code==self.subCode).all()
+				for trans in query:
+					trans.Activated=0'''
+			query=self.session.query(Factors)
+			factor=query.filter(Factors.Code==self.subCode)
+			'''factor = Factors( self.subCode, self.subDate, 0, self.custId, self.subAdd, self.subSub, self.VAT, self.fee, self.totalFactor, self.cashPayment,
+																	self.subShpDate, self.subFOB, self.subShipVia, permanent, self.subDesc, self.sell, self.editDate, 1)			
+									'''
+
+			factor.update({Factors.Bill : 0 , Factors.Cust : self.custId  , Factors.Addition : self.subAdd , Factors.Subtraction : self.subSub ,  Factors.VAT : self.VAT , Factors.CashPayment:self.cashPayment , Factors.ShipDate : self.subShpDate,
+				Factors.Delivery: self.subFOB  , Factors.ShipVia : self.subShipVia , Factors.Permanent : permanent , Factors.Desc:self.subDesc , Factors.Sell: self.sell, Factors.Fee: self.fee , Factors.PayableAmnt :self.totalFactor,
+				Factors.LastEdit : self.editDate  })
 
 		else:
 			sell = Factors(self.subCode, self.subDate, 0, self.custId, self.subAdd, self.subSub, self.VAT, self.fee, self.totalFactor, self.cashPayment,
 					self.subShpDate, self.subFOB, self.subShipVia, permanent, self.subDesc, self.sell, self.subDate, 1)#editdate=subdate
 
-		self.session.add(sell)
+			self.session.add(sell)
 		self.session.commit()
 		query = config.db.session.query(Customers)
 		query =	query.filter(Customers.custId==self.custId)
@@ -1103,25 +1098,26 @@ class Factor(Payments):
 		# FactorItems( self, number, productId, qnty,
 		#            untPrc, untDisc, factorId, desc):
 		if self.editFlag:								 
-			lasttransId = self.Id # Id of old factor
+			lasttransId1 = lasttransId = self.Id # Id of old factor
 			
-			lasttrans=self.session.query(Factors).select_from(Factors)
+			lasttrans=self.session.query(Factors)
 			lasttrans=lasttrans.order_by(Factors.Id.desc())				
 			lasttrans=lasttrans.filter(Factors.Code==self.Code)
 			lasttrans=lasttrans.filter(Factors.Id!=lasttransId).first()
-			lasttransId1=lasttrans.Id   # Id of new factor
+			#lasttransId1=lasttrans.Id   # Id of new factor
+			#lasttransId1 = self.Id ########################################3
 
 			# restore sold/bought products count
 			for oldProduct in self.oldProductList: # The old product list
 				foundFlag = False
 				for exch in self.sellListStore: # The new sell list store
-					query = self.session.query(Products).select_from(Products)
+					query = self.session.query(Products)
 					pid = query.filter(Products.name == unicode(exch[1])).first().id
 					if pid == oldProduct.productId:
 						foundFlag = True
 						break
 				if not foundFlag:
-					query   = self.session.query(Products).select_from(Products).filter(Products.id == oldProduct.productId)
+					query   = self.session.query(Products).filter(Products.id == oldProduct.productId)
 					pro = query.first()
 					if self.sell:
 						pro.quantity += oldProduct.qnty
@@ -1132,17 +1128,17 @@ class Factor(Payments):
 
 		
 		for exch in self.sellListStore: # The new sell list store
-			query = self.session.query(Products).select_from(Products)
+			query = self.session.query(Products)
 			pid = query.filter(Products.name == unicode(exch[1])).first().id
 		
 			self.lastfactorItemquantity=utility.getFloat(0)
 			self.nowfactorItemquantity=utility.getFloat(exch[2])
 
 			if self.editFlag:
-				factorItem1=self.session.query(FactorItems).select_from(FactorItems)
-				factorItem1=factorItem1.order_by(FactorItems.factorId.desc())
-				factorItem1=factorItem1.filter(FactorItems.productId==pid)
-				factorItem1=factorItem1.filter(FactorItems.factorId==lasttransId).first()
+				Item=self.session.query(FactorItems)				
+				Item=Item.filter(FactorItems.productId==pid)
+				Item =Item.filter(FactorItems.factorId==lasttransId)
+				factorItem1 = Item.first()
 				
 				if (not factorItem1) or (self.editTransaction.Permanent == 0 and self.subPreInv == 0):
 					self.lastfactorItemquantity=utility.getFloat(str(0))
@@ -1153,24 +1149,26 @@ class Factor(Payments):
 										 lasttransId1, unicode(exch[7]))
 					self.session.add( factorItem )
 					self.session.commit()
-					query   = self.session.query(Products).select_from(Products).filter(Products.id == pid)
+					query   = self.session.query(Products).filter(Products.id == pid)
 					pro = query.first()
 					if self.sell:
 						pro.quantity -= self.nowfactorItemquantity
 					else:
 						pro.quantity += self.nowfactorItemquantity
 					self.session.commit()										
-				else:
+				else:   #  product exists in factor
 					self.lastfactorItemquantity = utility.getFloat(str(factorItem1.qnty))
 					self.nowfactorItemquantity = utility.getFloat(exch[2])
-										
-					factorItem = FactorItems(utility.getInt(exch[0]), pid, utility.getFloat(exch[2]),
-										 utility.getFloat(exch[3]), utility.convertToLatin(exch[5]),
-										 lasttransId1, unicode(exch[7]))
-					self.session.add( factorItem )
+					
+					Item.update({FactorItems.number: utility.getInt(exch[0]) , FactorItems.productId : pid ,FactorItems.qnty: utility.getFloat(exch[2]) , 
+						FactorItems.untPrc :utility.getFloat(exch[3]), 	 FactorItems.untDisc : utility.convertToLatin(exch[5]) , FactorItems.desc : unicode(exch[7]) })
+					'''factorItem = FactorItems(utility.getInt(exch[0]), pid, utility.getFloat(exch[2]),
+																									 utility.getFloat(exch[3]), utility.convertToLatin(exch[5]),
+																									 lasttransId1, unicode(exch[7]))
+					self.session.add( factorItem )'''
 					self.session.commit()
 					if self.lastfactorItemquantity != self.nowfactorItemquantity:
-						query   = self.session.query(Products).select_from(Products).filter(Products.id == pid)
+						query   = self.session.query(Products).filter(Products.id == pid)
 						pro = query.first()
 						if self.sell:
 							pro.quantity += self.lastfactorItemquantity - self.nowfactorItemquantity

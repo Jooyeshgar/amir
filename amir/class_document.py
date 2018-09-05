@@ -80,18 +80,18 @@ class Document:
             self.notebooks = []
             return -1
 
-        sum = 0
-        for notebook in self.notebooks:
-            sum += notebook[1]
-        for cheque in self.cheques:
-            sum += cheque[1]
+        '''sum = 0
+                                for notebook in self.notebooks:
+                                    sum += notebook[1]
+                                for cheque in self.cheques:
+                                    sum += cheque[1]'''
         # if sum != 0:
         #     self.notebooks = []
         #     return -2
         
         if self.number > 0:
-            bill = share.config.db.session.query(Bill).select_from(Bill)
-            notebooks = share.config.db.session.query(Notebook).select_from(Notebook)
+            bill = share.config.db.session.query(Bill)
+            notebooks = share.config.db.session.query(Notebook)
             bill = bill.filter(Bill.number == self.number).first()
             bill.lastedit_date = date.today()
             bill.date = self.date
@@ -102,12 +102,12 @@ class Document:
                     share.config.db.session.add(Notebook(notbook[0], self.id, notbook[1], notbook[2]))
                 else:
                     temp = None
-                    temp = notebooks.filter(Notebook.id == notbook[3]).first()
+                    temp = notebooks.filter(Notebook.id == notbook[3]).first()                    
                     temp.subject_id = notbook[0]
                     temp.desc = notbook[2]
                     temp.value = notbook[1]
                     temp_2 = None
-                    temp_2 = share.config.db.session.query(Cheque).select_from(Cheque).filter(Cheque.chqNoteBookId == notbook[3]).first()
+                    temp_2 = share.config.db.session.query(Cheque).filter(Cheque.chqNoteBookId == notbook[3]).first()
                     if temp_2 != None:
                         temp_2.chqAmount = abs(notbook[1])
                         temp_2.chqDesc = notbook[2]
@@ -117,7 +117,7 @@ class Document:
             for deletes in delete_items:
                 share.config.db.session.query(Notebook).filter(Notebook.id == deletes).delete()
         else:
-            query = share.config.db.session.query(Bill.number).select_from(Bill)
+            query = share.config.db.session.query(Bill.number)
             last = query.order_by(Bill.number.desc()).first()
             if last != None:
                 self.number = last[0] + 1
@@ -128,7 +128,7 @@ class Document:
             share.config.db.session.add(bill)
             share.config.db.session.commit()
         
-            query = share.config.db.session.query(Bill).select_from(Bill)
+            query = share.config.db.session.query(Bill)
             query = query.filter(Bill.number == self.number)
             self.id = query.first().id
         
