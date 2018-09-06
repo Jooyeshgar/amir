@@ -4,6 +4,7 @@ from database import Notebook
 from database import Subject
 from database import Cheque
 from database import ChequeHistory
+from database import Factors
 
 from datetime import date
 from sqlalchemy.orm.util import outerjoin
@@ -75,13 +76,13 @@ class Document:
         self.cheques_result[cheque_id] = None
     
         
-    def save(self,delete_items=None):
+    def save(self, factorId = 0 ,delete_items=None):
         if len(self.notebooks) == 0:
             self.notebooks = []
             return -1
 
         if self.number > 0:
-          #  print ("if self.number")
+           # print ("if self.number")
             bill = share.config.db.session.query(Bill)            
             bill = bill.filter(Bill.number == self.number).first()
             bill.lastedit_date = date.today()
@@ -89,10 +90,10 @@ class Document:
             #notebook_ides = []
             notebooks = share.config.db.session.query(Notebook)
             for notbook in self.notebooks:                
-                if notbook[3] == 0:  # notebook id == 0 
+                if notbook[3] == 0:  # notebook id == 0    # self.id = bill.ID
                     share.config.db.session.add(Notebook(notbook[0], self.id, notbook[1], notbook[2]))
                 else:
-               #     print ("else 2")
+                   # print ("else 2")
                     temp = None
                     temp = notebooks.filter(Notebook.id == notbook[3]).first()                    
                     temp.subject_id = notbook[0]
@@ -109,21 +110,33 @@ class Document:
             for deletes in delete_items:
                 share.config.db.session.query(Notebook).filter(Notebook.id == deletes).delete()
         else:
-           # print ("else 1")
-            query = share.config.db.session.query(Bill.number)
-            last = query.order_by(Bill.number.desc()).first()  # get latest bill 
-            if last != None:
-                self.number = last[0] + 1
-            else:
-                self.number = 1
+            #print ("else 1")
+            if factorId : # editing factor ...
+                billId = share.config.db.session.query(Factors) . filter(Factors.Id == factorId) . first() . Bill
+                neededBill  = share.config.db.session.query(Bill) . filter (Bill. id == billId)
+                self.number = neededBill.first().number
+                neededBill.update({Bill.number: self.number ,Bill.creation_date: self.creation_date , Bill.lastedit_date: date.today() , Bill.date: self.date, Bill.permanent: False })
+                share.config.db.session.commit()
+                self.id = billId
 
-            bill = Bill(self.number, self.creation_date, date.today(), self.date, False)
-            share.config.db.session.add(bill)
-            share.config.db.session.commit()
+            else :  # adding new factor and bill
+                query = share.config.db.session.query(Bill.number)
+                last = query.order_by(Bill.number.desc()).first()  # get latest bill  (order by number) 
+                if last != None:
+                    self.number = last[0] + 1
+                else:
+                    self.number = 1
+
+                bill = Bill(self.number, self.creation_date, date.today(), self.date, False)
+                share.config.db.session.add(bill)
+                share.config.db.session.commit()
+
+                query = share.config.db.session.query(Bill)
+                query = query.filter(Bill.number == self.number)
+                self.id = query.first().id
+            
         
-            query = share.config.db.session.query(Bill)
-            query = query.filter(Bill.number == self.number)
-            self.id = query.first().id
+            
         
             for notebook in self.notebooks:
                 share.config.db.session.add(Notebook(notebook[0], self.id, notebook[1], notebook[2]))

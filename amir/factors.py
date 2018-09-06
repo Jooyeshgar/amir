@@ -1071,7 +1071,7 @@ class Factor(Payments):
 			factor=query.filter(Factors.Code==self.subCode)
 			factor = factor.filter(Factors.Sell == self.sell)
 
-			factor.update({Factors.Bill : 0 , Factors.Cust : self.custId  , Factors.Addition : self.subAdd , Factors.Subtraction : self.subSub ,  Factors.VAT : self.VAT , Factors.CashPayment:self.cashPayment , Factors.ShipDate : self.subShpDate,
+			factor.update({Factors.Cust : self.custId  , Factors.Addition : self.subAdd , Factors.Subtraction : self.subSub ,  Factors.VAT : self.VAT , Factors.CashPayment:self.cashPayment , Factors.ShipDate : self.subShpDate,
 				Factors.Delivery: self.subFOB  , Factors.ShipVia : self.subShipVia , Factors.Permanent : permanent , Factors.Desc:self.subDesc , Factors.Sell: self.sell, Factors.Fee: self.fee , Factors.PayableAmnt :self.totalFactor,
 				Factors.LastEdit : self.editDate  })
 
@@ -1201,11 +1201,12 @@ class Factor(Payments):
 		bill_id = self.saveDocument();
 		
 		# Assign document to the current transaction
-		query = self.session.query(Factors)#.select_from(Factor)
-		query = query.filter(Factors.Id == self.Code)
+		query = self.session.query(Factors)
+		query = query.filter(Factors.Code == self.Code)
+		query = query.filter(Factors.Sell == self.sell)
 		query.update( {Factors.Bill : bill_id } )	
 		self.session.commit()	
-
+		
 		query = self.session.query(Cheque)#.select_from(Cheque)
 		query = query.filter(Cheque.chqTransId == self.Id)
 		query.update( {Cheque.chqBillId : bill_id } )
@@ -1561,33 +1562,22 @@ class Factor(Payments):
 		# total = self.payableAmnt - self.totalDisc + self.subAdd + self.subTax
 		
 		trans_code = utility.LN(self.subCode, False)
-		if self.sell:
-			self.Document.add_notebook(self.custSubj, -(self.totalFactor), _("Debit for invoice number %s") % trans_code)
-			if self.cashPayment:
-				self.Document.add_notebook(self.custSubj, self.cashPayment, _("Cash Payment for invoice number %s") % trans_code)
-				self.Document.add_notebook(dbconf.get_int("cash"), -(self.cashPayment), _("Cash Payment for invoice number %s") % trans_code)
-			if self.totalDisc:
-				self.Document.add_notebook(dbconf.get_int("sell-discount"), -(self.totalDisc), _("Discount for invoice number %s") % trans_code)
-			if self.subAdd:
-				self.Document.add_notebook(dbconf.get_int("sell-adds"), self.subAdd, _("Additions for invoice number %s") % trans_code)
-			if self.VAT:
-				self.Document.add_notebook(dbconf.get_int("sell-vat"), (self.VAT), _("VAT for invoice number %s") % trans_code)
-			if self.fee:
-				self.Document.add_notebook(dbconf.get_int("sell-fee"), (self.fee), _("Fee for invoice number %s") % trans_code)
-		else:
-			self.Document.add_notebook(self.custSubj, self.totalFactor, _("Debit for invoice number %s") % trans_code)
-			if self.cashPayment:
-				self.Document.add_notebook(self.custSubj, -(self.cashPayment), _("Cash Payment for invoice number %s") % trans_code)
-				self.Document.add_notebook(dbconf.get_int("cash"), self.cashPayment, _("Cash Payment for invoice number %s") % trans_code)
-			if self.totalDisc:
-				self.Document.add_notebook(dbconf.get_int("buy-discount"), self.totalDisc, _("Discount for invoice number %s") % trans_code)
-			if self.subAdd:
-				self.Document.add_notebook(dbconf.get_int("buy-adds"), -self.subAdd, _("Additions for invoice number %s") % trans_code)
-			if self.VAT:
-				self.Document.add_notebook(dbconf.get_int("buy-vat"), -(self.VAT), _("VAT for invoice number %s") % trans_code)
-			if self.fee:
-				self.Document.add_notebook(dbconf.get_int("buy-fee"), -(self.fee), _("Fee for invoice number %s") % trans_code)
 		
+		noteBookSell =  "sell" if self.sell  else "buy"
+
+		self.Document.add_notebook(self.custSubj, -(self.totalFactor), _("Debit for invoice number %s") % trans_code)
+		if self.cashPayment:
+			self.Document.add_notebook(self.custSubj, self.cashPayment, _("Cash Payment for invoice number %s") % trans_code)
+			self.Document.add_notebook(dbconf.get_int("cash"), -(self.cashPayment), _("Cash Payment for invoice number %s") % trans_code)
+		if self.totalDisc:
+			self.Document.add_notebook(dbconf.get_int(noteBookSell+"-discount"), -(self.totalDisc), _("Discount for invoice number %s") % trans_code)
+		if self.subAdd:
+			self.Document.add_notebook(dbconf.get_int(noteBookSell+"-adds"), self.subAdd, _("Additions for invoice number %s") % trans_code)
+		if self.VAT:
+			self.Document.add_notebook(dbconf.get_int(noteBookSell+"-vat"), (self.VAT), _("VAT for invoice number %s") % trans_code)
+		if self.fee:
+			self.Document.add_notebook(dbconf.get_int(noteBookSell+"-fee"), (self.fee), _("Fee for invoice number %s") % trans_code)
+
 		# Create a row for each sold product
 		for exch in self.sellListStore:
 			query = self.session.query(ProductGroups.sellId)
@@ -1620,8 +1610,10 @@ class Factor(Payments):
 		
 # 		# self.session.add_all(doc_rows)
 # 		self.session.commit()
-		docnum = self.Document.save()
+		isTrueFactorId = self.Id  * self.editFlag   # 0 means inserting new factor and bill . otherwise is a valid factor ID
+		docnum = self.Document.save(isTrueFactorId)
 		share.mainwin.silent_daialog(_("Document saved with number %s.") % docnum)
+		return docnum
 
 	def vatCalc(self, sender=0, ev=0):
 		self.vatCheck = self.builder.get_object("vatCheck").get_active()
