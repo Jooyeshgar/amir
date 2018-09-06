@@ -67,7 +67,7 @@ class AutomaticAccounting:
         # Date entry
         date_box = self.builder.get_object('date-box')
         self.date_entry = dateentry.DateEntry()
-        date_box.pack_start(self.date_entry, False, False, False)
+        date_box.pack_start(self.date_entry, False, False, False,)
         self.current_time = self.date_entry.getDateObject()
         # type combo
         type_combo = self.builder.get_object('select-type')
@@ -220,14 +220,15 @@ class AutomaticAccounting:
                             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OK, Gtk.ResponseType.OK)
                            )
         adj = Gtk.Adjustment(0, 0, 100, 1, 1)
-        spin = Gtk.SpinButton(adj)
+        spin = Gtk.SpinButton()
+        spin.set_adjustment(adj)
 
         hbox = Gtk.HBox()
         hbox.pack_start(spin, True, True, 0)
-        hbox.pack_start(Gtk.Label(' % ', True, True, 0), False, False)
+        hbox.pack_start(Gtk.Label(' % ', True, True, 0), False, False , 0)
         hbox.show_all()
 
-        dialog.vbox.pack_start(hbox, False, False)
+        dialog.vbox.pack_start(hbox, False, False , 0 )
 
         result = dialog.run()
         if result == Gtk.ResponseType.OK:

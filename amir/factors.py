@@ -63,7 +63,7 @@ class Factor(Payments):
 			self.builder    = get_builder("BuyingForm")
 
 		self.window = self.builder.get_object("viewWindow")
-		
+	#	self.window.set_skip_taskbar_hint(True)
 		
 		###editing
 		
@@ -310,7 +310,7 @@ class Factor(Payments):
 		self.mainDlg.show_all()
 
 											
-	def editSelling(self,transId=None):  # both sell and buy
+	def editSelling(self,  treeview=None, path=None, view_column = None):  # both sell and buy
 		self.editFlag=True		
 		selection = self.treeview.get_selection()
 		iter = selection.get_selected()[1]		
@@ -488,7 +488,7 @@ class Factor(Payments):
 			
 		self.addDlg.show_all()
 				
-	def editProduct(self,sender):
+	def editProduct(self,sender=None):
 		iter    = self.factorTreeView.get_selection().get_selected()[1]
 		if iter != None :
 			self.editingSell    = iter
@@ -1538,9 +1538,6 @@ class Factor(Payments):
 		self.nonCashPymntsEntry.set_text(str_value)
 
 	def close(self, sender=0):
-
-	#	print 'closing selling form'
-	#	print self.Id
 		if self.editFlag==False:			
 			query = self.session.query(Payment).select_from(Payment)
 			query = query.filter(Payment.paymntTransId == self.Id)			
@@ -1636,4 +1633,6 @@ class Factor(Payments):
 		self.builder.get_object("feeEntry").set_sensitive(self.vatCheck)
 
 		self.valsChanged()
-## @}
+
+	def onProductRowClicked  (self, treeview, path, view_column):
+		self.editProduct()

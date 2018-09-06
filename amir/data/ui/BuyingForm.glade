@@ -135,6 +135,7 @@
                     <property name="can_focus">True</property>
                     <property name="enable_grid_lines">vertical</property>
                     <property name="enable_tree_lines">True</property>
+                    <signal name="row-activated" handler="onProductRowClicked" swapped="no"/>
                     <child internal-child="selection">
                       <object class="GtkTreeSelection" id="treeview-selection1"/>
                     </child>
@@ -2819,6 +2820,7 @@
                 <property name="search_column">0</property>
                 <property name="enable_grid_lines">vertical</property>
                 <property name="enable_tree_lines">True</property>
+                <signal name="row-activated" handler="editSelling" swapped="no"/>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection" id="treeview-selection4"/>
                 </child>
