@@ -249,6 +249,7 @@ class Payments(GObject.GObject):
 
 
 	def editPay(self, sender=0):
+		
 		iter = self.paysTreeView.get_selection().get_selected()[1]
 		if iter == None:
 			iter = self.cheqTreeView.get_selection().get_selected()[1]
@@ -256,9 +257,11 @@ class Payments(GObject.GObject):
 				return
 			else:
 				number = utility.convertToLatin(self.cheqListStore.get(iter, 0)[0])
+				print("transID: " , self.transId , " , bill ID : ", self.billId , " , order: " , number)
 				query = self.session.query(Cheque).select_from(Cheque)
 				query = query.filter(and_(Cheque.chqTransId == self.transId, 
 				                    Cheque.chqBillId == self.billId, Cheque.chqOrder == number))
+
 				cheque = query.first()
 				
 				self.editid = cheque.chqId

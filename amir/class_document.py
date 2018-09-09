@@ -82,13 +82,22 @@ class Document:
 
         if self.number > 0:
            # print ("if self.number")
+            self.msgbox = Gtk.MessageDialog(self.window,Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK , "doc . self.number")
+            self.msgbox.set_title(_("alarm!"))
+            self.msgbox.run()   
+            self.msgbox.destroy()
             bill = share.config.db.session.query(Bill)            
             bill = bill.filter(Bill.number == self.number).first()
             bill.lastedit_date = date.today()
             bill.date = self.date            
             #notebook_ides = []
             notebooks = share.config.db.session.query(Notebook)
-            for notbook in self.notebooks:                
+            for notbook in self.notebooks:     
+                from gi.repository import Gtk
+                self.msgbox = Gtk.MessageDialog(self.window,Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK , notbook[3])
+                self.msgbox.set_title(_("alarm!"))
+                self.msgbox.run()   
+                self.msgbox.destroy()
                 if notbook[3] == 0:  # notebook id == 0    # self.id = bill.ID
                     share.config.db.session.add(Notebook(notbook[0], self.id, notbook[1], notbook[2]))
                 else:
@@ -109,7 +118,7 @@ class Document:
             for deletes in delete_items:
                 share.config.db.session.query(Notebook).filter(Notebook.id == deletes).delete()
         else:
-            print ("else 1")
+           # print ("else 1")
             if factorId : # editing factor ...
                 billId = share.config.db.session.query(Factors) . filter(Factors.Id == factorId) . first() . Bill
                 neededBill  = share.config.db.session.query(Bill) . filter (Bill. id == billId)

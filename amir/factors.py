@@ -98,6 +98,7 @@ class Factor(Payments):
 		#self.cashPymntsEntry.show()
 		self.cashPymntsEntry.set_text("0")
 		self.cashPymntsEntry.connect("changed", self.paymentsChanged)
+
 		
 		self.qntyEntry = decimalentry.DecimalEntry()
 		self.builder.get_object("qntyBox").add(self.qntyEntry)
@@ -212,13 +213,19 @@ class Factor(Payments):
 		self.addNew()
 							
 	def addNew(self,transId=None):   # add sell
-		query   = self.session.query(Factors.Code).select_from(Factors).filter(Factors.Sell == self.sell)
-		lastCode  = query.order_by(Factors.Code.desc()).first()
-		if not lastCode:
-			self.Code  = 1
-		else:
-			self.Code  = int(lastCode.Code) + 1
+		
 
+		if self.editFlag:			
+			self.Id	= self.editTransaction.Id
+			self.Code 	= self.editTransaction.Code
+			chequeBillId = self.session.query(Cheque) . filter (Cheque.chqTransId == self.Id ).filter( Cheque.chqCust == self.customer.custId).first().chqId
+		else : 
+			query   = self.session.query(Factors.Code).select_from(Factors).filter(Factors.Sell == self.sell)
+			lastCode  = query.order_by(Factors.Code.desc()).first()
+			if not lastCode:
+				self.Code  = 1
+			else:
+				self.Code  = int(lastCode.Code) + 1		
 		self.mainDlg = self.builder.get_object("FormWindow")
 
 		self.Codeentry = self.builder.get_object("transCode")
@@ -240,12 +247,12 @@ class Factor(Payments):
 			txt += 1
 		#self.factorTreeView.get_selection().set_mode(  Gtk.SelectionMode.SINGLE    )
 		
-		self.paymentManager = payments.Payments(transId=self.Id,transCode=self.Code)
+		self.paymentManager = payments.Payments(transId=self.Id,billId= chequeBillId,  transCode=self.Code)
 		self.paymentManager.connect("payments-changed", self.setNonCashPayments)
 		self.paymentManager.fillPaymentTables()
 
 		if transId:
-			sellsQuery  = self.session.query(FactorItems).select_from(FactorItems)
+			sellsQuery  = self.session.query(FactorItems)
 			sellsQuery  = sellsQuery.filter(FactorItems.factorId==transId).order_by(FactorItems.number.asc()).all()
 			for sell in sellsQuery:
 				ttl     = sell.untPrc * sell.qnty
@@ -254,11 +261,7 @@ class Factor(Payments):
 				self.sellListStore.append(None,list)
 		
 		
-		if self.editFlag:
-			self.Id	= self.editTransaction.Id
-			self.Code 	= self.editTransaction.Code
-		
-			
+		if self.editFlag:			
 			'''self.paymentManager = payments.Payments(transId=self.Id,transCode=self.Code)
 												self.paymentManager.connect("payments-changed", self.setNonCashPayments)
 												self.paymentManager.fillPaymentTables()'''
@@ -697,7 +700,7 @@ class Factor(Payments):
 
 					
 	def clearSellFields(self):
-		zerostr = "0.0"
+		zerostr = "0"
 		if config.digittype == 1:
 			zerostr = utility.convertToPersian(zerostr)
 			
@@ -977,7 +980,7 @@ class Factor(Payments):
 	def paymentsChanged(self, sender=0, ev=0):
 		ttlCash = self.cashPymntsEntry.get_float()
 		self.cashPayment = ttlCash
-		ttlNonCash  = utility.getFloat(self.nonCashPymntsEntry.get_text())
+		ttlNonCash  = utility.getFloat(self.nonCashPymntsEntry.get_text())		
 		ttlPayments = ttlCash + ttlNonCash
 		
 		self.totalPaymentsEntry.set_text(utility.LN(ttlPayments))
@@ -987,6 +990,7 @@ class Factor(Payments):
 	def showPayments(self,sender):		
 		self.paymentManager.showPayments()
 		self.ttlNonCashEntry = self.builder.get_object("ttlNonCashEntry")
+
 
 
 	def submitFactorPressed(self,sender):
@@ -1187,11 +1191,9 @@ class Factor(Payments):
 		
 		
 
-		cust_code = unicode(self.customerEntry.get_text())
-		query = self.session.query(Customers).select_from(Customers)
-		cust = query.filter(Customers.custCode == cust_code).first()
-		query = self.session.query(Cheque).select_from(Cheque)
-		cheques = query.filter(Cheque.chqTransId == self.Id)
+		cust_code = unicode(self.customerEntry.get_text())		
+		cust = self.session.query(Customers).filter(Customers.custCode == cust_code).first()		 
+		cheques = self.session.query(Cheque).filter(Cheque.chqTransId == self.Id)
 		cheques.update ({Cheque.chqCust:cust.custId , Cheque.chqBillId : bill_id})
 		self.session.commit()
 
@@ -1542,9 +1544,10 @@ class Factor(Payments):
 
 	def setNonCashPayments(self, sender, str_value):
 		self.nonCashPymntsEntry.set_text(str_value)
+		self.paymentsChanged()
 
 	def close(self, sender=0):
-		if self.editFlag==False:			
+		if self.editFlag==False:		 # need to rollback done transaction before exit	
 			query = self.session.query(Payment).select_from(Payment)
 			query = query.filter(Payment.paymntTransId == self.Id)			
 			payment = query.all()				
