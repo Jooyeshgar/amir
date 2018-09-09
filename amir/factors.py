@@ -275,7 +275,7 @@ class Factor(Payments):
 			else:
 				self.Codeentry.set_text(str(self.editTransaction.Code))			
 						
-			self.additionsEntry.set_text(str(self.editTransaction.Addition))	
+			#self.additionsEntry.set_text(str(self.editTransaction.Addition))	
 			query = self.session.query(Customers).select_from(Customers)
 			customer = query.filter(Customers.custId == self.editTransaction.Cust).first()						
 			self.sellerSelected(self, self.editTransaction.Cust,customer.custCode)	
@@ -298,8 +298,8 @@ class Factor(Payments):
 			self.taxEntry.set_text(str(self.editTransaction.VAT))
 			self.feeEntry.set_text(str(self.editTransaction.Fee))
 			self.additionsEntry.set_text(str(self.editTransaction.Addition))
-			self.cashPymntsEntry.set_text(str(self.editTransaction.CashPayment))
-			self.builder.get_object("FOBEntry").set_text(str(self.editTransaction.Delivery))
+			self.subsEntry.set_text(str(self.editTransaction.Subtraction))
+			self.cashPymntsEntry.set_text(str(self.editTransaction.CashPayment))			
 			self.builder.get_object("shipViaEntry").set_text(str(self.editTransaction.ShipVia))
 			self.builder.get_object("transDescEntry").set_text(str(self.editTransaction.Desc))
 			self.factorDate.set_text(str(self.editTransaction.tDate))			
@@ -1053,8 +1053,7 @@ class Factor(Payments):
 									
 		self.subAdd     	= self.additionsEntry.get_float()
 		self.subSub     	= self.subsEntry.get_float()
-		self.subShpDate 	= self.shippedDate.getDateObject()
-		self.subFOB     	= unicode(self.builder.get_object("FOBEntry").get_text())
+		self.subShpDate 	= self.shippedDate.getDateObject()		
 		self.subShipVia 	= unicode(self.builder.get_object("shipViaEntry").get_text())
 		self.subDesc    	= unicode(self.builder.get_object("transDescEntry").get_text())
 	#	self.editdate		=self.
@@ -1071,13 +1070,15 @@ class Factor(Payments):
 			factor=query.filter(Factors.Code==self.subCode)
 			factor = factor.filter(Factors.Sell == self.sell)
 
+			'''Factors.Delivery: self.subFOB  ,'''
 			factor.update({Factors.Cust : self.custId  , Factors.Addition : self.subAdd , Factors.Subtraction : self.subSub ,  Factors.VAT : self.VAT , Factors.CashPayment:self.cashPayment , Factors.ShipDate : self.subShpDate,
-				Factors.Delivery: self.subFOB  , Factors.ShipVia : self.subShipVia , Factors.Permanent : permanent , Factors.Desc:self.subDesc , Factors.Sell: self.sell, Factors.Fee: self.fee , Factors.PayableAmnt :self.totalFactor,
+				 Factors.ShipVia : self.subShipVia , Factors.Permanent : permanent , Factors.Desc:self.subDesc , Factors.Sell: self.sell, Factors.Fee: self.fee , Factors.PayableAmnt : self.totalFactor,
 				Factors.LastEdit : self.editDate  })
 
 		else:
+			'''self.subFOB,'''
 			sell = Factors(self.subCode, self.subDate, 0, self.custId, self.subAdd, self.subSub, self.VAT, self.fee, self.totalFactor, self.cashPayment,
-					self.subShpDate, self.subFOB, self.subShipVia, permanent, self.subDesc, self.sell, self.subDate, 1)#editdate=subdate
+					self.subShpDate, self.subShipVia, permanent, self.subDesc, self.sell, self.subDate, 1)#editdate=subdate
 
 			self.session.add(sell)
 		self.session.commit()

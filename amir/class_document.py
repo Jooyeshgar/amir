@@ -74,8 +74,7 @@ class Document:
     def add_cheque(self, subject_id, value, desctxt, cheque_id):
         self.cheques.append((subject_id, float(value), desctxt, cheque_id))
         self.cheques_result[cheque_id] = None
-    
-        
+            
     def save(self, factorId = 0 ,delete_items=None):
         if len(self.notebooks) == 0:
             self.notebooks = []
@@ -110,7 +109,7 @@ class Document:
             for deletes in delete_items:
                 share.config.db.session.query(Notebook).filter(Notebook.id == deletes).delete()
         else:
-            #print ("else 1")
+            print ("else 1")
             if factorId : # editing factor ...
                 billId = share.config.db.session.query(Factors) . filter(Factors.Id == factorId) . first() . Bill
                 neededBill  = share.config.db.session.query(Bill) . filter (Bill. id == billId)
@@ -119,6 +118,25 @@ class Document:
                 share.config.db.session.commit()
                 self.id = billId
 
+                    
+                    # q = share.config.db.session.query(Notebook).filter(Notebook.bill_id == self.id) . filter(Notebook.subject_id== notebook[0]).first()
+                dbSubmitedNotebooks =  share.config.db.session.query(Notebook).filter(Notebook.bill_id == self.id)                
+                for nb in  dbSubmitedNotebooks :   
+                    found =  False
+                    for notebook in self.notebooks:                       
+                        if nb.subject_id == notebook[0]:
+                            found = True
+                            nb.value = notebook[1]
+                            nb.desc = notebook[2]
+                            break
+                    if  not found :
+                        share.config.db.session.delete(nb) 
+
+                for notebook in self.notebooks :
+                    found = [f for f in dbSubmitedNotebooks if f.subject_id == notebook[0]]                        
+                    if  len (found) == 0 :
+                        share.config.db.session.add(Notebook(notebook[0], self.id, notebook[1], notebook[2]))
+               
             else :  # adding new factor and bill
                 query = share.config.db.session.query(Bill.number)
                 last = query.order_by(Bill.number.desc()).first()  # get latest bill  (order by number) 
@@ -134,20 +152,18 @@ class Document:
                 query = share.config.db.session.query(Bill)
                 query = query.filter(Bill.number == self.number)
                 self.id = query.first().id
-            
-        
-            
-        
-            for notebook in self.notebooks:
-                share.config.db.session.add(Notebook(notebook[0], self.id, notebook[1], notebook[2]))
-
-            share.config.db.session.commit()
-
-            for cheque in self.cheques:
-                n = Notebook(cheque[0], self.id, cheque[1], cheque[2])
-                share.config.db.session.add(n)
+                                    
+                for notebook in self.notebooks:
+                    share.config.db.session.add(Notebook(notebook[0], self.id, notebook[1], notebook[2]))
                 share.config.db.session.commit()
-                self.cheques_result[cheque[3]] = n.id
+                
+
+                #  pay attention ...   :/
+                for cheque in self.cheques:            
+                   n = Notebook(cheque[0], self.id, cheque[1], cheque[2])
+                   share.config.db.session.add(n)
+                   share.config.db.session.commit()
+                   self.cheques_result[cheque[3]] = n.id
 
         self.notebooks = []
         share.config.db.session.commit()
