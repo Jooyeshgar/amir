@@ -259,10 +259,10 @@ class Factor(Payments):
 			self.Code 	= self.editTransaction.Code
 		
 			
-			self.paymentManager = payments.Payments(transId=self.Id,transCode=self.Code)
-			self.paymentManager.connect("payments-changed", self.setNonCashPayments)
-			self.paymentManager.fillPaymentTables()
-		#	print self.Id
+			'''self.paymentManager = payments.Payments(transId=self.Id,transCode=self.Code)
+												self.paymentManager.connect("payments-changed", self.setNonCashPayments)
+												self.paymentManager.fillPaymentTables()'''
+		
 			#self.builder.get_object("fullFactorSellBtn").set_label("Save Changes ...")
 			saveBtn = "fullFactorSellBtn" if self.sell else "fullFactorBuyBtn"
 		#	self.builder.get_object("fullFactorBuyBtn").set_label("Save Changes")
@@ -274,8 +274,7 @@ class Factor(Payments):
 				self.Codeentry.set_text(utility.convertToPersian(str(self.editTransaction.Code)))				
 			else:
 				self.Codeentry.set_text(str(self.editTransaction.Code))			
-						
-			#self.additionsEntry.set_text(str(self.editTransaction.Addition))	
+									
 			query = self.session.query(Customers).select_from(Customers)
 			customer = query.filter(Customers.custId == self.editTransaction.Cust).first()						
 			self.sellerSelected(self, self.editTransaction.Cust,customer.custCode)	
@@ -307,6 +306,7 @@ class Factor(Payments):
 			self.shippedDate.set_text(str(self.editTransaction.ShipDate))			
 			self.shippedDate.showDateObject(self.editTransaction.ShipDate)
 			self.builder.get_object("preChkBx").set_active(self.editTransaction.Permanent ^ 1)
+
 		self.mainDlg.show_all()
 
 											
@@ -718,7 +718,7 @@ class Factor(Payments):
 	def calculatePayable(self):
 		dbconf = dbconfig.dbConfig()
 		subtotal    = utility.getFloat(self.builder.get_object("subtotalEntry").get_text())
-		ttlDiscs    = self.listTotalDiscount + utility.getFloat(self.builder.get_object("custDiscount").get_text())
+		ttlDiscs    = self.listTotalDiscount #+ utility.getFloat(self.builder.get_object("custDiscount").get_text())
 		additions   = self.additionsEntry.get_float()
 		subtracts   = self.subsEntry.get_float()
 		taxEntry    = self.taxEntry
@@ -1078,7 +1078,7 @@ class Factor(Payments):
 		else:
 			'''self.subFOB,'''
 			sell = Factors(self.subCode, self.subDate, 0, self.custId, self.subAdd, self.subSub, self.VAT, self.fee, self.totalFactor, self.cashPayment,
-					self.subShpDate, self.subShipVia, permanent, self.subDesc, self.sell, self.subDate, 1)#editdate=subdate
+					self.subShpDate,'', self.subShipVia, permanent, self.subDesc, self.sell, self.subDate, 1)#editdate=subdate
 
 			self.session.add(sell)
 		self.session.commit()
@@ -1182,24 +1182,28 @@ class Factor(Payments):
 					
 		
 	def registerDocument(self):
-		# dbconf = dbconfig.dbConfig()		
-		query = self.session.query(Cheque).select_from(Cheque)
-		cheques = query.filter(Cheque.chqTransId == self.Id).all()
+		# Create new document
+		bill_id = self.saveDocument();
+		
+		
 
 		cust_code = unicode(self.customerEntry.get_text())
 		query = self.session.query(Customers).select_from(Customers)
 		cust = query.filter(Customers.custCode == cust_code).first()
-			
-		for pay in cheques:	
-	#		print pay.chqId
-			print pay.chqCust
-			pay.chqCust=cust.custId
-	#		print cust.custId
-			self.session.add(pay)
-			self.session.commit()
+		query = self.session.query(Cheque).select_from(Cheque)
+		cheques = query.filter(Cheque.chqTransId == self.Id)
+		cheques.update ({Cheque.chqCust:cust.custId , Cheque.chqBillId : bill_id})
+		self.session.commit()
 
-		# Create new document
-		bill_id = self.saveDocument();
+				
+		'''for pay in cheques:	
+									#		print pay.chqId
+										#	print pay.chqCust
+											pay.chqCust=cust.custId
+									#		print cust.custId
+										#	self.session.add(pay)
+											self.session.commit()'''		
+		
 		
 		# Assign document to the current transaction
 		query = self.session.query(Factors)
@@ -1207,14 +1211,14 @@ class Factor(Payments):
 		query = query.filter(Factors.Sell == self.sell)
 		query.update( {Factors.Bill : bill_id } )	
 		self.session.commit()	
-		
-		query = self.session.query(Cheque)#.select_from(Cheque)
-		query = query.filter(Cheque.chqTransId == self.Id)
-		query.update( {Cheque.chqBillId : bill_id } )
-		self.session.commit()
-		
-		
-		query = self.session.query(Payment)#.select_from(Payment)
+
+		#####
+		'''query = self.session.query(Cheque)
+								query = query.filter(Cheque.chqTransId == self.Id)
+								query.update( {Cheque.chqBillId : bill_id } )
+								self.session.commit()'''
+				
+		query = self.session.query(Payment)
 		query = query.filter(Payment.paymntTransId == self.Code)
 		query =query.update( {Payment.paymntBillId : bill_id } )		
 		self.session.commit()
