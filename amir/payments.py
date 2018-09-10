@@ -257,7 +257,7 @@ class Payments(GObject.GObject):
 				return
 			else:
 				number = utility.convertToLatin(self.cheqListStore.get(iter, 0)[0])
-				print("transID: " , self.transId , " , bill ID : ", self.billId , " , order: " , number)
+				#print("transID: " , self.transId , " , bill ID : ", self.billId , " , order: " , number)
 				query = self.session.query(Cheque).select_from(Cheque)
 				query = query.filter(and_(Cheque.chqTransId == self.transId, 
 				                    Cheque.chqBillId == self.billId, Cheque.chqOrder == number))
@@ -422,9 +422,10 @@ class Payments(GObject.GObject):
 				cheque.chqDueDate = dueDte
 				cheque.chqSerial = serial
 				cheque.chqStatus = status
-				#cheque.chqCust = self.payerEntry.get_text()
-				cheque.chqOwnerName	= self.payerEntry.get_text()
+				cheque.chqCust = "test " #self.payerEntry.get_text()				
+			#	cheque.chqOwnerName	= self.payerEntry.get_text()
 				cheque.chqDesc = pymntDesc
+
 				iter = self.edititer
 				self.cheqListStore.set(self.edititer, 1, cheque.chqCust, 2, pymnt_str,
 				                      3, wrtDate_str, 4, dueDte_str, 6, serial, 7, 
@@ -432,9 +433,7 @@ class Payments(GObject.GObject):
 			else:
 				self.numcheqs += 1
 				order = utility.LN(self.numcheqs)
-				
-				
-				
+												
 				##add cheque history
 				self.chequeHistoryChequeId 	= 	0
 				self.chequeHistoryAmount   	=	pymntAmnt
@@ -480,12 +479,12 @@ class Payments(GObject.GObject):
 				            self.numcheqs					,
 				            self.billId						,
 				           	self.numcheqs					)				            				
-
+				self.session.add(cheque)
 				iter = self.cheqListStore.append((order, self.payerEntry.get_text(), pymnt_str, wrtDate_str, 
 		                      dueDte_str, bank, serial, self.chequeStatus[status], pymntDesc))
 				
 			#self.session.add(chequeHistory)
-			self.session.add(cheque)
+			
 			self.session.commit()
 			
 			

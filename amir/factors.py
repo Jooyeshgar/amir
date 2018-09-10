@@ -214,7 +214,7 @@ class Factor(Payments):
 							
 	def addNew(self,transId=None):   # add sell
 		
-
+		chequeBillId = 0 
 		if self.editFlag:			
 			self.Id	= self.editTransaction.Id
 			self.Code 	= self.editTransaction.Code

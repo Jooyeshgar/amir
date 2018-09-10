@@ -6,6 +6,7 @@ from database import Cheque
 from database import ChequeHistory
 from database import Factors
 
+import logging
 from datetime import date
 from sqlalchemy.orm.util import outerjoin
 
@@ -81,11 +82,7 @@ class Document:
             return -1
 
         if self.number > 0:
-           # print ("if self.number")
-            self.msgbox = Gtk.MessageDialog(self.window,Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK , "doc . self.number")
-            self.msgbox.set_title(_("alarm!"))
-            self.msgbox.run()   
-            self.msgbox.destroy()
+            logging.debug ("class_document : function save : if self.number")
             bill = share.config.db.session.query(Bill)            
             bill = bill.filter(Bill.number == self.number).first()
             bill.lastedit_date = date.today()
@@ -101,7 +98,7 @@ class Document:
                 if notbook[3] == 0:  # notebook id == 0    # self.id = bill.ID
                     share.config.db.session.add(Notebook(notbook[0], self.id, notbook[1], notbook[2]))
                 else:
-                   # print ("else 2")
+                    logging.debug ("class_document : function save : else_1")
                     temp = None
                     temp = notebooks.filter(Notebook.id == notbook[3]).first()                    
                     temp.subject_id = notbook[0]
@@ -118,7 +115,7 @@ class Document:
             for deletes in delete_items:
                 share.config.db.session.query(Notebook).filter(Notebook.id == deletes).delete()
         else:
-           # print ("else 1")
+            logging.debug ("class_document : function save : else_2")
             if factorId : # editing factor ...
                 billId = share.config.db.session.query(Factors) . filter(Factors.Id == factorId) . first() . Bill
                 neededBill  = share.config.db.session.query(Bill) . filter (Bill. id == billId)
