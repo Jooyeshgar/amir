@@ -250,6 +250,7 @@ class Factor(Payments):
 		self.paymentManager = payments.Payments(transId=self.Id,billId= chequeBillId,  transCode=self.Code)
 		self.paymentManager.connect("payments-changed", self.setNonCashPayments)
 		self.paymentManager.fillPaymentTables()
+		self.paymentManager.customerNameLbl.set_text(self.customerNameEntry.get_text())
 
 		if transId:
 			sellsQuery  = self.session.query(FactorItems)
@@ -261,10 +262,7 @@ class Factor(Payments):
 				self.sellListStore.append(None,list)
 		
 		
-		if self.editFlag:			
-			'''self.paymentManager = payments.Payments(transId=self.Id,transCode=self.Code)
-												self.paymentManager.connect("payments-changed", self.setNonCashPayments)
-												self.paymentManager.fillPaymentTables()'''
+		if self.editFlag:						
 		
 			#self.builder.get_object("fullFactorSellBtn").set_label("Save Changes ...")
 			saveBtn = "fullFactorSellBtn" if self.sell else "fullFactorBuyBtn"
@@ -372,6 +370,7 @@ class Factor(Payments):
 		customer = query.filter(Customers.custCode == ccode).first()
 		if customer:
 			self.customerNameEntry.set_text(customer.custName)
+			self.paymentManager.customerNameLbl.set_text(customer.custName)
 		else:
 			self.customerNameEntry.set_text("")		
 
@@ -988,10 +987,9 @@ class Factor(Payments):
 
 		
 	def showPayments(self,sender):		
+		self.builder.get_object("customerNameLbl").set_text(self.customerNameEntry.get_text())
 		self.paymentManager.showPayments()
 		self.ttlNonCashEntry = self.builder.get_object("ttlNonCashEntry")
-
-
 
 	def submitFactorPressed(self,sender):
 		permit  = self.checkFullFactor()

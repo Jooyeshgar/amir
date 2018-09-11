@@ -97,7 +97,7 @@ class Payments(GObject.GObject):
 				
 		self.serialNoEntry = self.builder.get_object("serialNoEntry")
 		self.payerEntry = self.builder.get_object("payerNameEntry")
-		
+		self.customerNameLbl = self.builder.get_object("customerNameLbl")
 		
 		
 		#self.payerEntry.set_sensitive(True)
@@ -401,15 +401,12 @@ class Payments(GObject.GObject):
 		pymntAmnt 	= self.pymntAmntEntry.get_float()
 		wrtDate 	= self.writeDateEntry.getDateObject()
 		dueDte 		= self.dueDateEntry.getDateObject()
-		bank 		= unicode(self.bankCombo.get_active_text())
-		print (self.bankCombo.get_active_id())
-		print (self.bankCombo.get_active())
-
+		bank_name = self.bankCombo.get_active_text()
+		bank 		= self.bankaccounts_class.get_bank_id(bank_name)		
 		serial 		= unicode(self.serialNoEntry.get_text())
 		pymntDesc 	= unicode(self.pymntDescEntry.get_text())
 		payer		= unicode(self.payerEntry.get_text())		
-		iter = None
-		
+		iter = None		
 		pymnt_str = utility.LN(pymntAmnt)
 		wrtDate_str = dateentry.dateToString(wrtDate)
 		dueDte_str = dateentry.dateToString(dueDte)
@@ -426,14 +423,13 @@ class Payments(GObject.GObject):
 				cheque.chqSerial = serial
 				cheque.chqStatus = status
 				cheque.chqCust = None  #self.payerEntry.get_text()		
-				cheque.chqAccount = bank	
-				print bank 
+				cheque.chqAccount = bank					
 			#	cheque.chqOwnerName	= self.payerEntry.get_text()
 				cheque.chqDesc = pymntDesc
 
 				iter = self.edititer
-				self.cheqListStore.set(self.edititer, 1, cheque.chqCust, 2, pymnt_str,
-				                      3, wrtDate_str, 4, dueDte_str, 6, serial, 7, 
+				self.cheqListStore.set(self.edititer, 1,payer , 2, pymnt_str,
+				                      3, wrtDate_str, 4, dueDte_str, 5 ,unicode(bank_name) , 6, serial, 7, 
 				                      self.chequeStatus[status], 8, pymntDesc)
 			else:
 				self.numcheqs += 1
@@ -485,8 +481,8 @@ class Payments(GObject.GObject):
 				            self.billId						,
 				           	self.numcheqs					)				            				
 				self.session.add(cheque)
-				iter = self.cheqListStore.append((order, self.payerEntry.get_text(), pymnt_str, wrtDate_str, 
-		                      dueDte_str, bank, serial, self.chequeStatus[status], pymntDesc))
+				iter = self.cheqListStore.append((order, payer, pymnt_str, wrtDate_str, 
+		                      dueDte_str, unicode(bank_name), serial, self.chequeStatus[status], pymntDesc))
 				
 			#self.session.add(chequeHistory)
 			
