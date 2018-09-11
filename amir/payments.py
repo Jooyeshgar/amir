@@ -23,7 +23,7 @@ from database import *
 from share import share
 from helpers import get_builder, comboInsertItems
 
-
+import logging
 
 config = share.config
 
@@ -100,8 +100,8 @@ class Payments(GObject.GObject):
 		
 		
 		
-		self.payerEntry.set_sensitive(False)
-		self.builder.get_object("choose Payer").set_sensitive(False)
+		#self.payerEntry.set_sensitive(True)
+		#self.builder.get_object("choose Payer").set_sensitive(True)
 		
 		
 		self.trackingCodeEntry = self.builder.get_object("trackingCodeEntry")
@@ -207,7 +207,7 @@ class Payments(GObject.GObject):
 		#self.totalAmount = value
 		#self.emit("payments-changed", value)
         
-	def addPayment(self, sender=0, is_cheque=False):
+	def addPayment(self, sender=0, is_cheque=True):
 		
 		self.addPymntDlg = self.builder.get_object("addPaymentDlg")
 		
@@ -257,7 +257,7 @@ class Payments(GObject.GObject):
 				return
 			else:
 				number = utility.convertToLatin(self.cheqListStore.get(iter, 0)[0])
-				#print("transID: " , self.transId , " , bill ID : ", self.billId , " , order: " , number)
+				logging.debug("transID: " , self.transId , " , bill ID : ", self.billId , " , order: " , number)
 				query = self.session.query(Cheque).select_from(Cheque)
 				query = query.filter(and_(Cheque.chqTransId == self.transId, 
 				                    Cheque.chqBillId == self.billId, Cheque.chqOrder == number))
@@ -402,9 +402,12 @@ class Payments(GObject.GObject):
 		wrtDate 	= self.writeDateEntry.getDateObject()
 		dueDte 		= self.dueDateEntry.getDateObject()
 		bank 		= unicode(self.bankCombo.get_active_text())
+		print (self.bankCombo.get_active_id())
+		print (self.bankCombo.get_active())
+
 		serial 		= unicode(self.serialNoEntry.get_text())
 		pymntDesc 	= unicode(self.pymntDescEntry.get_text())
-		payer		= unicode(self.payerEntry.get_text())
+		payer		= unicode(self.payerEntry.get_text())		
 		iter = None
 		
 		pymnt_str = utility.LN(pymntAmnt)
@@ -422,7 +425,9 @@ class Payments(GObject.GObject):
 				cheque.chqDueDate = dueDte
 				cheque.chqSerial = serial
 				cheque.chqStatus = status
-				cheque.chqCust = "test " #self.payerEntry.get_text()				
+				cheque.chqCust = None  #self.payerEntry.get_text()		
+				cheque.chqAccount = bank	
+				print bank 
 			#	cheque.chqOwnerName	= self.payerEntry.get_text()
 				cheque.chqDesc = pymntDesc
 
@@ -471,10 +476,10 @@ class Payments(GObject.GObject):
 							0								,
 							#self.payerEntry.get_text()		,
 							#self.payerEntry.get_text() 		,
-							None							,
-				            None							,
+							None							, # customer Id . later after submiting factor will be updated 
+				            bank							,
 				            self.transCode					, 
-				            self.billId						, 
+				            self.billId						, #TODO must be a valid cheque history ID
 				            pymntDesc						, 
 				            self.numcheqs					,
 				            self.billId						,
@@ -485,7 +490,7 @@ class Payments(GObject.GObject):
 				
 			#self.session.add(chequeHistory)
 			
-			self.session.commit()
+			#self.session.commit()
 			
 			
 		## updat chequehistory id	
@@ -517,7 +522,7 @@ class Payments(GObject.GObject):
 			self.cheqTreeView.scroll_to_cell(path, None, False, 0, 0)
 			self.cheqTreeView.set_cursor(path, None, False)
 			
-		else:
+		else:  # reciept
 			trackCode = unicode(self.trackingCodeEntry.get_text())
 			if self.edtPymntFlg:
 				query = self.session.query(Payment).select_from(Payment)
@@ -545,7 +550,7 @@ class Payments(GObject.GObject):
 		                      dueDte_str, bank, serial, trackCode, pymntDesc))
 		                      
 			self.session.add(payment)
-			self.session.commit()
+			#self.session.commit()
 			path = self.paysListStore.get_path(iter)
 			self.paysTreeView.scroll_to_cell(path, None, False, 0, 0)
 			self.paysTreeView.set_cursor(path, None, False)
@@ -672,19 +677,19 @@ class Payments(GObject.GObject):
 	def activate_Cheque(self, sender=0):
 		self.cheque_clicked=True
 	#	print self.isCheque.get_active()
-		self.builder.get_object("chequeInfoBox").set_sensitive(False)
-		self.builder.get_object("bankBox").set_sensitive(True)
+	#	self.builder.get_object("chequeInfoBox").set_sensitive(False)
+		#self.builder.get_object("bankBox").set_sensitive(True)
 		self.builder.get_object("trackingCodeEntry").set_sensitive(False)
-		self.builder.get_object("payerNameEntry").set_sensitive(False)
-		self.builder.get_object("choose Payer").set_sensitive(False)
+	#	self.builder.get_object("payerNameEntry").set_sensitive(True)
+	#	self.builder.get_object("choose Payer").set_sensitive(True)
 	
 	def activate_BankReciept(self, sender=0):
 		self.cheque_clicked=False
-		self.builder.get_object("chequeInfoBox").set_sensitive(False)
-		self.builder.get_object("bankBox").set_sensitive(True)
+	#	self.builder.get_object("chequeInfoBox").set_sensitive(False)
+	#	self.builder.get_object("bankBox").set_sensitive(True)
 		self.builder.get_object("trackingCodeEntry").set_sensitive(True)
-		self.builder.get_object("payerNameEntry").set_sensitive(False)
-		self.builder.get_object("choose Payer").set_sensitive(False)
+	#	self.builder.get_object("payerNameEntry").set_sensitive(True)
+	#	self.builder.get_object("choose Payer").set_sensitive(True)
 	def chequeListActivated(self, treeview):
 		self.paysTreeView.get_selection().unselect_all()
 		
@@ -734,7 +739,7 @@ class Payments(GObject.GObject):
  
 		dialog.destroy()
 
-	def selectSeller(self,sender=0):
+	def selectSeller(self,sender=0):				# not needed in submiting factor
 		customer_win = customers.Customer()
 		customer_win.viewCustomers()
 		
@@ -743,8 +748,8 @@ class Payments(GObject.GObject):
 		if code != '':
 			customer_win.highlightCust(code)
 		customer_win.connect("customer-selected",self.sellerSelected)
-	#	print code
-	def sellerSelected(self, sender, id, code):
+	#	print Code
+	def sellerSelected(self, sender, id, code):  	 # not needed in submiting factor
 		self.payerEntry.set_text(code)
 		sender.window.destroy()
 		

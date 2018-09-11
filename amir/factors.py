@@ -217,7 +217,7 @@ class Factor(Payments):
 		chequeBillId = 0 
 		if self.editFlag:			
 			self.Id	= self.editTransaction.Id
-			self.Code 	= self.editTransaction.Code
+			self.Code 	= self.editTransaction.Code						
 			chequeBillId = self.session.query(Cheque) . filter (Cheque.chqTransId == self.Id ).filter( Cheque.chqCust == self.customer.custId).first().chqId
 		else : 
 			query   = self.session.query(Factors.Code).select_from(Factors).filter(Factors.Sell == self.sell)
@@ -357,11 +357,11 @@ class Factor(Payments):
 		customer_win = customers.Customer()
 		customer_win.viewCustomers()
 		code = self.customerEntry.get_text()
-		if code != '':
-			customer_win.highlightCust(code)
+		#if code != '':
+		#	customer_win.highlightCust(code)  		# this function is empty !
 		customer_win.connect("customer-selected", self.sellerSelected)
 		
-	def sellerSelected(self, sender, id, code):
+	def sellerSelected(self, sender, id, code):		
 		self.customerEntry.set_text(code)
 		sender.window.destroy()		
 		self.setCustomerName()
@@ -369,11 +369,11 @@ class Factor(Payments):
 	def setCustomerName(self, sender=0, ev=0):
 		ccode = unicode(self.customerEntry.get_text())
 		query = self.session.query(Customers).select_from(Customers)
-		customer = query.filter(Customers.custId == ccode).first()
+		customer = query.filter(Customers.custCode == ccode).first()
 		if customer:
 			self.customerNameEntry.set_text(customer.custName)
 		else:
-			self.customerNameEntry.set_text("")
+			self.customerNameEntry.set_text("")		
 
 	def selectProduct(self,sender=0):
 		obj = product.Product()
@@ -1547,21 +1547,7 @@ class Factor(Payments):
 		self.paymentsChanged()
 
 	def close(self, sender=0):
-		if self.editFlag==False:		 # need to rollback done transaction before exit	
-			query = self.session.query(Payment).select_from(Payment)
-			query = query.filter(Payment.paymntTransId == self.Id)			
-			payment = query.all()				
-			for pay in payment:	
-				self.session.delete(pay)
-			self.session.commit()
-			
-			query = self.session.query(Cheque).select_from(Cheque)
-			query = query.filter(Cheque.chqTransId == self.Id)			
-			cheque = query.all()				
-			for pay in cheque:	
-				self.session.delete(pay)
-			self.session.commit()
-				
+		self.session.rollback()			
 		self.mainDlg.hide()
 		return True;
 
