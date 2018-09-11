@@ -179,7 +179,7 @@ class Payments(GObject.GObject):
 
 		#TODO find why chqBillId  and chqOrder has been removed and what must be do!
 		#query = query.filter(and_(Cheque.chqTransId == self.transId, Cheque.chqBillId == self.billId))
-		query = query.filter(Cheque.chqTransId == self.transCode)
+		query = query.filter(and_(Cheque.chqTransId == self.transCode , Cheque.chqBillId == self.billId) )
 		cheqlist = query.order_by(Cheque.chqOrder.asc()).all()
 		#cheqlist = query.all()
 		for cheq in cheqlist:
@@ -190,8 +190,9 @@ class Payments(GObject.GObject):
 			wrtDate = dateentry.dateToString(cheq.chqWrtDate)
 			dueDate = dateentry.dateToString(cheq.chqDueDate)
 			status = self.chequeStatus[cheq.chqStatus]
-			
-			self.cheqListStore.append((order, "in testing", amount, wrtDate, dueDate, "", 
+			bank = self.bankaccounts_class.get_bank_name (cheq.chqAccount)				
+			customer = self.session.query(Customers) .filter(Customers.custId == cheq.chqCust).first().custName
+			self.cheqListStore.append((order, customer, amount, wrtDate, dueDate, bank, 
 			                         cheq.chqSerial, status, cheq.chqDesc))
 		self.addToTotalAmount(total)
 	
