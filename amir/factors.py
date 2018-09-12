@@ -329,26 +329,36 @@ class Factor(Payments):
 		iter1 = selection.get_selected()[1]	
 		code = self.treestore.get_value(iter1, 0)
 	#	print code
-		query = config.db.session.query(Factors).select_from(Factors)
-		Transaction = query.filter(Factors.Id ==unicode(code) )
-		Transaction = Transaction.filter(Factors.Activated==1).first()
-		TransactionId=Transaction.Id
+		factor = config.db.session.query(Factors).filter(Factors.Id ==unicode(code) ).first()
+		TransactionId = factor  . Id		
 		
-		factorItems=self.session.query(FactorItems).select_from(FactorItems)
-		factorItems=factorItems.filter(FactorItems.factorId==TransactionId).all()
-		
+		#correcting products' count table		
+		factorItems=self.session.query(FactorItems) . filter(FactorItems.factorId==TransactionId).all()		
 		for factorItem in factorItems:
-			product=self.session.query(Products).select_from(Products)
-			product= product.filter(Products.id==factorItem.productId).first()
+			product=self.session.query(Products) .filter(Products.id==factorItem.productId).first()			
 			if self.sell:
 				product.quantity+=factorItem.qnty
 			else:
 				product.quantity-=factorItem.qnty
+			config.db.session.delete(factorItem)
 		
-		query = config.db.session.query(Factors).select_from(Factors)
-		Transaction = query.filter(Factors.Id ==unicode(code) ).all()
-		for trans in Transaction:
-			trans.Activated=0
+		#removing notebooks			
+		#bill_id = self.session.query()
+		notebooks = self.session.query(Notebook) . filter(Notebook.bill_id == factor.Bill ).all()
+		for nb in notebooks:
+			self.session.delete(nb)
+
+		# removing cheques and reciepts
+		cheques = self.session.query(Cheque) . filter(Cheque.chqTransId == factor.Id).all()
+		for cheque in cheques :
+			self.session.delete(cheque)
+		#TODO reciept remained
+
+		#removing related bill
+		self.session.delete( self.session.query(Bill).filter(Bill.id == factor.Bill).first() )
+
+		Transaction = config.db.session.query(Factors).filter(Factors.Id ==unicode(code) ).first()		 
+		config.db.session.delete(Transaction)
 		config.db.session.commit()
 		self.treestore.remove(iter1)	
 

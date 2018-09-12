@@ -119,29 +119,31 @@ class Document:
             if factorId : # editing factor ...
                 billId = share.config.db.session.query(Factors) . filter(Factors.Id == factorId) . first() . Bill
                 neededBill  = share.config.db.session.query(Bill) . filter (Bill. id == billId)
-                self.number = neededBill.first().number
-                neededBill.update({Bill.number: self.number ,Bill.creation_date: self.creation_date , Bill.lastedit_date: date.today() , Bill.date: self.date, Bill.permanent: False })
+                #self.number = neededBill.first().number
+                neededBill.update({ Bill.lastedit_date: date.today() , Bill.date: self.date})
                 share.config.db.session.commit()
                 self.id = billId
 
-                    
-                    # q = share.config.db.session.query(Notebook).filter(Notebook.bill_id == self.id) . filter(Notebook.subject_id== notebook[0]).first()
-                dbSubmitedNotebooks =  share.config.db.session.query(Notebook).filter(Notebook.bill_id == self.id)                
-                for nb in  dbSubmitedNotebooks :   
-                    found =  False
-                    for notebook in self.notebooks:                       
-                        if nb.subject_id == notebook[0]:
-                            found = True
-                            nb.value = notebook[1]
-                            nb.desc = notebook[2]
-                            break
-                    if  not found :
-                        share.config.db.session.delete(nb) 
+                old_notebooks = share.config.db.session.query(Notebook)    . filter(Notebook.bill_id == billId)  .all()
+                for nb in old_notebooks:                    
+                    share.config.db.session.delete(nb)
+                # q = share.config.db.session.query(Notebook).filter(Notebook.bill_id == self.id) . filter(Notebook.subject_id== notebook[0]).first()
+                # dbSubmitedNotebooks =  share.config.db.session.query(Notebook).filter(Notebook.bill_id == self.id)                
+                # for nb in  dbSubmitedNotebooks :   
+                #     found =  False
+                #     for notebook in self.notebooks:                       
+                #         if nb.subject_id == notebook[0]:
+                #             found = True
+                #             nb.value = notebook[1]
+                #             nb.desc = notebook[2]
+                #             break
+                #     if  not found :
+                #         share.config.db.session.delete(nb) 
 
-                for notebook in self.notebooks :
-                    found = [f for f in dbSubmitedNotebooks if f.subject_id == notebook[0]]                        
-                    if  len (found) == 0 :
-                        share.config.db.session.add(Notebook(notebook[0], self.id, notebook[1], notebook[2]))
+                # for notebook in self.notebooks :
+                #     found = [f for f in dbSubmitedNotebooks if f.subject_id == notebook[0]]                        
+                #     if  len (found) == 0 :
+                #         share.config.db.session.add(Notebook(notebook[0], self.id, notebook[1], notebook[2]))
                
             else :  # adding new factor and bill
                 query = share.config.db.session.query(Bill.number)
@@ -152,28 +154,23 @@ class Document:
                     self.number = 1
 
                 bill = Bill(self.number, self.creation_date, date.today(), self.date, False)
-                share.config.db.session.add(bill)
-                share.config.db.session.commit()
+                share.config.db.session.add(bill)                
 
                 query = share.config.db.session.query(Bill)
                 query = query.filter(Bill.number == self.number)
-                self.id = query.first().id
-                                    
-                for notebook in self.notebooks:
-                    share.config.db.session.add(Notebook(notebook[0], self.id, notebook[1], notebook[2]))
-                share.config.db.session.commit()
-                
+                self.id = query.first().id                                    
+
+        for notebook in self.notebooks:
+                    share.config.db.session.add(Notebook(notebook[0], self.id, notebook[1], notebook[2]))                            
 
                 #  pay attention ...   :/
-                for cheque in self.cheques:            
-                   n = Notebook(cheque[0], self.id, cheque[1], cheque[2])
-                   share.config.db.session.add(n)
-                   share.config.db.session.commit()
-                   self.cheques_result[cheque[3]] = n.id
-
+        for cheque in self.cheques:            
+           n = Notebook(cheque[0], self.id, cheque[1], cheque[2])
+           share.config.db.session.add(n)                   
+           self.cheques_result[cheque[3]] = n.id
         self.notebooks = []
         share.config.db.session.commit()
-        return self.id
+        return self.id      # bill id
 
     def get_error_message(self, code):
         if   code == -1:
