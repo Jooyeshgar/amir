@@ -70,7 +70,7 @@ class Factor(Payments):
 		self.factorDate = DateEntry()
 		self.builder.get_object("datebox").add(self.factorDate)
 		self.factorDate.show()
-		
+		self.product = None
 		self.shippedDate = DateEntry()
 		self.builder.get_object("shippedDateBox").add(self.shippedDate)
 		self.shippedDate.show()
@@ -247,10 +247,11 @@ class Factor(Payments):
 			txt += 1
 		#self.factorTreeView.get_selection().set_mode(  Gtk.SelectionMode.SINGLE    )
 		
-		self.paymentManager = payments.Payments(transId=self.Id,billId= chequeBillId,  transCode=self.Code)
+		self.paymentManager = payments.Payments(transId=self.Id,billId= chequeBillId, transCode=self.Code , sellFlag = self.sell)
 		self.paymentManager.connect("payments-changed", self.setNonCashPayments)
 		self.paymentManager.fillPaymentTables()
-		self.paymentManager.customerNameLbl.set_text(self.customerNameEntry.get_text())
+		self.paymentManager.customerNameLbl.set_text(self.customerNameEntry.get_text())		
+		self.paymentManager.payerEntry.set_text(self.customerEntry.get_text())		
 
 		if transId:
 			sellsQuery  = self.session.query(FactorItems)
@@ -1186,12 +1187,10 @@ class Factor(Payments):
 	def registerDocument(self):
 		# Create new document
 		bill_id = self.saveDocument();
-		
-		
-
-		cust_code = unicode(self.customerEntry.get_text())		
-		cust = self.session.query(Customers).filter(Customers.custCode == cust_code).first()		 
-		cheques = self.session.query(Cheque).filter(Cheque.chqTransId == self.Id)
+				
+		cust_code = unicode(self.customerEntry.get_text())				
+		cust = self.session.query(Customers).filter(Customers.custCode == cust_code).first()		
+		cheques = self.session.query(Cheque).filter(Cheque.chqTransId == self.Id )#.filter(Cheque.chqBillId == self.billId)
 		cheques.update ({Cheque.chqCust:cust.custId , Cheque.chqBillId : bill_id})
 		self.session.commit()
 

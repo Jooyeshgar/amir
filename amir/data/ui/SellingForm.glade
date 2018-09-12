@@ -415,18 +415,6 @@
                           <placeholder/>
                         </child>
                         <child>
-                          <object class="GtkVSeparator" id="vseparator1">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                          </object>
-                          <packing>
-                            <property name="left_attach">2</property>
-                            <property name="right_attach">3</property>
-                            <property name="x_options">GTK_FILL</property>
-                            <property name="x_padding">10</property>
-                          </packing>
-                        </child>
-                        <child>
                           <object class="GtkVSeparator" id="vseparator2">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
@@ -492,6 +480,9 @@
                             <property name="right_attach">2</property>
                             <property name="x_options">GTK_FILL</property>
                           </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
                         </child>
                       </object>
                     </child>
@@ -1271,6 +1262,7 @@
               <object class="GtkToolbar" id="paymentToolBar">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="hexpand">True</property>
                 <property name="toolbar_style">both</property>
                 <property name="icon_size">1</property>
                 <child>
@@ -1313,6 +1305,20 @@
                     <property name="stock_id">gtk-delete</property>
                     <signal name="clicked" handler="removePay" swapped="no"/>
                     <accelerator key="Delete" signal="clicked"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="selectPayBtn">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Select payment</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">gtk-dnd</property>
+                    <signal name="clicked" handler="selectPayBtn_clicked_cb" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -2411,18 +2417,6 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="chqPayerLbl">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">4</property>
-                    <property name="right_attach">5</property>
-                    <property name="top_attach">2</property>
-                    <property name="bottom_attach">3</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkBox" id="pymntDueDateBox">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -2527,7 +2521,6 @@
                   <object class="GtkButton" id="choose Payer">
                     <property name="label" translatable="yes">select</property>
                     <property name="use_action_appearance">False</property>
-                    <property name="visible">True</property>
                     <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -2565,8 +2558,8 @@
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
-                    <property name="invisible_char">●</property>
                     <property name="width_chars">10</property>
+                    <property name="caps_lock_warning">False</property>
                     <property name="primary_icon_activatable">False</property>
                     <property name="secondary_icon_activatable">False</property>
                     <signal name="focus-out-event" handler="validatePayer" swapped="no"/>
@@ -2577,6 +2570,9 @@
                     <property name="top_attach">2</property>
                     <property name="bottom_attach">3</property>
                   </packing>
+                </child>
+                <child>
+                  <placeholder/>
                 </child>
               </object>
               <packing>

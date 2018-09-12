@@ -33,14 +33,14 @@ class Payments(GObject.GObject):
 	chequePayment=[]
 	recieptPayment=[]	
 	
-	def __init__(self, transId=0, billId=0,transCode=0):
+	def __init__(self, transId=0, billId=0,transCode=0 , sellFlag = 1):
 		
 		#temp for vackground
 		self.bank_names_count = 0
-		
-		self.background = Gtk.Fixed()
-		self.background.put(Gtk.Image.new_from_file(os.path.join(config.data_path, "media", "background.png")), 0, 0)
-		self.background.show_all()
+		self.sellFlag = sellFlag
+		#self.background = Gtk.Fixed()
+		#self.background.put(Gtk.Image.new_from_file(os.path.join(config.data_path, "media", "background.png")), 0, 0)     # not working !
+		#self.background.show_all()
 					
 		GObject.GObject.__init__(self)
 		
@@ -97,7 +97,7 @@ class Payments(GObject.GObject):
 				
 		self.serialNoEntry = self.builder.get_object("serialNoEntry")
 		self.payerEntry = self.builder.get_object("payerNameEntry")
-		self.customerNameLbl = self.builder.get_object("customerNameLbl")
+		self.customerNameLbl = self.builder.get_object("customerNameLbl")		
 		
 		
 		#self.payerEntry.set_sensitive(True)
@@ -116,8 +116,10 @@ class Payments(GObject.GObject):
 		self.cheqListStore = Gtk.ListStore(str, str, str, str, str, str, str, str, str)
 		self.cheqListStore.clear()
 		self.cheqTreeView.set_model(self.cheqListStore)
-		
-		payHeaders = (_("No."), _("Paid by"), _("Amount"), _("Writing date"), _("Due Date"), 
+				
+		payByTo = _("Payid by") if sellFlag else _("Payid to")
+		self.builder.get_object("payerLbl").set_text(payByTo)
+		payHeaders = (_("No."), payByTo, _("Amount"), _("Writing date"), _("Due Date"), 
 					  _("Bank"), _("Serial No."), _("Track Code"), _("Description"))
 		txt = 0
 		for header in payHeaders:
@@ -127,7 +129,7 @@ class Payments(GObject.GObject):
 			self.paysTreeView.append_column(column)
 			txt += 1
 		
-		cheqHeaders = (_("No."), _("Paid by"), _("Amount"), _("Writing date"), _("Due Date"), 
+		cheqHeaders = (_("No."), payByTo, _("Amount"), _("Writing date"), _("Due Date"), 
 					  _("Bank"), _("Serial No."), _("Status"), _("Description"))
 		txt = 0
 		for header in cheqHeaders:
@@ -223,8 +225,7 @@ class Payments(GObject.GObject):
 		self.bankCombo.set_active(0)
 		self.serialNoEntry.set_text("")
 		self.pymntAmntEntry.set_text("")
-		self.payerEntry.set_text("")
-		self.builder.get_object("chqPayerLbl").set_text("")
+		self.payerEntry.set_text("")		
 		self.writeDateEntry.showDateObject(today)
 		self.pymntDescEntry.set_text("")
 		self.trackingCodeEntry.set_text("")
@@ -317,7 +318,7 @@ class Payments(GObject.GObject):
 		self.serialNoEntry.set_text(serial)
 		self.writeDateEntry.showDateObject(wrtDate)
 		self.dueDateEntry.showDateObject(dueDate)
-		self.pymntDescEntry.set_text(desc)
+		self.pymntDescEntry.set_text(desc)		
 		
 		self.addPymntDlg.show_all()
 
@@ -405,15 +406,15 @@ class Payments(GObject.GObject):
 		bank_name = self.bankCombo.get_active_text()
 		bank 		= self.bankaccounts_class.get_bank_id(bank_name)		
 		serial 		= unicode(self.serialNoEntry.get_text())
-		pymntDesc 	= unicode(self.pymntDescEntry.get_text())
-		payer		= unicode(self.payerEntry.get_text())		
+		pymntDesc 	= unicode(self.pymntDescEntry.get_text())		
+		payer		= self.payerEntry.get_text()		
 		iter = None		
 		pymnt_str = utility.LN(pymntAmnt)
 		wrtDate_str = dateentry.dateToString(wrtDate)
 		dueDte_str = dateentry.dateToString(dueDte)
 		
 		if self.isCheque.get_active():
-			status = self.cheqStatusList.get_active()
+			status = 3  if  self.sellFlag else 1 	# buy -> pardakhti , sell -> daryafti	#self.cheqStatusList.get_active()
 			if self.edtPymntFlg:
 				query = self.session.query(Cheque).select_from(Cheque)
 				cheque = query.filter(Cheque.chqId == self.editid).first()
@@ -429,7 +430,7 @@ class Payments(GObject.GObject):
 				cheque.chqDesc = pymntDesc
 
 				iter = self.edititer
-				self.cheqListStore.set(self.edititer, 1,payer , 2, pymnt_str,
+				self.cheqListStore.set(self.edititer, 1,self.customerNameLbl.get_text() , 2, pymnt_str,
 				                      3, wrtDate_str, 4, dueDte_str, 5 ,unicode(bank_name) , 6, serial, 7, 
 				                      self.chequeStatus[status], 8, pymntDesc)
 			else:
@@ -443,7 +444,7 @@ class Payments(GObject.GObject):
 				self.chequeHistoryDueDate	=	dueDte
 				self.chequeHistorySerial	=	serial
 				self.chequeHistoryStatus	=	status
-				self.chequeHistoryCust		=	payer
+				self.chequeHistoryCust		=	None
 				self.chequeHistoryAccount	=	None
 				self.chequeHistoryDesc		=	pymntDesc
 				self.chequeHistoryDate		=	wrtDate
@@ -482,7 +483,7 @@ class Payments(GObject.GObject):
 				            self.billId						,
 				           	self.numcheqs					)				            				
 				self.session.add(cheque)
-				iter = self.cheqListStore.append((order, payer, pymnt_str, wrtDate_str, 
+				iter = self.cheqListStore.append((order,self.customerNameLbl.get_text()  , pymnt_str, wrtDate_str, 
 		                      dueDte_str, unicode(bank_name), serial, self.chequeStatus[status], pymntDesc))
 				
 			#self.session.add(chequeHistory)
@@ -745,7 +746,7 @@ class Payments(GObject.GObject):
 		if code != '':
 			customer_win.highlightCust(code)
 		customer_win.connect("customer-selected",self.sellerSelected)
-	#	print Code
+
 	def sellerSelected(self, sender, id, code):  	 # not needed in submiting factor
 		self.payerEntry.set_text(code)
 		sender.window.destroy()
@@ -753,11 +754,9 @@ class Payments(GObject.GObject):
 		query = self.session.query(Customers).select_from(Customers)
 		customer = query.filter(Customers.custId == id).first()
 		if self.cheque_clicked:
-			self.payerEntry.set_text(customer.custId)
-	#		print 'hello2' 		
+			self.payerEntry.set_text(customer.custId)	
 		else:
-			self.payerEntry.set_text(customer.custName)
-	#		print 'hello'
+			self.payerEntry.set_text(customer.custName)	
 				
 	def setSellerName(self,sender=0,ev=0):
 		payer   = self.payerEntry.get_text()
@@ -768,7 +767,8 @@ class Payments(GObject.GObject):
 		else:
 			self.buyerNameEntry.set_text(query.name)
 	
-							
+	def selectPayBtn_clicked_cb(self, sender):   # select existing payment # called when select payment button is clicked
+		return 
 GObject.type_register(Payments)
 GObject.signal_new("payments-changed", Payments, GObject.SignalFlags.RUN_LAST,
                    None, (GObject.TYPE_STRING,))
