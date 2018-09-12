@@ -323,7 +323,7 @@ class Payments(GObject.GObject):
 				return
 			else:
 				number = utility.getInt(self.cheqListStore.get(iter, 0)[0])
-			#	print number
+				print number
 				msg = _("Are you sure to delete the cheque number %d?") % number
 				msgBox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, 
 				                           Gtk.MessageType.QUESTION, Gtk.ButtonsType.OK_CANCEL, msg)
@@ -339,12 +339,13 @@ class Payments(GObject.GObject):
 				
 				self.session.delete(cheque)
 				# Decrease the order-number in next rows
-				query = self.session.query(Cheque)#.select_from(Cheque)
+				query = self.session.query(Cheque)
 				query = query.filter(and_(Cheque.chqTransId == self.transId,  Cheque.chqOrder > number))
 				query.update( {Cheque.chqOrder: Cheque.chqOrder - 1 } )
 				
 				self.numcheqs -= 1
 				liststore = self.cheqListStore
+				del self.chequesList[number - 1]
 				
 		else:
 			number = utility.getInt(self.paysListStore.get(iter, 0)[0])
@@ -364,14 +365,14 @@ class Payments(GObject.GObject):
 			
 			self.session.delete(payment)
 			# Decrease the order-number in next rows
-			query = self.session.query(Payment)#.select_from(Payment)
+			query = self.session.query(Payment)
 			query = query.filter(and_(Payment.paymntTransId == self.transId, Payment.paymntOrder > number))
 			query.update( {Payment.paymntOrder: Payment.paymntOrder - 1 } )
 			
 			self.numrecpts -= 1
 			liststore = self.paysListStore
 		
-		self.session.commit()
+		#self.session.commit()
 		self.addToTotalAmount(-(amount))
 		
 		hasrow = liststore.remove(iter)
