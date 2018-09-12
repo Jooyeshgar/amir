@@ -1543,8 +1543,11 @@ class Factor(Payments):
 		self.nonCashPymntsEntry.set_text(str_value)
 		self.paymentsChanged()
 
-	def close(self, sender=0):
-		self.session.rollback()			
+	def close(self, sender=0):		
+		self.session.rollback()		
+		self.session.query(Cheque).filter(Cheque.chqTransId == self.Id).delete()
+		self.session.query(Payment).filter(Payment.paymntTransId == self.Id).delete()
+		self.session.commit()	
 		self.mainDlg.hide()
 		return True;
 

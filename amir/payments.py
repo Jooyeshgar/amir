@@ -29,7 +29,7 @@ config = share.config
 
 class Payments(GObject.GObject):
 	
-	chequeStatus = [_("Pending"), _("In Account"), _("Refused"), _("Paid"), _("Spent")]
+	chequeStatus = [_("Paid-Not passed"), _("Paid-Passed"), _("Recieved-Not passed"), _("Recieved-Passed"), _("Spent") , _("Returned to customer") , _("Returned from customer") , _("Bounced")]
 	chequePayment=[]
 	recieptPayment=[]	
 	
@@ -148,7 +148,7 @@ class Payments(GObject.GObject):
 	def fillPaymentTables(self):
 	#	print 'fortest filpYMENT'
 		self.fillRecptTable()
-		self.fillChequeTable()	#TODO 	self.transCode
+		self.fillChequeTable()	
 	
 	def fillRecptTable(self):
 		total = 0
@@ -253,18 +253,14 @@ class Payments(GObject.GObject):
 	def editPay(self, sender=0):
 		
 		iter = self.paysTreeView.get_selection().get_selected()[1]
-		if iter == None:
+		if iter == None:		# if cheques table
 			iter = self.cheqTreeView.get_selection().get_selected()[1]
 			if iter == None:
 				return
 			else:
 				number = utility.convertToLatin(self.cheqListStore.get(iter, 0)[0])
 				logging.debug("transID: " , self.transId , " , bill ID : ", self.billId , " , order: " , number)
-				query = self.session.query(Cheque).select_from(Cheque)
-				query = query.filter(and_(Cheque.chqTransId == self.transId, 
-				                    Cheque.chqBillId == self.billId, Cheque.chqOrder == number))
-
-				cheque = query.first()
+				cheque = self.session.query(Cheque).select_from(Cheque).filter(and_(Cheque.chqTransId == self.transId, Cheque.chqOrder == number)).first()				
 				
 				self.editid = cheque.chqId
 				payer_id   = cheque.chqCust
@@ -279,8 +275,9 @@ class Payments(GObject.GObject):
 				self.isRecpt.set_sensitive(False)
 				self.cheqStatusList.set_active(cheque.chqStatus)
 				self.trackingCodeEntry.set_text("")
+				self.bankCombo.set_active(cheque.chqAccount - 1)
 				
-		else:
+		else:				# if reciepts table
 			number = utility.convertToLatin(self.paysListStore.get(iter, 0)[0])
 			query = self.session.query(Payment).select_from(Payment)
 			query = query.filter(and_(Payment.paymntTransId == self.transId, 
@@ -301,6 +298,7 @@ class Payments(GObject.GObject):
 			self.trackingCodeEntry.set_text(payment.paymntTrckCode)
 			#self.bankEntry.set_text(payment.paymntBank)
 			#self.bankCombo.set_text(payment.paymntBank)
+			self.bankCombo.set_active(payment.paymntBank - 1)
 		
 		self.edtPymntFlg = True
 		self.edititer = iter
@@ -414,7 +412,7 @@ class Payments(GObject.GObject):
 		dueDte_str = dateentry.dateToString(dueDte)
 		
 		if self.isCheque.get_active():
-			status = 3  if  self.sellFlag else 1 	# buy -> pardakhti , sell -> daryafti	#self.cheqStatusList.get_active()
+			status = 2  if  self.sellFlag else 0 	# buy -> pardakhti , sell -> daryafti	#self.cheqStatusList.get_active()
 			if self.edtPymntFlg:
 				query = self.session.query(Cheque).select_from(Cheque)
 				cheque = query.filter(Cheque.chqId == self.editid).first()
@@ -552,7 +550,7 @@ class Payments(GObject.GObject):
 			path = self.paysListStore.get_path(iter)
 			self.paysTreeView.scroll_to_cell(path, None, False, 0, 0)
 			self.paysTreeView.set_cursor(path, None, False)
-		
+		self.session.commit()
 		self.addToTotalAmount(pymntAmnt - pre_amnt)
 		self.addPymntDlg.hide()
 
@@ -724,14 +722,13 @@ class Payments(GObject.GObject):
 		dialog.show_all()
 		result = dialog.run()
 		bank_name = entry.get_text()
-		if result == Gtk.ResponseType.OK and len(bank_name) != 0:
-				combo = self.builder.get_object('bank_names_combo')
-				model = combo.get_model()
+		if result == Gtk.ResponseType.OK and len(bank_name) != 0:				
+				model = self.bankCombo.get_model()
  
 				iter = model.append()
 				model.set(iter, 0, bank_name)
 				self.bank_names_count+=1
-				combo.set_active(self.bank_names_count-1)
+				self.bankCombo.set_active(self.bank_names_count-1)
  
 				self.bankaccounts_class.add_bank(bank_name)
  
