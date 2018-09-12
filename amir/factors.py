@@ -247,7 +247,7 @@ class Factor(Payments):
 			txt += 1
 		#self.factorTreeView.get_selection().set_mode(  Gtk.SelectionMode.SINGLE    )
 		
-		self.paymentManager = payments.Payments(transId=self.Id,billId= chequeBillId, transCode=self.Code , sellFlag = self.sell)
+		self.paymentManager = payments.Payments(transId=self.Id,billId= chequeBillId, sellFlag = self.sell)
 		self.paymentManager.connect("payments-changed", self.setNonCashPayments)
 		self.paymentManager.fillPaymentTables()
 		self.paymentManager.customerNameLbl.set_text(self.customerNameEntry.get_text())		
@@ -1187,7 +1187,7 @@ class Factor(Payments):
 	def registerDocument(self):
 		# Create new document
 		bill_id = self.saveDocument();
-				
+		
 		cust_code = unicode(self.customerEntry.get_text())				
 		cust = self.session.query(Customers).filter(Customers.custCode == cust_code).first()		
 		cheques = self.session.query(Cheque).filter(Cheque.chqTransId == self.Id )#.filter(Cheque.chqBillId == self.billId)
@@ -1218,7 +1218,7 @@ class Factor(Payments):
 								self.session.commit()'''
 				
 		query = self.session.query(Payment)
-		query = query.filter(Payment.paymntTransId == self.Code)
+		query = query.filter(Payment.paymntTransId == self.Id)
 		query =query.update( {Payment.paymntBillId : bill_id } )		
 		self.session.commit()
 			

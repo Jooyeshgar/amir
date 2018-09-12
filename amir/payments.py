@@ -33,7 +33,7 @@ class Payments(GObject.GObject):
 	chequePayment=[]
 	recieptPayment=[]	
 	
-	def __init__(self, transId=0, billId=0,transCode=0 , sellFlag = 1):
+	def __init__(self, transId=0, billId=0 , sellFlag = 1):
 		
 		#temp for vackground
 		self.bank_names_count = 0
@@ -53,7 +53,7 @@ class Payments(GObject.GObject):
 		self.numcheqs = 0
 		self.transId = transId
 		self.billId = billId
-		self.transCode=transCode
+		#self.transCode=transCode
 		self.payer = None
 		
 		self.pymntAmntEntry = decimalentry.DecimalEntry()
@@ -148,12 +148,12 @@ class Payments(GObject.GObject):
 	def fillPaymentTables(self):
 	#	print 'fortest filpYMENT'
 		self.fillRecptTable()
-		self.fillChequeTable()
+		self.fillChequeTable()	#TODO 	self.transCode
 	
 	def fillRecptTable(self):
 		total = 0
 		query = self.session.query(Payment).select_from(Payment)
-		query = query.filter(and_(Payment.paymntTransId== self.transCode))
+		query = query.filter(and_(Payment.paymntTransId== self.transId))
 		paylist = query.order_by(Payment.paymntOrder.asc()).all()
 		# print paylist
 		for pay in paylist:
@@ -181,7 +181,7 @@ class Payments(GObject.GObject):
 
 		#TODO find why chqBillId  and chqOrder has been removed and what must be do!
 		#query = query.filter(and_(Cheque.chqTransId == self.transId, Cheque.chqBillId == self.billId))
-		query = query.filter(and_(Cheque.chqTransId == self.transCode , Cheque.chqBillId == self.billId) )
+		query = query.filter(and_(Cheque.chqTransId == self.transId , Cheque.chqBillId == self.billId) )
 		cheqlist = query.order_by(Cheque.chqOrder.asc()).all()
 		#cheqlist = query.all()
 		for cheq in cheqlist:
@@ -476,7 +476,7 @@ class Payments(GObject.GObject):
 							#self.payerEntry.get_text() 		,
 							None							, # customer Id . later after submiting factor will be updated 
 				            bank							,
-				            self.transCode					, 
+				            self.transId					, 
 				            self.billId						, #TODO must be a valid cheque history ID
 				            pymntDesc						, 
 				            self.numcheqs					,
@@ -543,7 +543,7 @@ class Payments(GObject.GObject):
 				self.numrecpts += 1
 				order = utility.LN(self.numrecpts)
 				payment = Payment(dueDte, bank, serial, pymntAmnt, self.payerEntry.get_text(), wrtDate,
-				                 pymntDesc, self.transCode, self.billId, trackCode, self.numrecpts)
+				                 pymntDesc, self.transId, self.billId, trackCode, self.numrecpts)
 				iter = self.paysListStore.append((order, self.payerEntry.get_text() , pymnt_str, wrtDate_str, 
 		                      dueDte_str, bank, serial, trackCode, pymntDesc))
 		                      
