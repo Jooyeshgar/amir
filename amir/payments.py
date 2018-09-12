@@ -33,7 +33,7 @@ class Payments(GObject.GObject):
 	chequePayment=[]
 	recieptPayment=[]	
 	
-	def __init__(self, transId=0, billId=0 , sellFlag = 1):
+	def __init__(self, transId=0, sellFlag = 1):
 		
 		#temp for vackground
 		self.bank_names_count = 0
@@ -52,7 +52,7 @@ class Payments(GObject.GObject):
 		self.numrecpts = 0
 		self.numcheqs = 0
 		self.transId = transId
-		self.billId = billId
+		#self.billId = billId
 		#self.transCode=transCode
 		self.payer = None
 		
@@ -145,8 +145,7 @@ class Payments(GObject.GObject):
 	#NOTE: Don't call this in __init__(), Because at initialize time, "payments-changed"
 	# signal hasn't connected to factor forms yet, So payment-sum can not be shown there
 	# even after the tables being filled.
-	def fillPaymentTables(self):
-	#	print 'fortest filpYMENT'
+	def fillPaymentTables(self):	
 		self.fillRecptTable()
 		self.fillChequeTable()	
 	
@@ -154,8 +153,7 @@ class Payments(GObject.GObject):
 		total = 0
 		query = self.session.query(Payment).select_from(Payment)
 		query = query.filter(and_(Payment.paymntTransId== self.transId))
-		paylist = query.order_by(Payment.paymntOrder.asc()).all()
-		# print paylist
+		paylist = query.order_by(Payment.paymntOrder.asc()).all()		
 		for pay in paylist:
 			self.numrecpts += 1
 			total += pay.paymntAmount
@@ -173,16 +171,12 @@ class Payments(GObject.GObject):
 		
 # 		# comment for test
 # 		query = self.session.query(Cheque, Customers.custName)
-# 		query = query.select_from(outerjoin(Cheque, Customers, Cheque.chqCust == Customers.custId))
-	#	print self.transId 
+# 		query = query.select_from(outerjoin(Cheque, Customers, Cheque.chqCust == Customers.custId))	
 
-		query = self.session.query(Cheque).select_from(Cheque)
-
-
-		#TODO find why chqBillId  and chqOrder has been removed and what must be do!
-		#query = query.filter(and_(Cheque.chqTransId == self.transId, Cheque.chqBillId == self.billId))
-		query = query.filter(and_(Cheque.chqTransId == self.transId , Cheque.chqBillId == self.billId) )
+		query = self.session.query(Cheque)
+		query = query.filter(Cheque.chqTransId == self.transId  )
 		cheqlist = query.order_by(Cheque.chqOrder.asc()).all()
+		self.chequesList = cheqlist 
 		#cheqlist = query.all()
 		for cheq in cheqlist:
 			self.numcheqs += 1
@@ -259,9 +253,10 @@ class Payments(GObject.GObject):
 				return
 			else:
 				number = utility.convertToLatin(self.cheqListStore.get(iter, 0)[0])
-				logging.debug("transID: " , self.transId , " , bill ID : ", self.billId , " , order: " , number)
-				cheque = self.session.query(Cheque).select_from(Cheque).filter(and_(Cheque.chqTransId == self.transId, Cheque.chqOrder == number)).first()				
+				number = utility.getInt(number)			
 				
+				cheque = self.chequesList [number-1]		# reads from cheques list that holds temporary changes in cheque table. for adding , edditing without effect on database before submiting factor form
+				#cheque = self.session.query(Cheque).select_from(Cheque).filter(and_(Cheque.chqTransId == self.transId, Cheque.chqOrder == number)).first()				
 				self.editid = cheque.chqId
 				payer_id   = cheque.chqCust
 				amount = utility.LN(cheque.chqAmount, False)
@@ -281,7 +276,7 @@ class Payments(GObject.GObject):
 			number = utility.convertToLatin(self.paysListStore.get(iter, 0)[0])
 			query = self.session.query(Payment).select_from(Payment)
 			query = query.filter(and_(Payment.paymntTransId == self.transId, 
-				                Payment.paymntBillId == self.billId, Payment.paymntOrder == number))
+				                 Payment.paymntOrder == number))
 			payment = query.first()
 			
 			self.editid = payment.paymntId
@@ -338,16 +333,14 @@ class Payments(GObject.GObject):
 				if answer != Gtk.ResponseType.OK:
 					return
 				query = self.session.query(Cheque).select_from(Cheque)
-				query = query.filter(and_(Cheque.chqTransId == self.transId, 
-				                    Cheque.chqBillId == self.billId, Cheque.chqOrder == number))
+				query = query.filter(and_(Cheque.chqTransId == self.transId,  Cheque.chqOrder == number))
 				cheque = query.first()
 				amount = cheque.chqAmount
 				
 				self.session.delete(cheque)
 				# Decrease the order-number in next rows
 				query = self.session.query(Cheque)#.select_from(Cheque)
-				query = query.filter(and_(Cheque.chqTransId == self.transId, 
-				                    Cheque.chqBillId == self.billId, Cheque.chqOrder > number))
+				query = query.filter(and_(Cheque.chqTransId == self.transId,  Cheque.chqOrder > number))
 				query.update( {Cheque.chqOrder: Cheque.chqOrder - 1 } )
 				
 				self.numcheqs -= 1
@@ -365,15 +358,14 @@ class Payments(GObject.GObject):
 				return
 			query = self.session.query(Payment).select_from(Payment)
 			query = query.filter(and_(Payment.paymntTransId == self.transId, 
-				                Payment.paymntBillId == self.billId, Payment.paymntOrder == number))
+				               Payment.paymntOrder == number))
 			payment = query.first()
 			amount = payment.paymntAmount
 			
 			self.session.delete(payment)
 			# Decrease the order-number in next rows
 			query = self.session.query(Payment)#.select_from(Payment)
-			query = query.filter(and_(Payment.paymntTransId == self.transId, 
-				                Payment.paymntBillId == self.billId, Payment.paymntOrder > number))
+			query = query.filter(and_(Payment.paymntTransId == self.transId, Payment.paymntOrder > number))
 			query.update( {Payment.paymntOrder: Payment.paymntOrder - 1 } )
 			
 			self.numrecpts -= 1
@@ -395,8 +387,7 @@ class Payments(GObject.GObject):
 
 	def submitPayment(self, sender=0):
 		if self.validatePayment() == False:
-			return
-	#	print 'validate paymanet is true'
+			return	
 		pre_amnt 	= 0
 		pymntAmnt 	= self.pymntAmntEntry.get_float()
 		wrtDate 	= self.writeDateEntry.getDateObject()
@@ -410,31 +401,49 @@ class Payments(GObject.GObject):
 		pymnt_str = utility.LN(pymntAmnt)
 		wrtDate_str = dateentry.dateToString(wrtDate)
 		dueDte_str = dateentry.dateToString(dueDte)
-		
+
 		if self.isCheque.get_active():
 			status = 2  if  self.sellFlag else 0 	# buy -> pardakhti , sell -> daryafti	#self.cheqStatusList.get_active()
 			if self.edtPymntFlg:
-				query = self.session.query(Cheque).select_from(Cheque)
-				cheque = query.filter(Cheque.chqId == self.editid).first()
+				iter = self.edititer
+				number = utility.convertToLatin(self.cheqListStore.get(iter, 0)[0])
+				number = utility.getInt(number)	
+				cheque = self.chequesList[number - 1]
+				query = self.session.query(Cheque)
+				cheque = query.filter(and_(Cheque.chqTransId == cheque.chqTransId , Cheque.chqOrder == number) ).first()
 				pre_amnt = cheque.chqAmount
 				cheque.chqAmount = pymntAmnt
 				cheque.chqWrtDate = wrtDate
 				cheque.chqDueDate = dueDte
 				cheque.chqSerial = serial
-				cheque.chqStatus = status
+				#cheque.chqStatus = status 			 must edit from automatic accounting
 				cheque.chqCust = None  #self.payerEntry.get_text()		
 				cheque.chqAccount = bank					
 			#	cheque.chqOwnerName	= self.payerEntry.get_text()
 				cheque.chqDesc = pymntDesc
-
-				iter = self.edititer
-				self.cheqListStore.set(self.edititer, 1,self.customerNameLbl.get_text() , 2, pymnt_str,
+				
+				self.cheqListStore.set(iter, 1,self.customerNameLbl.get_text() , 2, pymnt_str,
 				                      3, wrtDate_str, 4, dueDte_str, 5 ,unicode(bank_name) , 6, serial, 7, 
 				                      self.chequeStatus[status], 8, pymntDesc)
-			else:
+							
+				self.chequesList[number-1] = Cheque(
+							pymntAmnt						,
+							wrtDate							, 
+							dueDte							, 
+							serial							, 
+							status							,			
+							None							, 
+				            bank							,
+				            self.transId					, 
+				            0					, #notebook ID 
+				            pymntDesc						, 
+				            0					,	#TODO must be a valid cheque history ID
+				            0					,	#bill Id
+				            number  					)	#order
+			else:		# adding cheque
 				self.numcheqs += 1
 				order = utility.LN(self.numcheqs)
-												
+
 				##add cheque history
 				self.chequeHistoryChequeId 	= 	0
 				self.chequeHistoryAmount   	=	pymntAmnt
@@ -469,21 +478,21 @@ class Payments(GObject.GObject):
 							wrtDate							, 
 							dueDte							, 
 							serial							, 
-							0								,
+							status								,
 							#self.payerEntry.get_text()		,
 							#self.payerEntry.get_text() 		,
 							None							, # customer Id . later after submiting factor will be updated 
 				            bank							,
 				            self.transId					, 
-				            self.billId						, #TODO must be a valid cheque history ID
+				            0						,
 				            pymntDesc						, 
-				            self.numcheqs					,
-				            self.billId						,
-				           	self.numcheqs					)				            				
+				            0					,
+				            0					,
+				           	order					)				            				
 				self.session.add(cheque)
 				iter = self.cheqListStore.append((order,self.customerNameLbl.get_text()  , pymnt_str, wrtDate_str, 
 		                      dueDte_str, unicode(bank_name), serial, self.chequeStatus[status], pymntDesc))
-				
+				self.chequesList .append(cheque)
 			#self.session.add(chequeHistory)
 			
 			#self.session.commit()
@@ -550,7 +559,7 @@ class Payments(GObject.GObject):
 			path = self.paysListStore.get_path(iter)
 			self.paysTreeView.scroll_to_cell(path, None, False, 0, 0)
 			self.paysTreeView.set_cursor(path, None, False)
-		self.session.commit()
+		#self.session.commit()
 		self.addToTotalAmount(pymntAmnt - pre_amnt)
 		self.addPymntDlg.hide()
 
@@ -671,8 +680,7 @@ class Payments(GObject.GObject):
 		self.emit("payments-changed", total_str)
 		
 	def activate_Cheque(self, sender=0):
-		self.cheque_clicked=True
-	#	print self.isCheque.get_active()
+		self.cheque_clicked=True	
 	#	self.builder.get_object("chequeInfoBox").set_sensitive(False)
 		#self.builder.get_object("bankBox").set_sensitive(True)
 		self.builder.get_object("trackingCodeEntry").set_sensitive(False)

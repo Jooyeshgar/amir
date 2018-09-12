@@ -214,11 +214,11 @@ class Factor(Payments):
 							
 	def addNew(self,transId=None):   # add sell
 		
-		chequeBillId = 0 
+		#chequeBillId = 0 
 		if self.editFlag:			
 			self.Id	= self.editTransaction.Id
 			self.Code 	= self.editTransaction.Code						
-			chequeBillId = self.session.query(Cheque) . filter (Cheque.chqTransId == self.Id ).filter( Cheque.chqCust == self.customer.custId).first().chqId
+			#chequeBillId = self.session.query(Cheque) . filter (Cheque.chqTransId == self.Id ).filter( Cheque.chqCust == self.customer.custId).first().chqId
 		else : 
 			query   = self.session.query(Factors.Code).select_from(Factors).filter(Factors.Sell == self.sell)
 			lastCode  = query.order_by(Factors.Code.desc()).first()
@@ -247,7 +247,7 @@ class Factor(Payments):
 			txt += 1
 		#self.factorTreeView.get_selection().set_mode(  Gtk.SelectionMode.SINGLE    )
 		
-		self.paymentManager = payments.Payments(transId=self.Id,billId= chequeBillId, sellFlag = self.sell)
+		self.paymentManager = payments.Payments(transId=self.Id, sellFlag = self.sell)
 		self.paymentManager.connect("payments-changed", self.setNonCashPayments)
 		self.paymentManager.fillPaymentTables()
 		self.paymentManager.customerNameLbl.set_text(self.customerNameEntry.get_text())		
@@ -1545,9 +1545,9 @@ class Factor(Payments):
 
 	def close(self, sender=0):		
 		self.session.rollback()		
-		self.session.query(Cheque).filter(Cheque.chqTransId == self.Id).delete()
-		self.session.query(Payment).filter(Payment.paymntTransId == self.Id).delete()
-		self.session.commit()	
+		'''self.session.query(Cheque).filter(Cheque.chqTransId == self.Id).delete()
+								self.session.query(Payment).filter(Payment.paymntTransId == self.Id).delete()
+								self.session.commit()'''	
 		self.mainDlg.hide()
 		return True;
 
