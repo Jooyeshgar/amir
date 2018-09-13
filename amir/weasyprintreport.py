@@ -71,7 +71,7 @@ class WeasyprintReport:
             subprocess.call(["xdg-open", 'report.pdf'])
         else:
             os.startfile('report.pdf')
-        time.sleep(1)
+        time.sleep(2)
         os.remove('report.pdf');
     def createTable(self,report_header,report_data):
         if config.locale == 'en_US':

@@ -1307,7 +1307,7 @@ class Factor(Payments):
 									 شماره اقتصادی: ' + factorSellerEconomicalCode + '<br /> کد پستی ۱۰ رقمی: ' + factorSellerPostalCode + ' \
 									</td> \
 									<td class="right none lheight"  width="27%"> \
-										' + factorSellerName + '<br /> ' + factorSellerAddress + ' \
+										نام: ' + factorSellerName + ' <br />نشانی :  ' + factorSellerAddress + ' \
 									</td> \
 									<td class="right none" style="border-right:1px solid #000;width: 6%;"> <br> \
 									</td> \
@@ -1325,7 +1325,7 @@ class Factor(Payments):
 										شماره اقتصادی: ' + factorBuyerEconomicalCode + '<br /> کد پستی ۱۰ رقمی: ' + factorBuyerPostalCode + '\
 									</td> \
 									<td class="right none lheight" width="27%"> \
-										' + factorBuyerName + '<br /> ' + factorBuyerAddress + ' \
+										نام: ' + factorBuyerName + '<br />نشانی :‌ ' + factorBuyerAddress + ' \
 									</td> \
 									<td class="right none" style="border-right:1px solid #000;width: 6%;"> <br> \
 									</td> \
@@ -1348,8 +1348,8 @@ class Factor(Payments):
 										(ریال)</p> \
 									</td> \
 										<td class="border center" style="border-right: none;width:9%"> \
-										<p align="center" class="bold">مبلغ<br> \
-										تخفیف</p> \
+										<p align="center" class="bold"> مبلغ تخفیف<br> \
+										<br/>(ریال)</p> \
 									</td> \
 									<td class="border center" style="border-right: none;width:11%"> \
 										<p align="center" class="bold">مبلغ کل<br> \
@@ -1382,31 +1382,50 @@ class Factor(Payments):
 								</tr>'
 
 		k = 1;
+		factor  = self.session.query(Factors).filter(Factors.Id == self.Id) . first()
 		sellsQuery  = self.session.query(FactorItems, Products).select_from(FactorItems)
-		sellsQuery  = sellsQuery.filter(FactorItems.factorId==self.Id, FactorItems.productId == Products.id).order_by(FactorItems.number.asc()).all()
+		sellsQuery  = sellsQuery.filter(FactorItems.factorId==self.Id, FactorItems.productId == Products.id).order_by(FactorItems.number.asc()).all()		
 		sumTotalPrice = 0
 		sumTotalDiscount = 0
 		sumTotalAfterDiscount = 0
-		sumTotalVat = 0
+		sumTotalVat = factor.VAT + factor.Fee 
+		totalVat = 0 
 		sumFinalPrice = 0
 		description = ''
 		items = ''
-		for sell in sellsQuery:
-			productId = sell.FactorItems.productId
-			productCode = sell.Products.code
-			productName = sell.Products.name 
-			quantity = sell.FactorItems.qnty
-			unitPrice = sell.FactorItems.untPrc
-			totalPrice = unitPrice * quantity
-			totalDiscount = float(sell.FactorItems.untDisc) * float(sell.FactorItems.qnty)
+		sell = None
+		dbconf = dbconfig.dbConfig()
+		for k in range(1 , len(sellsQuery) + 2 ) :			
+			if k == len(sellsQuery) + 1 :	
+				if not factor.Addition:
+					if factor.Subtraction > 0 :
+						productName = "تخفیف"
+					else :
+						break				
+				else :
+					productName = "سایر"
+				productCode = "-"				
+				quantity = 1
+				unitPrice = float(factor.Addition)
+				totalDiscount = factor.Subtraction				
+			else:		
+				sell = sellsQuery[k-1]						
+				productCode = sell.Products.code
+				productName = sell.Products.name 
+				quantity = sell.FactorItems.qnty
+				unitPrice = sell.FactorItems.untPrc
+				totalDiscount = float(sell.FactorItems.untDisc) * float(sell.FactorItems.qnty)
+			totalPrice = unitPrice * quantity			
 			totalAfterDiscount = totalPrice - totalDiscount
-			totalVat = 0  # TODO: Store it to database and use it here
+			VAT = totalAfterDiscount * dbconf.get_int("vat-rate")/100
+			Fee = totalAfterDiscount * dbconf.get_int("fee-rate")/100
+			totalVat = VAT + Fee  #float(totalPrice) * 0.09
 			finalPrice = totalAfterDiscount + totalVat
 
 			sumTotalPrice += totalPrice
 			sumTotalDiscount += totalDiscount
 			sumTotalAfterDiscount += totalAfterDiscount
-			sumTotalVat += totalVat
+			#sumTotalVat += totalVat
 			sumFinalPrice += finalPrice
 			html +='<tr style="text-align:center; vertical-align: top;"> \
 						<td class="border center" style="border-right: none;" > \
@@ -1443,7 +1462,7 @@ class Factor(Payments):
 							<span style="text-align: right;" class="bold" style="width: 10px;"> ' + utility.convertToPersian(str(utility.convertToPersian(k))) + ' </span> \
 						</td> \
 					</tr>'
-			k += 1
+			#k += 1
 		for k in range(k, 7):
 			html +='<tr style="text-align:center; vertical-align: top;"> \
 						<td class="border center" style="border-right: none;" > \
@@ -1483,19 +1502,19 @@ class Factor(Payments):
 			k += 1
 		html += '				<tr style="vertical-align: top;"> \
 	        						<td class="border center" style="border-right: none;" width="9%"> \
-	            						<span>' + utility.convertToPersian(str(sumTotalPrice)) + '</span> \
+	            						<span>' + utility.convertToPersian(str(sumFinalPrice)) + '</span> \
         							</td> \
 	        						<td class="border center" style="border-right: none;" width="15%"> \
-	            						<span align="right">' + utility.convertToPersian(str(sumTotalDiscount)) + '</span> \
+	            						<span align="right">' + utility.convertToPersian(str(sumTotalVat)) + '</span> \
 	        						</td> \
 	        						<td class="border center" style="border-right: none;" width="13%"> \
 	            						<span align="right">' + utility.convertToPersian(str(sumTotalAfterDiscount)) + '</span> \
 	        						</td> \
 	        						<td class="border center" style="border-right: none;" width="7%"> \
-	            						<span align="right">' + utility.convertToPersian(str(sumTotalVat)) + '</span> \
+	            						<span align="right">' + utility.convertToPersian(str(sumTotalDiscount)) + '</span> \
 	        						</td> \
 	        						<td class="border center" style="border-right: none;" width="7%"> \
-	            						<span align="right">' + utility.convertToPersian(str(sumFinalPrice)) + '</span> \
+	            						<span align="right">' + utility.convertToPersian(str(sumTotalPrice )) + '</span> \
 	        						</td> \
 	        						<td colspan="6" class="border pink center" width="49%"> \
 	            						<span align="center">جمع کل (ریال): ' + utility.convertToPersian(str(sumTotalPrice)) + '</span> \
@@ -1521,7 +1540,7 @@ class Factor(Payments):
 	            						<span align="right"><br></span> \
 	        						</td> \
 	        						<td colspan="6" class="border" width="44%" style="height: 25px;"> \
-	            						<span style="padding-right: 5px">توضیحات</span> \
+	            						<span style="padding-right: 5px">توضیحات: '+factor.Desc+'</span>  \
 	        						</td> \
 	    						</tr> \
 							</tbody> \
@@ -1532,12 +1551,11 @@ class Factor(Payments):
 		return html
 	def printTransaction(self, sender):
 		
-		if self.editFlag == False:  # adding 
-			code = self.Code		
+		if self.editFlag == False:  # adding 			
 			self.submitFactorPressed(sender)
 			query = config.db.session.query(Factors, Customers)
 			query = query.select_from(outerjoin(Factors, Customers, Factors.Cust== Customers.custId))
-			result,result2 = query.filter(Factors.Id == code).first() 		
+			result,result2 = query.filter(Factors.Id == self.Id).first() 		
 			self.editTransaction=result 
 			self.customer=result2	
 		else :
