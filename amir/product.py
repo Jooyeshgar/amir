@@ -51,7 +51,7 @@ class Product(productgroup.ProductGroup):
 		self.sellPriceEntry.show()
 
 		self.treeview = self.builder.get_object("productsTreeView")
-		self.treestore = Gtk.TreeStore(str, str, str, str, str)
+		self.treestore = Gtk.TreeStore(str, str, str, str, str, str)
 
 	def viewProducts(self):
 		self.window = self.builder.get_object("viewProductsWindow")
@@ -102,6 +102,13 @@ class Product(productgroup.ProductGroup):
 		column.set_resizable(True)
 		self.treeview.append_column(column)
 
+		column      = Gtk.TreeViewColumn(_("Unit measurement"), 
+											Gtk.CellRendererText(),
+											text = 5)
+		#column.set_spacing(5)
+		column.set_resizable(True)
+		self.treeview.append_column(column)
+
 		
 		self.treeview.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
 		self.treestore.set_sort_column_id(0, Gtk.SortType.ASCENDING)
@@ -144,19 +151,19 @@ class Product(productgroup.ProductGroup):
 		last_gid = 0
 		grouprow = None
 		for g, p in result:
-			if g.id != last_gid:
-				grouprow = self.treestore.append(None, (g.code, g.name, "", "", ""))
+
+			if g.id != last_gid:				
+				grouprow = self.treestore.append(None, (g.code, g.name, "", "", "" , ""))
 				last_gid = g.id
 				
 			if p != None:
 				self.treestore.append(grouprow, (p.code, p.name, utility.LN(p.quantity), 
-										utility.LN(p.purchacePrice), utility.LN(p.sellingPrice)))
+										utility.LN(p.purchacePrice), utility.LN(p.sellingPrice) ,p.uMeasurement))
 
 
 	def addProduct(self, sender, pcode = ""):
 		#self.treestore = Gtk.TreeStore(str, str, str, str, str)		
-		self.treestore.clear()
-		self.treeview.set_model(self.treestore)
+	
 		
 		accgrp = ""
 		try:
@@ -168,7 +175,7 @@ class Product(productgroup.ProductGroup):
 			iter = selection.get_selected()[1]
 			if iter != None and self.treestore.iter_parent(iter) == None:
 				accgrp = self.treestore.get_value(iter, 0)
-			
+		
 		dialog = self.builder.get_object("addProductDlg")
 		dialog.set_title(_("Add New Product"))
 		
@@ -183,11 +190,12 @@ class Product(productgroup.ProductGroup):
 		self.purchPriceEntry.set_text("")
 		self.sellPriceEntry.set_text("")
 		self.builder.get_object("oversell").set_active(False)
+		self.builder.get_object("uMeasureEntry").set_text("")
 		
 		success = False
 		while not success :
 			result = dialog.run()
-			if result == 1:
+			if result == 1:				
 				code     = unicode(self.builder.get_object("proCodeEntry").get_text())
 				accgrp   = unicode(self.builder.get_object("accGrpEntry" ).get_text())
 				name     = unicode(self.builder.get_object("proNameEntry").get_text())
@@ -199,8 +207,8 @@ class Product(productgroup.ProductGroup):
 				p_price  = self.purchPriceEntry.get_float()
 				s_price  = self.sellPriceEntry.get_float()
 				oversell = self.builder.get_object("oversell").get_active()
-				
-				success = self.saveProduct(code, accgrp, name, location, desc, quantity, q_warn, p_price, s_price, oversell, formula)
+				measurement = self.builder.get_object("uMeasureEntry").get_text()				
+				success = self.saveProduct(code, accgrp, name, location, desc, quantity, q_warn, p_price, s_price, oversell, formula, measurement)
 			else:
 				break
 	
@@ -246,6 +254,7 @@ class Product(productgroup.ProductGroup):
 				self.purchPriceEntry.set_text(p_price)
 				self.sellPriceEntry.set_text(s_price)
 				self.builder.get_object("oversell").set_active(product.oversell)
+				self.builder.get_object("uMeasureEntry").set_text(product.uMeasurement)
 				
 				success = False
 				while not success :
@@ -262,15 +271,16 @@ class Product(productgroup.ProductGroup):
 						p_price  = self.purchPriceEntry.get_float()
 						s_price  = self.sellPriceEntry.get_float()
 						oversell = self.builder.get_object("oversell").get_active()
+						measurement = self.builder.get_object("uMeasureEntry").get_text()
 					
-						success = self.saveProduct(code, accgrp, name, location, desc, quantity, q_warn, p_price, s_price, oversell, formula, iter)
+						success = self.saveProduct(code, accgrp, name, location, desc, quantity, q_warn, p_price, s_price, oversell, formula , measurement, iter)
 					else:
 						break
 				
 				dialog.hide()
             
 	def saveProduct(self, code, accgrp, name, location, desc, quantity, quantity_warn, 
-			purchase_price, sell_price, oversell, formula, edititer=None):
+			purchase_price, sell_price, oversell, formula,uMeasurement="", edititer=None):
 		msg = ""
 		if code == "":
 			msg += _("Product code should not be empty.\n")
@@ -314,18 +324,15 @@ class Product(productgroup.ProductGroup):
 			for elm in flist:
 				if elm != '':
 					partlist = elm.split(u':')
-					price = float(partlist[1])
-					print "price: %s" % str(price)
+					price = float(partlist[1])					
 					numlist = partlist[0].split(u'-')
 					if len(numlist) > 0:
 						firstnum = float(numlist[0])
 						if firstnum < secnum:
 							msg += _("Discount formula is not valid")
-							break
-						print "fnum: %d" % firstnum
+							break						
 						if len(numlist) > 1:
-							secnum = float(numlist[1])
-							print "secnum: %d" % secnum
+							secnum = float(numlist[1])							
 							if firstnum > secnum:
 								msg += _("Discount formula should be typed in ascending order.")
 								break
@@ -343,11 +350,11 @@ class Product(productgroup.ProductGroup):
 			msgbox.set_title(_("Invalid product properties"))
 			msgbox.run()
 			msgbox.destroy()
-			return False
-			
+			return False					
 		if edititer == None:
 			product = Products(code, name, quantity_warn, oversell, location, quantity,
-					purchase_price, sell_price, group.id, desc, formula)
+					purchase_price, sell_price, group.id, desc, formula, uMeasurement)
+			config.db.session.add(product)
 		else:
 			product.code            = code
 			product.name            = name
@@ -360,8 +367,8 @@ class Product(productgroup.ProductGroup):
 			product.sellingPrice    = sell_price
 			product.purchacePrice   = purchase_price
 			product.discountFormula = formula
-			
-		config.db.session.add(product)
+			product.uMeasurement	= uMeasurement
+					
 		config.db.session.commit()
 		
 		#Show new product in table

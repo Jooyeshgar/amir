@@ -12,16 +12,7 @@ permissions = Table('permissions', meta,
     Column('value',           Unicode(20),  nullable = True                       ),
     mysql_charset='utf8'
 )
-user = Table('users', meta,
-    Column('id',        Integer, primary_key=True),
-    Column('code',      String(20), unique=True),
-    Column('name',      Unicode(60), nullable=False),
-    Column('parent_id',     Integer, ColumnDefault(0), ForeignKey('users.id'), nullable=False),
-    Column('lft',       Integer, nullable=False),
-    Column('rgt',       Integer, nullable=False),
-    Column('type',      Integer),      # 0 for Debtor, 1 for Creditor, 2 for both
-    mysql_charset='utf8'
-)
+
 def upgrade(migrate_engine):
     # meta = MetaData(bind=migrate_engine)
     meta.bind = migrate_engine
@@ -95,6 +86,10 @@ def upgrade(migrate_engine):
     s.execute('DELETE FROM config')
     s.commit()
 
+    s.execute('ALTER TABLE `products` ADD COLUMN `uMeasurement`  Text;')
+    s.commit()
+    #col = Column('uMeasurement', String, default='')
+    #col.create(table, populate_default=True)
 
     factorItems = Table('factorItems', meta, autoload=True)
     factorItems.c.exchngId.alter(name='id')
@@ -105,9 +100,9 @@ def upgrade(migrate_engine):
     factorItems.c.exchngUntDisc.alter(name='untDisc')
     factorItems.c.exchngTransId.alter(name='factorId')
     factorItems.c.exchngDesc.alter(name='desc')
-    factorItems = Table('factorItems', meta, autoload=True)
-    factorItems.c.exchngId.alter(name='id')
-    factorItems.c.exchngNo.alter(name='number')
+    '''factorItems = Table('factorItems', meta, autoload=True)
+                factorItems.c.exchngId.alter(name='id')
+                factorItems.c.exchngNo.alter(name='number')'''
     permissions.create(checkfirst=True)
     config = Table('config', meta, autoload=True)
     op = config.insert()
@@ -122,8 +117,8 @@ def upgrade(migrate_engine):
         # 1 : Entry
         # 2 : Entry (Single Int from Subjects)
         # 3 : Entry (Multi  Int from Subjects)
-        {'cfgId' : 1, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-name'       , 'cfgValue' : u'Enter Company Name', 'cfgDesc' : u'Enter Company name here'},
-        {'cfgId' : 2, 'cfgType' : 0, 'cfgCat' : 0, 'cfgKey' : u'co-logo'       , 'cfgValue' : u'', 'cfgDesc' : u'Select Company logo'},
+        {'cfgId' : 1, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-name'       , 'cfgValue' : u'Company Name', 'cfgDesc' : u'Your company name'},
+        {'cfgId' : 2, 'cfgType' : 0, 'cfgCat' : 0, 'cfgKey' : u'co-logo'       , 'cfgValue' : u'', 'cfgDesc' : u'Select your company logo'},
         {'cfgId' : 3, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'custSubject'   , 'cfgValue' : u'4',  'cfgDesc' : u'Enter here'},
         {'cfgId' : 4, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'bank'          , 'cfgValue' : u'1',  'cfgDesc' : u'Enter here'},
         {'cfgId' : 5, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'cash'          , 'cfgValue' : u'3',  'cfgDesc' : u'Enter here'},
@@ -143,16 +138,18 @@ def upgrade(migrate_engine):
         {'cfgId' :19, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'our_cheque'    , 'cfgValue' : u'22', 'cfgDesc':u'Enter here'},
         {'cfgId' :20, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'other_cheque'  , 'cfgValue' : u'6',  'cfgDesc':u'Enter here'},
         {'cfgId' :21, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'income'        , 'cfgValue' : u'83', 'cfgDesc':u'Enter here'},
-        {'cfgId' :22, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-address'    , 'cfgValue' : u'Enter your company address',  'cfgDesc':u'Enter here'},
-        {'cfgId' :23, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-economical-code'    , 'cfgValue' : u'Enter your economical code',  'cfgDesc':u'Enter here'},
-        {'cfgId' :24, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-national-code'    , 'cfgValue' : u'Enter your national code',  'cfgDesc':u'Enter here'},
-        {'cfgId' :25, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-postal-code'    , 'cfgValue' : u'Enter your postal code',  'cfgDesc':u'Enter here'},
-        {'cfgId' :26, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-phone-number'    , 'cfgValue' : u'Enter your phone number',  'cfgDesc':u'Enter here'},
-        {'cfgId' :27, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'sell-adds'    , 'cfgValue' : u'40',  'cfgDesc':u'Enter here'}
+        {'cfgId' :22, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-address'    , 'cfgValue' : u'company address (set from settings->confug) ',  'cfgDesc':u'your company address'},
+        {'cfgId' :23, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-economical-code'     , 'cfgValue' : u'economical code ',  'cfgDesc':u'Your economical code'},
+        {'cfgId' :24, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-national-code'       , 'cfgValue' : u'national code ',  'cfgDesc':u'Your national code'},
+        {'cfgId' :25, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-postal-code'         , 'cfgValue' : u'postal code ',  'cfgDesc':u'Your postal code'},
+        {'cfgId' :26, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-phone-number'        , 'cfgValue' : u'phone number ',  'cfgDesc':u'Your phone number'},
+        {'cfgId' :27, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'sell-adds'              , 'cfgValue' : u'40',  'cfgDesc':u'Enter here'}
         #{'cfgId' :11, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'fund'          , 'cfgValue' : u'??', 'cfgDesc':u'Enter here'},  #TODO cfgKey
         #{'cfgId' :12, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'acc-receivable', 'cfgValue' : u'??', 'cfgDesc':u'Enter here',}, #TODO cfgKey
         #{'cfgId' :13, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' :u'commission'     , 'cfgValue' : u'??', 'cfgDesc':u'Enter here'}   #TODO cfgKey
     )
+
+    
 
 def downgrade(migrate_engine):
     # Operations to reverse the above upgrade go here.
@@ -169,6 +166,6 @@ def downgrade(migrate_engine):
     # customers.drop()
     # bankAccounts.drop()
     # config.drop()
-    print("downgrade to 2")
+    logging.debug("downgrade to 2")
     
 

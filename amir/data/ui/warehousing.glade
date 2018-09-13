@@ -1,29 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.18.3 -->
 <interface>
-  <requires lib="gtk+" version="2.16"/>
-  <!-- interface-naming-policy project-wide -->
+  <requires lib="gtk+" version="3.0"/>
   <object class="GtkDialog" id="addProductDlg">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
     <property name="window_position">mouse</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
-      <object class="GtkVBox" id="dialog-vbox2">
+      <object class="GtkBox" id="dialog-vbox2">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area2">
+          <object class="GtkButtonBox" id="dialog-action_area2">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton" id="cancelBtn1">
                 <property name="label">gtk-cancel</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
               </object>
               <packing>
@@ -35,10 +36,10 @@
             <child>
               <object class="GtkButton" id="saveBtn1">
                 <property name="label">gtk-save</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
                 <accelerator key="s" signal="activate" modifiers="GDK_CONTROL_MASK"/>
               </object>
@@ -60,17 +61,20 @@
           <object class="GtkTable" id="productsLayout">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="n_rows">7</property>
+            <property name="n_rows">8</property>
             <property name="n_columns">5</property>
             <property name="column_spacing">5</property>
             <property name="row_spacing">5</property>
             <child>
+              <placeholder/>
+            </child>
+            <child>
               <object class="GtkLabel" id="proCdeLbl">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="xalign">0</property>
                 <property name="xpad">5</property>
                 <property name="label" translatable="yes">Product Code:</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="x_options">GTK_FILL</property>
@@ -80,9 +84,9 @@
               <object class="GtkLabel" id="proNameLbl">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="xalign">0</property>
                 <property name="xpad">5</property>
                 <property name="label" translatable="yes">Product Name:</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="top_attach">1</property>
@@ -98,8 +102,6 @@
                 <property name="invisible_char">•</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">False</property>
-                <property name="primary_icon_sensitive">True</property>
-                <property name="secondary_icon_sensitive">True</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -112,9 +114,9 @@
               <object class="GtkLabel" id="proDescLbl">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="xalign">0</property>
                 <property name="xpad">5</property>
                 <property name="label" translatable="yes">Product Description:</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="top_attach">2</property>
@@ -126,9 +128,9 @@
               <object class="GtkLabel" id="accGrpLbl">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="xalign">0</property>
                 <property name="xpad">20</property>
                 <property name="label" translatable="yes">Accounting Group:</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="left_attach">2</property>
@@ -140,9 +142,9 @@
               <object class="GtkLabel" id="qntyWarnLbl">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="xalign">0</property>
                 <property name="xpad">20</property>
                 <property name="label" translatable="yes">Quantity Warning:</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="left_attach">2</property>
@@ -155,10 +157,11 @@
             <child>
               <object class="GtkCheckButton" id="oversell">
                 <property name="label" translatable="yes">OverSell?</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
-                <property name="use_action_appearance">False</property>
+                <property name="xalign">0.5</property>
                 <property name="draw_indicator">True</property>
               </object>
               <packing>
@@ -172,9 +175,9 @@
               <object class="GtkLabel" id="qnttyLbl">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="xalign">0</property>
                 <property name="xpad">5</property>
                 <property name="label" translatable="yes">Quantity:</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="top_attach">3</property>
@@ -186,9 +189,9 @@
               <object class="GtkLabel" id="proLocLbl">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="xalign">0</property>
                 <property name="xpad">20</property>
                 <property name="label" translatable="yes">Product Location:</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="left_attach">2</property>
@@ -206,8 +209,6 @@
                 <property name="invisible_char">•</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">False</property>
-                <property name="primary_icon_sensitive">True</property>
-                <property name="secondary_icon_sensitive">True</property>
               </object>
               <packing>
                 <property name="left_attach">3</property>
@@ -220,9 +221,9 @@
               <object class="GtkLabel" id="purchasePriceLbl">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="xalign">0</property>
                 <property name="xpad">5</property>
                 <property name="label" translatable="yes">Purchace Price:</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="top_attach">4</property>
@@ -234,29 +235,15 @@
               <object class="GtkLabel" id="sellPriceLbl">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="xalign">0</property>
                 <property name="xpad">20</property>
                 <property name="label" translatable="yes">Selling Price:</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="left_attach">2</property>
                 <property name="right_attach">3</property>
                 <property name="top_attach">4</property>
                 <property name="bottom_attach">5</property>
-                <property name="x_options">GTK_FILL</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="discountFormulaLbl">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="xalign">0</property>
-                <property name="xpad">5</property>
-                <property name="label" translatable="yes">Discount Formula:</property>
-              </object>
-              <packing>
-                <property name="top_attach">5</property>
-                <property name="bottom_attach">6</property>
                 <property name="x_options">GTK_FILL</property>
               </packing>
             </child>
@@ -268,33 +255,12 @@
                 <property name="invisible_char">•</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">False</property>
-                <property name="primary_icon_sensitive">True</property>
-                <property name="secondary_icon_sensitive">True</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
                 <property name="right_attach">5</property>
                 <property name="top_attach">2</property>
                 <property name="bottom_attach">3</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkEntry" id="discFormulaEntry">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="max_length">100</property>
-                <property name="invisible_char">•</property>
-                <property name="truncate_multiline">True</property>
-                <property name="primary_icon_activatable">False</property>
-                <property name="secondary_icon_activatable">False</property>
-                <property name="primary_icon_sensitive">True</property>
-                <property name="secondary_icon_sensitive">True</property>
-              </object>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="right_attach">5</property>
-                <property name="top_attach">5</property>
-                <property name="bottom_attach">6</property>
               </packing>
             </child>
             <child>
@@ -339,8 +305,6 @@
                     <property name="invisible_char">•</property>
                     <property name="primary_icon_activatable">False</property>
                     <property name="secondary_icon_activatable">False</property>
-                    <property name="primary_icon_sensitive">True</property>
-                    <property name="secondary_icon_sensitive">True</property>
                   </object>
                   <packing>
                     <property name="expand">True</property>
@@ -363,8 +327,6 @@
                 <property name="invisible_char">•</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">False</property>
-                <property name="primary_icon_sensitive">True</property>
-                <property name="secondary_icon_sensitive">True</property>
                 <signal name="activate" handler="selectProductGroup" swapped="no"/>
               </object>
               <packing>
@@ -375,25 +337,25 @@
             <child>
               <object class="GtkButton" id="button3">
                 <property name="label" translatable="yes">Select</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <signal name="clicked" handler="selectProductGroup" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">4</property>
                 <property name="right_attach">5</property>
-                <property name="y_options"></property>
+                <property name="y_options"/>
               </packing>
             </child>
             <child>
               <object class="GtkLabel" id="label1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="xalign">0.10000000149011612</property>
                 <property name="label" translatable="yes">Hint: From quantity - To quantity: Amount of discount for each product (The order is important)
          Example:   1-30: 400 , 30-100: 360.7 , 100-170: 300</property>
+                <property name="xalign">0.10000000149011612</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -441,6 +403,67 @@
             <child>
               <placeholder/>
             </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <object class="GtkEntry" id="discFormulaEntry">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="max_length">100</property>
+                <property name="invisible_char">•</property>
+                <property name="truncate_multiline">True</property>
+                <property name="primary_icon_activatable">False</property>
+                <property name="secondary_icon_activatable">False</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="right_attach">5</property>
+                <property name="top_attach">5</property>
+                <property name="bottom_attach">6</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="discountFormulaLbl">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="xpad">5</property>
+                <property name="label" translatable="yes">Discount Formula:</property>
+                <property name="xalign">0</property>
+              </object>
+              <packing>
+                <property name="top_attach">5</property>
+                <property name="bottom_attach">6</property>
+                <property name="x_options">GTK_FILL</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label2">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Unit Measurement:</property>
+              </object>
+              <packing>
+                <property name="top_attach">7</property>
+                <property name="bottom_attach">8</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkEntry" id="uMeasureEntry">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="max_length">30</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="right_attach">2</property>
+                <property name="top_attach">7</property>
+                <property name="bottom_attach">8</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">True</property>
@@ -461,22 +484,23 @@
     <property name="window_position">center-on-parent</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
-      <object class="GtkVBox" id="dialog-vbox1">
+      <object class="GtkBox" id="dialog-vbox1">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area1">
+          <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton" id="button2">
                 <property name="label">gtk-cancel</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
               </object>
               <packing>
@@ -488,10 +512,10 @@
             <child>
               <object class="GtkButton" id="button1">
                 <property name="label">gtk-save</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
                 <accelerator key="s" signal="activate" modifiers="GDK_CONTROL_MASK"/>
               </object>
@@ -525,8 +549,6 @@
                 <property name="invisible_char">•</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">False</property>
-                <property name="primary_icon_sensitive">True</property>
-                <property name="secondary_icon_sensitive">True</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -540,9 +562,9 @@
               <object class="GtkLabel" id="addGrpName1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="xalign">0</property>
                 <property name="xpad">5</property>
                 <property name="label" translatable="yes">Group Name:</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="top_attach">1</property>
@@ -555,9 +577,9 @@
               <object class="GtkLabel" id="addGrpCde1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="xalign">0</property>
                 <property name="xpad">5</property>
                 <property name="label" translatable="yes">Group Code:</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="x_options">GTK_FILL</property>
@@ -567,10 +589,10 @@
             <child>
               <object class="GtkButton" id="groupSelSlctBtn1">
                 <property name="label" translatable="yes">Select</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <signal name="clicked" handler="selectSellingSubject" swapped="no"/>
               </object>
               <packing>
@@ -585,10 +607,10 @@
             <child>
               <object class="GtkButton" id="groupBuySlctBtn1">
                 <property name="label" translatable="yes">Select</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <signal name="clicked" handler="selectBuyingSubject" swapped="no"/>
               </object>
               <packing>
@@ -604,9 +626,9 @@
               <object class="GtkLabel" id="addGrpSell1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="xalign">0</property>
                 <property name="xpad">5</property>
                 <property name="label" translatable="yes">Selling Code:</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="top_attach">3</property>
@@ -619,9 +641,9 @@
               <object class="GtkLabel" id="addGrpBuy1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="xalign">0</property>
                 <property name="xpad">5</property>
                 <property name="label" translatable="yes">Buying Code:</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="top_attach">2</property>
@@ -670,8 +692,6 @@
                 <property name="invisible_char">•</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">False</property>
-                <property name="primary_icon_sensitive">True</property>
-                <property name="secondary_icon_sensitive">True</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -691,9 +711,9 @@
           <object class="GtkLabel" id="label9">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="xalign">0</property>
             <property name="xpad">5</property>
             <property name="label" translatable="yes">Enter, Ctrl+S: OK    Escape: Cancel</property>
+            <property name="xalign">0</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -729,13 +749,13 @@
             <property name="toolbar_style">both</property>
             <child>
               <object class="GtkToolButton" id="addGroupsBtn">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Add Group</property>
                 <property name="stock_id">gtk-new</property>
-                <accelerator key="Insert" signal="clicked"/>
                 <signal name="clicked" handler="addProductGroup" swapped="no"/>
+                <accelerator key="Insert" signal="clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -749,13 +769,14 @@
               </object>
               <packing>
                 <property name="expand">False</property>
+                <property name="homogeneous">False</property>
               </packing>
             </child>
             <child>
               <object class="GtkToolButton" id="groupEditBtn">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Edit</property>
                 <property name="stock_id">gtk-edit</property>
                 <signal name="clicked" handler="editProductGroup" swapped="no"/>
@@ -767,13 +788,13 @@
             </child>
             <child>
               <object class="GtkToolButton" id="deleteGroupBtn">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Delete</property>
                 <property name="stock_id">gtk-delete</property>
-                <accelerator key="d" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
                 <signal name="clicked" handler="deleteProductGroup" swapped="no"/>
+                <accelerator key="d" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -792,8 +813,6 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="border_width">15</property>
-            <property name="hscrollbar_policy">automatic</property>
-            <property name="vscrollbar_policy">automatic</property>
             <child>
               <object class="GtkTreeView" id="GroupsTreeView">
                 <property name="visible">True</property>
@@ -803,6 +822,9 @@
                 <property name="enable_tree_lines">True</property>
                 <signal name="key-release-event" handler="on_key_release_event" swapped="no"/>
                 <signal name="row-activated" handler="selectGroupFromList" swapped="no"/>
+                <child internal-child="selection">
+                  <object class="GtkTreeSelection" id="treeview-selection1"/>
+                </child>
               </object>
             </child>
           </object>
@@ -833,7 +855,7 @@
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Products</property>
     <property name="window_position">center-always</property>
-    <property name="default_width">500</property>
+    <property name="default_width">540</property>
     <property name="destroy_with_parent">True</property>
     <child>
       <object class="GtkVBox" id="viewProductsVBox">
@@ -847,13 +869,13 @@
             <property name="toolbar_style">both</property>
             <child>
               <object class="GtkToolButton" id="addProductBtn">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Add Product</property>
                 <property name="stock_id">gtk-add</property>
-                <accelerator key="Insert" signal="clicked"/>
                 <signal name="clicked" handler="addProduct" swapped="no"/>
+                <accelerator key="Insert" signal="clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -862,13 +884,13 @@
             </child>
             <child>
               <object class="GtkToolButton" id="addGroupBtn">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Add Group</property>
                 <property name="stock_id">gtk-new</property>
-                <accelerator key="g" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
                 <signal name="clicked" handler="addProductGroup" swapped="no"/>
+                <accelerator key="g" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -882,17 +904,18 @@
               </object>
               <packing>
                 <property name="expand">False</property>
+                <property name="homogeneous">False</property>
               </packing>
             </child>
             <child>
               <object class="GtkToolButton" id="editBtn">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Edit</property>
                 <property name="stock_id">gtk-edit</property>
-                <accelerator key="e" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
                 <signal name="clicked" handler="editProductsAndGrps" swapped="no"/>
+                <accelerator key="e" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -901,13 +924,13 @@
             </child>
             <child>
               <object class="GtkToolButton" id="deleteBtn">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Delete</property>
                 <property name="stock_id">gtk-delete</property>
-                <accelerator key="Delete" signal="clicked"/>
                 <signal name="clicked" handler="deleteProductsAndGrps" swapped="no"/>
+                <accelerator key="Delete" signal="clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -926,8 +949,6 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="border_width">15</property>
-            <property name="hscrollbar_policy">automatic</property>
-            <property name="vscrollbar_policy">automatic</property>
             <property name="shadow_type">in</property>
             <child>
               <object class="GtkTreeView" id="productsTreeView">
@@ -938,6 +959,9 @@
                 <signal name="button-press-event" handler="on_button_press_event" swapped="no"/>
                 <signal name="key-release-event" handler="on_key_release_event" swapped="no"/>
                 <signal name="row-activated" handler="selectProductFromList" swapped="no"/>
+                <child internal-child="selection">
+                  <object class="GtkTreeSelection" id="treeview-selection2"/>
+                </child>
               </object>
             </child>
           </object>
@@ -956,9 +980,9 @@
               <object class="GtkLabel" id="label6">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="xalign">0</property>
                 <property name="xpad">5</property>
                 <property name="label" translatable="yes">Insert: Add product    Ctrl+G: Add Group   Ctrl+E: Edit    Del: Delete</property>
+                <property name="xalign">0</property>
               </object>
               <packing>
                 <property name="expand">True</property>
