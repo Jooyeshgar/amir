@@ -5,6 +5,14 @@ from sqlalchemy import *
 from migrate import *
 import logging
 
+def _2to3digits(num):
+    _3digit = ""
+    i = 0 
+    while i< len(num )- 1 :
+        _3digit = "0" + num[len(num) - i - 2 ] + num [len(num) - i - 1] + _3digit
+        i += 2
+    return _3digit
+
 meta = MetaData()
 permissions = Table('permissions', meta,
     Column('id',            Integer,      primary_key = True                      ),
@@ -19,6 +27,15 @@ def upgrade(migrate_engine):
     from sqlalchemy.orm import sessionmaker, scoped_session
     Session = scoped_session(sessionmaker(bind=migrate_engine))
     s = Session()
+
+    subject = Table('subject', meta, autoload=True)    
+   # s.query(subject).update({subject.c.code: _2to3digits(subject.c.code)})      #TODO try this instead of raw sql command
+    query = s.query(subject)
+    al = query.all()
+    for subj in al :       
+        #query.filter(subject.c.id == subj.id).update({subject.c.code : _2to3digits(subj.code)})    # TODO       try this instead of raw sql command
+        s.execute("update subject set code = '"+ str(_2to3digits(subj.code))+"' where id ="+str(subj.id) + ";")
+    s.commit()
 
     s.execute('CREATE TABLE factors (\
                 "Id" INTEGER NOT NULL, \
