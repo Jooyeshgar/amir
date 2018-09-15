@@ -429,6 +429,7 @@ class Factor(Payments):
 
 	def addProduct(self,sender=0,edit=None):
 		self.addDlg = self.builder.get_object("addDlg")
+		self.edtSellFlg = False
 		if edit:
 			self.editCde    = edit[0]
 			ttl = "Edit sell:\t%s - %s" %(self.editCde,edit[1])
@@ -443,7 +444,7 @@ class Factor(Payments):
 				self.addDlg.set_title("Choose sell information")
 			else:
 				self.addDlg.set_title("Choose buy information")
-			self.edtSellFlg = False
+			
 			btnVal  = "Add to list"
 			
 		self.proVal        = self.builder.get_object("proEntry")
@@ -501,7 +502,7 @@ class Factor(Payments):
 			
 		self.addDlg.show_all()
 				
-	def editProduct(self,sender=None):
+	def editProduct(self,sender=None , treeview=None , path = None):
 		iter    = self.factorTreeView.get_selection().get_selected()[1]
 		if iter != None :
 			self.editingSell    = iter
@@ -1648,5 +1649,3 @@ class Factor(Payments):
 
 		self.valsChanged()
 
-	def onProductRowClicked  (self, treeview, path, view_column):
-		self.editProduct()
