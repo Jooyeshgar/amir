@@ -68,6 +68,7 @@ class AutomaticAccounting:
         self.addChequeui = None 
         self.spendChequeui = payments.Payments(0 , 0 , True) 
         self.spendChequeui.fillChequeTable()
+        self.spendChequeui.connect("payments-changed", self.update_spend_cheque_label ) 
         # Date entry
         date_box = self.builder.get_object('date-box')
         self.date_entry = dateentry.DateEntry()
@@ -182,6 +183,7 @@ class AutomaticAccounting:
             customerEntry = self.from_entry
         self.addChequeui = payments.Payments(0 , sellMode , False)
         self.addChequeui.customerNameLbl.set_text(customerEntry.get_text())
+        self.addChequeui.connect("payments-changed",self.update_non_cash_payment_label)
 
     def on_from_clicked(self, button):
         entry  = self.from_entry
@@ -272,6 +274,14 @@ class AutomaticAccounting:
         mod.set_text(str(r))
 
         self.check_save_button()
+
+    def update_non_cash_payment_label(self , sender , total_value):
+
+        self.builder.get_object('non-cash-payment-label').set_text(str(total_value))
+        
+    
+    def update_spend_cheque_label(self, sender , total_value):        
+        self.builder.get_object("spend-cheque-label").set_text(str(total_value))
 
     def on_subject_selected(self, subject, id, code, name, entry, to):
         if to:
