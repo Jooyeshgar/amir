@@ -1,4 +1,5 @@
-import chequeui
+#import chequeui
+import payments
 import class_cheque
 import class_document
 import customers
@@ -51,7 +52,7 @@ class AutomaticAccounting:
         10: (True , False, True , True , True , 'cash,bank', 'partner'),
     }
     def __init__(self):
-        self.mode = None
+        #self.mode = None
         self.liststore = None
         
         # Chosen Type
@@ -63,7 +64,10 @@ class AutomaticAccounting:
         self.builder = helpers.get_builder('automaticaccounting')
         self.builder.connect_signals(self)
 
-        self.chequeui = chequeui.ChequeUI(self.builder.get_object('non-cash-payment-label'),self.builder.get_object('spend-cheque-label'))
+        #self.chequeui = chequeui.ChequeUI(self.builder.get_object('non-cash-payment-label'),self.builder.get_object('spend-cheque-label'))
+        self.addChequeui = None 
+        self.spendChequeui = payments.Payments(0 , 0 , True) 
+        self.spendChequeui.fillChequeTable()
         # Date entry
         date_box = self.builder.get_object('date-box')
         self.date_entry = dateentry.DateEntry()
@@ -120,8 +124,8 @@ class AutomaticAccounting:
         if iter == None:
             return
         
-        self.chequeui.new_cheques = []
-        self.chequeui.spend_cheques = []
+        # self.chequeui.new_cheques = []
+        # self.chequeui.spend_cheques = []
         model = combo.get_model()
         index = model.get(iter, 0)[0]
         self.type_index = int(index)
@@ -165,6 +169,19 @@ class AutomaticAccounting:
             self.to_entry.set_text(query.name)
         else:
             self.builder.get_object('to-button').set_sensitive(True)
+
+        # resetting non-cash payments UI for adding :
+        sellMode = 0
+        if self.type_index is not None and self.type_configs[self.type_index][3]:
+            #mode = 'our'
+            sellMode = 0    # pardakhti
+            customerEntry = self.to_entry
+        else:
+            #mode = 'other'
+            sellMode = 1    # daryafti 
+            customerEntry = self.from_entry
+        self.addChequeui = payments.Payments(0 , sellMode , False)
+        self.addChequeui.customerNameLbl.set_text(customerEntry.get_text())
 
     def on_from_clicked(self, button):
         entry  = self.from_entry
@@ -303,17 +320,18 @@ class AutomaticAccounting:
         save_button.set_sensitive(True)
 
     def on_non_cash_payment_button_clicked(self, button):
-        if self.type_index is not None and self.type_configs[self.type_index][3]:
-            self.mode = 'our'
-        else:
-            self.mode = 'other'
 
-        self.chequeui.list_cheques(self.mode)
+        self.addChequeui. showPayments()
+        #self.addChquesList = self.chequeui.chequesList 
+        #self.chequeui.list_cheques(self.mode)
 
     def on_spend_cheque_buttun_clicked(self,button):
-        cl_cheque = class_cheque.ClassCheque()
-        self.chequeui.list_cheques(None, 1)
-        cl_cheque.save_cheque_history()
+        cl_cheque = class_cheque.ClassCheque()        
+        #payments.get_object("selectPayBtn").set_sensitive(False)
+        self.spendChequeui. showPayments()
+        #self.spendChquesList = self.chequeui.chequesList 
+        #self.chequeui.list_cheques(None, 1)
+        #cl_cheque.save_cheque_history()         # TODO: look at this function to ensure that is not necessary
         
         
     def on_save_button_clicked(self, button):
@@ -335,19 +353,23 @@ class AutomaticAccounting:
         #Save data in data base for single use
         if self.liststore == None:
             type(result['from'])
+            if self.type_index is not None and self.type_configs[self.type_index][3]:
+                mode = 'our'                
+            else:
+                mode = 'other'
             document = class_document.Document()
             document.add_notebook(result['from'], -result['total_value'], unicode(result['desc']))
             document.add_notebook(result['to']  ,  result['cash_payment'], unicode(result['desc']))
             if result['discount'] :
                 document.add_notebook(dbconf.get_int('sell-discount'), -result['discount'], result['desc'])
             cl_cheque = class_cheque.ClassCheque()
-            for cheque in self.chequeui.new_cheques:
-                if self.mode == 'our':
+            for cheque in self.addChequeui.chequesList:
+                if mode == 'our':
                     document.add_cheque(dbconf.get_int('our_cheque'), cheque['amount'], cheque['desc'], cheque['serial'])
                 else:
                     document.add_cheque(dbconf.get_int('other_cheque'), cheque['amount'], cheque['desc'], cheque['serial'])
             #spendble cheque
-            for sp_cheque in self.chequeui.spend_cheques:
+            for sp_cheque in self.spendChequeui.chequesList:
                 cl_cheque.update_status(sp_cheque['serial'],5)
                 document.add_cheque(dbconf.get_int('other_cheque'), -sp_cheque['amount'] , unicode('kharj shodeh') , sp_cheque['serial'])
                     

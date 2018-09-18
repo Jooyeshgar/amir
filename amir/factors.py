@@ -998,8 +998,7 @@ class Factor(Payments):
 		self.calculateBalance()
 
 		
-	def showPayments(self,sender):		
-		self.builder.get_object("customerNameLbl").set_text(self.customerNameEntry.get_text())
+	def showPayments(self,sender):				
 		self.paymentManager.showPayments()
 		self.ttlNonCashEntry = self.builder.get_object("ttlNonCashEntry")
 
