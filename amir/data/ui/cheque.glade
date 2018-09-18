@@ -364,24 +364,6 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="choose Payer">
-                    <property name="label" translatable="yes">select</property>
-                    <property name="use_action_appearance">False</property>
-                    <property name="sensitive">False</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="focus_on_click">False</property>
-                    <signal name="clicked" handler="selectSeller" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="left_attach">3</property>
-                    <property name="right_attach">4</property>
-                    <property name="top_attach">2</property>
-                    <property name="bottom_attach">3</property>
-                    <property name="y_options">GTK_FILL</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkLabel" id="customerNameLbl">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -397,15 +379,14 @@
                   </packing>
                 </child>
                 <child>
+                  <placeholder/>
+                </child>
+                <child>
                   <object class="GtkEntry" id="payerNameEntry">
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
                     <property name="width_chars">10</property>
-                    <property name="caps_lock_warning">False</property>
-                    <property name="primary_icon_activatable">False</property>
-                    <property name="secondary_icon_activatable">False</property>
-                    <signal name="focus-out-event" handler="validatePayer" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -546,6 +527,81 @@
       <action-widget response="0">cancelBtn</action-widget>
     </action-widgets>
   </object>
+  <object class="GtkWindow" id="selectCheque">
+    <property name="can_focus">False</property>
+    <child>
+      <object class="GtkBox" id="box1">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="margin_left">20</property>
+        <property name="margin_right">20</property>
+        <property name="margin_top">20</property>
+        <property name="margin_bottom">20</property>
+        <property name="orientation">vertical</property>
+        <property name="baseline_position">top</property>
+        <child>
+          <object class="GtkTreeView" id="freeChequesTreeview">
+            <property name="height_request">250</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="margin_left">10</property>
+            <property name="margin_right">10</property>
+            <property name="margin_top">10</property>
+            <property name="margin_bottom">10</property>
+            <property name="level_indentation">20</property>
+            <child internal-child="selection">
+              <object class="GtkTreeSelection" id="treeview-selection"/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButtonBox" id="buttonbox1">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="spacing">8</property>
+            <property name="layout_style">start</property>
+            <child>
+              <object class="GtkButton" id="btnOk">
+                <property name="label" translatable="yes">OK</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btnCancel">
+                <property name="label" translatable="yes">Cancel</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="pack_type">end</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
   <object class="GtkDialog" id="showPymnts">
     <property name="width_request">700</property>
     <property name="can_focus">False</property>
@@ -665,7 +721,7 @@
                     <property name="label" translatable="yes">Select payment</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-dnd</property>
-                    <signal name="clicked" handler="selectPayBtn_clicked_cb" swapped="no"/>
+                    <signal name="clicked" handler="selectPayBtn_clicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>

@@ -7,7 +7,7 @@ import gi
 from gi.repository import Gtk
 from gi.repository import Gdk
 
-from sqlalchemy.sql import and_
+from sqlalchemy.sql import and_ , or_
 from sqlalchemy.orm.util import outerjoin
 
 import numberentry
@@ -49,6 +49,7 @@ class Payments(GObject.GObject):
 		self.builder = get_builder("cheque")
 		self.window = self.builder.get_object("showPymnts")
 		
+		self.addPymntDlg = self.builder.get_object("addPaymentDlg")
 		#self.spendCheque = spendCheque
 		if spendCheque : 		# if is from automatic accounting-> spend cheque
 			self.builder.get_object("addpaymentBtn") . set_sensitive(False)
@@ -127,6 +128,24 @@ class Payments(GObject.GObject):
 			self.cheqTreeView.append_column(column)
 			txt += 1
 			
+		self.chqSltWindow = self.builder.get_object("selectCheque")
+		self.freeChequesTreeview = self.builder.get_object("freeChequesTreeview")
+		self.sltCheqListStore = Gtk.ListStore(str, str, str, str, str, str, str, str, str , str)
+		self.sltCheqListStore.clear()
+		self.freeChequesTreeview.set_model(self.sltCheqListStore)
+
+		payByTo = "TEST"
+		cheqHeaders = (_("ID"), _("No."), payByTo, _("Amount"), _("Writing date"), _("Due Date"), 
+					  _("Bank"), _("Serial No."), _("Status"), _("Description"))
+		txt = 0
+		for header in cheqHeaders:
+			column = Gtk.TreeViewColumn(header,Gtk.CellRendererText(),text = txt)
+			column.set_spacing(5)
+			column.set_resizable(True)
+			self.freeChequesTreeview.append_column(column)
+			txt += 1
+
+
 		self.builder.connect_signals(self)
 		#
 	
@@ -171,10 +190,7 @@ class Payments(GObject.GObject):
 		return True
 
         
-	def addPayment(self, sender=0, is_cheque=True):
-		
-		self.addPymntDlg = self.builder.get_object("addPaymentDlg")
-		
+	def addPayment(self, sender=0, is_cheque=True):					
 		self.editingPay = None
 		self.addPymntDlg.set_title(_("Add Non-Cash Payment"))
 		self.edtPymntFlg = False
@@ -222,8 +238,7 @@ class Payments(GObject.GObject):
 			self.bankCombo.set_active(cheque.chqAccount - 1)
 						
 		self.edtPymntFlg = True
-		self.edititer = iter
-		self.addPymntDlg = self.builder.get_object("addPaymentDlg")
+		self.edititer = iter		
 		self.addPymntDlg.set_title(_("Edit Non-Cash Payment"))
 		self.builder.get_object("submitBtn").set_label(_("Save Changes..."))
 		self.builder.get_object("paymentsStatusBar").push(1,"")
@@ -448,15 +463,11 @@ class Payments(GObject.GObject):
 			msgbox.destroy()
 			return False
 		else:
-			return True
-			
-	def validatePayer(self, sender=0, ev=0):
-		return 
-
-				
+			return True			
 
 	def cancelPayment(self, sender=0, ev=0): 
-		self.addPymntDlg.hide()
+		#self.addPymntDlg.hide()
+		sender.hide()
 		return True
 
 	def addToTotalAmount(self, amount):
@@ -518,15 +529,22 @@ class Payments(GObject.GObject):
 		
 		self.payerEntry.set_text(customer.custId)	
 				
-	# def setSellerName(self,sender=0,ev=0):
-	# 	payer   = self.payerEntry.get_text()
-	# 	query   = self.session.query(Subject).select_from(Subject)
-	# 	query   = query.filter(Subject.code==payer).first()
-	# 	if not query:
-	# 		self.buyerNameEntry.set_text("")
-	# 	else:
-	# 		self.buyerNameEntry.set_text(query.name)
-	
+
+	def selectPayBtn_clicked(self , sender):		
+		query = self.session.query(Cheque) . filter (or_(Cheque.chqStatus== 3, Cheque.chqStatus== 6 ) )
+		cheqlist = query.all()
+		for cheq in cheqlist:						
+			order = utility.LN(self.numcheqs, False)
+			ID = utility.LN(cheq.chqId)
+			amount = utility.LN(cheq.chqAmount)
+			wrtDate = dateentry.dateToString(cheq.chqWrtDate)
+			dueDate = dateentry.dateToString(cheq.chqDueDate)
+			status = self.chequeStatus[cheq.chqStatus]
+			bank = self.bankaccounts_class.get_bank_name (cheq.chqAccount)				
+			customer = self.session.query(Customers) .filter(Customers.custId == cheq.chqCust).first().custName
+			self.sltCheqListStore.append((ID , order, customer, amount, wrtDate, dueDate, bank, 
+			                         cheq.chqSerial, status, cheq.chqDesc	))
+		self.chqSltWindow.show_all()
 
 GObject.type_register(Payments)
 GObject.signal_new("payments-changed", Payments, GObject.SignalFlags.RUN_LAST,
