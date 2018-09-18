@@ -116,7 +116,7 @@ class AmirConfig:
             if sys.platform == 'win32':
                 self.locale_path = '..\\locale'
             else:
-                self.locale_path = '../locale'
+                self.locale_path = '/usr/share/locale'
 
         else:
             logging.error('Project path not found. "%s"' % abs_data_path)

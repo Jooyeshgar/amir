@@ -207,7 +207,7 @@ class Product(productgroup.ProductGroup):
 				p_price  = self.purchPriceEntry.get_float()
 				s_price  = self.sellPriceEntry.get_float()
 				oversell = self.builder.get_object("oversell").get_active()
-				measurement = self.builder.get_object("uMeasureEntry").get_text()				
+				measurement = unicode(self.builder.get_object("uMeasureEntry").get_text())
 				success = self.saveProduct(code, accgrp, name, location, desc, quantity, q_warn, p_price, s_price, oversell, formula, measurement)
 			else:
 				break
@@ -271,7 +271,7 @@ class Product(productgroup.ProductGroup):
 						p_price  = self.purchPriceEntry.get_float()
 						s_price  = self.sellPriceEntry.get_float()
 						oversell = self.builder.get_object("oversell").get_active()
-						measurement = self.builder.get_object("uMeasureEntry").get_text()
+						measurement = unicode(self.builder.get_object("uMeasureEntry").get_text())
 					
 						success = self.saveProduct(code, accgrp, name, location, desc, quantity, q_warn, p_price, s_price, oversell, formula , measurement, iter)
 					else:

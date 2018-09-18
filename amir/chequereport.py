@@ -285,7 +285,7 @@ class ChequeReport:
         
         self.treeviewIncoming.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
         self.treeviewOutgoing.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
-        self.treeviewDeleted.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
+        self.treeviewDeleted.get_selection().set_mode(Gtk.SelectionMode.SINGLE)        
         #self.treestore.set_sort_func(0, self.sortGroupIds)
         # self.treestore.set_sort_column_id(0, Gtk.SortType.ASCENDING)
         self.window.show_all()
@@ -333,10 +333,11 @@ class ChequeReport:
         dateTo = box.get_text()
         self.showResult(chequeId, chqSerial, amountFrom, amountTo, dateFrom, dateTo)
 
-    def showResult(self, chequeId=None, chqSerial=None, amountFrom=None, amountTo=None, dateFrom=None, dateTo=None):
+    def showResult(self, chequeId=None, chqSerial=None, amountFrom=None, amountTo=None, dateFrom=None, dateTo=None):        
         self.treestoreIncoming.clear()
         self.treestoreOutgoing.clear()
-        result = config.db.session.query(Cheque).outerjoin(Customers, Customers.custId == Cheque.chqCust).all()
+        self.treestoreDeleted.clear()
+        result = config.db.session.query(Cheque).outerjoin(Customers, Customers.custId == Cheque.chqCust)
         # Apply filters
         if chequeId:
             result = result.filter(Cheque.chqId == chequeId)
@@ -371,7 +372,7 @@ class ChequeReport:
             result = result.filter(Cheque.chqDueDate >= dateFrom)
 
         # Show
-        for cheque in result:
+        for cheque in result.all():            
             if not hasattr(cheque, 'custName'):
                 cheque.custName = ''
             if share.config.datetypes[share.config.datetype] == "jalali": 
@@ -390,7 +391,7 @@ class ChequeReport:
                 year, month, day = str(cheque.chqDueDate).split("-")
                 chqDueDate = str(day) + '-' + str(month) + '-' + str(year)
 
-            if (cheque.chqStatus == 2) or (cheque.chqStatus == 3):
+            if (cheque.chqStatus == 2) or (cheque.chqStatus == 4):
                 clear = 'Cleared'
             else:
                 clear = 'Not Cleared'
@@ -400,8 +401,8 @@ class ChequeReport:
                     self.treestoreIncoming.append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(cheque.custName), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqNoteBookId), str(cheque.chqDesc), str(cheque.chqBillId), str(cheque.chqOrder)))
                 else:
                     self.treestoreOutgoing.append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(cheque.custName), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqNoteBookId), str(cheque.chqDesc), str(cheque.chqBillId), str(cheque.chqOrder)))
-            else:
-                self.treestoreDeleted.append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(cheque.custName), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqNoteBookId), str(cheque.chqDesc), str(cheque.chqBillId), str(cheque.chqOrder)))
+            else:                
+                self.treestoreDeleted.     append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(cheque.custName), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqNoteBookId), str(cheque.chqDesc), str(cheque.chqBillId), str(cheque.chqOrder)))
 
     def getSelection(self):
         selection = self.treeviewOutgoing.get_selection()
@@ -417,10 +418,10 @@ class ChequeReport:
                 selection = self.treeviewDeleted.get_selection()
                 iter = selection.get_selected()[1]
                 if iter != None :
-                    self.code = convertToLatin(self.treestoreDeleted.get(iter, 0)[0])
+                    self.code = convertToLatin(self.treestoreDeleted.get(iter, 0)[0])        
 
     def odatAzMoshtari(self, sender):
-        self.getSelection()
+        self.getSelection()       
         result = config.db.session.query(Cheque)
         result = result.filter(Cheque.chqId == self.code).first()
         result.chqStatus = 6
@@ -461,7 +462,7 @@ class ChequeReport:
 
         document = class_document.Document()
         document.add_notebook(result.Customers.custSubj  , result.Cheque.chqAmount, _('Bounced cheque'))
-        document.add_notebook(58, -result.Cheque.chqAmount, _('Bounced cheque'))
+        document.add_notebook(58, -result.Cheque.chqAmount, _('Bounced cheque'))    #TODO  58 must bee extracted from dbconfig ; like customer's subject in customer.py
         document.save()
 
         config.db.session.commit()
@@ -473,11 +474,12 @@ class ChequeReport:
         result = config.db.session.query(Cheque, Customers)
         result = result.filter(Customers.custId == Cheque.chqCust)
         result = result.filter(Cheque.chqId == self.code).first()
-        if result.Cheque.chqStatus == 4:
+        status = result.Cheque.chqStatus
+        if status == 4:
             sub = subjects.Subjects(parent_id=[1,14])
             sub.connect('subject-selected', self.on_subject_selected)
-        if result.Cheque.chqStatus == 1:
-            result.Cheque.chqStatus = 2
+        if status == 1 or status == 3:
+            result.Cheque.chqStatus = 2 if status == 1 else 3
             ch_history = ChequeHistory(result.Cheque.chqId, result.Cheque.chqAmount, result.Cheque.chqWrtDate, result.Cheque.chqDueDate, result.Cheque.chqSerial, result.Cheque.chqStatus, result.Cheque.chqCust, result.Cheque.chqAccount, result.Cheque.chqTransId, result.Cheque.chqDesc, self.current_time)
             config.db.session.add(ch_history)
             config.db.session.commit()
@@ -506,7 +508,8 @@ class ChequeReport:
         share.mainwin.silent_daialog(_("The operation was completed successfully."))
 
     def on_dialog_destroy(self, sender):
-        self.dialog.hide()
+        sender.hide()
+        #self.dialog.hide()
 
     def selectChequeFromListIncoming(self, treeview, path, view_column):
         selection = self.treeviewIncoming.get_selection()
@@ -683,19 +686,19 @@ class ChequeReport:
         my_button.set_sensitive(True)
         my_button = self.builder.get_object("passButton")
         my_button.set_sensitive(True)
-        self.getSelection()
+        self.getSelection()        
         result = config.db.session.query(Cheque)
-        result = result.filter(Cheque.chqId == self.code).first()
-        if result.chqStatus in [2,3,4,5,6,7,8]:
+        result = result.filter(Cheque.chqId == self.code).first()        
+        if result.chqStatus in [2,3,4,5,6,7,8]: # 1
             my_button = self.builder.get_object("odatAsMoshtariButton")
             my_button.set_sensitive(False)
-        if result.chqStatus in [1,2,3,5,6,7,8]:
+        if result.chqStatus in [1,2,4,5,6,7,8]: # 3 
             my_button = self.builder.get_object("odatBeMoshtariButton")
             my_button.set_sensitive(False)
-        if result.chqStatus in [1,2,3,5,6,7,8]:
+        if result.chqStatus in [2,4,5,6,7,8]:   # 1 , 3
             my_button = self.builder.get_object("bargashtButton")
             my_button.set_sensitive(False)
-        if result.chqStatus in [2,3,6,7,8]:
+        if result.chqStatus in [2,4,6,7,8]:     # 1 , 3 , 5
             my_button = self.builder.get_object("passButton")
             my_button.set_sensitive(False)
         if result.chqDelete == True:
