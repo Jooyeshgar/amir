@@ -4,6 +4,7 @@
 from sqlalchemy import *
 from migrate import *
 import logging
+from migrate.changeset.constraint import ForeignKeyConstraint
 
 def _2to3digits(num):
     _3digit = ""
@@ -105,8 +106,7 @@ def upgrade(migrate_engine):
 
     s.execute('ALTER TABLE `products` ADD COLUMN `uMeasurement`  Text;')
     s.commit()
-    #col = Column('uMeasurement', String, default='')
-    #col.create(table, populate_default=True)
+
 
     factorItems = Table('factorItems', meta, autoload=True)
     factorItems.c.exchngId.alter(name='id')
@@ -117,10 +117,13 @@ def upgrade(migrate_engine):
     factorItems.c.exchngUntDisc.alter(name='untDisc')
     factorItems.c.exchngTransId.alter(name='factorId')
     factorItems.c.exchngDesc.alter(name='desc')
-    '''factorItems = Table('factorItems', meta, autoload=True)
-                factorItems.c.exchngId.alter(name='id')
-                factorItems.c.exchngNo.alter(name='number')'''
+
     permissions.create(checkfirst=True)
+
+    cheque = Table('cheque', meta, autoload=True)
+    factors = Table('factors', meta, autoload=True)    
+    cons = ForeignKeyConstraint ([cheque.c.chqTransId] , [factors.c.Code])
+
     config = Table('config', meta, autoload=True)
     op = config.insert()
     op.execute(
