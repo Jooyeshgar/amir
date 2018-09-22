@@ -260,8 +260,8 @@ class AutomaticAccounting:
 
     def on_cash_payment_entry_change(self, entry):
         val1 = self.cash_payment_entry.get_float()
-        val2 = float(unicode(self.builder.get_object('non-cash-payment-label').get_text()).replace('/', '.'))
-        val3 = float(unicode(self.builder.get_object('spend-cheque-label').get_text()).replace('/','.'))
+        val2 = float(unicode(self.builder.get_object('non-cash-payment-label').get_text()).replace(','  ,  ''))
+        val3 = float(unicode(self.builder.get_object('spend-cheque-label').get_text()).replace(','  ,  ''))
         discount = self.discount_entry.get_float()
 
         paid = val1+val2+val3+discount
@@ -345,6 +345,7 @@ class AutomaticAccounting:
         
         
     def on_save_button_clicked(self, button):
+        share.config.db.session.rollback() 
         result = {}
         result['type']                  = self.type_index
         result['total_value']           = self.total_credit_entry.get_float()
@@ -375,13 +376,13 @@ class AutomaticAccounting:
             cl_cheque = class_cheque.ClassCheque()
             for cheque in self.addChequeui.chequesList:
                 if mode == 'our':
-                    document.add_cheque(dbconf.get_int('our_cheque'), cheque['amount'], cheque['desc'], cheque['serial'])
+                    document.add_cheque(dbconf.get_int('our_cheque'), cheque.chqAmount, cheque.chqDesc, cheque.chqSerial)
                 else:
-                    document.add_cheque(dbconf.get_int('other_cheque'), cheque['amount'], cheque['desc'], cheque['serial'])
+                    document.add_cheque(dbconf.get_int('other_cheque'), cheque.chqAmount, cheque.chqDesc, cheque.chqSerial)
             #spendble cheque
             for sp_cheque in self.spendChequeui.chequesList:
-                cl_cheque.update_status(sp_cheque['serial'],5)
-                document.add_cheque(dbconf.get_int('other_cheque'), -sp_cheque['amount'] , unicode('kharj shodeh') , sp_cheque['serial'])
+                cl_cheque.update_status(sp_cheque.chqSerial , sp_cheque.chqCust,5)
+                document.add_cheque(dbconf.get_int('other_cheque'), -sp_cheque.chqAmount , unicode('kharj shodeh') , sp_cheque.chqSerial)
                     
             result = document.save()
 
@@ -396,12 +397,12 @@ class AutomaticAccounting:
             else: # from is customer
                 customer_id = share.config.db.session.query(Customers).select_from(Customers).filter(Customers.custSubj==self.from_id).first().custId
 
-            for cheque in self.chequeui.new_cheques:
-                notebook_id =document.cheques_result[cheque['serial']]
-                cl_cheque.add_cheque(cheque['amount'], cheque['write_date'], cheque['due_date'],
-                                     cheque['serial'], cheque['status'],
-                                     customer_id, cheque['bank_account_id'],
-                                     0, notebook_id, cheque['desc'], result, 0)
+            for cheque in self.addChequeui.chequesList:
+                notebook_id =document.cheques_result[cheque.chqSerial]
+                cl_cheque.add_cheque(cheque.chqAmount, cheque.chqWrtDate, cheque.chqDueDate,
+                                     cheque.chqSerial, cheque.chqStatus,
+                                     customer_id, cheque.chqAccount,
+                                     0, notebook_id, cheque.chqDesc, result, 0)
             cl_cheque.save()
             cl_cheque.save_cheque_history(self.current_time)
             self.on_destroy(self.builder.get_object('general'))

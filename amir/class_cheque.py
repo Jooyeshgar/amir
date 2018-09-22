@@ -76,9 +76,10 @@ class ClassCheque:
     # ChequeUI::save calls this function automatically.
     # @param id cheque id
     # @param status New status - Integer
-    def update_status(self, serial, status):
-        u_ch = config.db.session.query(Cheque).filter(Cheque.chqSerial == serial).first()
-        u_ch.chqStatus = status
+    def update_status(self, serial,cust ,  status):
+        u_ch = config.db.session.query(Cheque).filter(Cheque.chqSerial == serial).filter(Cheque.chqCust == cust).first()        
+        ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, ch.chqStatus, ch.chqCust, cd.chqAccount, ch.chqTransId, ch.chqDesc, current_date)
+        config.db.session.add(ch_history)
 
     ## Save datas to database
     def save(self):
@@ -86,19 +87,17 @@ class ClassCheque:
             config.db.session.add(cheque)
         config.db.session.commit()
         
-    def save_cheque_history(self,current_date):
-        print current_date
-        print Cheque
-        for new_ch in self.new_cheques:
-            print new_ch.chqSerial
-            ch = config.db.session.query(Cheque).filter(Cheque.chqSerial == new_ch.chqSerial).first()
-            ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, ch.chqDesc, current_date)
-            print ch_history
+    def save_cheque_history(self,current_date):            
+        for new_ch in self.new_cheques:            
+            ch = config.db.session.query(Cheque).filter(Cheque.chqSerial == new_ch.chqSerial).filter(Cheque.chqCust == new_ch.chqCust).first()            
+            ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, ch.chqDesc, current_date)            
             config.db.session.add(ch_history)
-        for sp in self.sp_cheques:
-            ch = config.db.session.query(Cheque).filter(Cheque.chqSerial == sp['serial']).first()
-            ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, ch.chqStatus, ch.chqCust, cd.chqAccount, ch.chqTransId, ch.chqDesc, current_date)
-            config.db.session.add(ch_history)
+            config.db.session.commit()
+            print ch_history.Id
+            ch.chqHistoryId = ch_history. Id 
+       # for sp in self.sp_cheques:
+          #  ch = config.db.session.query(Cheque).filter(Cheque.chqSerial == sp['serial']).first()
         config.db.session.commit()
+        
             
 ## @}
