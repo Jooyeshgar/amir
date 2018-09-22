@@ -77,9 +77,13 @@ class ClassCheque:
     # @param id cheque id
     # @param status New status - Integer
     def update_status(self, serial,cust ,  status):
-        u_ch = config.db.session.query(Cheque).filter(Cheque.chqSerial == serial).filter(Cheque.chqCust == cust).first()        
-        ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, ch.chqStatus, ch.chqCust, cd.chqAccount, ch.chqTransId, ch.chqDesc, current_date)
+        current_date = dateentry.DateEntry().getDateObject()
+        ch = config.db.session.query(Cheque).filter(Cheque.chqSerial == serial).filter(Cheque.chqCust == cust).first()        
+        ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, ch.chqDesc, current_date)
         config.db.session.add(ch_history)
+        config.db.session.commit()            
+        ch.chqHistoryId = ch_history. Id 
+        ch.chqStatus = status
 
     ## Save datas to database
     def save(self):
@@ -92,8 +96,7 @@ class ClassCheque:
             ch = config.db.session.query(Cheque).filter(Cheque.chqSerial == new_ch.chqSerial).filter(Cheque.chqCust == new_ch.chqCust).first()            
             ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, ch.chqDesc, current_date)            
             config.db.session.add(ch_history)
-            config.db.session.commit()
-            print ch_history.Id
+            config.db.session.commit()            
             ch.chqHistoryId = ch_history. Id 
        # for sp in self.sp_cheques:
           #  ch = config.db.session.query(Cheque).filter(Cheque.chqSerial == sp['serial']).first()

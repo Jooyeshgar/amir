@@ -42,7 +42,7 @@ class Cheque(Base):
     chqDelete     = Column(Boolean)
 
     def __init__( self, chqAmount, chqWrtDate, chqDueDate, chqSerial,
-                  chqStatus, chqCust , chqAccount, chqTransId, chqNoteBookId, chqDesc,chqHistoryId ,chqBillId,chqOrder,chqDelete=False):
+                  chqStatus, chqCust , chqAccount, chqTransId, chqNoteBookId, chqDesc,chqHistoryId ,chqBillId,chqOrder=0,chqDelete=False):
         self.chqAmount   = chqAmount
         self.chqWrtDate  = chqWrtDate
         self.chqDueDate  = chqDueDate

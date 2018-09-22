@@ -183,7 +183,7 @@ class AutomaticAccounting:
             customerEntry = self.from_entry
         self.addChequeui = payments.Payments(0 , sellMode , False)
         self.addChequeui.customerNameLbl.set_text(customerEntry.get_text())
-        self.addChequeui.connect("payments-changed",self.update_non_cash_payment_label)
+        self.addChequeui.connect("payments-changed",self.update_non_cash_payment_label  )
 
     def on_from_clicked(self, button):
         entry  = self.from_entry
@@ -258,7 +258,7 @@ class AutomaticAccounting:
 
         dialog.destroy()
 
-    def on_cash_payment_entry_change(self, entry):
+    def on_cash_payment_entry_change(self, entry=None):
         val1 = self.cash_payment_entry.get_float()
         val2 = float(unicode(self.builder.get_object('non-cash-payment-label').get_text()).replace(','  ,  ''))
         val3 = float(unicode(self.builder.get_object('spend-cheque-label').get_text()).replace(','  ,  ''))
@@ -278,10 +278,12 @@ class AutomaticAccounting:
     def update_non_cash_payment_label(self , sender , total_value):
 
         self.builder.get_object('non-cash-payment-label').set_text(str(total_value))
+        self.on_cash_payment_entry_change()
         
     
     def update_spend_cheque_label(self, sender , total_value):        
         self.builder.get_object("spend-cheque-label").set_text(str(total_value))
+        self.on_cash_payment_entry_change()
 
     def on_subject_selected(self, subject, id, code, name, entry, to):
         if to:
@@ -309,6 +311,7 @@ class AutomaticAccounting:
             self.from_code = subj.code
             self.from_name = cust.custName
         entry.set_text(cust.custName)
+        self.addChequeui.customerNameLbl.set_text(cust.custName)
         self.check_save_button()
         customer.window.destroy()
 
@@ -330,19 +333,11 @@ class AutomaticAccounting:
         save_button.set_sensitive(True)
 
     def on_non_cash_payment_button_clicked(self, button):
-
         self.addChequeui. showPayments()
-        #self.addChquesList = self.chequeui.chequesList 
-        #self.chequeui.list_cheques(self.mode)
 
     def on_spend_cheque_buttun_clicked(self,button):
-        cl_cheque = class_cheque.ClassCheque()        
-        #payments.get_object("selectPayBtn").set_sensitive(False)
-        self.spendChequeui. showPayments()
-        #self.spendChquesList = self.chequeui.chequesList 
-        #self.chequeui.list_cheques(None, 1)
-        #cl_cheque.save_cheque_history()         # TODO: look at this function to ensure that is not necessary
-        
+        cl_cheque = class_cheque.ClassCheque()                
+        self.spendChequeui. showPayments()        
         
     def on_save_button_clicked(self, button):
         share.config.db.session.rollback() 
@@ -382,7 +377,7 @@ class AutomaticAccounting:
             #spendble cheque
             for sp_cheque in self.spendChequeui.chequesList:
                 cl_cheque.update_status(sp_cheque.chqSerial , sp_cheque.chqCust,5)
-                document.add_cheque(dbconf.get_int('other_cheque'), -sp_cheque.chqAmount , unicode('kharj shodeh') , sp_cheque.chqSerial)
+                document.add_cheque(dbconf.get_int('other_cheque'), -sp_cheque.chqAmount , unicode(_('spended')) , sp_cheque.chqSerial)
                     
             result = document.save()
 
@@ -432,31 +427,6 @@ class AutomaticAccounting:
                 numrows += 1
                 self.liststore.append ((LN(numrows), LN(mysubject.get_code(dbconf.get_int('sell-discount'))), mysubject.get_name(dbconf.get_int('sell-discount')), LN(result['discount']), LN(0), result['desc'], None))
 
-            #cl_cheque = class_cheque.ClassCheque()
-            #or cheque in self.chequeui.new_cheques:
-            #    if self.mode == 'our':
-            #        document.add_cheque(dbconf.get_int('our_cheque'), -cheque['amount'], cheque['desc'], cheque['serial'])
-            #    else:
-            #        document.add_cheque(dbconf.get_int('other_cheque'), -cheque['amount'], cheque['desc'], cheque['serial'])
-            #spendble cheque
-            #for sp_cheque in self.chequeui.spend_cheques:
-            #   cl_cheque.update_status(sp_cheque['serial'],5)
-            #    document.add_cheque(dbconf.get_int('other_cheque'), -sp_cheque['amount'] , unicode('kharj shodeh') , sp_cheque['serial'])
-                    
-
-            #if self.type_configs[self.type_index][3] == True: # from is subject
-            #    customer_id = 0
-            #else: # from is customer
-            #    customer_id = config.db.session.query(Customers).select_from(Customers).filter(Customers.custSubj==self.from_id).first().custId
-
-            #for cheque in self.chequeui.new_cheques:
-            #    notebook_id =document.cheques_result[cheque['serial']]
-            #    cl_cheque.add_cheque(cheque['amount'], cheque['write_date'], cheque['due_date'],
-            #                         cheque['serial'], cheque['status'],
-            #                         customer_id, cheque['bank_account_id'],
-            #                         result, notebook_id, cheque['desc'])
-            #cl_cheque.save()
-            #cl_cheque.save_cheque_history(self.current_time)
             self.on_destroy(self.builder.get_object('general'))
 
 
