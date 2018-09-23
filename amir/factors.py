@@ -1003,6 +1003,7 @@ class Factor(Payments):
 		self.ttlNonCashEntry = self.builder.get_object("ttlNonCashEntry")
 
 	def submitFactorPressed(self,sender):
+		self.session.rollback()	
 		permit  = self.checkFullFactor()
 		self.sell_factor = True
 		if permit:

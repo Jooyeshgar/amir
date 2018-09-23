@@ -718,6 +718,12 @@
                             <child>
                               <placeholder/>
                             </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
                           </object>
                         </child>
                       </object>
@@ -1046,7 +1052,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="xpad">10</property>
-                                <property name="label" translatable="yes">Transaction Code:</property>
+                                <property name="label" translatable="yes">Invoice Number:</property>
                                 <property name="xalign">0</property>
                               </object>
                               <packing>

@@ -7,7 +7,7 @@ import gi
 from gi.repository import Gtk
 from gi.repository import Gdk
 
-from sqlalchemy.sql import and_ , or_
+from sqlalchemy.sql import and_ , or_ , desc
 from sqlalchemy.orm.util import outerjoin
 
 import numberentry
@@ -40,6 +40,7 @@ class Payments(GObject.GObject):
 		self.sellFlag = sellFlag		
 		self.chequesList = []
 		self.spendList = []
+		self.lastChqID = 0
 		#self.background = Gtk.Fixed()
 		#self.background.put(Gtk.Image.new_from_file(os.path.join(config.data_path, "media", "background.png")), 0, 0)     # not working !
 		#self.background.show_all()
@@ -111,14 +112,14 @@ class Payments(GObject.GObject):
 		
 		
 		self.cheqTreeView = self.builder.get_object("chequeTreeView")
-		self.cheqListStore = Gtk.ListStore( str, str, str, str, str, str, str, str , str)
+		self.cheqListStore = Gtk.ListStore(str, str, str, str, str, str, str, str, str , str)
 		self.cheqListStore.clear()
 		self.cheqTreeView.set_model(self.cheqListStore)
 				
 		payByTo = _("Payid by") if sellFlag else _("Payid to")
 
 		
-		cheqHeaders = (_("No."), payByTo, _("Amount"), _("Writing date"), _("Due Date"), 
+		cheqHeaders = (_("ID") , _("No."), payByTo, _("Amount"), _("Writing date"), _("Due Date"), 
 					  _("Bank"), _("Serial No."), _("Status"), _("Description"))
 		txt = 0
 		for header in cheqHeaders:
@@ -169,6 +170,7 @@ class Payments(GObject.GObject):
 		for cheq in cheqlist:
 			self.numcheqs += 1
 			total += cheq.chqAmount
+			ID = utility.LN(cheq.chqId)
 			order = utility.LN(self.numcheqs, False)
 			ID = utility.LN(cheq.chqId)
 			amount = utility.LN(cheq.chqAmount)
@@ -177,9 +179,12 @@ class Payments(GObject.GObject):
 			status = self.chequeStatus[cheq.chqStatus]
 			bank = self.bankaccounts_class.get_bank_name (cheq.chqAccount)				
 			customer = self.session.query(Customers) .filter(Customers.custId == cheq.chqCust).first().custName
-			self.cheqListStore.append((order, customer, amount, wrtDate, dueDate, bank, 
-			                         cheq.chqSerial, status, cheq.chqDesc))
+			self.cheqListStore.append((ID , order, customer, amount, wrtDate, dueDate, bank, 
+			                         cheq.chqSerial, status, cheq.chqDesc))			
 		self.addToTotalAmount(total)
+		self. lastChqID = self.session.query(Cheque).order_by(desc(Cheque.chqId)).first().chqId
+		print self.lastChqID
+
 	
 	def showPayments(self):
 		self.window.show_all()
@@ -256,7 +261,7 @@ class Payments(GObject.GObject):
 		if iter == None:
 			return
 		
-		number = utility.getInt(self.cheqListStore.get(iter, 0)[0])			
+		number = utility.getInt(self.cheqListStore.get(iter, 1)[0])			
 		msg = _("Are you sure to delete the cheque number %d?") % number
 		msgBox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, 
 		                           Gtk.MessageType.QUESTION, Gtk.ButtonsType.OK_CANCEL, msg)
@@ -265,25 +270,54 @@ class Payments(GObject.GObject):
 		msgBox.destroy()
 		if answer != Gtk.ResponseType.OK:
 			return
-		query = self.session.query(Cheque)
-		query = query.filter(and_(Cheque.chqTransId == self.transId,  Cheque.chqOrder == number , Cheque.chqBillId == 0))
-		cheque = query.first()					
-		if cheque != None:
+		ID = utility.getInt(self.cheqListStore.get(iter, 0)[0])			 
+		cheque =self.session.query(Cheque). filter(Cheque.chqId == ID).first()	
+		if cheque.chqStatus!= 5 : #cheque is just related to this transaction and is not spended from anywhere		
+			if cheque.chqId == self.lastChqID:
+				self.lastChqID -= 1		
 			self.session.delete(cheque) # TODO : also  must deletes notebook 
 			# Decrease the order-number in next rows
-			query = self.session.query(Cheque)
-			query = query.filter(and_(Cheque.chqTransId == self.transId,  Cheque.chqOrder > number))
-			query.update( {Cheque.chqOrder: Cheque.chqOrder - 1 } )
+			# query = self.session.query(Cheque)
+			# query = query.filter(and_(Cheque.chqTransId == self.transId,  Cheque.chqOrder > number))
+			# query.update( {Cheque.chqOrder: Cheque.chqOrder - 1 } )
 		#else if cheque == None: # spending
+
+		else:
+			chqHistory = cheque.chqHistoryId
+			history = self.session.query(ChequeHistory).filter(ChequeHistory.Id == chqHistory).first()
+			prevCheque = Cheque(
+						history.Amount						,
+						history.WrtDate							, 
+						history.DueDate							, 
+						history.Serial							, 
+						history.Status							,			
+						history.Cust							, 
+			            history.Account							,
+			            history.TransId					, 
+			            cheque.chqNoteBookId					, #notebook ID 
+			            history.Desc						, 
+			            chqHistory					,	#TODO must be a valid cheque history ID
+			            cheque.chqBillId					,	#bill Id
+			            0  					)	#order
+			#self.chequesList[number-1] = prevCheque
+			#revert cheque to  it's last history 
+			cheque.chqAmount = history.Amount
+			cheque.chqWrtDate = history.WrtDate 
+			cheque.chqDueDate = history.DueDate
+			cheque.chqSerial  = history.Serial
+			cheque . chqStatus = history. Status 
+			cheque. chqCust  = history.Cust
+			cheque.chqAccount = history.Account
+			cheque.chqTransId  = history.TransId
+			cheque.chqDesc = history.Desc
 
 		self.numcheqs -= 1
 		liststore = self.cheqListStore
 		del self.chequesList[number - 1]
 
-		amount = utility.getInt(self.cheqListStore.get(iter, 2)[0])
+		amount = utility.getInt(self.cheqListStore.get(iter, 3)[0])
 		#self.session.commit()
-		self.addToTotalAmount(-(amount))
-		
+		self.addToTotalAmount(-(amount))	
 		hasrow = liststore.remove(iter)
 		# if there is a row after the deleted one
 		if hasrow:
@@ -331,9 +365,9 @@ class Payments(GObject.GObject):
 		#	cheque.chqOwnerName	= self.payerEntry.get_text()
 			cheque.chqDesc = pymntDesc
 			
-			self.cheqListStore.set(iter, 1,self.customerNameLbl.get_text() , 2, pymnt_str,
-			                      3, wrtDate_str, 4, dueDte_str, 5 ,unicode(bank_name) , 6, serial, 7, 
-			                      self.chequeStatus[status], 8, pymntDesc)
+			self.cheqListStore.set(iter, 2,self.customerNameLbl.get_text() , 3, pymnt_str,
+			                      4, wrtDate_str, 5, dueDte_str, 6 ,unicode(bank_name) , 7, serial, 8, 
+			                      self.chequeStatus[status], 9, pymntDesc)
 						
 			self.chequesList[number-1] = Cheque(
 						pymntAmnt						,
@@ -367,8 +401,9 @@ class Payments(GObject.GObject):
 			            0					,
 			            0					,
 			           	order					)				            				
+			self. lastChqID += 1
 			self.session.add(cheque)
-			iter = self.cheqListStore.append((order,self.customerNameLbl.get_text()  , pymnt_str, wrtDate_str, 
+			iter = self.cheqListStore.append((unicode(self.lastChqID ) , order ,self.customerNameLbl.get_text()  , pymnt_str, wrtDate_str, 
 	                      dueDte_str, unicode(bank_name), serial, self.chequeStatus[status], pymntDesc))
 			self.chequesList .append(cheque)
 			#self.session.add(chequeHistory)							
@@ -554,9 +589,9 @@ class Payments(GObject.GObject):
 	def onFreeChequeSelected (self , sender , path = None , col = 0):		
 		treeiter = self.sltCheqListStore.get_iter(path)
 		chequeId = self.sltCheqListStore.get_value(treeiter , 0)
-		cheque = self.session.query(Cheque ) . filter(Cheque.chqId == chequeId).first()
-		#cheque.chqStatus = 5
-		#cheque.chqTransId = self.transId
+		cheque = self.session.query(Cheque ) . filter(Cheque.chqId == chequeId).first()		
+		cheque.chqStatus = 5
+		#cheque.chqTransId = self.TransId # TODO !!!!!!!!!!!!!!!!!!!!!!!!!!
 		self.chequesList .append(cheque)
 		self.numcheqs  += 1 
 		#chequeNo = self.sltCheqListStore.get_value(treeiter , 1)
@@ -566,9 +601,9 @@ class Payments(GObject.GObject):
 		chequeDDate = self.sltCheqListStore.get_value(treeiter , 5)
 		chequeBank = self.sltCheqListStore.get_value(treeiter , 6)
 		chequeSerial = self.sltCheqListStore.get_value(treeiter , 7)
-		chequeStatus = self.sltCheqListStore.get_value(treeiter , 7)
+		chequeStatus = self.chequeStatus[cheque.chqStatus] #self.sltCheqListStore.get_value(treeiter , 7)
 		chequeDesc = self.sltCheqListStore.get_value(treeiter , 7)
-		self.cheqListStore.append((utility.LN(self.numcheqs  ),chequeCust  , chequeAmnt, chequeWDate, 
+		self.cheqListStore.append((chequeId , utility.LN(self.numcheqs  ),chequeCust  , chequeAmnt, chequeWDate, 
 	           chequeDDate, chequeBank, chequeSerial, chequeStatus, chequeDesc))
 
 		self.addToTotalAmount(utility.getFloat(chequeAmnt) ) 

@@ -79,7 +79,7 @@ class ClassCheque:
     def update_status(self, serial,cust ,  status):
         current_date = dateentry.DateEntry().getDateObject()
         ch = config.db.session.query(Cheque).filter(Cheque.chqSerial == serial).filter(Cheque.chqCust == cust).first()        
-        ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, ch.chqDesc, current_date)
+        ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, status, ch.chqCust, ch.chqAccount, ch.chqTransId, ch.chqDesc, current_date)
         config.db.session.add(ch_history)
         config.db.session.commit()            
         ch.chqHistoryId = ch_history. Id 
