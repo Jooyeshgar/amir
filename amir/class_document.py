@@ -122,7 +122,7 @@ class Document:
                 #self.number = neededBill.first().number
                 neededBill.update({ Bill.lastedit_date: date.today() , Bill.date: self.date})
                 share.config.db.session.commit()
-                self.id = billId
+                self.id = billId                
 
                 old_notebooks = share.config.db.session.query(Notebook)    . filter(Notebook.bill_id == billId)  .all()
                 for nb in old_notebooks:                    
@@ -161,15 +161,16 @@ class Document:
                 self.id = query.first().id                                    
 
         for notebook in self.notebooks:
-                    share.config.db.session.add(Notebook(notebook[0], self.id, notebook[1], notebook[2]))                            
+            share.config.db.session.add(Notebook(notebook[0], self.id, notebook[1], notebook[2]))                            
 
                 #  pay attention ...   :/
         for cheque in self.cheques:            
            n = Notebook(cheque[0], self.id, cheque[1], cheque[2])
-           share.config.db.session.add(n)                   
-           self.cheques_result[cheque[3]] = n.id
+           share.config.db.session.add(n)        
+           share.config.db.session.commit()           
+           self.cheques_result[cheque[3]] = n.id           
         self.notebooks = []
-        share.config.db.session.commit()
+        
         return self.id      # bill id
 
     def get_error_message(self, code):

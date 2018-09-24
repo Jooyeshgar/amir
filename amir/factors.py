@@ -20,6 +20,7 @@ from    sqlalchemy.sql              import  and_
 from    sqlalchemy.sql.functions    import  *
 from    database                    import  *
 import	class_document
+import  class_cheque
 from gi.repository import Gtk
 from gi.repository import Gdk
 from payments import Payments
@@ -224,7 +225,9 @@ class Factor(Payments):
 			lastCode  = query.order_by(Factors.Code.desc()).first()
 			if not lastCode:
 				self.Code  = 1
+				self.Id = 1
 			else:
+				self.Id = self.session.query(Factors).order_by(Factors.Id.desc()) . first().Id + 1
 				self.Code  = int(lastCode.Code) + 1		
 		self.mainDlg = self.builder.get_object("FormWindow")
 
@@ -327,8 +330,7 @@ class Factor(Payments):
 	def removeFactor(self, sender):
 		selection = self.treeview.get_selection()
 		iter1 = selection.get_selected()[1]	
-		code = self.treestore.get_value(iter1, 0)
-	#	print code
+		code = self.treestore.get_value(iter1, 0)	
 		factor = config.db.session.query(Factors).filter(Factors.Id ==unicode(code) ).first()
 		TransactionId = factor  . Id		
 		
@@ -536,14 +538,12 @@ class Factor(Payments):
 			self.valsChanged()
 			length  = len(self.sellsItersDict) -1
 			if len(self.sellsItersDict) > 1:
-				while No < length:
-			#		print No
+				while No < length:			
 					nextIter    = self.sellsItersDict[No+1]
 					self.sellListStore.set_value(nextIter,0,str(No))
 					self.sellsItersDict[No] = nextIter
 					del self.sellsItersDict[No+1]
-					No  += 1
-		#		print "--------------",length
+					No  += 1		
 			else:
 				self.sellsItersDict = {}
 				
@@ -739,8 +739,7 @@ class Factor(Payments):
 		feeEntry    = self.feeEntry
 
 		self.totalDiscsEntry.set_text(utility.LN(ttlDiscs))
-		self.totalFactor = subtotal + additions - subtracts - ttlDiscs
-	#	print self.totalFactor
+		self.totalFactor = subtotal + additions - subtracts - ttlDiscs	
 		if self.vatCheck:
 			self.VAT = self.totalFactor * dbconf.get_int("vat-rate")/100
 			self.fee = self.totalFactor * dbconf.get_int("fee-rate")/100
@@ -767,8 +766,7 @@ class Factor(Payments):
 
 	def validatePCode(self, sender, event):
 		productCd   = unicode(self.proVal.get_text())
-		if self.product_code != productCd:
-		#	print "validateCode"
+		if self.product_code != productCd:		
 			product = self.session.query(Products).select_from(Products).filter(Products.code==productCd).first()
 			if not product:
 				self.proVal.modify_base(Gtk.StateType.NORMAL,self.redClr)
@@ -796,8 +794,7 @@ class Factor(Payments):
 			else:
 				qnty = self.qntyEntry.get_float()
 
-			if self.quantity != qnty:
-		#		print "validateQnty"
+			if self.quantity != qnty:		
 				qntyAvlble  = float(self.product.quantity)
 				over    = self.product.oversell
 				if qnty < 0:
@@ -824,8 +821,7 @@ class Factor(Payments):
 				if not severe:
 					code   = self.proVal.get_text()
 					sellPrc = self.product.sellingPrice
-					if self.product.discountFormula:
-			#			print "formula exists!"
+					if self.product.discountFormula:			
 						discval = self.calcDiscount(self.product.discountFormula, qnty, sellPrc)
 						discstr = utility.LN(discval)
 						if self.sell:
@@ -879,8 +875,7 @@ class Factor(Payments):
 			if not severe:
 				self.calcTotal()
 	
-	def validateDiscnt(self, sender=0, event=0):
-	#	print "validateDiscnt"
+	def validateDiscnt(self, sender=0, event=0):	
 		if self.product:
 			stMsg = ""
 			severe = False
@@ -895,8 +890,7 @@ class Factor(Payments):
 				disc  = utility.convertToLatin(self.discountEntry.get_text())
 				discval = 0
 
-				if disc != "":
-		#			print disc
+				if disc != "":		
 					pindex = disc.find(u'%')
 					if pindex == 0 or pindex == len(disc) - 1:
 						discp = float(disc.strip(u'%'))
@@ -1002,8 +996,7 @@ class Factor(Payments):
 		self.paymentManager.showPayments()
 		self.ttlNonCashEntry = self.builder.get_object("ttlNonCashEntry")
 
-	def submitFactorPressed(self,sender):
-		self.session.rollback()	
+	def submitFactorPressed(self,sender):		
 		permit  = self.checkFullFactor()
 		self.sell_factor = True
 		if permit:
@@ -1051,13 +1044,11 @@ class Factor(Payments):
 						pro_dic[pro_name] = pro.quantity - pro_qnty
 			
 			pro_str = ""
-			for (k, v) in pro_dic.items():
-	#			print "%s : %d" % (k, v)
+			for (k, v) in pro_dic.items():	
 				if v < 0:
 					pro_str += k + _(", ")
 					
-			pro_str.strip()
-		#	print pro_str
+			pro_str.strip()		
 			
 			if pro_str:
 				msg = _("The available quantity of %s is not enough for the invoice. You can save it as pre-invoice.") \
@@ -1196,42 +1187,83 @@ class Factor(Payments):
 					
 		
 	def registerDocument(self):
-		# Create new document
-		bill_id = self.saveDocument();
-		
 		cust_code = unicode(self.customerEntry.get_text())				
-		cust = self.session.query(Customers).filter(Customers.custCode == cust_code).first()		
-		cheques = self.session.query(Cheque).filter(Cheque.chqTransId == self.Id )#.filter(Cheque.chqBillId == self.billId)
+		cust = self.session.query(Customers).filter(Customers.custCode == cust_code).first()
+		
+		cl_cheque = class_cheque.ClassCheque()
+		dbconf = dbconfig.dbConfig()
+		for cheque in self.paymentManager.chequesList:
+			if cheque.chqStatus == 5 :
+				#cl_cheque.update_status(sp_cheque.chqId,5 , self.custId)
+				self.Document.add_cheque(dbconf.get_int('other_cheque'), -cheque.chqAmount , unicode(_('spended')) , cheque.chqId)
+			elif not self.sell: #buying - our cheque
+				self.Document.add_cheque(dbconf.get_int('our_cheque'), cheque.chqAmount, cheque.chqDesc, cheque.chqId)
+			else:		 	  #selling - their cheque
+				self.Document.add_cheque(dbconf.get_int('other_cheque'), cheque.chqAmount, cheque.chqDesc, cheque.chqId) 
+
+			##add cheque history			
+			chequeHistoryChequeId 	= 	cheque.chqId
+			chequeHistoryAmount   	=	cheque.chqAmount
+			chequeHistoryWrtDate  	=	cheque.chqWrtDate
+			chequeHistoryDueDate	=	cheque.chqDueDate
+			chequeHistorySerial	    =	cheque.chqSerial
+			chequeHistoryStatus	    =	cheque.chqStatus
+			chequeHistoryCust		=	cust.custId
+			chequeHistoryAccount	=	cheque.chqAccount
+			chequeHistoryDesc		=	cheque.chqDesc
+			chequeHistoryDate		=	self.editDate
+			chequeHistoryTransId	=	self.Id					
+			
+			chequeHistory= ChequeHistory(			
+						chequeHistoryChequeId 	,
+						chequeHistoryAmount   	,
+						chequeHistoryWrtDate  	,
+						chequeHistoryDueDate	,
+						chequeHistorySerial	,
+						chequeHistoryStatus	,
+						chequeHistoryCust		,
+						chequeHistoryAccount	,
+						chequeHistoryTransId	,
+						chequeHistoryDesc		,
+						chequeHistoryDate			)  
+			self.session.add(chequeHistory) 
+			self.session.commit()			
+			print cheque.chqId
+			ch = self.session.query(Cheque).filter(Cheque.chqId == cheque.chqId).first()			
+			ch.chqHistoryId = chequeHistory.Id			
+			self.session.commit()
+
+
+		# Create new document
+		bill_id = self.saveDocument()
+
+
+		for cheque in self.paymentManager.chequesList:
+			notebook_id = self.Document.cheques_result[cheque.chqId]
+			ch = self.session.query(Cheque).filter(Cheque.chqId == cheque.chqId).first()
+			ch.chqNoteBookId = notebook_id
+
+		# 	cheq = Cheque(cheque.chqAmount, cheque.chqWrtDate, cheque.chqDueDate,
+		# 			cheque.chqSerial, cheque.chqStatus,
+		# 			cust, cheque.chqAccount,
+		# 			self.Id, notebook_id, cheque.chqDesc, bill_id, 0)
+		# 	if self.editFlag:
+		# 		cl_cheque.edit(cheq , cheque.chqId)
+		# 	else:
+		# 		cl_cheque.add_cheque(cheq)
+		# cl_cheque.save()
+		# cl_cheque.save_cheque_history(self.editDate)
+		cheques = self.session.query(Cheque).filter(Cheque.chqTransId == self.Id )
 		cheques.update ({Cheque.chqCust:cust.custId , Cheque.chqBillId : bill_id})
 		self.session.commit()
 
-				
-		'''for pay in cheques:	
-									#		print pay.chqId
-										#	print pay.chqCust
-											pay.chqCust=cust.custId
-									#		print cust.custId
-										#	self.session.add(pay)
-											self.session.commit()'''		
-		
-		
 		# Assign document to the current transaction
 		query = self.session.query(Factors)
 		query = query.filter(Factors.Code == self.Code)
 		query = query.filter(Factors.Sell == self.sell)
 		query.update( {Factors.Bill : bill_id } )	
 		self.session.commit()	
-
-		#####
-		'''query = self.session.query(Cheque)
-								query = query.filter(Cheque.chqTransId == self.Id)
-								query.update( {Cheque.chqBillId : bill_id } )
-								self.session.commit()'''
-				
-		query = self.session.query(Payment)
-		query = query.filter(Payment.paymntTransId == self.Id)
-		query =query.update( {Payment.paymntBillId : bill_id } )		
-		self.session.commit()
+			
 			
 	def createPrintJob(self):
 		dbconf = dbconfig.dbConfig()
@@ -1547,8 +1579,7 @@ class Factor(Payments):
 							</tbody> \
 						</table> \
 					</body> \
-				</html>'
-	#	print html;
+				</html>'	
 		return html
 	def printTransaction(self, sender):
 		

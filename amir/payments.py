@@ -160,30 +160,29 @@ class Payments(GObject.GObject):
 		total = 0
 
 		query = self.session.query(Cheque)		
-		if self.transId == 0 :					#  from automatic accounting 
-			query = query.filter(Cheque.chqTransId == -1  )
-		else:				
+		if self.transId != 0 :					#  from automatic accounting 					
 			query = query.select_from(Factors).filter(Cheque.chqTransId== self.transId) . filter (Factors.Sell == self.sellFlag)			
-		cheqlist = query.order_by(Cheque.chqOrder.asc()).all()
-		self.chequesList = cheqlist 
-		#cheqlist = query.all()
-		for cheq in cheqlist:
-			self.numcheqs += 1
-			total += cheq.chqAmount
-			ID = utility.LN(cheq.chqId)
-			order = utility.LN(self.numcheqs, False)
-			ID = utility.LN(cheq.chqId)
-			amount = utility.LN(cheq.chqAmount)
-			wrtDate = dateentry.dateToString(cheq.chqWrtDate)
-			dueDate = dateentry.dateToString(cheq.chqDueDate)
-			status = self.chequeStatus[cheq.chqStatus]
-			bank = self.bankaccounts_class.get_bank_name (cheq.chqAccount)				
-			customer = self.session.query(Customers) .filter(Customers.custId == cheq.chqCust).first().custName
-			self.cheqListStore.append((ID , order, customer, amount, wrtDate, dueDate, bank, 
-			                         cheq.chqSerial, status, cheq.chqDesc))			
-		self.addToTotalAmount(total)
-		self. lastChqID = self.session.query(Cheque).order_by(desc(Cheque.chqId)).first().chqId
-		print self.lastChqID
+			cheqlist = query.order_by(Cheque.chqOrder.asc()).all()
+			self.chequesList = cheqlist 
+			#cheqlist = query.all()
+			for cheq in cheqlist:
+				self.numcheqs += 1
+				total += cheq.chqAmount
+				ID = utility.LN(cheq.chqId)
+				order = utility.LN(self.numcheqs, False)
+				ID = utility.LN(cheq.chqId)
+				amount = utility.LN(cheq.chqAmount)
+				wrtDate = dateentry.dateToString(cheq.chqWrtDate)
+				dueDate = dateentry.dateToString(cheq.chqDueDate)
+				status = self.chequeStatus[cheq.chqStatus]
+				bank = self.bankaccounts_class.get_bank_name (cheq.chqAccount)				
+				customer = self.session.query(Customers) .filter(Customers.custId == cheq.chqCust).first().custName
+				self.cheqListStore.append((ID , order, customer, amount, wrtDate, dueDate, bank, 
+				                         cheq.chqSerial, status, cheq.chqDesc))			
+			self.addToTotalAmount(total)
+			cheque = self.session.query(Cheque).order_by(desc(Cheque.chqId)).first()
+			if cheque != None :
+				self. lastChqID = cheque.chqId		
 
 	
 	def showPayments(self):
@@ -228,7 +227,7 @@ class Payments(GObject.GObject):
 		if iter == None:
 			return
 		else:
-			number = utility.convertToLatin(self.cheqListStore.get(iter, 0)[0])
+			number = utility.convertToLatin(self.cheqListStore.get(iter, 1)[0])		
 			number = utility.getInt(number)						
 			cheque = self.chequesList [number-1]		# reads from cheques list that holds temporary changes in cheque table. for adding or edditing without effect on database before submiting factor form				
 			self.editid = cheque.chqId
@@ -285,21 +284,7 @@ class Payments(GObject.GObject):
 		else:
 			chqHistory = cheque.chqHistoryId
 			history = self.session.query(ChequeHistory).filter(ChequeHistory.Id == chqHistory).first()
-			prevCheque = Cheque(
-						history.Amount						,
-						history.WrtDate							, 
-						history.DueDate							, 
-						history.Serial							, 
-						history.Status							,			
-						history.Cust							, 
-			            history.Account							,
-			            history.TransId					, 
-			            cheque.chqNoteBookId					, #notebook ID 
-			            history.Desc						, 
-			            chqHistory					,	#TODO must be a valid cheque history ID
-			            cheque.chqBillId					,	#bill Id
-			            0  					)	#order
-			#self.chequesList[number-1] = prevCheque
+			
 			#revert cheque to  it's last history 
 			cheque.chqAmount = history.Amount
 			cheque.chqWrtDate = history.WrtDate 
@@ -324,12 +309,12 @@ class Payments(GObject.GObject):
 			# Decrease the order-number in next rows
 			while iter != None:
 				number_str = utility.LN(number, False)
-				liststore.set_value (iter, 0, number_str)
+				liststore.set_value (iter, 1, number_str)
 				number += 1
 				iter = liststore.iter_next(iter)
 
 
-	def submitPayment(self, sender=0):
+	def submitPayment(self, sender=0):		
 		if self.validatePayment() == False:
 			return	
 		pre_amnt 	= 0
@@ -349,11 +334,11 @@ class Payments(GObject.GObject):
 		status = 3  if  self.sellFlag else 1 	# buy -> pardakhti , sell -> daryafti	
 		if self.edtPymntFlg:
 			iter = self.edititer
-			number = utility.convertToLatin(self.cheqListStore.get(iter, 0)[0])
+			number = utility.convertToLatin(self.cheqListStore.get(iter, 1)[0])
 			number = utility.getInt(number)	
 			cheque = self.chequesList[number - 1]
 			query = self.session.query(Cheque)
-			cheque = query.filter(and_(Cheque.chqTransId == cheque.chqTransId , Cheque.chqOrder == number) ).first()
+			cheque = query.filter(and_(Cheque.chqTransId == cheque.chqTransId) ).first()
 			pre_amnt = cheque.chqAmount
 			cheque.chqAmount = pymntAmnt
 			cheque.chqWrtDate = wrtDate
@@ -368,8 +353,9 @@ class Payments(GObject.GObject):
 			self.cheqListStore.set(iter, 2,self.customerNameLbl.get_text() , 3, pymnt_str,
 			                      4, wrtDate_str, 5, dueDte_str, 6 ,unicode(bank_name) , 7, serial, 8, 
 			                      self.chequeStatus[status], 9, pymntDesc)
-						
-			self.chequesList[number-1] = Cheque(
+			self. lastChqID += 1	
+
+			self.chequesList[number-1] = Cheque(						
 						pymntAmnt						,
 						wrtDate							, 
 						dueDte							, 
@@ -382,12 +368,13 @@ class Payments(GObject.GObject):
 			            pymntDesc						, 
 			            0					,	#TODO must be a valid cheque history ID
 			            0					,	#bill Id
-			            number  					)	#order
+			            number  			,	#order
+			            chqId = self.lastChqID			)	
 		else:		# adding cheque
 			self.numcheqs += 1
 			order = utility.LN(self.numcheqs)
-			
-			cheque = Cheque(
+			self. lastChqID += 1			
+			cheque = Cheque(						
 						pymntAmnt						,
 						wrtDate							, 
 						dueDte							, 
@@ -400,41 +387,17 @@ class Payments(GObject.GObject):
 			            pymntDesc						, 
 			            0					,
 			            0					,
-			           	order					)				            				
-			self. lastChqID += 1
+			           	order				,
+			           	chqId = self.lastChqID	)				            				
+			
 			self.session.add(cheque)
 			iter = self.cheqListStore.append((unicode(self.lastChqID ) , order ,self.customerNameLbl.get_text()  , pymnt_str, wrtDate_str, 
 	                      dueDte_str, unicode(bank_name), serial, self.chequeStatus[status], pymntDesc))
 			self.chequesList .append(cheque)
-			#self.session.add(chequeHistory)							
+
+										
 			
-			##add cheque history
-			self.chequeHistoryChequeId 	= 	0
-			self.chequeHistoryAmount   	=	pymntAmnt
-			self.chequeHistoryWrtDate  	=	wrtDate
-			self.chequeHistoryDueDate	=	dueDte
-			self.chequeHistorySerial	=	serial
-			self.chequeHistoryStatus	=	status
-			self.chequeHistoryCust		=	None
-			self.chequeHistoryAccount	=	None
-			self.chequeHistoryDesc		=	pymntDesc
-			self.chequeHistoryDate		=	wrtDate
-			self.chequeHistoryTransId	=	self.transId
-			
-			
-			
-# 				chequeHistory= ChequeHistory(			
-# 						self.chequeHistoryChequeId 	,
-# 						self.chequeHistoryAmount   	,
-# 						self.chequeHistoryWrtDate  	,
-# 						self.chequeHistoryDueDate	,
-# 						self.chequeHistorySerial	,
-# 						self.chequeHistoryStatus	,
-# 						self.chequeHistoryCust		,
-# 						self.chequeHistoryAccount	,
-# 						self.chequeHistoryTransId	,
-# 						self.chequeHistoryDesc		,
-# 						self.chequeHistoryDate			)
+
 
 		## updat chequehistory id	
 # 			query=self.session.query(ChequeHistory).select_from(ChequeHistory)
@@ -576,7 +539,11 @@ class Payments(GObject.GObject):
 			dueDate = dateentry.dateToString(cheq.chqDueDate)
 			status = self.chequeStatus[cheq.chqStatus]
 			bank = self.bankaccounts_class.get_bank_name (cheq.chqAccount)				
-			customer = self.session.query(Customers) .filter(Customers.custId == cheq.chqCust).first().custName
+			customer = self.session.query(Customers) .filter(Customers.custId == cheq.chqCust).first()
+			if customer != None:
+				customer = customer.custName
+			else: 
+				continue
 			self.sltCheqListStore.append((ID , order, customer, amount, wrtDate, dueDate, bank, 
 			                         cheq.chqSerial, status, cheq.chqDesc	))
 		self.chqSltWindow.show_all()

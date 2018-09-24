@@ -371,13 +371,19 @@ class AutomaticAccounting:
             cl_cheque = class_cheque.ClassCheque()
             for cheque in self.addChequeui.chequesList:
                 if mode == 'our':
-                    document.add_cheque(dbconf.get_int('our_cheque'), cheque.chqAmount, cheque.chqDesc, cheque.chqSerial)
+                    document.add_cheque(dbconf.get_int('our_cheque'), cheque.chqAmount, cheque.chqDesc, cheque.chqId)
                 else:
-                    document.add_cheque(dbconf.get_int('other_cheque'), cheque.chqAmount, cheque.chqDesc, cheque.chqSerial)
-            #spendble cheque
+                    document.add_cheque(dbconf.get_int('other_cheque'), cheque.chqAmount, cheque.chqDesc, cheque.chqId)            
+
+            if self.type_configs[self.type_index][3] == True: # from is subject
+                customer_id = 0     #share.config.db.session.query(Customers).filter(Customers.custSubj==self.to_id).first().custId
+            else: # from is customer
+                customer_id = share.config.db.session.query(Customers).filter(Customers.custSubj==self.from_id).first().custId
+
+            #spendble cheques
             for sp_cheque in self.spendChequeui.chequesList:
-                cl_cheque.update_status(sp_cheque.chqSerial , sp_cheque.chqCust,5)
-                document.add_cheque(dbconf.get_int('other_cheque'), -sp_cheque.chqAmount , unicode(_('spended')) , sp_cheque.chqSerial)
+                cl_cheque.update_status(sp_cheque.chqId,5 , customer_id)
+                document.add_cheque(dbconf.get_int('other_cheque'), -sp_cheque.chqAmount , unicode(_('spended')) , sp_cheque.chqId)
                     
             result = document.save()
 
@@ -387,13 +393,9 @@ class AutomaticAccounting:
                 dialog.destroy()
                 return
 
-            if self.type_configs[self.type_index][3] == True: # from is subject
-                customer_id = 0
-            else: # from is customer
-                customer_id = share.config.db.session.query(Customers).select_from(Customers).filter(Customers.custSubj==self.from_id).first().custId
 
             for cheque in self.addChequeui.chequesList:
-                notebook_id =document.cheques_result[cheque.chqSerial]
+                notebook_id =document.cheques_result[cheque.chqId]
                 cl_cheque.add_cheque(cheque.chqAmount, cheque.chqWrtDate, cheque.chqDueDate,
                                      cheque.chqSerial, cheque.chqStatus,
                                      customer_id, cheque.chqAccount,

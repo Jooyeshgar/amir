@@ -55,8 +55,18 @@ class ClassCheque:
     # 
     # edit cheque and put last configs in database
     # @param info new configs as a dictionary
-    def edit(self, info):
-        pass
+    def edit(self, chequeC , chqId ,  ):
+        cheque = config.db.session.query(Cheque).filter (chqId == chqId)
+        cheque.chqAmount = chequeC.chqAmount
+        cheque.chqWrtDate =chequeC. chqWrtDate
+        cheque.chqDueDate =chequeC. chqDueDte
+        cheque.chqSerial = chequeC.chqSerial
+        #cheque.chqStatus = status           must edit from automatic accounting
+        cheque.chqCust = chequeC.chqCust
+        cheque.chqAccount = chequeC.chqAccount
+        cheque.chqDesc = chequeC.chqDesc
+        config.db.session.commit()
+        self.new_cheques.append(chequeC)
 
     ## get cheque id from cheque number
     #
@@ -76,14 +86,16 @@ class ClassCheque:
     # ChequeUI::save calls this function automatically.
     # @param id cheque id
     # @param status New status - Integer
-    def update_status(self, serial,cust ,  status):
+    # @param customer_id new customer Id 
+    def update_status(self, id,  status , customer_id):
         current_date = dateentry.DateEntry().getDateObject()
-        ch = config.db.session.query(Cheque).filter(Cheque.chqSerial == serial).filter(Cheque.chqCust == cust).first()        
-        ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, status, ch.chqCust, ch.chqAccount, ch.chqTransId, ch.chqDesc, current_date)
+        ch = config.db.session.query(Cheque).filter(Cheque.chqId == id ).first()        
+        ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, status, customer_id, ch.chqAccount, ch.chqTransId, ch.chqDesc, current_date)
         config.db.session.add(ch_history)
         config.db.session.commit()            
         ch.chqHistoryId = ch_history. Id 
         ch.chqStatus = status
+        ch.chqCust = customer_id
 
     ## Save datas to database
     def save(self):
