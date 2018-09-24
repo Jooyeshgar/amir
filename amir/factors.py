@@ -25,6 +25,7 @@ from gi.repository import Gtk
 from gi.repository import Gdk
 from payments import Payments
 from weasyprintreport import *
+#import logging
 
 config = share.config
 
@@ -1227,8 +1228,7 @@ class Factor(Payments):
 						chequeHistoryDesc		,
 						chequeHistoryDate			)  
 			self.session.add(chequeHistory) 
-			self.session.commit()			
-			print cheque.chqId
+			self.session.commit()						
 			ch = self.session.query(Cheque).filter(Cheque.chqId == cheque.chqId).first()			
 			ch.chqHistoryId = chequeHistory.Id			
 			self.session.commit()

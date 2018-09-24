@@ -369,7 +369,7 @@ class Payments(GObject.GObject):
 			            0					,	#TODO must be a valid cheque history ID
 			            0					,	#bill Id
 			            number  			,	#order
-			            chqId = self.lastChqID			)	
+			            chqId = cheque.chqId			)	
 		else:		# adding cheque
 			self.numcheqs += 1
 			order = utility.LN(self.numcheqs)
