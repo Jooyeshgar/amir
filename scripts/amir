@@ -160,6 +160,7 @@ class MainWindow(GObject.GObject):
 
 	def chequeReport(self, sender):
 		reportwin = chequereport.ChequeReport()
+		reportwin.showResult()
 
 	def aboutAmir(self, sender):
 		aboutwin = self.builder.get_object("aboutdialog")

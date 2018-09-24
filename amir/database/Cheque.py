@@ -43,7 +43,8 @@ class Cheque(Base):
 
     def __init__( self, chqAmount, chqWrtDate, chqDueDate, chqSerial,
                   chqStatus, chqCust , chqAccount, chqTransId, chqNoteBookId, chqDesc,chqHistoryId ,chqBillId,chqOrder=0,chqDelete=False , chqId=0) :
-        self.chqId = chqId
+        if chqId != 0:
+            self.chqId = chqId
         self.chqAmount   = chqAmount
         self.chqWrtDate  = chqWrtDate
         self.chqDueDate  = chqDueDate

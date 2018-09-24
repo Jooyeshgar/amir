@@ -2,7 +2,7 @@ import gi
 from gi.repository import Gtk
 
 from sqlalchemy import or_
-from sqlalchemy.orm.util import outerjoin
+from sqlalchemy.orm.util import outerjoin , join
 from sqlalchemy.sql import between, and_
 from sqlalchemy.sql.functions import sum
 
@@ -18,10 +18,12 @@ import class_document
 import dbconfig
 import subjects
 
+import logging
 dbconf = dbconfig.dbConfig()
 config = share.config
 
 class ChequeReport:
+    chequeStatus = ["" , _("Paid-Not passed"), _("Paid-Passed"), _("Recieved-Not passed"), _("Recieved-Passed"), _("Spent") , _("Returned to customer") , _("Returned from customer") , _("Bounced")]
     def __init__(self):
         self.builder = get_builder("chequereport")
         self.window = self.builder.get_object("windowChequeReport")
@@ -36,6 +38,7 @@ class ChequeReport:
         self.treeviewOutgoing.set_model(self.treestoreOutgoing)
         self.treeviewDeleted.set_model(self.treestoreDeleted)
 
+        self.createHistoryTreeview()
         column = Gtk.TreeViewColumn(_("ID"), Gtk.CellRendererText(), text = 0)
         column.set_spacing(5)
         column.set_resizable(True)
@@ -245,41 +248,41 @@ class ChequeReport:
         column.set_sort_indicator(True)
         self.treeviewDeleted.append_column(column)
 
-        column = Gtk.TreeViewColumn(_("Bill ID"), Gtk.CellRendererText(), text = 12)
+        column = Gtk.TreeViewColumn(_("Bill ID"), Gtk.CellRendererText(), text = 11)
         column.set_spacing(5)
         column.set_resizable(True)
-        column.set_sort_column_id(12)
+        column.set_sort_column_id(11)
         column.set_sort_indicator(True)
         self.treeviewIncoming.append_column(column)
-        column = Gtk.TreeViewColumn(_("Bill ID"), Gtk.CellRendererText(), text = 12)
+        column = Gtk.TreeViewColumn(_("Bill ID"), Gtk.CellRendererText(), text = 11)
         column.set_spacing(5)
         column.set_resizable(True)
-        column.set_sort_column_id(12)
+        column.set_sort_column_id(11)
         column.set_sort_indicator(True)
         self.treeviewOutgoing.append_column(column)
-        column = Gtk.TreeViewColumn(_("Bill ID"), Gtk.CellRendererText(), text = 12)
+        column = Gtk.TreeViewColumn(_("Bill ID"), Gtk.CellRendererText(), text = 11)
         column.set_spacing(5)
         column.set_resizable(True)
-        column.set_sort_column_id(12)
+        column.set_sort_column_id(11)
         column.set_sort_indicator(True)
         self.treeviewDeleted.append_column(column)
         
-        column = Gtk.TreeViewColumn(_("Order"), Gtk.CellRendererText(), text = 13)
+        column = Gtk.TreeViewColumn(_("Order"), Gtk.CellRendererText(), text = 12)
         column.set_spacing(5)
         column.set_resizable(True)
-        column.set_sort_column_id(13)
+        column.set_sort_column_id(12)
         column.set_sort_indicator(True)
         self.treeviewIncoming.append_column(column)
-        column = Gtk.TreeViewColumn(_("Order"), Gtk.CellRendererText(), text = 13)
+        column = Gtk.TreeViewColumn(_("Order"), Gtk.CellRendererText(), text = 12)
         column.set_spacing(5)
         column.set_resizable(True)
-        column.set_sort_column_id(13)
+        column.set_sort_column_id(12)
         column.set_sort_indicator(True)
         self.treeviewOutgoing.append_column(column)
-        column = Gtk.TreeViewColumn(_("Order"), Gtk.CellRendererText(), text = 13)
+        column = Gtk.TreeViewColumn(_("Order"), Gtk.CellRendererText(), text = 12)
         column.set_spacing(5)
         column.set_resizable(True)
-        column.set_sort_column_id(13)
+        column.set_sort_column_id(12)
         column.set_sort_indicator(True)
         self.treeviewDeleted.append_column(column)
         
@@ -309,7 +312,6 @@ class ChequeReport:
             self.dateToEntry.set_placeholder_text("1:1:2018")
             self.dateFromEntry.set_placeholder_text("1:1:2018")
 
-        self.showResult()
         self.date_entry = dateentry.DateEntry()
         self.current_time = self.date_entry.getDateObject()
 
@@ -337,7 +339,7 @@ class ChequeReport:
         self.treestoreIncoming.clear()
         self.treestoreOutgoing.clear()
         self.treestoreDeleted.clear()
-        result = config.db.session.query(Cheque).outerjoin(Customers, Customers.custId == Cheque.chqCust)
+        result = config.db.session.query(Cheque , Customers.custName).select_from(outerjoin(Cheque , Customers, Customers.custId == Cheque.chqCust))
         # Apply filters
         if chequeId:
             result = result.filter(Cheque.chqId == chequeId)
@@ -372,9 +374,7 @@ class ChequeReport:
             result = result.filter(Cheque.chqDueDate >= dateFrom)
 
         # Show
-        for cheque in result.all():            
-            if not hasattr(cheque, 'custName'):
-                cheque.custName = ''
+        for cheque , cust in result.all():            
             if share.config.datetypes[share.config.datetype] == "jalali": 
                 year, month, day = str(cheque.chqWrtDate).split("-")
                 chqWrtDate = gregorian_to_jalali(int(year),int(month),int(day))
@@ -395,14 +395,14 @@ class ChequeReport:
                 clear = 'Cleared'
             else:
                 clear = 'Not Cleared'
-
+            
             if cheque.chqDelete == False:
                 if (cheque.chqStatus == 3) or (cheque.chqStatus == 4) or (cheque.chqStatus == 7):
-                    self.treestoreIncoming.append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(cheque.custName), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqNoteBookId), str(cheque.chqDesc), str(cheque.chqBillId), str(cheque.chqOrder)))
+                    self.treestoreIncoming.append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(cust), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqNoteBookId), str(cheque.chqDesc), str(cheque.chqBillId), str(unicode(self.chequeStatus[cheque.chqStatus]))))
                 else:
-                    self.treestoreOutgoing.append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(cheque.custName), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqNoteBookId), str(cheque.chqDesc), str(cheque.chqBillId), str(cheque.chqOrder)))
+                    self.treestoreOutgoing.append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(cust), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqNoteBookId), str(cheque.chqDesc), str(cheque.chqBillId), str(unicode(self.chequeStatus[cheque.chqStatus]))))
             else:                
-                self.treestoreDeleted.     append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(cheque.custName), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqNoteBookId), str(cheque.chqDesc), str(cheque.chqBillId), str(cheque.chqOrder)))
+                self.treestoreDeleted.     append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(cust), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqNoteBookId), str(cheque.chqDesc), str(cheque.chqBillId), str(unicode(self.chequeStatus[cheque.chqStatus]))))
 
     def getSelection(self):
         selection = self.treeviewOutgoing.get_selection()
@@ -507,8 +507,9 @@ class ChequeReport:
         subject.window.destroy()
         share.mainwin.silent_daialog(_("The operation was completed successfully."))
 
-    def on_dialog_destroy(self, sender):
+    def on_dialog_destroy(self, sender,data=None):
         sender.hide()
+        return True
         #self.dialog.hide()
 
     def selectChequeFromListIncoming(self, treeview, path, view_column):
@@ -536,10 +537,89 @@ class ChequeReport:
             self.showHistory(self.code)
 
     def showHistory(self, code):
-        self.window = self.builder.get_object("window1")
+
+        self.historywindow.show_all()
+        
+
+        self.treestoreHistory.clear()
+        result = config.db.session.query(ChequeHistory, Cheque , Customers.custName)\
+        .join(Cheque,ChequeHistory.ChequeId== Cheque.chqId).join(Customers,  Customers.custId == Cheque.chqCust)\
+        .filter(ChequeHistory.ChequeId == code).all()
+        #result = config.db.session.query(ChequeHistory, Cheque , Customers).select_from(join(ChequeHistory, Cheque , Customers, Customers.custId == Cheque.chqCust,ChequeHistory.Id== Cheque.chqId)).all()
+        #result = config.db.session.query(ChequeHistory).outerjoin(Customers, Customers.custId == ChequeHistory.Cust)
+        #result = result.filter(ChequeHistory.ChequeId == code).all()
+
+
+        # Show
+        for  chequeHistory, cheque,cust in result:                        
+            if share.config.datetypes[share.config.datetype] == "jalali": 
+                year, month, day = str(chequeHistory.WrtDate).split("-")
+                chqWrtDate = gregorian_to_jalali(int(year),int(month),int(day))
+                chqWrtDate = str(chqWrtDate[0]) + '-' + str(chqWrtDate[1]) + '-' + str(chqWrtDate[2])
+
+                year, month, day = str(chequeHistory.DueDate).split("-")
+                DueDate = gregorian_to_jalali(int(year),int(month),int(day))
+                chqDueDate = str(DueDate[0]) + '-' + str(DueDate[1]) + '-' + str(DueDate[2])
+
+            else:
+                year, month, day = str(chequeHistory.WrtDate).split("-")
+                chqWrtDate = str(day) + '-' + str(month) + '-' + str(year)
+
+                year, month, day = str(chequeHistory.DueDate).split("-")
+                chqDueDate = str(day) + '-' + str(month) + '-' + str(year)
+
+            if (chequeHistory.Status == 2) or (chequeHistory.Status == 3):
+                clear = 'Cleared'
+            else:
+                clear = 'Not Cleared'
+
+            self.treestoreHistory.append(None, (str(chequeHistory.ChequeId), str(chequeHistory.Amount), str(chqWrtDate), str(chqDueDate), str(chequeHistory.Serial), str(clear), str(cust), str(chequeHistory.Account), str(chequeHistory.TransId), str(cheque.chqNoteBookId), str(chequeHistory.Desc), str(chequeHistory.Date) ,str(cheque.chqBillId),str(self.chequeStatus[chequeHistory.Status]) ))
+
+    def on_select_cell(self, sender):
+        my_button = self.builder.get_object("odatAsMoshtariButton")
+        my_button.set_sensitive(True)
+        my_button = self.builder.get_object("odatBeMoshtariButton")
+        my_button.set_sensitive(True)
+        my_button = self.builder.get_object("bargashtButton")
+        my_button.set_sensitive(True)
+        my_button = self.builder.get_object("passButton")
+        my_button.set_sensitive(True)
+        self.getSelection()        
+        result = config.db.session.query(Cheque)
+        result = result.filter(Cheque.chqId == self.code).first()        
+        if result.chqStatus in [2,3,4,5,6,7,8]: # 1
+            my_button = self.builder.get_object("odatAsMoshtariButton")
+            my_button.set_sensitive(False)
+        if result.chqStatus in [1,2,4,5,6,7,8]: # 3 
+            my_button = self.builder.get_object("odatBeMoshtariButton")
+            my_button.set_sensitive(False)
+        if result.chqStatus in [2,4,5,6,7,8]:   # 1 , 3
+            my_button = self.builder.get_object("bargashtButton")
+            my_button.set_sensitive(False)
+        if result.chqStatus in [2,4,6,7,8]:     # 1 , 3 , 5
+            my_button = self.builder.get_object("passButton")
+            my_button.set_sensitive(False)
+        if result.chqDelete == True:
+            my_button = self.builder.get_object("deleteButton")
+            my_button.set_sensitive(False)
+    def on_delete(self, sender):
+        self.getSelection()
+        result = config.db.session.query(Cheque)
+        result = result.filter(Cheque.chqId == self.code).first()
+        result.chqDelete = True
+        ch_history = ChequeHistory(result.chqId, result.chqAmount, result.chqWrtDate, result.chqDueDate, result.chqSerial, result.chqStatus, result.chqCust, result.chqAccount, result.chqTransId, result.chqDesc, self.current_time, result.chqDelete)
+        config.db.session.add(ch_history)
+        config.db.session.commit()
+
+        share.mainwin.silent_daialog(_("The operation was completed successfully."))
+        self.searchFilter()
+
+
+    def createHistoryTreeview(self):
+        self.historywindow = self.builder.get_object("window1")
         
         self.treeviewHistory = self.builder.get_object("treeviewHistory")
-        self.treestoreHistory = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str)
+        self.treestoreHistory = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str, str, str, str)
         self.treeviewHistory.set_model(self.treestoreHistory)
 
         column = Gtk.TreeViewColumn(_("ID"), Gtk.CellRendererText(), text = 0)
@@ -605,7 +685,7 @@ class ChequeReport:
         column.set_sort_indicator(True)
         self.treeviewHistory.append_column(column)
 
-        column = Gtk.TreeViewColumn(_("Note Book ID"), Gtk.CellRendererText(), text = 9)
+        column = Gtk.TreeViewColumn(_("NoteBook ID"), Gtk.CellRendererText(), text = 9)
         column.set_spacing(5)
         column.set_resizable(True)
         column.set_sort_column_id(2)
@@ -619,7 +699,7 @@ class ChequeReport:
         column.set_sort_indicator(True)
         self.treeviewHistory.append_column(column)
 
-        column = Gtk.TreeViewColumn(_("History ID"), Gtk.CellRendererText(), text = 11)
+        column = Gtk.TreeViewColumn(_("History Date"), Gtk.CellRendererText(), text = 11)
         column.set_spacing(5)
         column.set_resizable(True)
         column.set_sort_column_id(3)
@@ -633,85 +713,10 @@ class ChequeReport:
         column.set_sort_indicator(True)
         self.treeviewHistory.append_column(column)
         
-        column = Gtk.TreeViewColumn(_("Order"), Gtk.CellRendererText(), text = 13)
+        column = Gtk.TreeViewColumn(_("Status"), Gtk.CellRendererText(), text = 13)
         column.set_spacing(5)
         column.set_resizable(True)
         column.set_sort_column_id(3)
         column.set_sort_indicator(True)
         self.treeviewHistory.append_column(column)
-        
-        # self.treeviewHistory.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
-        #self.treestore.set_sort_func(0, self.sortGroupIds)
-        # self.treestore.set_sort_column_id(0, Gtk.SortType.ASCENDING)
-        self.window.show_all()
         self.builder.connect_signals(self)
-
-        self.treestoreHistory.clear()
-        result = config.db.session.query(ChequeHistory).outerjoin(Customers, Customers.custId == ChequeHistory.Cust)
-        result = result.filter(ChequeHistory.ChequeId == code).all()
-
-        # Show
-        for cheque in result:
-            if not hasattr(cheque, 'custName'):
-                cheque.custName = ''
-            if share.config.datetypes[share.config.datetype] == "jalali": 
-                year, month, day = str(cheque.WrtDate).split("-")
-                chqWrtDate = gregorian_to_jalali(int(year),int(month),int(day))
-                chqWrtDate = str(chqWrtDate[0]) + '-' + str(chqWrtDate[1]) + '-' + str(chqWrtDate[2])
-
-                year, month, day = str(cheque.DueDate).split("-")
-                DueDate = gregorian_to_jalali(int(year),int(month),int(day))
-                chqDueDate = str(DueDate[0]) + '-' + str(DueDate[1]) + '-' + str(DueDate[2])
-
-            else:
-                year, month, day = str(cheque.WrtDate).split("-")
-                chqWrtDate = str(day) + '-' + str(month) + '-' + str(year)
-
-                year, month, day = str(cheque.DueDate).split("-")
-                chqDueDate = str(day) + '-' + str(month) + '-' + str(year)
-
-            if (cheque.Status == 2) or (cheque.Status == 3):
-                clear = 'Cleared'
-            else:
-                clear = 'Not Cleared'
-
-            self.treestoreHistory.append(None, (str(cheque.ChequeId), str(cheque.Amount), str(chqWrtDate), str(chqDueDate), str(cheque.Serial), str(clear), str(cheque.custName), str(cheque.Account), str(cheque.TransId), str(cheque.TransId), str(cheque.Desc)))
-
-    def on_select_cell(self, sender):
-        my_button = self.builder.get_object("odatAsMoshtariButton")
-        my_button.set_sensitive(True)
-        my_button = self.builder.get_object("odatBeMoshtariButton")
-        my_button.set_sensitive(True)
-        my_button = self.builder.get_object("bargashtButton")
-        my_button.set_sensitive(True)
-        my_button = self.builder.get_object("passButton")
-        my_button.set_sensitive(True)
-        self.getSelection()        
-        result = config.db.session.query(Cheque)
-        result = result.filter(Cheque.chqId == self.code).first()        
-        if result.chqStatus in [2,3,4,5,6,7,8]: # 1
-            my_button = self.builder.get_object("odatAsMoshtariButton")
-            my_button.set_sensitive(False)
-        if result.chqStatus in [1,2,4,5,6,7,8]: # 3 
-            my_button = self.builder.get_object("odatBeMoshtariButton")
-            my_button.set_sensitive(False)
-        if result.chqStatus in [2,4,5,6,7,8]:   # 1 , 3
-            my_button = self.builder.get_object("bargashtButton")
-            my_button.set_sensitive(False)
-        if result.chqStatus in [2,4,6,7,8]:     # 1 , 3 , 5
-            my_button = self.builder.get_object("passButton")
-            my_button.set_sensitive(False)
-        if result.chqDelete == True:
-            my_button = self.builder.get_object("deleteButton")
-            my_button.set_sensitive(False)
-    def on_delete(self, sender):
-        self.getSelection()
-        result = config.db.session.query(Cheque)
-        result = result.filter(Cheque.chqId == self.code).first()
-        result.chqDelete = True
-        ch_history = ChequeHistory(result.chqId, result.chqAmount, result.chqWrtDate, result.chqDueDate, result.chqSerial, result.chqStatus, result.chqCust, result.chqAccount, result.chqTransId, result.chqDesc, self.current_time, result.chqDelete)
-        config.db.session.add(ch_history)
-        config.db.session.commit()
-
-        share.mainwin.silent_daialog(_("The operation was completed successfully."))
-        self.searchFilter()
