@@ -274,6 +274,10 @@ class Payments(GObject.GObject):
 		if cheque.chqStatus!= 5 : #cheque is just related to this transaction and is not spended from anywhere		
 			if cheque.chqId == self.lastChqID:
 				self.lastChqID -= 1		
+			self.session.query(Notebook).filter(cheque.chqNoteBookId== Notebook.id).delete()
+			ch = cheque
+			ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, "deleted", date.today())            
+			self.session.add(ch_history)
 			self.session.delete(cheque) # TODO : also  must deletes notebook 
 			# Decrease the order-number in next rows
 			# query = self.session.query(Cheque)
@@ -393,25 +397,7 @@ class Payments(GObject.GObject):
 			self.session.add(cheque)
 			iter = self.cheqListStore.append((unicode(self.lastChqID ) , order ,self.customerNameLbl.get_text()  , pymnt_str, wrtDate_str, 
 	                      dueDte_str, unicode(bank_name), serial, self.chequeStatus[status], pymntDesc))
-			self.chequesList .append(cheque)
-
-										
-			
-
-
-		## updat chequehistory id	
-# 			query=self.session.query(ChequeHistory).select_from(ChequeHistory)
-# 			from sqlalchemy.sql.expression import desc
-# 			
-# 			chequeHistory=query.filter(ChequeHistory.TransId == self.transId).order_by(desc(ChequeHistory.Id)).first()
-# 			print chequeHistory.Id
-# 								
-# 			query = self.session.query(Cheque).select_from(Cheque)
-# 			tempCheque = query.filter(Cheque.chqTransId == self.transId).order_by(desc(Cheque.chqId)).first()
-# 			
-# 			tempCheque.chqHistoryId=chequeHistory.Id
-# 			chequeHistory.ChequeId=tempCheque.chqId
-
+			self.chequesList .append(cheque)								
 			
 			path = self.cheqListStore.get_path(iter)
 			self.cheqTreeView.scroll_to_cell(path, None, False, 0, 0)
