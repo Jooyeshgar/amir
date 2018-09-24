@@ -376,7 +376,7 @@ class AutomaticAccounting:
                     document.add_cheque(dbconf.get_int('other_cheque'), cheque.chqAmount, cheque.chqDesc, cheque.chqId)            
 
             if self.type_configs[self.type_index][3] == True: # from is subject
-                customer_id = 0     #share.config.db.session.query(Customers).filter(Customers.custSubj==self.to_id).first().custId
+                customer_id = share.config.db.session.query(Customers).filter(Customers.custSubj==self.to_id).first().custId
             else: # from is customer
                 customer_id = share.config.db.session.query(Customers).filter(Customers.custSubj==self.from_id).first().custId
 

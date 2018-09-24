@@ -27,6 +27,7 @@ class ChequeReport:
     def __init__(self):
         self.builder = get_builder("chequereport")
         self.window = self.builder.get_object("windowChequeReport")
+        self.window.set_title("Cheques Report")
         
         self.treeviewIncoming = self.builder.get_object("treeviewIncoming")
         self.treeviewOutgoing = self.builder.get_object("treeviewOutgoing")
@@ -617,6 +618,7 @@ class ChequeReport:
 
     def createHistoryTreeview(self):
         self.historywindow = self.builder.get_object("window1")
+        self.historywindow.set_title("Cheque History")
         
         self.treeviewHistory = self.builder.get_object("treeviewHistory")
         self.treestoreHistory = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str, str, str, str)
