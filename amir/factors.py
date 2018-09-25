@@ -353,8 +353,11 @@ class Factor(Payments):
 
 		# removing cheques and reciepts
 		cheques = self.session.query(Cheque) . filter(Cheque.chqTransId == factor.Id).all()
-		for cheque in cheques :
-			self.session.delete(cheque)
+		for ch in cheques :
+			ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, "deleted", date.today(),True)            
+			self.session.add(ch_history)
+			#self.session.delete(ch)
+			ch.chqDelete = True
 		#TODO reciept remained
 
 		#removing related bill
@@ -449,7 +452,7 @@ class Factor(Payments):
 				self.addDlg.set_title("Choose buy information")
 			
 			btnVal  = "Add to list"
-			
+		self.sellListStore.clear()
 		self.proVal        = self.builder.get_object("proEntry")
 		self.discountEntry = self.builder.get_object("discountEntry")
 		self.descVal       = self.builder.get_object("descVal")

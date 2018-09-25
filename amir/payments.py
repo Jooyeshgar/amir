@@ -38,8 +38,7 @@ class Payments(GObject.GObject):
 		#temp for vackground
 		self.bank_names_count = 0
 		self.sellFlag = sellFlag		
-		self.chequesList = []
-		self.spendList = []
+		self.chequesList = []		
 		self.lastChqID = 0
 		#self.background = Gtk.Fixed()
 		#self.background.put(Gtk.Image.new_from_file(os.path.join(config.data_path, "media", "background.png")), 0, 0)     # not working !
@@ -158,14 +157,19 @@ class Payments(GObject.GObject):
 		
 	def fillChequeTable(self):
 		total = 0
+		if self.transId != 0 :					#  from factors 				
+			if  self.sellFlag:
+				#spendedCheuqesList =self.session.execute("select cheque.* from cheque join chequehistory on cheque.chqId = chequehistory.ChequeId where TransId = 4 and Status <>5 ")
 
-		query = self.session.query(Cheque)		
-		if self.transId != 0 :					#  from automatic accounting 					
-			query = query.select_from(Factors).filter(Cheque.chqTransId== self.transId) . filter (Factors.Sell == self.sellFlag)			
-			cheqlist = query.order_by(Cheque.chqOrder.asc()).all()
-			self.chequesList = cheqlist 
-			#cheqlist = query.all()
-			for cheq in cheqlist:
+				query = self.session.query(Cheque).select_from(ChequeHistory).filter(Cheque.chqId == ChequeHistory.ChequeId)\
+					.filter(Cheque.chqStatus==5).filter(ChequeHistory.TransId == self.transId).order_by(ChequeHistory.Id.desc()).distinct(Cheque.chqId)				
+				spendedCheuqesList = query.all()						
+				self.chequesList+=spendedCheuqesList				
+			query = self.session.query(Cheque)			
+			query = query.filter(Cheque.chqTransId== self.transId).filter(Cheque.chqDelete == False)		
+			cheqlist = query.all()
+			self.chequesList +=  cheqlist 
+			for cheq in self.chequesList:
 				self.numcheqs += 1
 				total += cheq.chqAmount
 				ID = utility.LN(cheq.chqId)
@@ -274,22 +278,22 @@ class Payments(GObject.GObject):
 		if cheque.chqStatus!= 5 : #cheque is just related to this transaction and is not spended from anywhere		
 			if cheque.chqId == self.lastChqID:
 				self.lastChqID -= 1		
-			self.session.query(Notebook).filter(cheque.chqNoteBookId== Notebook.id).delete()
+			wasSubmited = self.session.query(Notebook).filter(cheque.chqNoteBookId== Notebook.id).delete()
 			ch = cheque
-			ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, "deleted", date.today())            
-			self.session.add(ch_history)
-			self.session.delete(cheque) # TODO : also  must deletes notebook 
-			# Decrease the order-number in next rows
-			# query = self.session.query(Cheque)
-			# query = query.filter(and_(Cheque.chqTransId == self.transId,  Cheque.chqOrder > number))
-			# query.update( {Cheque.chqOrder: Cheque.chqOrder - 1 } )
-		#else if cheque == None: # spending
-
-		else:
+			if wasSubmited :
+				ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, "deleted", date.today(),True)            
+				self.session.add(ch_history)
+			#self.session.delete(cheque)
+			cheque.chqDelete = True 
+		else:		# is a spended cheque
 			chqHistory = cheque.chqHistoryId
-			history = self.session.query(ChequeHistory).filter(ChequeHistory.Id == chqHistory).first()
+			#history = self.session.query(ChequeHistory).filter(ChequeHistory.Id == chqHistory).first()
+			history = self.session.query(ChequeHistory).\
+				filter(ChequeHistory.ChequeId == cheque.chqId).\
+				filter(ChequeHistory.TransId != self.transId).\
+				order_by(ChequeHistory.Id.desc()).limit(1).first()			
 			
-			#revert cheque to  it's last history 
+			#revert cheque to  it's last history of previous Factor before the cheque spended 
 			cheque.chqAmount = history.Amount
 			cheque.chqWrtDate = history.WrtDate 
 			cheque.chqDueDate = history.DueDate
@@ -341,6 +345,8 @@ class Payments(GObject.GObject):
 			number = utility.convertToLatin(self.cheqListStore.get(iter, 1)[0])
 			number = utility.getInt(number)	
 			cheque = self.chequesList[number - 1]
+			if cheque.chqStatus == 5 :
+				return
 			query = self.session.query(Cheque)
 			cheque = query.filter(and_(Cheque.chqTransId == cheque.chqTransId) ).first()
 			pre_amnt = cheque.chqAmount
@@ -513,7 +519,7 @@ class Payments(GObject.GObject):
 
 	def selectPayBtn_clicked(self , sender):	
 		self.sltCheqListStore.clear()	
-		query = self.session.query(Cheque) . filter (or_(Cheque.chqStatus== 3, Cheque.chqStatus== 6 ) )
+		query = self.session.query(Cheque) . filter (or_(Cheque.chqStatus== 3, Cheque.chqStatus== 6 ) ).filter(Cheque.chqDelete == False)
 		cheqlist = query.all()
 		numcheqs = 0 
 		for cheq in cheqlist:	
@@ -543,8 +549,8 @@ class Payments(GObject.GObject):
 		treeiter = self.sltCheqListStore.get_iter(path)
 		chequeId = self.sltCheqListStore.get_value(treeiter , 0)
 		cheque = self.session.query(Cheque ) . filter(Cheque.chqId == chequeId).first()		
-		cheque.chqStatus = 5
-		#cheque.chqTransId = self.TransId # TODO !!!!!!!!!!!!!!!!!!!!!!!!!!
+		cheque.chqStatus = 5		
+		cheque.chqTransId = self.transId 
 		self.chequesList .append(cheque)
 		self.numcheqs  += 1 
 		#chequeNo = self.sltCheqListStore.get_value(treeiter , 1)

@@ -122,7 +122,7 @@ def upgrade(migrate_engine):
 
     cheque = Table('cheque', meta, autoload=True)
     factors = Table('factors', meta, autoload=True)    
-    cons = ForeignKeyConstraint ([cheque.c.chqTransId] , [factors.c.Code])
+    cons = ForeignKeyConstraint ([cheque.c.chqTransId] , [factors.c.Id])
 
     config = Table('config', meta, autoload=True)
     op = config.insert()
