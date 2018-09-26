@@ -74,7 +74,7 @@ class Document:
 
     def add_cheque(self, subject_id, value, desctxt, cheque_id):
         self.cheques.append((subject_id, float(value), desctxt, cheque_id))
-        self.cheques_result[cheque_id] = None
+        self.cheques_result[cheque_id] = None   #CANREMOVE
             
     def save(self, factorId = 0 ,delete_items=None):
         if len(self.notebooks) == 0:
@@ -82,7 +82,7 @@ class Document:
             return -1
 
         if self.number > 0:
-            logging.debug ("class_document : function save : if self.number")
+            logging.error ("class_document : function save : if self.number")
             bill = share.config.db.session.query(Bill)            
             bill = bill.filter(Bill.number == self.number).first()
             bill.lastedit_date = date.today()
@@ -98,7 +98,7 @@ class Document:
                 if notbook[3] == 0:  # notebook id == 0    # self.id = bill.ID
                     share.config.db.session.add(Notebook(notbook[0], self.id, notbook[1], notbook[2]))
                 else:
-                    logging.debug ("class_document : function save : else_1")
+                    logging.error ("class_document : function save : else_1")
                     temp = None
                     temp = notebooks.filter(Notebook.id == notbook[3]).first()                    
                     temp.subject_id = notbook[0]
@@ -117,6 +117,7 @@ class Document:
         else:
             logging.debug ("class_document : function save : else_2")
             if factorId : # editing factor ...
+                logging.debug("class_document : function save: else_2 / if factorId")
                 billId = share.config.db.session.query(Factors) . filter(Factors.Id == factorId) . first() . Bill
                 neededBill  = share.config.db.session.query(Bill) . filter (Bill. id == billId)
                 #self.number = neededBill.first().number
@@ -146,6 +147,7 @@ class Document:
                 #         share.config.db.session.add(Notebook(notebook[0], self.id, notebook[1], notebook[2]))
                
             else :  # adding new factor and bill
+                logging.debug("class_document : function save: else_2 / else not factorId")
                 query = share.config.db.session.query(Bill.number)
                 last = query.order_by(Bill.number.desc()).first()  # get latest bill  (order by number) 
                 if last != None:
@@ -161,17 +163,17 @@ class Document:
                 self.id = query.first().id                                    
 
         for notebook in self.notebooks:
-            share.config.db.session.add(Notebook(notebook[0], self.id, notebook[1], notebook[2]))                            
+            share.config.db.session.add(Notebook(notebook[0], self.id, notebook[1], notebook[2],factId=notebook[3]))                            
 
                 #  pay attention ...   :/
         for cheque in self.cheques:            
-           n = Notebook(cheque[0], self.id, cheque[1], cheque[2])
+           n = Notebook(cheque[0], self.id, cheque[1], cheque[2],chqId=cheque[3])           
            share.config.db.session.add(n)        
            share.config.db.session.commit()           
-           self.cheques_result[cheque[3]] = n.id           
+           self.cheques_result[cheque[3]] = n.id    #CANREMOVE       
         self.notebooks = []
         
-        return self.id      # bill id
+        return self.id      # bill id   #CANREMOVE
 
     def get_error_message(self, code):
         if   code == -1:

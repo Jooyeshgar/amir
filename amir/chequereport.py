@@ -610,6 +610,7 @@ class ChequeReport:
         result.chqDelete = True
         ch_history = ChequeHistory(result.chqId, result.chqAmount, result.chqWrtDate, result.chqDueDate, result.chqSerial, result.chqStatus, result.chqCust, result.chqAccount, result.chqTransId, result.chqDesc, self.current_time, result.chqDelete)
         config.db.session.add(ch_history)
+        config.db.session.query(Notebook).filter(Notebook.chqId == self.code).delete()
         config.db.session.commit()
 
         share.mainwin.silent_daialog(_("The operation was completed successfully."))

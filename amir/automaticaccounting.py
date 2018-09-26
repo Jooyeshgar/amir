@@ -396,7 +396,7 @@ class AutomaticAccounting:
 
 
             for cheque in self.addChequeui.chequesList:
-                notebook_id =document.cheques_result[cheque.chqId]
+                notebook_id =document.cheques_result[cheque.chqId]          #CANREMOVE notebook_id , result
                 cl_cheque.add_cheque(cheque.chqAmount, cheque.chqWrtDate, cheque.chqDueDate,
                                      cheque.chqSerial, cheque.chqStatus,
                                      customer_id, cheque.chqAccount,

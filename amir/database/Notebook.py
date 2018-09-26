@@ -17,11 +17,15 @@ class Notebook(Base):
     bill_id       = Column(Integer, ForeignKey('bill.id'))
     desc          = Column(UnicodeText, ColumnDefault(""))
     value         = Column(Integer, ColumnDefault(0), nullable = False)
+    factorId      = Column(Integer, ColumnDefault(0), nullable = False)
+    chqId         = Column(Integer, ForeignKey('Cheque.chqId'))
     
-    def __init__(self, subject_id, bill_id, value, desc):
+    def __init__(self, subject_id, bill_id, value, desc , factId=0 ,chqId=0):
         self.subject_id = subject_id
         self.bill_id = bill_id
         self.value = value
         self.desc = desc
+        self.factorId = factId
+        self.chqId = chqId
 
 ## @}

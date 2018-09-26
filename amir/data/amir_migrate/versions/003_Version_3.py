@@ -105,6 +105,8 @@ def upgrade(migrate_engine):
     s.commit()
 
     s.execute('ALTER TABLE `products` ADD COLUMN `uMeasurement`  Text;')
+    s.execute('ALTER TABLE `notebook` ADD COLUMN `factorId` Integer NOT NULL DEFAULT 0 ; ')
+    s.execute('ALTER TABLE `notebook` ADD COLUMN `chqId` Integer NOT NULL DEFAULT 0 ; ')
     s.commit()
 
 
@@ -123,6 +125,8 @@ def upgrade(migrate_engine):
     cheque = Table('cheque', meta, autoload=True)
     factors = Table('factors', meta, autoload=True)    
     cons = ForeignKeyConstraint ([cheque.c.chqTransId] , [factors.c.Id])
+    notebook = Table('notebook', meta , autoload=True)
+    cons = ForeignKeyConstraint ([notebook.c.chqId] , [cheque.c.chqId])
 
     config = Table('config', meta, autoload=True)
     op = config.insert()

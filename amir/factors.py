@@ -214,13 +214,10 @@ class Factor(Payments):
 	def on_add_clicked(self,sender):
 		self.addNew()
 							
-	def addNew(self,transId=None):   # add sell
-		
-		#chequeBillId = 0 
+	def addNew(self,transId=None):   # add sell			
 		if self.editFlag:			
 			self.Id	= self.editTransaction.Id
-			self.Code 	= self.editTransaction.Code						
-			#chequeBillId = self.session.query(Cheque) . filter (Cheque.chqTransId == self.Id ).filter( Cheque.chqCust == self.customer.custId).first().chqId
+			self.Code 	= self.editTransaction.Code									
 		else : 
 			query   = self.session.query(Factors.Code).select_from(Factors).filter(Factors.Sell == self.sell)
 			lastCode  = query.order_by(Factors.Code.desc()).first()
@@ -349,14 +346,14 @@ class Factor(Payments):
 		cheques = self.session.query(Cheque) . filter(Cheque.chqTransId == factor.Id).all()
 		for ch in cheques :
 			self.paymentManager.removeCheque(ch)		
-		#removing notebooks			
-		#bill_id = self.session.query()
-		notebooks = self.session.query(Notebook) . filter(Notebook.bill_id == factor.Bill ).all()
+		#removing notebooks					
+		notebooks = self.session.query(Notebook) . filter(Notebook.factorId == factor.Id ).all()
+		bill_id = notebooks[0].bill_id
 		for nb in notebooks:
 			self.session.delete(nb)		
 
 		#removing related bill
-		self.session.delete( self.session.query(Bill).filter(Bill.id == factor.Bill).first() )
+		self.session.delete( self.session.query(Bill).filter(Bill.id == bill_id).first() )
 
 		Transaction = config.db.session.query(Factors).filter(Factors.Id ==unicode(code) ).first()		 
 		config.db.session.delete(Transaction)
@@ -1236,31 +1233,22 @@ class Factor(Payments):
 		bill_id = self.saveDocument()
 
 
-		for cheque in self.paymentManager.chequesList:
-			notebook_id = self.Document.cheques_result[cheque.chqId]
-			ch = self.session.query(Cheque).filter(Cheque.chqId == cheque.chqId).first()
-			ch.chqNoteBookId = notebook_id
+		# for cheque in self.paymentManager.chequesList:								#CANREMOVE
+		# 	notebook_id = self.Document.cheques_result[cheque.chqId]
+		# 	ch = self.session.query(Cheque).filter(Cheque.chqId == cheque.chqId).first()
+		# 	ch.chqNoteBookId = notebook_id					
 
-		# 	cheq = Cheque(cheque.chqAmount, cheque.chqWrtDate, cheque.chqDueDate,
-		# 			cheque.chqSerial, cheque.chqStatus,
-		# 			cust, cheque.chqAccount,
-		# 			self.Id, notebook_id, cheque.chqDesc, bill_id, 0)
-		# 	if self.editFlag:
-		# 		cl_cheque.edit(cheq , cheque.chqId)
-		# 	else:
-		# 		cl_cheque.add_cheque(cheq)
-		# cl_cheque.save()
-		# cl_cheque.save_cheque_history(self.editDate)
-		cheques = self.session.query(Cheque).filter(Cheque.chqTransId == self.Id )
-		cheques.update ({Cheque.chqCust:cust.custId , Cheque.chqBillId : bill_id})
-		self.session.commit()
+		cheques = self.session.query(Cheque).filter(Cheque.chqTransId == self.Id ).all()
+		for cheque in cheques: 
+			cheque.chqCust = cust.custId 
+		self.session.commit()														
 
 		# Assign document to the current transaction
-		query = self.session.query(Factors)
-		query = query.filter(Factors.Code == self.Code)
-		query = query.filter(Factors.Sell == self.sell)
-		query.update( {Factors.Bill : bill_id } )	
-		self.session.commit()	
+		# query = self.session.query(Factors)			#CANREMOVE
+		# query = query.filter(Factors.Code == self.Code)
+		# query = query.filter(Factors.Sell == self.sell)
+		# query.update( {Factors.Bill : bill_id } )		#CANREMOVE
+		# self.session.commit()	
 			
 			
 	def createPrintJob(self):
@@ -1617,18 +1605,18 @@ class Factor(Payments):
 		
 		noteBookSell =  "sell" if self.sell  else "buy"
 
-		self.Document.add_notebook(self.custSubj, -(self.totalFactor), _("Debit for invoice number %s") % trans_code)
+		self.Document.add_notebook(self.custSubj, -(self.totalFactor), _("Debit for invoice number %s") % trans_code,self.Id)
 		if self.cashPayment:
-			self.Document.add_notebook(self.custSubj, self.cashPayment, _("Cash Payment for invoice number %s") % trans_code)
-			self.Document.add_notebook(dbconf.get_int("cash"), -(self.cashPayment), _("Cash Payment for invoice number %s") % trans_code)
+			self.Document.add_notebook(self.custSubj, self.cashPayment, _("Cash Payment for invoice number %s") % trans_code,self.Id)
+			self.Document.add_notebook(dbconf.get_int("cash"), -(self.cashPayment), _("Cash Payment for invoice number %s") % trans_code,self.Id)
 		if self.totalDisc:
-			self.Document.add_notebook(dbconf.get_int(noteBookSell+"-discount"), -(self.totalDisc), _("Discount for invoice number %s") % trans_code)
+			self.Document.add_notebook(dbconf.get_int(noteBookSell+"-discount"), -(self.totalDisc), _("Discount for invoice number %s") % trans_code,self.Id)
 		if self.subAdd:
-			self.Document.add_notebook(dbconf.get_int(noteBookSell+"-adds"), self.subAdd, _("Additions for invoice number %s") % trans_code)
+			self.Document.add_notebook(dbconf.get_int(noteBookSell+"-adds"), self.subAdd, _("Additions for invoice number %s") % trans_code,self.Id)
 		if self.VAT:
-			self.Document.add_notebook(dbconf.get_int(noteBookSell+"-vat"), (self.VAT), _("VAT for invoice number %s") % trans_code)
+			self.Document.add_notebook(dbconf.get_int(noteBookSell+"-vat"), (self.VAT), _("VAT for invoice number %s") % trans_code,self.Id)
 		if self.fee:
-			self.Document.add_notebook(dbconf.get_int(noteBookSell+"-fee"), (self.fee), _("Fee for invoice number %s") % trans_code)
+			self.Document.add_notebook(dbconf.get_int(noteBookSell+"-fee"), (self.fee), _("Fee for invoice number %s") % trans_code,self.Id)
 
 		# Create a row for each sold product
 		for exch in self.sellListStore:
@@ -1640,28 +1628,10 @@ class Factor(Payments):
 			exch_totalAmnt = utility.getFloat(exch[2]) * utility.getFloat(exch[3])
 			#TODO Use unit name specified for each product
 			if self.sell:
-				self.Document.add_notebook(sellid, exch_totalAmnt, _("Selling %s units, invoice number %s") % (exch[2], trans_code))
+				self.Document.add_notebook(sellid, exch_totalAmnt, _("Selling %s units, invoice number %s") % (exch[2], trans_code),self.Id)
 			else:
-				self.Document.add_notebook(sellid, -exch_totalAmnt, _("Buying %s units, invoice number %s") % (exch[2], trans_code))
+				self.Document.add_notebook(sellid, -exch_totalAmnt, _("Buying %s units, invoice number %s") % (exch[2], trans_code),self.Id)
 
-# 		# Create rows for payments
-# 		row = Notebook(self.custSubj, bill.id, self.totalPayment, 
-# 		               _("Payment for invoice number %s") % trans_code)
-# 		self.session.add(row)
-# 		# doc_rows.append(row)
-# 		row = Notebook(dbconf.get_int("fund"), bill.id, -(self.cashPayment), 
-# 		               _("Cash Payment for invoice number %s") % trans_code)
-# 		self.session.add(row)
-# 		# doc_rows.append(row)
-# 		row = Notebook(dbconf.get_int("acc-receivable"), bill.id, -(self.totalPayment - self.cashPayment),
-# 		               _("Non-cash Payment for invoice number %s") % trans_code)
-# 		self.session.add(row)
-# 		# doc_rows.append(row)
-		
-# 		#TODO Add rows for customer introducer's commision
-		
-# 		# self.session.add_all(doc_rows)
-# 		self.session.commit()
 		isTrueFactorId = self.Id  * self.editFlag   # 0 means inserting new factor and bill . otherwise is a valid factor ID
 		docnum = self.Document.save(isTrueFactorId)
 		share.mainwin.silent_daialog(_("Document saved with number %s.") % docnum)
