@@ -344,21 +344,16 @@ class Factor(Payments):
 			else:
 				product.quantity-=factorItem.qnty
 			config.db.session.delete(factorItem)
-		
+
+		self.paymentManager = payments.Payments(transId=self.Id, sellFlag = self.sell)
+		cheques = self.session.query(Cheque) . filter(Cheque.chqTransId == factor.Id).all()
+		for ch in cheques :
+			self.paymentManager.removeCheque(ch)		
 		#removing notebooks			
 		#bill_id = self.session.query()
 		notebooks = self.session.query(Notebook) . filter(Notebook.bill_id == factor.Bill ).all()
 		for nb in notebooks:
-			self.session.delete(nb)
-
-		# removing cheques and reciepts
-		cheques = self.session.query(Cheque) . filter(Cheque.chqTransId == factor.Id).all()
-		for ch in cheques :
-			ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, "deleted", date.today(),True)            
-			self.session.add(ch_history)
-			#self.session.delete(ch)
-			ch.chqDelete = True
-		#TODO reciept remained
+			self.session.delete(nb)		
 
 		#removing related bill
 		self.session.delete( self.session.query(Bill).filter(Bill.id == factor.Bill).first() )

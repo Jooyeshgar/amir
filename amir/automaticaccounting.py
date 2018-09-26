@@ -182,6 +182,7 @@ class AutomaticAccounting:
             sellMode = 1    # daryafti 
             customerEntry = self.from_entry
         self.addChequeui = payments.Payments(0 , sellMode , False)
+        self.addChequeui.fillChequeTable()
         self.addChequeui.customerNameLbl.set_text(customerEntry.get_text())
         self.addChequeui.connect("payments-changed",self.update_non_cash_payment_label  )
 

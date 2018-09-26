@@ -39,7 +39,7 @@ class Payments(GObject.GObject):
 		self.bank_names_count = 0
 		self.sellFlag = sellFlag		
 		self.chequesList = []		
-		self.lastChqID = 0
+		self.lastChqID = 0		
 		#self.background = Gtk.Fixed()
 		#self.background.put(Gtk.Image.new_from_file(os.path.join(config.data_path, "media", "background.png")), 0, 0)     # not working !
 		#self.background.show_all()
@@ -184,10 +184,9 @@ class Payments(GObject.GObject):
 				self.cheqListStore.append((ID , order, customer, amount, wrtDate, dueDate, bank, 
 				                         cheq.chqSerial, status, cheq.chqDesc))			
 			self.addToTotalAmount(total)
-			cheque = self.session.query(Cheque).order_by(desc(Cheque.chqId)).first()
-			if cheque != None :
-				self. lastChqID = cheque.chqId		
-
+		cheque = self.session.query(Cheque).order_by(desc(Cheque.chqId)).first()
+		if cheque != None :			
+			self. lastChqID = cheque.chqId		
 	
 	def showPayments(self):
 		self.window.show_all()
@@ -274,35 +273,8 @@ class Payments(GObject.GObject):
 		if answer != Gtk.ResponseType.OK:
 			return
 		ID = utility.getInt(self.cheqListStore.get(iter, 0)[0])			 
-		cheque =self.session.query(Cheque). filter(Cheque.chqId == ID).first()	
-		if cheque.chqStatus!= 5 : #cheque is just related to this transaction and is not spended from anywhere		
-			if cheque.chqId == self.lastChqID:
-				self.lastChqID -= 1		
-			wasSubmited = self.session.query(Notebook).filter(cheque.chqNoteBookId== Notebook.id).delete()
-			ch = cheque
-			if wasSubmited :
-				ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, "deleted", date.today(),True)            
-				self.session.add(ch_history)
-			#self.session.delete(cheque)
-			cheque.chqDelete = True 
-		else:		# is a spended cheque
-			chqHistory = cheque.chqHistoryId
-			#history = self.session.query(ChequeHistory).filter(ChequeHistory.Id == chqHistory).first()
-			history = self.session.query(ChequeHistory).\
-				filter(ChequeHistory.ChequeId == cheque.chqId).\
-				filter(ChequeHistory.TransId != self.transId).\
-				order_by(ChequeHistory.Id.desc()).limit(1).first()			
-			
-			#revert cheque to  it's last history of previous Factor before the cheque spended 
-			cheque.chqAmount = history.Amount
-			cheque.chqWrtDate = history.WrtDate 
-			cheque.chqDueDate = history.DueDate
-			cheque.chqSerial  = history.Serial
-			cheque . chqStatus = history. Status 
-			cheque. chqCust  = history.Cust
-			cheque.chqAccount = history.Account
-			cheque.chqTransId  = history.TransId
-			cheque.chqDesc = history.Desc
+		cheque =self.session.query(Cheque). filter(Cheque.chqId == ID).first()
+		self.removeCheque	(cheque)
 
 		self.numcheqs -= 1
 		liststore = self.cheqListStore
@@ -383,7 +355,7 @@ class Payments(GObject.GObject):
 		else:		# adding cheque
 			self.numcheqs += 1
 			order = utility.LN(self.numcheqs)
-			self. lastChqID += 1			
+			self. lastChqID += 1				
 			cheque = Cheque(						
 						pymntAmnt						,
 						wrtDate							, 
@@ -539,6 +511,36 @@ class Payments(GObject.GObject):
 			self.sltCheqListStore.append((ID , order, customer, amount, wrtDate, dueDate, bank, 
 			                         cheq.chqSerial, status, cheq.chqDesc	))
 		self.chqSltWindow.show_all()
+
+	def removeCheque(self,cheque) : 
+		if cheque.chqStatus!= 5 : #cheque is just related to this transaction and is not spended from anywhere		
+			if cheque.chqId == self.lastChqID:
+				self.lastChqID -= 1		
+			wasSubmited = self.session.query(Notebook).filter(cheque.chqNoteBookId== Notebook.id).delete()			
+			ch = cheque
+			if wasSubmited :
+				ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, "deleted", date.today(),True)            
+				self.session.add(ch_history)
+			#self.session.delete(cheque)
+			cheque.chqDelete = True 
+		else:		# is a spended cheque
+			chqHistory = cheque.chqHistoryId
+			#history = self.session.query(ChequeHistory).filter(ChequeHistory.Id == chqHistory).first()
+			history = self.session.query(ChequeHistory).\
+				filter(ChequeHistory.ChequeId == cheque.chqId).\
+				filter(ChequeHistory.TransId != self.transId).\
+				order_by(ChequeHistory.Id.desc()).limit(1).first()			
+			
+			#revert cheque to  it's last history of previous Factor before the cheque spended 
+			cheque.chqAmount = history.Amount
+			cheque.chqWrtDate = history.WrtDate 
+			cheque.chqDueDate = history.DueDate
+			cheque.chqSerial  = history.Serial
+			cheque . chqStatus = history. Status 
+			cheque. chqCust  = history.Cust
+			cheque.chqAccount = history.Account
+			cheque.chqTransId  = history.TransId
+			cheque.chqDesc = history.Desc
 
 
 	def closeSltChqWnd (self , sender= None , ser_data = None):
