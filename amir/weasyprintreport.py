@@ -38,8 +38,7 @@ class Printo:
         self.operation.set_print_settings(settings)
 
     def run(self):
-        self.operation.run(Gtk.PrintOperationAction.PRINT_DIALOG)
-        Gtk.main_quit()
+        self.operation.run(Gtk.PrintOperationAction.PRINT_DIALOG)       
 
     def begin_print(self, operation, print_ctx, document):
         operation.set_n_pages(len(document.pages))
@@ -71,10 +70,12 @@ class WeasyprintReport:
             subprocess.call(["xdg-open", 'report.pdf'])
         else:
             os.startfile('report.pdf')
-        time.sleep(2)
+        time.sleep(3)
         os.remove('report.pdf');
+        
     def createTable(self,report_header,report_data):
         if config.locale == 'en_US':
+            text_align = "left"
             html = '<table style="width:100%"><tr>'
             for header in report_header:
                 html += '<th>' + header + '</th>'
@@ -82,11 +83,12 @@ class WeasyprintReport:
             for row in report_data:
                 html += '<tr>'
                 for data in row:
-                    html += '<td>' + data + '</td>'
+                    html += '<td>' + str(data) + '</td>'
                 html += '</tr>'
             html += '</table>'
         else:
-            html = '<table style="width:100%"><tr>'
+            text_align =  "right"
+            html = '<table style="width:100%; "><tr>'
             report_header = report_header[::-1]
             for header in report_header:
                 html += '<th>' + header + '</th>'
@@ -98,5 +100,5 @@ class WeasyprintReport:
                     html += '<td>' + str(data) + '</td>'
                 html += '</tr>'
             html += '</table>'
-        html = '<!DOCTYPE html> <html> <head> <style> @font-face {font-family: Vazir; src: url(data/font/Vazir.woff); } html {font-family: myFirstFont; } table {border-collapse: collapse;} table, td, th {border: 2px solid black; padding: 10px;font-size:10px; text-align:center;}  </style> <meta charset="UTF-8"> </head> <body>' + html + '</body> </html>'
+        html = '<!DOCTYPE html> <html> <head> <style> @font-face {font-family: Vazir; src: url(data/font/Vazir.woff); } html {font-family: myFirstFont; } table {border-collapse: collapse;} table, td, th {border: 2px solid black; padding: 10px;font-size:10px; text-align:'+text_align+';}  </style> <meta charset="UTF-8"> </head> <body>' + html + '</body> </html>'        
         return html

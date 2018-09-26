@@ -53,11 +53,11 @@ class TBalanceReport:
     def createReport(self):
         report_data = []
         remaining = 0
-        report_header = [_("Ledger name"), _("Debt"), _("Credit"), _("Remaining")]
+        report_header = [_("Code") , _("Ledger name"), _("Debt"), _("Credit"), _("Remaining")]
         col_width = [31, 23, 23, 23]
         
         query = config.db.session.query(Subject).select_from(Subject)
-        result = query.filter(Subject.parent_id == 0).all()
+        result = query.order_by(Subject.code).all()
         
         query1 = config.db.session.query(sum(Notebook.value))
         # Check the report parameters
@@ -94,14 +94,16 @@ class TBalanceReport:
                 credit_sum = 0
             else:
                 credit_sum = res[0]
-            
+            if self.builder.get_object("chbZero").get_active()==False:
+                if credit_sum == 0 and debt_sum == 0:
+                    continue
             remain = credit_sum + debt_sum
             if remain < 0:
                 remain = "( " + utility.LN(-remain) + " )"
             else:
                 remain = utility.LN(remain)
                 
-            report_data.append((s.name, utility.LN(-debt_sum), utility.LN(credit_sum), remain))
+            report_data.append((s.code, s.name, utility.LN(-debt_sum), utility.LN(credit_sum), remain))
             
         return {"data":report_data, "col-width":col_width ,"heading":report_header}
             
