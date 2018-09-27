@@ -368,23 +368,26 @@ class AutomaticAccounting:
             document.add_notebook(result['from'], -result['total_value'], unicode(result['desc']))
             document.add_notebook(result['to']  ,  result['cash_payment'], unicode(result['desc']))
             if result['discount'] :
-                document.add_notebook(dbconf.get_int('sell-discount'), -result['discount'], result['desc'])
-            cl_cheque = class_cheque.ClassCheque()
-            for cheque in self.addChequeui.chequesList:
-                if mode == 'our':
-                    document.add_cheque(dbconf.get_int('our_cheque'), cheque.chqAmount, cheque.chqDesc, cheque.chqId)
-                else:
-                    document.add_cheque(dbconf.get_int('other_cheque'), cheque.chqAmount, cheque.chqDesc, cheque.chqId)            
+                document.add_notebook(dbconf.get_int('sell-discount'), -result['discount'], result['desc'])            
 
             if self.type_configs[self.type_index][3] == True: # from is subject
-                customer_id = share.config.db.session.query(Customers).filter(Customers.custSubj==self.to_id).first().custId
+                custSubj = self.to_id                
             else: # from is customer
-                customer_id = share.config.db.session.query(Customers).filter(Customers.custSubj==self.from_id).first().custId
+                custSubj = self.from_id
+            customer_id = share.config.db.session.query(Customers).filter(Customers.custSubj==custSubj).first().custId
+
+            for cheque in self.addChequeui.chequesList:
+                if mode == 'our':
+                    document.add_cheque(dbconf.get_int('our_cheque'),custSubj, cheque.chqAmount, cheque.chqDesc, cheque.chqId)
+                else:
+                    document.add_cheque(dbconf.get_int('other_cheque'),custSubj, cheque.chqAmount, cheque.chqDesc, cheque.chqId)            
+
+            cl_cheque = class_cheque.ClassCheque()
 
             #spendble cheques
             for sp_cheque in self.spendChequeui.chequesList:
                 cl_cheque.update_status(sp_cheque.chqId,5 , customer_id)
-                document.add_cheque(dbconf.get_int('other_cheque'), -sp_cheque.chqAmount , unicode(_('spended')) , sp_cheque.chqId)
+                document.add_cheque(dbconf.get_int('other_cheque'),custSubj, -sp_cheque.chqAmount , unicode(_('spended')) , sp_cheque.chqId)
                     
             result = document.save()
 
@@ -395,12 +398,11 @@ class AutomaticAccounting:
                 return
 
 
-            for cheque in self.addChequeui.chequesList:
-                notebook_id =document.cheques_result[cheque.chqId]          #CANREMOVE notebook_id , result
+            for cheque in self.addChequeui.chequesList:                
                 cl_cheque.add_cheque(cheque.chqAmount, cheque.chqWrtDate, cheque.chqDueDate,
                                      cheque.chqSerial, cheque.chqStatus,
                                      customer_id, cheque.chqAccount,
-                                     0, notebook_id, cheque.chqDesc, result, 0)
+                                     0, 0, cheque.chqDesc, 0, 0)
             cl_cheque.save()
             cl_cheque.save_cheque_history(self.current_time)
             self.on_destroy(self.builder.get_object('general'))

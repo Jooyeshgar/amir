@@ -1191,11 +1191,11 @@ class Factor(Payments):
 		for cheque in self.paymentManager.chequesList:
 			if cheque.chqStatus == 5 :
 				#cl_cheque.update_status(sp_cheque.chqId,5 , self.custId)
-				self.Document.add_cheque(dbconf.get_int('other_cheque'), -cheque.chqAmount , unicode(_('spended')) , cheque.chqId)
+				self.Document.add_cheque(dbconf.get_int('other_cheque'),self.custSubj, -cheque.chqAmount , unicode(_('spended')) , cheque.chqId)
 			elif not self.sell: #buying - our cheque
-				self.Document.add_cheque(dbconf.get_int('our_cheque'), cheque.chqAmount, cheque.chqDesc, cheque.chqId)
+				self.Document.add_cheque(dbconf.get_int('our_cheque'),self.custSubj, cheque.chqAmount, cheque.chqDesc, cheque.chqId)
 			else:		 	  #selling - their cheque
-				self.Document.add_cheque(dbconf.get_int('other_cheque'), cheque.chqAmount, cheque.chqDesc, cheque.chqId) 
+				self.Document.add_cheque(dbconf.get_int('other_cheque'),self.custSubj, cheque.chqAmount, cheque.chqDesc, cheque.chqId) 
 
 			##add cheque history			
 			chequeHistoryChequeId 	= 	cheque.chqId

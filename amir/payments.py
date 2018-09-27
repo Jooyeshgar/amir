@@ -522,13 +522,15 @@ class Payments(GObject.GObject):
 			#self.session.delete(cheque)
 			cheque.chqDelete = True 
 		else:		# is a spended cheque
-			#chqHistory = cheque.chqHistoryId
-			#history = self.session.query(ChequeHistory).filter(ChequeHistory.Id == chqHistory).first()
 			history = self.session.query(ChequeHistory).\
 				filter(ChequeHistory.ChequeId == cheque.chqId).\
 				filter(ChequeHistory.TransId != self.transId).\
-				order_by(ChequeHistory.Id.desc()).limit(1).first()			
-			
+				order_by(ChequeHistory.Id.desc()).limit(1).first()	
+
+			dNotes = self.session.query(Notebook).filter(cheque.chqId== Notebook.chqId).order_by(Notebook.id.desc()).limit(2).all()
+			if len(dNotes):
+				self.session.query(Notebook).filter(or_(Notebook.id==dNotes[0].id ,Notebook.id== dNotes[1].id  )).delete()
+
 			#revert cheque to  it's last history of previous Factor before the cheque spended 
 			cheque.chqAmount = history.Amount
 			cheque.chqWrtDate = history.WrtDate 

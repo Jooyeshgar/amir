@@ -72,9 +72,9 @@ class Document:
         self.cheques = []
         self.cheques_result = {}
 
-    def add_cheque(self, subject_id, value, desctxt, cheque_id):
-        self.cheques.append((subject_id, float(value), desctxt, cheque_id))
-        self.cheques_result[cheque_id] = None   #CANREMOVE
+    def add_cheque(self, subject_id , custId, value, desctxt, cheque_id):
+        self.cheques.append((subject_id, float(value), desctxt, cheque_id))  
+        self.cheques.append ((custId  , -float(value), desctxt, cheque_id))  
             
     def save(self, factorId = 0 ,delete_items=None):
         if len(self.notebooks) == 0:
@@ -118,7 +118,7 @@ class Document:
             logging.debug ("class_document : function save : else_2")
             if factorId : # editing factor ...
                 logging.debug("class_document : function save: else_2 / if factorId")
-                billId = share.config.db.session.query(Factors) . filter(Factors.Id == factorId) . first() . Bill
+                billId = share.config.db.session.query(Notebook) . filter(Notebook.factorId == factorId) . first() . bill_id
                 neededBill  = share.config.db.session.query(Bill) . filter (Bill. id == billId)
                 #self.number = neededBill.first().number
                 neededBill.update({ Bill.lastedit_date: date.today() , Bill.date: self.date})
@@ -169,11 +169,10 @@ class Document:
         for cheque in self.cheques:            
            n = Notebook(cheque[0], self.id, cheque[1], cheque[2],chqId=cheque[3])           
            share.config.db.session.add(n)        
-           share.config.db.session.commit()           
-           self.cheques_result[cheque[3]] = n.id    #CANREMOVE       
+           share.config.db.session.commit()                      
         self.notebooks = []
         
-        return self.id      # bill id   #CANREMOVE
+        return self.id      # bill id   
 
     def get_error_message(self, code):
         if   code == -1:
