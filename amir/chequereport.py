@@ -295,23 +295,20 @@ class ChequeReport:
         self.window.show_all()
         self.builder.connect_signals(self)
 
-        self.dateFromEntry = self.builder.get_object("dateFromSearchentry")
-        self.dateToEntry = self.builder.get_object("dateToSearchentry")
+        dateFromEntry = self.builder.get_object("dateFromSearchentry")
+        dateToEntry = self.builder.get_object("dateToSearchentry")
+        dateFromEntry1 = self.builder.get_object("dateFromSearchentry1")
+        dateToEntry1 = self.builder.get_object("dateToSearchentry1")
         if share.config.datetypes[share.config.datetype] == "jalali":
-            self.dateToEntry.set_placeholder_text("1396:1:1")
-            self.dateFromEntry.set_placeholder_text("1396:1:1")
+            dateToEntry.set_placeholder_text("1396:1:1")
+            dateFromEntry.set_placeholder_text("1396:1:1")            
+            dateToEntry1.set_placeholder_text("1396:1:1")
+            dateFromEntry1.set_placeholder_text("1396:1:1")
         else:
-            self.dateToEntry.set_placeholder_text("1:1:2018")
-            self.dateFromEntry.set_placeholder_text("1:1:2018")
-
-        self.dateFromEntry = self.builder.get_object("dateFromSearchentry")
-        self.dateToEntry = self.builder.get_object("dateToSearchentry")
-        if share.config.datetypes[share.config.datetype] == "jalali":
-            self.dateToEntry.set_placeholder_text("1396:1:1")
-            self.dateFromEntry.set_placeholder_text("1396:1:1")
-        else:
-            self.dateToEntry.set_placeholder_text("1:1:2018")
-            self.dateFromEntry.set_placeholder_text("1:1:2018")
+            dateToEntry.set_placeholder_text("1:1:2018")
+            dateFromEntry.set_placeholder_text("1:1:2018")            
+            dateToEntry1.set_placeholder_text("1:1:2018")
+            dateFromEntry1.set_placeholder_text("1:1:2018")
 
         self.date_entry = dateentry.DateEntry()
         self.current_time = self.date_entry.getDateObject()
@@ -329,14 +326,20 @@ class ChequeReport:
         box = self.builder.get_object("amountToSearchentry")
         amountTo = box.get_text()
 
-        box = self.builder.get_object("dateFromSearchentry")
+        box = self.builder.get_object("dateFromSearchentry1")    #wire
         dateFrom = box.get_text()
 
-        box = self.builder.get_object("dateToSearchentry")
+        box = self.builder.get_object("dateToSearchentry1")      #Due
         dateTo = box.get_text()
-        self.showResult(chequeId, chqSerial, amountFrom, amountTo, dateFrom, dateTo)
 
-    def showResult(self, chequeId=None, chqSerial=None, amountFrom=None, amountTo=None, dateFrom=None, dateTo=None):        
+        box = self.builder.get_object("dateFromSearchentry")   #write
+        wDateFrom = box.get_text()
+
+        box = self.builder.get_object("dateToSearchentry")     #write
+        wDateTo = box.get_text()
+        self.showResult(chequeId, chqSerial, amountFrom, amountTo , dateFrom, dateTo, wDateTo,wDateFrom)
+
+    def showResult(self, chequeId=None, chqSerial=None, amountFrom=None, amountTo=None, dateFrom=None, dateTo=None,wDateTo=None , wDateFrom=None):        
         self.treestoreIncoming.clear()
         self.treestoreOutgoing.clear()
         self.treestoreDeleted.clear()
@@ -345,34 +348,64 @@ class ChequeReport:
         if chequeId:
             result = result.filter(Cheque.chqId == chequeId)
         if chqSerial:
-            result = result.filter(Cheque.chqSerial == chqSerial)
+            result = result.filter(Cheque.chqSerial.like(chqSerial+"%"))
         if amountFrom:
             result = result.filter(Cheque.chqAmount >= amountFrom)
         if amountTo:
             result = result.filter(Cheque.chqAmount <= amountTo)
         if share.config.datetypes[share.config.datetype] == "jalali":
             if dateTo:
-                year, month, day = str(dateTo).split(":")
-                e=jalali_to_gregorian(int(year),int(month),int(day))
-                dateTo = datetime(e[0], e[1], e[2])
+                try:
+                    year, month, day = str(dateTo).split(":")
+                    e=jalali_to_gregorian(int(year),int(month),int(day))
+                    dateTo = datetime(e[0], e[1], e[2])
+                except:
+                    return              
             if dateFrom:
-                year, month, day = dateFrom.split(":")
-                e=jalali_to_gregorian(int(year),int(month),int(day))
-                dateFrom = datetime(e[0], e[1], e[2])
+                try:
+                    year, month, day = dateFrom.split(":")
+                    e=jalali_to_gregorian(int(year),int(month),int(day))
+                    dateFrom = datetime(e[0], e[1], e[2])
+                except:
+                    return
+            if wDateTo:
+                try:
+                    year, month, day = str(wDateTo).split(":")
+                    e=jalali_to_gregorian(int(year),int(month),int(day))
+                    wDateTo = datetime(e[0], e[1], e[2])
+                except:
+                    return  
+            if wDateFrom:
+                try:
+                    year, month, day = wDateFrom.split(":")
+                    e=jalali_to_gregorian(int(year),int(month),int(day))
+                    wDateFrom = datetime(e[0], e[1], e[2])
+                except:
+                    return 
         else:
             if dateTo:
                 year, month, day = str(dateTo).split(":")
                 dateTo = datetime(int(day),int(month),int(year))
             if dateFrom:
                 year, month, day = dateFrom.split(":")
-                dateFrom = datetime(int(day),int(month),int(year))
+                dateFrom = datetime(int(day),int(month),int(year))            
+            if wDateTo:
+                year, month, day = str(wDateTo).split(":")
+                wDateTo = datetime(int(day),int(month),int(year))
+            if wDateFrom:
+                year, month, day = wDateFrom.split(":")
+                wDateFrom = datetime(int(day),int(month),int(year))
 
         if dateTo:
-            result = result.filter(Cheque.chqDueDate <= dateTo)
-        if dateFrom:
-            DD = timedelta(days=1)
-            dateFrom -= DD
+            result = result.filter(Cheque.chqDueDate <= dateTo)        
+        if wDateTo:
+            result = result.filter(Cheque.chqWrtDate <= wDateTo)
+        if dateFrom:            
+            dateFrom -= timedelta(days=1)
             result = result.filter(Cheque.chqDueDate >= dateFrom)
+        if wDateFrom:            
+            wDateFrom -= timedelta(days=1)
+            result = result.filter(Cheque.chqWrtDate >= wDateFrom)
 
         # Show
         for cheque , cust in result.all():            
@@ -381,7 +414,7 @@ class ChequeReport:
                 chqWrtDate = gregorian_to_jalali(int(year),int(month),int(day))
                 chqWrtDate = str(chqWrtDate[0]) + '-' + str(chqWrtDate[1]) + '-' + str(chqWrtDate[2])
 
-                year, month, day = str(cheque.chqWrtDate).split("-")
+                year, month, day = str(cheque.chqDueDate).split("-")
                 chqDueDate = gregorian_to_jalali(int(year),int(month),int(day))
                 chqDueDate = str(chqDueDate[0]) + '-' + str(chqDueDate[1]) + '-' + str(chqDueDate[2])
 

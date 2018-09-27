@@ -108,8 +108,7 @@ class CardexReport:
         obj.highlightProduct(unicode(code))
 
     def proSelected(self,sender=0, id=0, code=0):
-        code = unicode(code)
-        print code
+        code = unicode(code)        
         if sender:
             self.proVal.set_text(code)
             sender.window.destroy()
@@ -126,8 +125,7 @@ class CardexReport:
 
     def sellerSelected(self, sender, id, code):
         self.customerEntry.set_text(code)
-        sender.window.destroy()     
-        self.setCustomerName()
+        sender.window.destroy()             
 
     def showResult(self, productCode,factorType,customerCode,dateFrom,dateTo):
         query = config.db.session.query(Products)
