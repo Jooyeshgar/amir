@@ -1,6 +1,6 @@
 from gi.repository import Gtk
 import class_document
-import numberentry
+import numberentry , decimalentry
 import dateentry
 import subjects
 import utility
@@ -41,7 +41,7 @@ class AddEditDoc:
         self.code.connect("activate", self.selectSubject)
         self.code.set_tooltip_text(_("Press Enter to see available subjects."))
         
-        self.amount = numberentry.NumberEntry()
+        self.amount = decimalentry.DecimalEntry()
         box = self.builder.get_object("amountbox")
         box.add(self.amount)
         self.amount.set_activates_default(True)
@@ -173,8 +173,7 @@ class AddEditDoc:
         selection = self.treeview.get_selection()
         iter = selection.get_selected()[1]
         if iter != None :
-            code    = self.liststore.get(iter, 1)[0]
-            print code
+            code    = self.liststore.get(iter, 1)[0]            
         dialog = self.builder.get_object("dialog1")
         dialog.set_title(_("Add new row"))
         self.code.set_text("")
@@ -186,11 +185,11 @@ class AddEditDoc:
             type = not (self.builder.get_object("debtor").get_active() == True)
                 
             code = self.code.get_text()
-            amount = self.amount.get_text()
+            amount = self.amount.get_float()
             if code != '' and amount != '':
 
 
-                self.saveRow(utility.convertToLatin(code), int(unicode(amount)), type, desc.get_text())
+                self.saveRow(utility.convertToLatin(code), amount, type, desc.get_text())
         dialog.hide()
     
     ##Show add_row dialog and call saveRow() to edit the current row

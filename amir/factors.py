@@ -191,7 +191,7 @@ class Factor(Payments):
 		for t ,c in reversed(result):		
 			date = t.tDate
 			date = dateToString(date)
-			grouprow = self.treestore.append(None, (int(t.Id), t.Code, str(date), c.custName, str(t.PayableAmnt)))
+			grouprow = self.treestore.append(None, (int(t.Id), t.Code, str(date), c.custName, utility.LN(t.PayableAmnt)))
 			
 		self.window.show_all()
 
