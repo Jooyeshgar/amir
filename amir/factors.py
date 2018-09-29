@@ -187,7 +187,6 @@ class Factor(Payments):
 		query =	query.filter(Factors.Sell==self.sell).filter(Factors.Activated==1)
 		result = query.all()
 
-		from pprint import pprint
 		self.cal = calverter()
 		for t ,c in reversed(result):		
 			date = t.tDate
@@ -297,11 +296,12 @@ class Factor(Payments):
 				self.appendDiscount(float(factorItem.qnty)*float(factorItem.untDisc))
 				self.valsChanged()
 				number+=1																
-			self.taxEntry.set_text(str(self.editTransaction.VAT))
-			self.feeEntry.set_text(str(self.editTransaction.Fee))
-			self.additionsEntry.set_text(str(self.editTransaction.Addition))
-			self.subsEntry.set_text(str(self.editTransaction.Subtraction))
-			self.cashPymntsEntry.set_text(str(self.editTransaction.CashPayment))			
+			self.taxEntry.set_text(str(utility.LN(self.editTransaction.VAT)))
+			self.feeEntry.set_text(str(utility.LN(self.editTransaction.Fee)))
+			self.additionsEntry.set_text(str(utility.LN(self.editTransaction.Addition)))
+			self.subsEntry.set_text(str(utility.LN(self.editTransaction.Subtraction)))			
+			
+			self.cashPymntsEntry.set_text(utility.LN(self.editTransaction.CashPayment))	
 			self.builder.get_object("shipViaEntry").set_text(str(self.editTransaction.ShipVia))
 			self.builder.get_object("transDescEntry").set_text(str(self.editTransaction.Desc))
 			self.factorDate.set_text(str(self.editTransaction.tDate))			
@@ -741,8 +741,8 @@ class Factor(Payments):
 			self.fee = self.totalFactor * dbconf.get_int("fee-rate")/100
 			self.totalTax = self.VAT + self.fee
 
-			taxEntry.set_text(str(self.VAT))
-			feeEntry.set_text(str(self.fee))
+			taxEntry.set_text(utility.LN(str(self.VAT)))
+			feeEntry.set_text(utility.LN(str(self.fee)))
 		else:
 			self.totalTax = 0
 			self.VAT = 0
