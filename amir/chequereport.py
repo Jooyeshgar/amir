@@ -39,7 +39,7 @@ class ChequeReport:
         self.treeviewOutgoing.set_model(self.treestoreOutgoing)
         self.treeviewDeleted.set_model(self.treestoreDeleted)
 
-        self.createHistoryTreeview()
+        
         column = Gtk.TreeViewColumn(_("ID"), Gtk.CellRendererText(), text = 0)
         column.set_spacing(5)
         column.set_resizable(True)
@@ -570,18 +570,12 @@ class ChequeReport:
             self.code = convertToLatin(self.treestoreOutgoing.get(iter, 0)[0])
             self.showHistory(self.code)
 
-    def showHistory(self, code):
-
-        self.historywindow.show_all()
-        
+    def showHistory(self, code):            
 
         self.treestoreHistory.clear()
         result = config.db.session.query(ChequeHistory, Cheque , Customers.custName)\
         .join(Cheque,ChequeHistory.ChequeId== Cheque.chqId).join(Customers,  Customers.custId == Cheque.chqCust)\
         .filter(ChequeHistory.ChequeId == code).all()
-        #result = config.db.session.query(ChequeHistory, Cheque , Customers).select_from(join(ChequeHistory, Cheque , Customers, Customers.custId == Cheque.chqCust,ChequeHistory.Id== Cheque.chqId)).all()
-        #result = config.db.session.query(ChequeHistory).outerjoin(Customers, Customers.custId == ChequeHistory.Cust)
-        #result = result.filter(ChequeHistory.ChequeId == code).all()
 
 
         # Show
@@ -602,12 +596,13 @@ class ChequeReport:
                 year, month, day = str(chequeHistory.DueDate).split("-")
                 chqDueDate = str(day) + '-' + str(month) + '-' + str(year)
 
-            if (chequeHistory.Status == 2) or (chequeHistory.Status == 3):
+            if (chequeHistory.Status == 2) or (chequeHistory.Status == 4):
                 clear = 'Cleared'
             else:
                 clear = 'Not Cleared'
 
             self.treestoreHistory.append(None, (str(chequeHistory.ChequeId), str(chequeHistory.Amount), str(chqWrtDate), str(chqDueDate), str(chequeHistory.Serial), str(clear), str(cust), str(chequeHistory.Account), str(chequeHistory.TransId), str(cheque.chqNoteBookId), str(chequeHistory.Desc), str(chequeHistory.Date) ,str(cheque.chqBillId),str(self.chequeStatus[chequeHistory.Status]) ))
+            self.historywindow.show_all()
 
     def on_select_cell(self, sender):
         my_button = self.builder.get_object("odatAsMoshtariButton")
