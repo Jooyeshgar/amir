@@ -8,6 +8,7 @@ from database import BankNames
 from sqlalchemy.orm.util import outerjoin
 from sqlalchemy.orm.query import aliased
 from sqlalchemy.sql.functions import *
+from gi.repository import Gtk
 
 config = share.config
 ## \defgroup Controller
@@ -39,6 +40,24 @@ class BankAccountsClass:
             config.db.session.add(BankNames(bank_name))
             config.db.session.commit()
 
+    def addNewBank (self , model):
+        dialog = Gtk.Dialog(None, None,
+                     Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                     (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                      Gtk.STOCK_OK, Gtk.ResponseType.OK))
+        label = Gtk.Label(label='Bank Name:')
+        entry = Gtk.Entry()
+        dialog.vbox.pack_start(label, False, False,0)
+        dialog.vbox.pack_start(entry, False, False,0)
+        dialog.show_all()
+        result = dialog.run()
+        bank_name = entry.get_text()        
+        if result == Gtk.ResponseType.OK and len(bank_name) != 0:                                
+                iter = model.append()
+                model.set(iter, 0, bank_name)       
+                self.add_bank(bank_name)
+ 
+        dialog.destroy()
     def add_account(self, id, name, number, type, owner, bank, branch, address, phone, webpage, desc):
         name    = unicode(name)
         number  = unicode(number)

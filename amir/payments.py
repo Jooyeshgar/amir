@@ -82,7 +82,8 @@ class Payments(GObject.GObject):
 		self.isRecpt = self.builder.get_object("recieptRadioButton")
 		self.pymntDescEntry = self.builder.get_object("pymntDescEntry")
 		self.bankEntry = self.builder.get_object("bankEntry")	
-		
+		if not self.sellFlag:
+			self.builder.get_object("chooseBankBtn").set_sensitive(False)
 		
 		# add for bankcombo 23/11/92
 		
@@ -95,17 +96,12 @@ class Payments(GObject.GObject):
 		self.bankCombo.pack_start(cell, True)
 		# self.bankCombo.add_attribute(cell, 'text', 0)
 		
-		for item in self.bankaccounts_class.get_bank_names():
-			iter = model.append()
-			model.set(iter, 0, item.Name)
-			self.bank_names_count+=1
+
 	
 				
 		self.serialNoEntry = self.builder.get_object("serialNoEntry")
 		self.payerEntry = self.builder.get_object("payerNameEntry")
-		self.customerNameLbl = self.builder.get_object("customerNameLbl")		
-
-		self.bankAccountEntry = self.builder.get_object("bankAccountEntry")
+		self.customerNameLbl = self.builder.get_object("customerNameLbl")			
 		
 		
 		self.cheqTreeView = self.builder.get_object("chequeTreeView")
@@ -202,6 +198,16 @@ class Payments(GObject.GObject):
 		self.removeFlg=False
 		btnVal  = _("Add payment to list")
 		
+		model = self.bankCombo.get_model()
+		if self.sellFlag: # other's cheque
+			banks = self.bankaccounts_class.get_bank_names()
+		else:
+			banks =  self.bankaccounts_class.get_all_accounts()
+		for item in banks:
+			iter = model.append()
+			name = item.Name if self.sellFlag else item.accName
+			model.set(iter, 0, name )			
+
 		today   = date.today()
 		self.dueDateEntry.showDateObject(today)
 		self.bankCombo.set_active(0)
@@ -209,9 +215,8 @@ class Payments(GObject.GObject):
 		self.pymntAmntEntry.set_text("")
 		self.payerEntry.set_text("")		
 		self.writeDateEntry.showDateObject(today)
-		self.pymntDescEntry.set_text("")
-		self.bankAccountEntry.set_text("")
-				
+		self.pymntDescEntry.set_text("")				
+
 		self.btn    = self.builder.get_object("submitBtn")
 		self.btn.set_label(btnVal)
 		
@@ -223,7 +228,16 @@ class Payments(GObject.GObject):
 
 
 	def editPay(self, sender=0):
-					
+		model = self.bankCombo.get_model()
+		if self.sellFlag: # other's cheque
+			banks = self.bankaccounts_class.get_bank_names()
+		else:
+			banks =  self.bankaccounts_class.get_all_accounts()
+		for item in banks:
+			iter = model.append()
+			name = item.Name if self.sellFlag else item.accName
+			model.set(iter, 0, name )	
+
 		iter = self.cheqTreeView.get_selection().get_selected()[1]
 		if iter == None:
 			return
@@ -232,7 +246,7 @@ class Payments(GObject.GObject):
 			number = utility.getInt(number)						
 			cheque = self.chequesList [number-1]		# reads from cheques list that holds temporary changes in cheque table. for adding or edditing without effect on database before submiting factor form				
 			self.editid = cheque.chqId
-			payer_id   = cheque.chqCust
+			#payer_id   = cheque.chqCust
 			amount = utility.LN(cheque.chqAmount, False)
 			serial = cheque.chqSerial
 			wrtDate = cheque.chqWrtDate
@@ -299,8 +313,11 @@ class Payments(GObject.GObject):
 		pymntAmnt 	= self.pymntAmntEntry.get_float()
 		wrtDate 	= self.writeDateEntry.getDateObject()
 		dueDte 		= self.dueDateEntry.getDateObject()
-		bank_name = self.bankCombo.get_active_text()
-		bank 		= self.bankaccounts_class.get_bank_id(bank_name)		
+		bank = int(self.bankCombo.get_active()) + 1
+		if self.sellFlag:
+			bank_name = self.bankaccounts_class.get_bank_name(bank)		
+		else:
+			bank_name = self.bankaccounts_class.get_account(bank).accName
 		serial 		= unicode(self.serialNoEntry.get_text())
 		pymntDesc 	= unicode(self.pymntDescEntry.get_text())		
 		payer		= self.payerEntry.get_text()		
@@ -444,28 +461,8 @@ class Payments(GObject.GObject):
 				self.addPayment(sender, True)
 
 	def on_add_bank_clicked(self, sender):
-		dialog = Gtk.Dialog(None, None,
-					 Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
-					 (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-					  Gtk.STOCK_OK, Gtk.ResponseType.OK))
-		label = Gtk.Label(label='Bank Name:')
-		entry = Gtk.Entry()
-		dialog.vbox.pack_start(label, False, False,0)
-		dialog.vbox.pack_start(entry, False, False,0)
-		dialog.show_all()
-		result = dialog.run()
-		bank_name = entry.get_text()
-		if result == Gtk.ResponseType.OK and len(bank_name) != 0:				
-				model = self.bankCombo.get_model()
- 
-				iter = model.append()
-				model.set(iter, 0, bank_name)
-				self.bank_names_count+=1
-				self.bankCombo.set_active(self.bank_names_count-1)
- 
-				self.bankaccounts_class.add_bank(bank_name)
- 
-		dialog.destroy()
+		model = self.bankCombo.get_model()
+		self.bankaccounts_class.addNewBank(model)
 
 	def selectSeller(self,sender=0):				# not needed in submiting factor
 		customer_win = customers.Customer()

@@ -96,7 +96,7 @@ class BankAccountsUI:
         if id > 0:
             account = self.bankaccounts_class.get_account(id)
         else:
-            account = BankAccounts('', '', 0, '', 0, '', '', '', '', '')
+            account = BankAccounts('', '', 0, '', 1, '', '', '', '', '')
         self.builder.get_object('account_name').set_text(account.accName)
         self.builder.get_object('account_number').set_text(account.accNumber)
         self.builder.get_object('account_owner').set_text(account.accOwner)
@@ -105,8 +105,7 @@ class BankAccountsUI:
         self.builder.get_object('bank_phone').set_text(account.accBankPhone)
         self.builder.get_object('bank_webpage').set_text(account.accBankWebPage)
         self.builder.get_object('desc').set_text(account.accDesc)
-        self.builder.get_object('account_types_combo').set_active(account.accType)
-        #if account.accBank == 0:
+        self.builder.get_object('account_types_combo').set_active(account.accType)        
         self.builder.get_object('bank_names_combo').set_active(account.accBank-1)
         # else:
         #     c = 0
@@ -162,29 +161,9 @@ class BankAccountsUI:
         self.builder.get_object('general_window').hide()
 
     def on_add_bank_clicked(self, sender):
-        dialog = Gtk.Dialog(None, None,
-                     Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
-                     (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                      Gtk.STOCK_OK, Gtk.ResponseType.OK))
-        label = Gtk.Label(label='Bank Name:')
-        entry = Gtk.Entry()
-        dialog.vbox.pack_start(label, False, False)
-        dialog.vbox.pack_start(entry, False, False)
-        dialog.show_all()
-        result = dialog.run()
-        bank_name = entry.get_text()
-        if result == Gtk.ResponseType.OK and len(bank_name) != 0:
-                combo = self.builder.get_object('bank_names_combo')
-                model = combo.get_model()
+        model = self.builder.get_object('bank_names_combo').get_model()
+        self.bankaccounts_class.addNewBank(model)
 
-                iter = model.append()
-                model.set(iter, 0, bank_name)
-                self.bank_names_count+=1
-                combo.set_active(self.bank_names_count-1)
-
-                self.bankaccounts_class.add_bank(bank_name)
-
-        dialog.destroy()
 
     def on_add_window_delete_event(self, window, event):
         window.hide()
