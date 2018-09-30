@@ -24,7 +24,7 @@ class BankAccountsClass:
         return config.db.session.query(BankAccounts).select_from(BankAccounts).filter(BankAccounts.accId == id).first()
 
     def get_all_accounts(self):
-        return config.db.session.query(BankAccounts).select_from(BankAccounts).order_by(BankAccounts.accBank).all()
+        return config.db.session.query(BankAccounts).select_from(BankAccounts).all()
 
     def get_bank_id(self, name):
         return config.db.session.query(BankNames).select_from(BankNames).filter(BankNames.Name == unicode(name)).first().Id
@@ -50,7 +50,8 @@ class BankAccountsClass:
         webpage = unicode(webpage)
         desc    = unicode(desc)
 
-        bank_id = config.db.session.query(BankNames).select_from(BankNames).filter(BankNames.Name == bank).first().Id
+        #bank_id = config.db.session.query(BankNames).select_from(BankNames).filter(BankNames.Name == bank).first().Id
+        bank_id = bank
 
         if id == -1:
             bank_account = BankAccounts(name, number, type, owner, bank_id, branch, address, phone, webpage, desc)
@@ -59,8 +60,7 @@ class BankAccountsClass:
             dbconf = dbconfig.dbConfig()
             sub.add(dbconf.get_int('bank'), name, str(bank_account.accId).rjust(2, '0'))
         else:
-            query = config.db.session.query(BankAccounts).select_from(BankAccounts)
-            query = query.filter(BankAccounts.accId == id)
+            query = config.db.session.query(BankAccounts).filter(BankAccounts.accId == id)
             query.update( {BankAccounts.accName        : name,
                            BankAccounts.accNumber      : number,
                            BankAccounts.accType        : type,

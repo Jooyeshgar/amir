@@ -87,16 +87,16 @@ class BankAccountsUI:
             if account.accType == 0:
                 accType = 'جاری'
             else:
-                accType = 'حساب پس انداز'
+                accType = 'حساب پس انداز'            
             accBank = self.bankaccounts_class.get_bank_name(account.accBank)
-            model.set(iter, 0, account.accId, 1, account.accName, 2, account.accNumber, 3, account.accOwner, 4, accType, 5, accBank)
+            model.set(iter, 0, unicode(account.accId), 1, account.accName, 2, unicode(account.accNumber), 3, account.accOwner, 4, accType, 5, accBank)
         window.show_all()
     #add acount
     def add_account(self, id=-1):
         if id > 0:
             account = self.bankaccounts_class.get_account(id)
         else:
-            account = BankAccounts('', '', -1, '', -1, '', '', '', '', '')
+            account = BankAccounts('', '', 0, '', 0, '', '', '', '', '')
         self.builder.get_object('account_name').set_text(account.accName)
         self.builder.get_object('account_number').set_text(account.accNumber)
         self.builder.get_object('account_owner').set_text(account.accOwner)
@@ -106,22 +106,22 @@ class BankAccountsUI:
         self.builder.get_object('bank_webpage').set_text(account.accBankWebPage)
         self.builder.get_object('desc').set_text(account.accDesc)
         self.builder.get_object('account_types_combo').set_active(account.accType)
-        if account.accBank == -1:
-            self.builder.get_object('bank_names_combo').set_active(account.accBank)
-        else:
-            c = 0
-            bank_name = self.bankaccounts_class.get_bank_name(account.accBank)
-            combo_box = self.builder.get_object('bank_names_combo')
-            combo_box.set_active(c)
-            model = combo_box.get_model()
-            iter  = combo_box.get_active_iter()
-            while iter != None:
-                if model.get_value(iter, 0) == bank_name:
-                    break
-                else:
-                    c+=1
-                    self.builder.get_object('bank_names_combo').set_active(c)
-                    iter  = combo_box.get_active_iter()
+        #if account.accBank == 0:
+        self.builder.get_object('bank_names_combo').set_active(account.accBank-1)
+        # else:
+        #     c = 0
+        #     bank_name = self.bankaccounts_class.get_bank_name(account.accBank)
+        #     combo_box = self.builder.get_object('bank_names_combo')
+        #     combo_box.set_active(c)
+        #     model = combo_box.get_model()
+        #     iter  = combo_box.get_active_iter()
+        #     while iter != None:
+        #         if model.get_value(iter, 0) == bank_name:
+        #             break
+        #         else:
+        #             c+=1
+        #             self.builder.get_object('bank_names_combo').set_active(c)
+        #             iter  = combo_box.get_active_iter()
 
         self.selected_id = id
         window = self.builder.get_object('add_window')
@@ -198,7 +198,7 @@ class BankAccountsUI:
         account_number = self.builder.get_object('account_number').get_text()
         account_type = self.builder.get_object('account_types_combo').get_active()
         account_owner = self.builder.get_object('account_owner').get_text()
-        bank_name = self.builder.get_object('bank_names_combo').get_active_text()
+        bank_id = self.builder.get_object('bank_names_combo').get_active()    # bankName Id
 
         if len(account_name) == 0:
             msg+= 'Account Name Can not be empty\n'
@@ -208,7 +208,7 @@ class BankAccountsUI:
             msg+= 'Account Owner Can not be empty\n'
         if account_type == -1:
             msg+= 'Select an account type\n'
-        if bank_name == None:
+        if bank_id == None:
             msg+= 'Select a Bank\n'
 
         if len(msg):
@@ -217,12 +217,13 @@ class BankAccountsUI:
             dialog.destroy()
             return
 
+        bank_id += 1
         result = self.bankaccounts_class.add_account(id,
                 account_name,
                 account_number,
                 account_type,
                 account_owner,
-                bank_name,
+                bank_id,
                 self.builder.get_object('bank_branch').get_text(),
                 self.builder.get_object('bank_address').get_text(), 
                 self.builder.get_object('bank_phone').get_text(),
@@ -252,6 +253,7 @@ class BankAccountsUI:
                 accType = 'جاری'
             else:
                 accType = 'حساب پس انداز'
+            bank_name= self.bankaccounts_class.get_bank_name(bank_id)
             model.set(iter, 0, result, 1, account_name, 2, account_number, 3, account_owner, 4, accType, 5, bank_name)
             glib.timeout_add_seconds(3, lambda w: w.destroy(), infobar)
 ## @}
