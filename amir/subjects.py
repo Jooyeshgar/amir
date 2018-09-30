@@ -1,5 +1,5 @@
 import gi
-from gi.repository import Gtk
+from gi.repository import Gtk , Gdk
 from gi.repository import GObject
 
 from sqlalchemy.orm.util import outerjoin
@@ -112,8 +112,8 @@ class Subjects(GObject.GObject):
             self.builder.get_object('toolbar4').hide()
             self.builder.get_object('statusbar1').hide()
         else:
-            self.builder.get_object('hbox5').hide()
-        
+            self.builder.get_object('hbox5').hide()    
+
     def addLedger(self, sender):
         dialog = self.builder.get_object("dialog1")
         dialog.set_title(_("Add Ledger"))
@@ -533,6 +533,13 @@ class Subjects(GObject.GObject):
         else:
             return 1
 
+    def searchName(self, sender):
+        name = unicode(self.builder.get_object('nameEntry').get_text())
+        if name == "":
+            self.treeview.collapse_all()
+        code = config.db.session.query(Subject.code).filter(Subject.name.like(name+"%")).first().code        
+        self.highlightSubject(code)
+
     def highlightSubject(self, code):
         i = 3
         code = code.decode('utf-8')
@@ -567,7 +574,7 @@ class Subjects(GObject.GObject):
             self.treeview.expand_to_path(path)
             self.treeview.scroll_to_cell(path, None, False, 0, 0)
             self.treeview.set_cursor(path, None, False)
-            self.treeview.grab_focus()
+            #self.treeview.grab_focus()
      
     def on_key_release_event(self, sender, event):
         expand = 0

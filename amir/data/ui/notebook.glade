@@ -7,85 +7,152 @@
     <property name="title" translatable="yes">Notebook Subjects</property>
     <property name="default_width">700</property>
     <property name="default_height">350</property>
+    <property name="destroy_with_parent">True</property>
     <property name="type_hint">dialog</property>
     <child>
       <object class="GtkVBox" id="vbox29">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
-          <object class="GtkToolbar" id="toolbar4">
-            <property name="height_request">60</property>
+          <object class="GtkBox" id="box1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="toolbar_style">both</property>
             <child>
-              <object class="GtkToolButton" id="addtoolbutton">
+              <object class="GtkToolbar" id="toolbar4">
+                <property name="height_request">60</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="has_tooltip">True</property>
-                <property name="label" translatable="yes">Add ledger</property>
-                <property name="stock_id">gtk-new</property>
-                <signal name="clicked" handler="addLedger" swapped="no"/>
-                <accelerator key="l" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
+                <property name="toolbar_style">both</property>
+                <child>
+                  <object class="GtkToolButton" id="addtoolbutton">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="has_tooltip">True</property>
+                    <property name="label" translatable="yes">Add ledger</property>
+                    <property name="stock_id">gtk-new</property>
+                    <signal name="clicked" handler="addLedger" swapped="no"/>
+                    <accelerator key="l" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="addsubtoolbutton">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Add sub-ledger</property>
+                    <property name="stock_id">gtk-add</property>
+                    <signal name="clicked" handler="addSubLedger" swapped="no"/>
+                    <accelerator key="Insert" signal="clicked"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSeparatorToolItem" id="separatortoolitem1">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="edittoolbutton">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Edit</property>
+                    <property name="stock_id">gtk-edit</property>
+                    <signal name="clicked" handler="editLedger" swapped="no"/>
+                    <accelerator key="e" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="deletetoolbutton">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="has_tooltip">True</property>
+                    <property name="tooltip_markup">Ctrl+D</property>
+                    <property name="tooltip_text" translatable="yes">Ctrl+D</property>
+                    <property name="label" translatable="yes">Delete</property>
+                    <property name="stock_id">gtk-delete</property>
+                    <signal name="clicked" handler="deleteLedger" swapped="no"/>
+                    <accelerator key="Delete" signal="clicked"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="homogeneous">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
               </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="addsubtoolbutton">
+              <object class="GtkBox" id="box2">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Add sub-ledger</property>
-                <property name="stock_id">gtk-add</property>
-                <signal name="clicked" handler="addSubLedger" swapped="no"/>
-                <accelerator key="Insert" signal="clicked"/>
+                <property name="margin_left">13</property>
+                <property name="spacing">8</property>
+                <child>
+                  <object class="GtkSeparator" id="separator1">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="label8">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="margin_right">5</property>
+                    <property name="label" translatable="yes">Search 
+subject name:</property>
+                    <property name="justify">center</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="nameEntry">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="max_length">100</property>
+                    <property name="width_chars">15</property>
+                    <property name="max_width_chars">15</property>
+                    <property name="caps_lock_warning">False</property>
+                    <signal name="changed" handler="searchName" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkSeparatorToolItem" id="separatortoolitem1">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">False</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToolButton" id="edittoolbutton">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Edit</property>
-                <property name="stock_id">gtk-edit</property>
-                <signal name="clicked" handler="editLedger" swapped="no"/>
-                <accelerator key="e" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToolButton" id="deletetoolbutton">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="has_tooltip">True</property>
-                <property name="tooltip_markup">Ctrl+D</property>
-                <property name="tooltip_text" translatable="yes">Ctrl+D</property>
-                <property name="label" translatable="yes">Delete</property>
-                <property name="stock_id">gtk-delete</property>
-                <signal name="clicked" handler="deleteLedger" swapped="no"/>
-                <accelerator key="Delete" signal="clicked"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
               </packing>
             </child>
           </object>
@@ -107,6 +174,8 @@
                 <property name="can_focus">True</property>
                 <property name="tooltip_text" translatable="yes">Use left/right arrow keys to expand/collapse subjects</property>
                 <property name="rules_hint">True</property>
+                <property name="enable_search">False</property>
+                <property name="search_column">1</property>
                 <property name="enable_tree_lines">True</property>
                 <signal name="key-release-event" handler="on_key_release_event" swapped="no"/>
                 <signal name="row-activated" handler="selectSubjectFromList" swapped="no"/>

@@ -444,7 +444,7 @@ class Factor(Payments):
 				self.addDlg.set_title("Choose buy information")
 			
 			btnVal  = "Add to list"
-		self.sellListStore.clear()
+		
 		self.proVal        = self.builder.get_object("proEntry")
 		self.discountEntry = self.builder.get_object("discountEntry")
 		self.descVal       = self.builder.get_object("descVal")
