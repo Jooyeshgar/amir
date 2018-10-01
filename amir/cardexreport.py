@@ -92,12 +92,15 @@ class CardexReport:
 
         self.dateToEntry = self.builder.get_object("dateToEntry")
         self.dateFromEntry = self.builder.get_object("dateFromEntry")
+        delimiter = config.datedelims[config.datedelim] 
         if share.config.datetypes[share.config.datetype] == "jalali":
-            self.dateToEntry.set_placeholder_text("1396:1:1")
-            self.dateFromEntry.set_placeholder_text("1396:1:1")
+            placeH = "1396"+delimiter+"1"+ delimiter +"1"
+            self.dateToEntry.set_placeholder_text(placeH)
+            self.dateFromEntry.set_placeholder_text(placeH)
         else:
-            self.dateToEntry.set_placeholder_text("1:1:2018")
-            self.dateFromEntry.set_placeholder_text("1:1:2018")
+            placeH = "1"+delimiter+"1"+delimiter+"2018"
+            self.dateToEntry.set_placeholder_text(placeH)
+            self.dateFromEntry.set_placeholder_text(placeH)
 
     def selectProduct(self,sender=0):
         self.proVal = self.builder.get_object("productCodeSearchEntry")
@@ -234,10 +237,11 @@ class CardexReport:
         else:
             productType = item[0]
 
+        delimiter = config.datedelims[config.datedelim] 
         dateTo = self.dateToEntry.get_text()
-        dateTo = dateTo.replace(":", "-")
+        dateTo = dateTo.replace(delimiter, "-")
 
         dateFrom = self.dateFromEntry.get_text()
-        dateFrom = dateFrom.replace(":", "-")
+        dateFrom = dateFrom.replace(delimiter, "-")
 
         self.showResult(productCode,productType,customerCode,dateFrom,dateTo)

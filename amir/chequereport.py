@@ -23,7 +23,7 @@ dbconf = dbconfig.dbConfig()
 config = share.config
 
 class ChequeReport:
-    chequeStatus = ["" , _("Paid-Not passed"), _("Paid-Passed"), _("Recieved-Not passed"), _("Recieved-Passed"), _("Spent") , _("Returned to customer") , _("Returned from customer") , _("Bounced")]
+    chequeStatus = ["" , _("Paid-Not passed"), _("Paid-Passed"), _("Recieved-Not passed"), _("Recieved-Passed"), _("Spent") , _("Returned to customer") , _("Returned from customer") , _("Paid-Bounced"),_("Recieved-Bounced")]
     def __init__(self):
         self.builder = get_builder("chequereport")
         self.window = self.builder.get_object("windowChequeReport")
@@ -345,6 +345,7 @@ class ChequeReport:
         self.treestoreDeleted.clear()
         result = config.db.session.query(Cheque , Customers.custName).select_from(outerjoin(Cheque , Customers, Customers.custId == Cheque.chqCust))
         # Apply filters
+        delimiter = config.datedelims[config.datedelim]        
         if chequeId:
             result = result.filter(Cheque.chqId == chequeId)
         if chqSerial:
@@ -356,44 +357,44 @@ class ChequeReport:
         if share.config.datetypes[share.config.datetype] == "jalali":
             if dateTo:
                 try:
-                    year, month, day = str(dateTo).split(":")
+                    year, month, day = str(dateTo).split(delimiter)
                     e=jalali_to_gregorian(int(year),int(month),int(day))
                     dateTo = datetime(e[0], e[1], e[2])
                 except:
                     return              
             if dateFrom:
                 try:
-                    year, month, day = dateFrom.split(":")
+                    year, month, day = dateFrom.split(delimiter)
                     e=jalali_to_gregorian(int(year),int(month),int(day))
                     dateFrom = datetime(e[0], e[1], e[2])
                 except:
                     return
             if wDateTo:
                 try:
-                    year, month, day = str(wDateTo).split(":")
+                    year, month, day = str(wDateTo).split(delimiter)
                     e=jalali_to_gregorian(int(year),int(month),int(day))
                     wDateTo = datetime(e[0], e[1], e[2])
                 except:
                     return  
             if wDateFrom:
                 try:
-                    year, month, day = wDateFrom.split(":")
+                    year, month, day = wDateFrom.split(delimiter)
                     e=jalali_to_gregorian(int(year),int(month),int(day))
                     wDateFrom = datetime(e[0], e[1], e[2])
                 except:
                     return 
         else:
             if dateTo:
-                year, month, day = str(dateTo).split(":")
+                year, month, day = str(dateTo).split(delimiter)
                 dateTo = datetime(int(day),int(month),int(year))
             if dateFrom:
-                year, month, day = dateFrom.split(":")
+                year, month, day = dateFrom.split(delimiter)
                 dateFrom = datetime(int(day),int(month),int(year))            
             if wDateTo:
-                year, month, day = str(wDateTo).split(":")
+                year, month, day = str(wDateTo).split(delimiter)
                 wDateTo = datetime(int(day),int(month),int(year))
             if wDateFrom:
-                year, month, day = wDateFrom.split(":")
+                year, month, day = wDateFrom.split(delimiter)
                 wDateFrom = datetime(int(day),int(month),int(year))
 
         if dateTo:
@@ -489,7 +490,7 @@ class ChequeReport:
         result = config.db.session.query(Cheque, Customers)
         result = result.filter(Customers.custId == Cheque.chqCust)
         result = result.filter(Cheque.chqId == self.code).first()
-        result.Cheque.chqStatus = 8
+        result.Cheque.chqStatus = 8 if result.cheque.chqStatus in (1 , 2, 5) else 9
         ch_history = ChequeHistory(result.Cheque.chqId, result.Cheque.chqAmount, result.Cheque.chqWrtDate, result.Cheque.chqDueDate, result.Cheque.chqSerial, result.Cheque.chqStatus, result.Cheque.chqCust, result.Cheque.chqAccount, result.Cheque.chqTransId, result.Cheque.chqDesc, self.current_time)
         config.db.session.add(ch_history)
         config.db.session.commit()
