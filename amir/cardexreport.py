@@ -107,13 +107,17 @@ class CardexReport:
         obj = product.Product()
         obj.viewProducts()
         obj.connect("product-selected",self.proSelected)
-        code = self.proVal.get_text()
-        obj.highlightProduct(unicode(code))
+        id = self.proVal.get_text()     
+        prod= config.db.session.query(Products).filter(Products.id==id).first()
+        if prod:
+            code = prod.code
+            group = prod.accGroup
+            obj.highlightProduct(unicode(code) , unicode(group))
 
     def proSelected(self,sender=0, id=0, code=0):
-        code = unicode(code)        
+        id = unicode(id)        
         if sender:
-            self.proVal.set_text(code)
+            self.proVal.set_text(id)
             sender.window.destroy()
 
 
@@ -142,12 +146,12 @@ class CardexReport:
             self.builder.get_object("nameTextView").get_buffer().set_text(bill.name)
             self.builder.get_object("groupTextView").get_buffer().set_text(str(bill.accGroup))
             self.builder.get_object("locationTextView").get_buffer().set_text(bill.location)
-            self.builder.get_object("quantityTextView").get_buffer().set_text(utility.LN('{0:g}'.format(float(bill.quantity))))
-            self.builder.get_object("quantityWarningTextView").get_buffer().set_text(utility.LN('{0:g}'.format(float(bill.qntyWarning))))
+            self.builder.get_object("quantityTextView").get_buffer().set_text(utility.LN(format(float(bill.quantity))))
+            self.builder.get_object("quantityWarningTextView").get_buffer().set_text(utility.LN(format(float(bill.qntyWarning))))
             self.builder.get_object("oversellTextView").get_buffer().set_text(str(bill.oversell))
-            self.builder.get_object("purchacePriceTextView").get_buffer().set_text(utility.LN('{0:g}'.format(float(bill.purchacePrice))))
+            self.builder.get_object("purchacePriceTextView").get_buffer().set_text(utility.LN(format(float(bill.purchacePrice))))
             self.builder.get_object("dicountFormulaTextView").get_buffer().set_text(str(bill.discountFormula))
-            self.builder.get_object("sellingPriceTextView").get_buffer().set_text(utility.LN('{0:g}'.format(float(bill.sellingPrice))))
+            self.builder.get_object("sellingPriceTextView").get_buffer().set_text(utility.LN(format(float(bill.sellingPrice))))
             self.builder.get_object("productDescriptionTextView").get_buffer().set_text(bill.productDesc)
 
             
@@ -195,9 +199,9 @@ class CardexReport:
             for factor in result:
                 if factor.Factors.Sell == True:
                     buy_quantity = '-'
-                    sell_quantity = str('{0:g}'.format(float(factor.FactorItems.qnty)))
+                    sell_quantity = str(utility.LN(float(factor.FactorItems.qnty)))
                 else:
-                    buy_quantity = str('{0:g}'.format(float(factor.FactorItems.qnty)))
+                    buy_quantity = str(utility.LN(float(factor.FactorItems.qnty)))
                     sell_quantity = '-'
                 if share.config.datetypes[share.config.datetype] == "jalali": 
                     year, month, day = str(factor.Factors.tDate).split("-")
@@ -207,7 +211,7 @@ class CardexReport:
                     year, month, day = str(factor.Factors.tDate).split("-")
                     date = str(day) + '-' + str(month) + '-' + str(year)
                 self.treestore.append(None, (str(factor.Factors.Code), str(factor.Customers.custCode), str(factor.Customers.custName), sell_quantity, buy_quantity,
-                 str('{0:g}'.format(float(factor.FactorItems.qnty * factor.FactorItems.untPrc))), str(date)))
+                 str(utility.LN(float(factor.FactorItems.qnty * factor.FactorItems.untPrc))), str(date)))
         else:
             statusbar = self.builder.get_object('statusbar3')
             context_id = statusbar.get_context_id('statusbar')
