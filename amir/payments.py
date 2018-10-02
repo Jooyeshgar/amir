@@ -508,6 +508,7 @@ class Payments(GObject.GObject):
 		self.chqSltWindow.show_all()
 
 	def removeCheque(self,cheque) : 
+		ch_history = None
 		if cheque.chqStatus!= 5 : #cheque is just related to this transaction and is not spended from anywhere		
 			if cheque.chqId == self.lastChqID:
 				self.lastChqID -= 1		
@@ -540,7 +541,8 @@ class Payments(GObject.GObject):
 			cheque.chqDesc = history.Desc
 			ch = cheque
 			ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, "Unspended", date.today(),True)            
-		self.session.add(ch_history)
+		if ch_history:
+			self.session.add(ch_history)
 		self.session.commit()
 
 

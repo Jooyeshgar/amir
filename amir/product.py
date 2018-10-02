@@ -51,7 +51,7 @@ class Product(productgroup.ProductGroup):
 		self.sellPriceEntry.show()
 
 		self.treeview = self.builder.get_object("productsTreeView")
-		self.treestore = Gtk.TreeStore(str, str, str, str, str, str)
+		self.treestore = Gtk.TreeStore(str, str, str, str, str, str , int)
 
 	def viewProducts(self):
 		self.window = self.builder.get_object("viewProductsWindow")
@@ -115,22 +115,7 @@ class Product(productgroup.ProductGroup):
 		
 		#Fill groups treeview
 		self.fillTreeview()
-		# query = config.db.session.query(ProductGroups, Products)
-		# query = query.select_from(outerjoin(ProductGroups, Products, ProductGroups.id == Products.accGroup))
-		# query = query.order_by(ProductGroups.id.asc())
-		# result = query.all()
-		
-		# last_gid = 0
-		# grouprow = None
-		# for g, p in result:
-		# 	if g.id != last_gid:
-		# 		grouprow = self.treestore.append(None, (g.code, g.name, "", "", ""))
-		# 		last_gid = g.id
-				
-		# 	if p != None:
-		# 		self.treestore.append(grouprow, (p.code, p.name, utility.LN(p.quantity), 
-		# 								utility.LN(p.purchacePrice), utility.LN(p.sellingPrice)))
-		
+
 		self.window.show_all()
 		if utility.checkPermission(32):
 			self.builder.get_object("addProductBtn").hide()
@@ -153,17 +138,16 @@ class Product(productgroup.ProductGroup):
 		for g, p in result:
 
 			if g.id != last_gid:				
-				grouprow = self.treestore.append(None, (g.code, g.name, "", "", "" , ""))
+				grouprow = self.treestore.append(None, (g.code, g.name, "", "", "" , "",0))
 				last_gid = g.id
 				
 			if p != None:
 				self.treestore.append(grouprow, (p.code, p.name, utility.LN(p.quantity), 
-										utility.LN(p.purchacePrice), utility.LN(p.sellingPrice) ,p.uMeasurement))
+										utility.LN(p.purchacePrice), utility.LN(p.sellingPrice) ,p.uMeasurement,p.id))
 
 
 	def addProduct(self, sender, pcode = ""):
-		#self.treestore = Gtk.TreeStore(str, str, str, str, str)		
-	
+		#self.treestore = Gtk.TreeStore(str, str, str, str, str)				
 		
 		accgrp = ""
 		try:
@@ -179,7 +163,11 @@ class Product(productgroup.ProductGroup):
 		dialog = self.builder.get_object("addProductDlg")
 		dialog.set_title(_("Add New Product"))
 		
-		self.builder.get_object("proCodeEntry").set_text("")
+		lastProCode = config.db.session.query(Products.code).filter(Products.accGroup==accgrp).order_by(Products.code.desc()).first()
+		if lastProCode:
+			lastProCode = lastProCode.code	
+		lastProCode = unicode(int(lastProCode)+1 ) if lastProCode else ""
+		self.builder.get_object("proCodeEntry").set_text(lastProCode)
 		self.builder.get_object("accGrpEntry" ).set_text(accgrp)
 		self.builder.get_object("proNameEntry").set_text("")
 		self.builder.get_object("proLocEntry" ).set_text("")
@@ -227,11 +215,12 @@ class Product(productgroup.ProductGroup):
 				dialog.set_title(_("Edit Product"))
 				
 				code = self.treestore.get_value(iter, 0)
+				id = self.treestore.get_value(iter, 6)				
 				query = config.db.session.query(Products, ProductGroups.code)
 				query = query.select_from(outerjoin(ProductGroups, Products, ProductGroups.id == Products.accGroup))
-				result = query.filter(Products.code == code).first()
+				result = query.filter(Products.id== id).first()
 				product = result[0]
-				groupcode = result[1]
+				groupcode = result[1]				
 				
 				quantity = str(product.quantity)
 				quantity_warn = str(product.qntyWarning)
@@ -273,14 +262,14 @@ class Product(productgroup.ProductGroup):
 						oversell = self.builder.get_object("oversell").get_active()
 						measurement = unicode(self.builder.get_object("uMeasureEntry").get_text())
 					
-						success = self.saveProduct(code, accgrp, name, location, desc, quantity, q_warn, p_price, s_price, oversell, formula , measurement, iter)
+						success = self.saveProduct(code, accgrp, name, location, desc, quantity, q_warn, p_price, s_price, oversell, formula , measurement,id, iter)
 					else:
 						break
 				
 				dialog.hide()
             
 	def saveProduct(self, code, accgrp, name, location, desc, quantity, quantity_warn, 
-			purchase_price, sell_price, oversell, formula,uMeasurement="", edititer=None):
+			purchase_price, sell_price, oversell, formula,uMeasurement="",editId=0, edititer=None):
 		msg = ""
 		if code == "":
 			msg += _("Product code should not be empty.\n")
@@ -295,20 +284,13 @@ class Product(productgroup.ProductGroup):
 			msgbox.run()
 			msgbox.destroy()
 			return False
-            
-		if edititer != None:
-			pcode = unicode(self.treestore.get_value(edititer, 0))
-			query = config.db.session.query(Products).select_from(Products)
-			product = query.filter(Products.code == pcode).first()
-			pid = product.id
-            
+		result = 0    		         
 		#Checks if the product code is repeated.
-		query = config.db.session.query(count(Products.id)).select_from(Products)
-		query = query.filter(Products.code == code)
-		if edititer != None:
-			query = query.filter(Products.id != pid)
-		result = query.first()[0]
-		msg = ""
+		query = config.db.session.query(count(Products.id))
+		query = query.filter(Products.code == code).filter(Products.accGroup == accgrp)
+		if edititer !=None:
+			query = query.filter(Products.id != editId)				
+		result = query.first()[0]		
 		if result != 0:
 			msg += _("A product with this code already exists.\n")
 			
@@ -350,12 +332,14 @@ class Product(productgroup.ProductGroup):
 			msgbox.set_title(_("Invalid product properties"))
 			msgbox.run()
 			msgbox.destroy()
-			return False					
+			return False	
+
 		if edititer == None:
 			product = Products(code, name, quantity_warn, oversell, location, quantity,
-					purchase_price, sell_price, group.id, desc, formula, uMeasurement)
+					purchase_price, sell_price, group.id, desc, formula, uMeasurement)	
 			config.db.session.add(product)
 		else:
+			product = config.db.session.query(Products).filter(Products.id == editId).first()
 			product.code            = code
 			product.name            = name
 			product.oversell        = oversell
@@ -419,9 +403,9 @@ class Product(productgroup.ProductGroup):
 				self.deleteProductGroup(sender)
 			else:
 				#Iter points to a product
-				code = unicode(self.treestore.get_value(iter, 0))
-				query = config.db.session.query(Products).select_from(Products)
-				product = query.filter(Products.code == code).first()
+				id = unicode(self.treestore.get_value(iter, 6))
+				query = config.db.session.query(Products)
+				product = query.filter(Products.id == id).first()
 				
 				#TODO check if this product is used somewhere else
 				
@@ -440,14 +424,14 @@ class Product(productgroup.ProductGroup):
 			#A product should be saved, set all given data.
 			self.treestore.set(treeiter, 0, data[0], 1, data[1], 2, data[2], 3, data[3], 4, data[4])
 
-	def highlightProduct(self, code):
+	def highlightProduct(self, code , group):
 		iter = self.treestore.get_iter_first()
 		if code != "":
 			code = code.decode('utf-8')
 			
 			query = config.db.session.query(ProductGroups)
 			query = query.select_from(outerjoin(ProductGroups, Products, ProductGroups.id == Products.accGroup))
-			group = query.filter(Products.code == code).first()
+			group = query.filter(Products.code == code).filter(Products.accGroup== group).first()
 			
 			if group:
 				tcode = group.code
@@ -480,10 +464,11 @@ class Product(productgroup.ProductGroup):
 		iter = self.treestore.get_iter(path)
 		if self.treestore.iter_parent(iter) != None:
 			code = unicode(self.treestore.get_value(iter, 0))
-			
+			parent_iter = self.treestore.iter_parent(iter)
+			group = self.treestore.get_value(parent_iter , 0)
 			query = config.db.session.query(Products).select_from(Products)
-			query = query.filter(Products.code == code)
-			product_id = query.first().id
+			query = query.filter(Products.code == code).filter(Products.accGroup== group)
+			product_id = query.first().id			
 			self.emit("product-selected", product_id, code)
 		
 	def selectProductGroup(self, sender):
@@ -496,6 +481,12 @@ class Product(productgroup.ProductGroup):
 
 	def groupSelected(self, sender, id, code):
 		self.builder.get_object("accGrpEntry").set_text(code)
+		
+		lastProCode = config.db.session.query(Products.code).filter(Products.accGroup==code).order_by(Products.code.desc()).first()
+		if lastProCode:
+			lastProCode = lastProCode.code	
+		lastProCode = unicode(int(lastProCode)+1 ) if lastProCode else ""		
+		self.builder.get_object("proCodeEntry").set_text(lastProCode)
 		sender.window.destroy()
         
 
