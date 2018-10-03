@@ -1044,8 +1044,7 @@ class Factor(Payments):
 				
 				if pro_id in pro_dic:
 					pro_dic[pro_id] -= pro_qnty
-				else:
-					print pro_id
+				else:					
 					query   = self.session.query(Products).filter(Products.id == pro_id)
 					pro = query.first()
 					if not pro.oversell:
@@ -1613,26 +1612,28 @@ class Factor(Payments):
 		trans_code = utility.LN(self.subCode, False)
 		
 		noteBookSell =  "sell" if self.sell  else "buy"
-
-		self.Document.add_notebook(self.custSubj, -(self.totalFactor), _("Debit for invoice number %s") % trans_code,self.Id)
+		sellN = (-1) ** (not self.sell )		
+		print sellN
+		self.Document.add_notebook(self.custSubj, -(self.totalFactor * sellN), _("Debit for invoice number %s") % trans_code,self.Id)
 		if self.cashPayment:
-			self.Document.add_notebook(self.custSubj, self.cashPayment, _("Cash Payment for invoice number %s") % trans_code,self.Id)
-			self.Document.add_notebook(dbconf.get_int("cash"), -(self.cashPayment), _("Cash Payment for invoice number %s") % trans_code,self.Id)
-		if self.totalDisc:
-			self.Document.add_notebook(dbconf.get_int(noteBookSell+"-discount"), -(self.totalDisc), _("Discount for invoice number %s") % trans_code,self.Id)
+			self.Document.add_notebook(self.custSubj, (self.cashPayment) * sellN, _("Cash Payment for invoice number %s") % trans_code,self.Id)
+			self.Document.add_notebook(dbconf.get_int("cash"), -(self.cashPayment*sellN), _("Cash Payment for invoice number %s") % trans_code,self.Id)
+		if self.subSub:
+			self.Document.add_notebook(dbconf.get_int(noteBookSell+"-discount"), -(self.subSub)*sellN, _("Discount for invoice number %s") % trans_code,self.Id)
 		if self.subAdd:
-			self.Document.add_notebook(dbconf.get_int(noteBookSell+"-adds"), self.subAdd, _("Additions for invoice number %s") % trans_code,self.Id)
+			self.Document.add_notebook(dbconf.get_int(noteBookSell+"-adds"), (self.subAdd) * sellN, _("Additions for invoice number %s") % trans_code,self.Id)
 		if self.VAT:
-			self.Document.add_notebook(dbconf.get_int(noteBookSell+"-vat"), (self.VAT), _("VAT for invoice number %s") % trans_code,self.Id)
+			self.Document.add_notebook(dbconf.get_int(noteBookSell+"-vat"), (self.VAT) * sellN, _("VAT for invoice number %s") % trans_code,self.Id)
 		if self.fee:
-			self.Document.add_notebook(dbconf.get_int(noteBookSell+"-fee"), (self.fee), _("Fee for invoice number %s") % trans_code,self.Id)
+			self.Document.add_notebook(dbconf.get_int(noteBookSell+"-fee"), (self.fee)*sellN, _("Fee for invoice number %s") % trans_code,self.Id)
 
 		# Create a row for each sold product
 		for exch in self.sellListStore:
-			query = self.session.query(ProductGroups.sellId)
+			query = self.session.query(ProductGroups)
 			query = query.select_from(outerjoin(Products, ProductGroups, Products.accGroup == ProductGroups.id))
 			result = query.filter(Products.id == unicode(exch[8])).first()
-			sellid = result[0]
+			#sellid = result[0]
+			sellid = result.sellId if self.sell else result.buyId
 
 			exch_totalAmnt = utility.getFloat(exch[2]) * utility.getFloat(exch[3])
 			#TODO Use unit name specified for each product
