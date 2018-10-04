@@ -167,7 +167,8 @@ def upgrade(migrate_engine):
         {'cfgId' :24, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-national-code'       , 'cfgValue' : u'national code ',  'cfgDesc':u'Your national code'},
         {'cfgId' :25, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-postal-code'         , 'cfgValue' : u'postal code ',  'cfgDesc':u'Your postal code'},
         {'cfgId' :26, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-phone-number'        , 'cfgValue' : u'phone number ',  'cfgDesc':u'Your phone number'},
-        {'cfgId' :27, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'sell-adds'              , 'cfgValue' : u'40',  'cfgDesc':u'Enter here'}
+        {'cfgId' :27, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'sell-adds'              , 'cfgValue' : u'41',  'cfgDesc':u'Additions when selling'},
+        {'cfgId' :28, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'buy-adds'               , 'cfgValue' : u'40',  'cfgDesc':u'Additions when buying'}
         #{'cfgId' :11, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'fund'          , 'cfgValue' : u'??', 'cfgDesc':u'Enter here'},  #TODO cfgKey
         #{'cfgId' :12, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'acc-receivable', 'cfgValue' : u'??', 'cfgDesc':u'Enter here',}, #TODO cfgKey
         #{'cfgId' :13, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' :u'commission'     , 'cfgValue' : u'??', 'cfgDesc':u'Enter here'}   #TODO cfgKey
@@ -180,24 +181,22 @@ def upgrade(migrate_engine):
         'custAccName1':u'', 'custAccNo1':u'' , 'custAccBank1':u'', 'custAccName2':u'' , 'custAccNo2':u'', 'custAccBank2':u'', 
         'custTypeBuyer':True , 'custTypeSeller':True,'custTypeMate':False, 'custTypeAgent':False,'custMarked':False ,
         'custIntroducer': u'' , 'custCommission': u'' , 'custReason':u'' , 'custDiscRate':u'' })
-        
+    
+    productgroups = Table('productgroups' , meta , autoload = True)
+    op = productgroups.insert()
+    op.execute({'id':1 , 'code': 1 , 'name':u"گروه عمومی کالا" , 'buyId':19 , 'sellId': 20})
+
+    products = Table('products', meta , autoload=True)    
+    op = products.insert()
+    op.execute({'id':1, 'code':1 , 'name': u"عمومی" , 'accGroup':1, 'location':u'محل در انبار', 'quantity':100, 'qntyWarning': 10 , 'oversell':True , 'purchacePrice':2000 ,
+         'sellingPrice':3000 , 'discountFormula':u"" ,'productDesc': u"توضیح کالا: این یک کالای پیشفرض آزمایشی است.", 'uMeasurement':u"عدد" })
 
 
 def downgrade(migrate_engine):
     # Operations to reverse the above upgrade go here.
     meta.bind = migrate_engine
+    # TODO 
 
-    # products.drop()
-    # productGroups.drop()
-    # factors.drop()
-    # factorItems.drop()
-    # payments.drop()
-
-    # cheques.drop()
-    # custGroups.drop()
-    # customers.drop()
-    # bankAccounts.drop()
-    # config.drop()
     logging.debug("downgrade to 2")
     
 
