@@ -1353,6 +1353,7 @@
                 <property name="invisible_char">●</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">False</property>
+                <signal name="focus-out-event" handler="validateDiscnt" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">1</property>

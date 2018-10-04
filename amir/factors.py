@@ -407,6 +407,7 @@ class Factor(Payments):
 		qnty = self.qntyEntry.get_float()
 		discnt = self.calcDiscount(formula, qnty, sellPrc)
 		
+		self.product = selectedPro
 		self.avQntyVal.set_text(utility.LN(av_qnty))
 		self.stnrdDisc.set_text(utility.LN(discnt))
 
@@ -882,7 +883,7 @@ class Factor(Payments):
 			if not severe:
 				self.calcTotal()
 	
-	def validateDiscnt(self, sender=0, event=0):	
+	def validateDiscnt(self, sender=0, event=0):			
 		if self.product:
 			stMsg = ""
 			severe = False
@@ -890,10 +891,10 @@ class Factor(Payments):
 			purcPrc = self.product.purchacePrice
 			untPrc = self.unitPriceEntry.get_float() 
 			
-			if self.discountEntry.get_text() == "":
+			if self.discountEntry.get_text() == "":				
 				self.discountEntry.set_text(self.stnrdDisc.get_text())
 				discval = utility.getFloat(self.stnrdDisc.get_text())
-			else:
+			else:				
 				disc  = utility.convertToLatin(self.discountEntry.get_text())
 				discval = 0
 
@@ -926,8 +927,7 @@ class Factor(Payments):
 						if not stMsg:
 							stMsg  = errMess
 							severe = True
-				
-			
+							
 			self.addStBar.push(1,stMsg)
 			if not severe:
 				if untPrc < discval:
@@ -938,8 +938,7 @@ class Factor(Payments):
 						self.addStBar.push(1,errMess)
 				else:
 					self.discountEntry.modify_base(Gtk.StateType.NORMAL,self.whiteClr)
-					self.discountEntry.set_tooltip_text("")
-						
+					self.discountEntry.set_tooltip_text("")				
 				self.calcTotalDiscount(discval)
 
 
@@ -1612,8 +1611,7 @@ class Factor(Payments):
 		trans_code = utility.LN(self.subCode, False)
 		
 		noteBookSell =  "sell" if self.sell  else "buy"
-		sellN = (-1) ** (not self.sell )		
-		print sellN
+		sellN = (-1) ** (not self.sell )				
 		self.Document.add_notebook(self.custSubj, -(self.totalFactor * sellN), _("Debit for invoice number %s") % trans_code,self.Id)
 		if self.cashPayment:
 			self.Document.add_notebook(self.custSubj, (self.cashPayment) * sellN, _("Cash Payment for invoice number %s") % trans_code,self.Id)
@@ -1626,6 +1624,8 @@ class Factor(Payments):
 			self.Document.add_notebook(dbconf.get_int(noteBookSell+"-vat"), (self.VAT) * sellN, _("VAT for invoice number %s") % trans_code,self.Id)
 		if self.fee:
 			self.Document.add_notebook(dbconf.get_int(noteBookSell+"-fee"), (self.fee)*sellN, _("Fee for invoice number %s") % trans_code,self.Id)
+		if self.totalDisc:
+			self.Document.add_notebook(dbconf.get_int(noteBookSell+"-discount"), -(self.totalDisc)*sellN, _("Discount on items for invoice number %s") % trans_code,self.Id)
 
 		# Create a row for each sold product
 		for exch in self.sellListStore:
