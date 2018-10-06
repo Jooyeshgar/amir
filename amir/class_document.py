@@ -77,8 +77,9 @@ class Document:
         self.cheques.append ((custId  , -float(value), desctxt, cheque_id))  
             
     def save(self, factorId = 0 ,delete_items=None):
-        if len(self.notebooks) == 0:
+        if (len(self.notebooks) == 0) and (len(self.cheques)==0) : 
             self.notebooks = []
+            self.cheques = []
             return -1
 
         if self.number > 0:

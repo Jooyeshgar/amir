@@ -94,13 +94,14 @@ class CardexReport:
         self.dateFromEntry = self.builder.get_object("dateFromEntry")
         delimiter = config.datedelims[config.datedelim] 
         if share.config.datetypes[share.config.datetype] == "jalali":
-            placeH = "1396"+delimiter+"1"+ delimiter +"1"
+            placeH = "1397"+delimiter+"1"+ delimiter +"1"
             self.dateToEntry.set_placeholder_text(placeH)
             self.dateFromEntry.set_placeholder_text(placeH)
         else:
             placeH = "1"+delimiter+"1"+delimiter+"2018"
             self.dateToEntry.set_placeholder_text(placeH)
             self.dateFromEntry.set_placeholder_text(placeH)
+        self.builder.get_object("typeComboBox").set_active(2)
 
     def selectProduct(self,sender=0):
         self.proVal = self.builder.get_object("productCodeSearchEntry")
@@ -160,8 +161,10 @@ class CardexReport:
             query = query.filter(bill.id == FactorItems.productId, FactorItems.factorId == Factors.Id, Customers.custId == Factors.Cust)
             if factorType and factorType != 'All':
                 if factorType == 'Sell':
+                    print "1"
                     factorType = 1
                 else:
+                    print "0"
                     factorType = 0
                 query = query.filter(Factors.Sell == factorType)
 

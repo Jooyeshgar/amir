@@ -234,14 +234,19 @@ class Factor(Payments):
 			self.Id	= self.editTransaction.Id
 			self.Code 	= self.editTransaction.Code									
 		else : 
-			query   = self.session.query(Factors.Code).select_from(Factors).filter(Factors.Sell == self.sell)
-			lastCode  = query.order_by(Factors.Code.desc()).first()
-			if not lastCode:
+			query   = self.session.query(Factors)
+			last  = query.order_by(Factors.Code.desc()).first()
+			if not last:				
 				self.Code  = 1
-				self.Id = 1
+				self.Id = 1				
 			else:
-				self.Id = self.session.query(Factors).order_by(Factors.Id.desc()) . first().Id + 1
-				self.Code  = int(lastCode.Code) + 1		
+				lastFactor = query.filter(Factors.Sell == self.sell).order_by(Factors.Code.desc()).first()
+				if lastFactor:					
+					self.Id = int(lastFactor.Id) +1  #self.session.query(Factors).filter(Factors.sell==self.sell).order_by(Factors.Id.desc()) . first().Id + 1
+					self.Code  = int(lastFactor.Code) + 1						
+				else :					
+					self.Id = int(last.Id) + 1
+					self.Code = 1					
 		self.mainDlg = self.builder.get_object("FormWindow")
 
 		self.Codeentry = self.builder.get_object("transCode")
@@ -1099,7 +1104,7 @@ class Factor(Payments):
 		self.treestore.append(None,(int(self.Id), LN(self.subCode), str(self.subDate), customer.custName, str(self.totalFactor), pre_invoice))
 		
 	def registerFactorItems(self):	
-				
+			
 		if self.editFlag:								 
 			lasttransId1 = lasttransId = self.Id # Id of editing  factor
 
@@ -1168,7 +1173,7 @@ class Factor(Payments):
 						#self.session.commit()
 					
 			# in add mode transaction																						
-			else:	
+			else:					
 				lastfactorItemquantity=utility.getFloat(str(0))
 				nowfactorItemquantity=utility.getFloat(exch[2])
 				factorItem = FactorItems(utility.getInt(exch[0]), pid, utility.getFloat(exch[2]),
