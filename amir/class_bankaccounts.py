@@ -4,6 +4,7 @@ import dbconfig
 from share import share
 from database import BankAccounts
 from database import BankNames
+from database import Subject
 
 from sqlalchemy.orm.util import outerjoin
 from sqlalchemy.orm.query import aliased
@@ -71,15 +72,18 @@ class BankAccountsClass:
 
         #bank_id = config.db.session.query(BankNames).select_from(BankNames).filter(BankNames.Name == bank).first().Id
         bank_id = bank
-
+        dbconf = dbconfig.dbConfig()
         if id == -1:
             bank_account = BankAccounts(name, number, type, owner, bank_id, branch, address, phone, webpage, desc)
             config.db.session.add(bank_account)
-            sub = class_subject.Subjects()
-            dbconf = dbconfig.dbConfig()
+            sub = class_subject.Subjects()            
             sub.add(dbconf.get_int('bank'), name, str(bank_account.accId).rjust(2, '0'))
         else:
             query = config.db.session.query(BankAccounts).filter(BankAccounts.accId == id)
+            prevName = query.first().accName            
+            q = config.db.session.query(Subject).filter(Subject.parent_id== (dbconf.get_int('bank')) ).filter(Subject.name==prevName)
+            if q:
+                q.update({Subject.name:name})
             query.update( {BankAccounts.accName        : name,
                            BankAccounts.accNumber      : number,
                            BankAccounts.accType        : type,
@@ -89,8 +93,8 @@ class BankAccountsClass:
                            BankAccounts.accBankAddress : address,
                            BankAccounts.accBankPhone   : phone,
                            BankAccounts.accBankWebPage : webpage,
-                           BankAccounts.accDesc        : desc})
-        config.db.session.commit()
+                           BankAccounts.accDesc        : desc})           
+        
 
         if id == -1:
             return bank_account.accId
@@ -100,7 +104,11 @@ class BankAccountsClass:
     #
     ## @param Integer bank account id
     def delete_account(self, id):
-        config.db.session.query(BankAccounts).filter(BankAccounts.accId == id).delete()
+        query = config.db.session.query(BankAccounts).filter(BankAccounts.accId == id)
+        accName = query.first().accName
+        query.delete()
+        bankSubject = dbconfig.dbConfig().get_int('bank')
+        config.db.session.query(Subject).filter(Subject.parent_id==bankSubject).filter(Subject.name== accName).delete()
         config.db.session.commit()
 
 ## @}

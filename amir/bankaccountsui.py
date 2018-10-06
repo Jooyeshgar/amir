@@ -209,14 +209,15 @@ class BankAccountsUI:
                 self.builder.get_object('bank_webpage').get_text(), 
                 self.builder.get_object('desc').get_text())
         if result > 0:
+            config.db.session.commit()
             window = self.builder.get_object('add_window').hide()
-            infobar = Gtk.InfoBar()
-            label = Gtk.Label(label='successfully added.')
-            infobar.get_content_area().add(label)
-            width , height = self.main_window_background.window.get_size()
-            infobar.set_size_request(width, -1)
-            self.main_window_background.put(infobar ,0 , 0)
-            infobar.show_all()
+            # infobar = Gtk.InfoBar()
+            # label = Gtk.Label(label='successfully added.')
+            # infobar.get_content_area().add(label)
+            # width , height = self.main_window_background.window.get_size()
+            # infobar.set_size_request(width, -1)
+            # self.main_window_background.put(infobar ,0 , 0)
+            # infobar.show_all()
 
             model = self.builder.get_object('treeview').get_model()
             if id == -1:
@@ -233,7 +234,9 @@ class BankAccountsUI:
             else:
                 accType = 'حساب پس انداز'
             bank_name= self.bankaccounts_class.get_bank_name(bank_id)
-            model.set(iter, 0, result, 1, account_name, 2, account_number, 3, account_owner, 4, accType, 5, bank_name)
-            glib.timeout_add_seconds(3, lambda w: w.destroy(), infobar)
+            model.set(iter, 0, unicode(result), 1, account_name, 2, account_number, 3, account_owner, 4, accType, 5, bank_name)            
+           # glib.timeout_add_seconds(3, lambda w: w.destroy(), infobar)
+        else:
+            config.db.session.rollback()
 ## @}
 
