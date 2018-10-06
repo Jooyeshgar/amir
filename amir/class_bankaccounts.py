@@ -59,7 +59,7 @@ class BankAccountsClass:
                 self.add_bank(bank_name)
  
         dialog.destroy()
-    def add_account(self, id, name, number, type, owner, bank, branch, address, phone, webpage, desc):
+    def add_account(self, id, name, number="", type=0, owner="", bank=1, branch="", address="", phone="", webpage="", desc=""):
         name    = unicode(name)
         number  = unicode(number)
         owner   = unicode(owner)
@@ -69,15 +69,17 @@ class BankAccountsClass:
         phone   = unicode(phone)
         webpage = unicode(webpage)
         desc    = unicode(desc)
-
-        #bank_id = config.db.session.query(BankNames).select_from(BankNames).filter(BankNames.Name == bank).first().Id
+        
         bank_id = bank
         dbconf = dbconfig.dbConfig()
         if id == -1:
             bank_account = BankAccounts(name, number, type, owner, bank_id, branch, address, phone, webpage, desc)
             config.db.session.add(bank_account)
-            sub = class_subject.Subjects()            
-            sub.add(dbconf.get_int('bank'), name, str(bank_account.accId).rjust(2, '0'))
+            config.db.session.commit()
+            sub = class_subject.Subjects()   
+            # accountId = str(bank_account.accId)                
+            # accSubjectCode = accountId.rjust(3 - len(accountId)+1 , '0')
+            sub.add(dbconf.get_int('bank'), name)
         else:
             query = config.db.session.query(BankAccounts).filter(BankAccounts.accId == id)
             prevName = query.first().accName            
