@@ -363,10 +363,11 @@ class AutomaticAccounting:
             if self.type_index is not None and self.type_configs[self.type_index][3]:
                 mode = 'our'                
             else:
-                mode = 'other'
+                mode = 'other'            
             document = class_document.Document()
-            document.add_notebook(result['from'], -result['total_value'], unicode(result['desc']))
-            document.add_notebook(result['to']  ,  result['cash_payment'], unicode(result['desc']))
+            if result['cash_payment']  :
+                document.add_notebook(result['from'], -result['cash_payment'], unicode(result['desc']))
+                document.add_notebook(result['to']  ,  result['cash_payment'], unicode(result['desc']))
             if result['discount'] :
                 document.add_notebook(dbconf.get_int('sell-discount'), -result['discount'], result['desc'])            
 
@@ -378,9 +379,9 @@ class AutomaticAccounting:
 
             for cheque in self.addChequeui.chequesList:
                 if mode == 'our':
-                    document.add_cheque(dbconf.get_int('our_cheque'),custSubj, cheque.chqAmount, cheque.chqDesc, cheque.chqId)
+                    document.add_cheque(dbconf.get_int('our_cheque'),custSubj,-(cheque.chqAmount), cheque.chqDesc, cheque.chqId)
                 else:
-                    document.add_cheque(dbconf.get_int('other_cheque'),custSubj, cheque.chqAmount, cheque.chqDesc, cheque.chqId)            
+                    document.add_cheque(dbconf.get_int('other_cheque'),custSubj, -cheque.chqAmount, cheque.chqDesc, cheque.chqId)            
 
             cl_cheque = class_cheque.ClassCheque()
 

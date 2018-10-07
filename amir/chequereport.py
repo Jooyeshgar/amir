@@ -95,7 +95,6 @@ class ChequeReport:
         self.current_time = self.date_entry.getDateObject()
         self.createHistoryTreeview()
 
-
     def searchFilter(self, sender=None):
         box = self.builder.get_object("idSearchentry")
         chequeId = box.get_text()
@@ -386,14 +385,22 @@ class ChequeReport:
         result = config.db.session.query(Cheque, Customers)
         result = result.filter(Customers.custId == Cheque.chqCust)
         result = result.filter(Cheque.chqId == self.code).first()
-        result.Cheque.chqStatus = 8 if result.cheque.chqStatus in (1 , 2, 5) else 9
-        ch_history = ChequeHistory(result.Cheque.chqId, result.Cheque.chqAmount, result.Cheque.chqWrtDate, result.Cheque.chqDueDate, result.Cheque.chqSerial, result.Cheque.chqStatus, result.Cheque.chqCust, result.Cheque.chqAccount, result.Cheque.chqTransId, result.Cheque.chqDesc, self.current_time)
-        config.db.session.add(ch_history)
-        config.db.session.commit()
+        stat = result.Cheque.chqStatus
 
-        document = class_document.Document()
-        document.add_notebook(result.Customers.custSubj  , result.Cheque.chqAmount, _('Bounced cheque'))
-        document.add_notebook(58, -result.Cheque.chqAmount, _('Bounced cheque'))    #TODO  58 must bee extracted from dbconfig ; like customer's subject in customer.py
+        document = class_document.Document()        
+        result.Cheque.chqStatus = 8 if stat in (1 , 2, 5) else 9
+        if stat in  (1 , 2, 5): # our
+            result.Cheque.chqStatus = 8
+            document.add_notebook(result.Customers.custSubj   , result.Cheque.chqAmount, _('Bounced cheque'))
+            document.add_notebook(dbconf.get_int('our_cheque'), -result.Cheque.chqAmount, _('Bounced cheque'))   
+        elif stat in (3 , 4): # their
+            result.Cheque.chqStatus  = 9 
+            document.add_notebook(result.Customers.custSubj  , -result.Cheque.chqAmount, _('Bounced cheque'))
+            document.add_notebook(dbconf.get_int('other_cheque'), result.Cheque.chqAmount, _('Bounced cheque'))   
+
+        ch_history = ChequeHistory(result.Cheque.chqId, result.Cheque.chqAmount, result.Cheque.chqWrtDate, result.Cheque.chqDueDate, result.Cheque.chqSerial, result.Cheque.chqStatus, result.Cheque.chqCust, result.Cheque.chqAccount, result.Cheque.chqTransId, result.Cheque.chqDesc, self.current_time)
+        config.db.session.add(ch_history)        
+
         document.save()
 
         config.db.session.commit()

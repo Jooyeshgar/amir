@@ -78,8 +78,7 @@ class Document:
             
     def save(self, factorId = 0 ,delete_items=None):
         if (len(self.notebooks) == 0) and (len(self.cheques)==0) : 
-            self.notebooks = []
-            self.cheques = []
+            self.clear_notebook
             return -1
 
         if self.number > 0:
@@ -171,7 +170,7 @@ class Document:
            n = Notebook(cheque[0], self.id, cheque[1], cheque[2],chqId=cheque[3])           
            share.config.db.session.add(n)        
            share.config.db.session.commit()                      
-        self.notebooks = []
+        self.clear_notebook
         
         return self.id      # bill id   
 
