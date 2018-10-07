@@ -34,12 +34,24 @@ class ChequeReport:
         self.treeviewIncoming = self.builder.get_object("treeviewIncoming")
         self.treeviewOutgoing = self.builder.get_object("treeviewOutgoing")
         self.treeviewDeleted = self.builder.get_object("treeviewDeleted")
+        self.treeviewCashed = self.builder.get_object("treeviewCashed")
+        self.treeviewPassed = self.builder.get_object("treeviewPassed")
+        self.treeviewBounced = self.builder.get_object("treeviewBounced")
+        self.treeviewBouncedP = self.builder.get_object("treeviewBouncedP")
         self.treestoreIncoming = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str, str)
         self.treestoreOutgoing = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str, str)
         self.treestoreDeleted = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str, str)
+        self.treestorePassed = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str, str)
+        self.treestoreCashed = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str, str)
+        self.treestoreBounced = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str, str)
+        self.treestoreBouncedP = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str, str)
         self.treeviewIncoming.set_model(self.treestoreIncoming)
         self.treeviewOutgoing.set_model(self.treestoreOutgoing)
         self.treeviewDeleted.set_model(self.treestoreDeleted)
+        self.treeviewPassed.set_model(self.treestorePassed)
+        self.treeviewCashed.set_model(self.treestoreCashed)
+        self.treeviewBounced.set_model(self.treestoreBounced)
+        self.treeviewBouncedP.set_model(self.treestoreBouncedP)
 
         
         headers = (_("ID"), _("Amount"),_("Write Date"),_("Due Date") ,_("Serial"),_("Clear"),_("Customer Name"),_("Account"),_("Transaction ID"),\
@@ -52,20 +64,44 @@ class ChequeReport:
             column.set_spacing(5)
             column.set_resizable(True)
             column.set_sort_column_id(i)
-            column.set_sort_indicator(True)
+            column.set_sort_indicator(True)            
             self.treeviewIncoming.append_column(column)
             column = Gtk.TreeViewColumn(str(header), Gtk.CellRendererText(), text = i)
             column.set_spacing(5)
             column.set_resizable(True)
             column.set_sort_column_id(i)
-            column.set_sort_indicator(True)
+            column.set_sort_indicator(True)            
             self.treeviewOutgoing.append_column(column)
             column = Gtk.TreeViewColumn(str(header), Gtk.CellRendererText(), text = i)
             column.set_spacing(5)
             column.set_resizable(True)
             column.set_sort_column_id(i)
+            column.set_sort_indicator(True)            
+            self.treeviewDeleted.append_column(column)            
+            column = Gtk.TreeViewColumn(str(header), Gtk.CellRendererText(), text = i)
+            column.set_spacing(5)
+            column.set_resizable(True)
+            column.set_sort_column_id(i)
             column.set_sort_indicator(True)
-            self.treeviewDeleted.append_column(column)
+            self.treeviewCashed.append_column(column)            
+            column = Gtk.TreeViewColumn(str(header), Gtk.CellRendererText(), text = i)
+            column.set_spacing(5)
+            column.set_resizable(True)
+            column.set_sort_column_id(i)
+            column.set_sort_indicator(True)
+            self.treeviewPassed.append_column(column)            
+            column = Gtk.TreeViewColumn(str(header), Gtk.CellRendererText(), text = i)
+            column.set_spacing(5)
+            column.set_resizable(True)
+            column.set_sort_column_id(i)
+            column.set_sort_indicator(True)
+            self.treeviewBounced.append_column(column)            
+            column = Gtk.TreeViewColumn(str(header), Gtk.CellRendererText(), text = i)
+            column.set_spacing(5)
+            column.set_resizable(True)
+            column.set_sort_column_id(i)
+            column.set_sort_indicator(True)
+            self.treeviewBouncedP.append_column(column)
             i+=1
     
         self.treeviewIncoming.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
@@ -212,14 +248,24 @@ class ChequeReport:
                 clear = 'Cleared'
             else:
                 clear = 'Not Cleared'
-            chqBill = config.db.session.query(Notebook.bill_id).filter(Notebook.chqId==cheque.chqId).first().bill_id            
+            chqBill = config.db.session.query(Notebook.bill_id).filter(Notebook.chqId==cheque.chqId).first().bill_id    
+            addingRow = (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(cust), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqDesc), str(chqBill), str(unicode(self.chequeStatus[cheque.chqStatus])))        
             if cheque.chqDelete == False:
-                if (cheque.chqStatus == 3) or (cheque.chqStatus == 4) or (cheque.chqStatus == 7):
-                    self.treestoreIncoming.append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(cust), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqDesc), str(chqBill), str(unicode(self.chequeStatus[cheque.chqStatus]))))
+                if (cheque.chqStatus == 3) or (cheque.chqStatus == 4) or (cheque.chqStatus == 7) or (cheque.chqStatus==9):
+                    self.treestoreIncoming.append(None,addingRow )
                 else:
-                    self.treestoreOutgoing.append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(cust), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqDesc), str(chqBill), str(unicode(self.chequeStatus[cheque.chqStatus]))))
+                    self.treestoreOutgoing.append(None, addingRow )
+
+                if (cheque.chqStatus == 2) :
+                    self.treestorePassed.append(None , addingRow)
+                elif cheque.chqStatus== 4:
+                    self.treestoreCashed.append(None , addingRow)
+                elif cheque.chqStatus== 8 :
+                    self.treestoreBouncedP.append(None , addingRow)                
+                elif cheque.chqStatus== 9 :
+                    self.treestoreBounced.append(None , addingRow)
             else:                
-                self.treestoreDeleted.     append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(cust), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqDesc), str(chqBill), str(unicode(self.chequeStatus[cheque.chqStatus]))))
+                self.treestoreDeleted.     append(None, addingRow)
 
     def getSelection(self):        
         self.currentTreeview = 0
