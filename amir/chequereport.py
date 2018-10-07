@@ -16,7 +16,9 @@ from datetime import datetime, timedelta
 import dateentry
 import class_document
 import dbconfig
-import subjects
+import subjects ,customers
+import class_bankaccounts
+import decimalentry , utility
 
 import logging
 dbconf = dbconfig.dbConfig()
@@ -190,7 +192,7 @@ class ChequeReport:
             result = result.filter(Cheque.chqWrtDate >= wDateFrom)
 
         # Show
-        for cheque , cust in result.all():            
+        for cheque , cust in result.all():                   
             if share.config.datetypes[share.config.datetype] == "jalali": 
                 year, month, day = str(cheque.chqWrtDate).split("-")
                 chqWrtDate = gregorian_to_jalali(int(year),int(month),int(day))
@@ -220,21 +222,134 @@ class ChequeReport:
             else:                
                 self.treestoreDeleted.     append(None, (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(cust), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqDesc), str(chqBill), str(unicode(self.chequeStatus[cheque.chqStatus]))))
 
-    def getSelection(self):
+    def getSelection(self):        
+        self.currentTreeview = 0
         selection = self.treeviewOutgoing.get_selection()
         iter = selection.get_selected()[1]
         if iter != None :
-            self.code = convertToLatin(self.treestoreOutgoing.get(iter, 0)[0])
+            self.code = convertToLatin(self.treestoreOutgoing.get(iter, 0)[0])     
+            self.currentTreeview = 1       
         else:
             selection = self.treeviewIncoming.get_selection()
             iter = selection.get_selected()[1]
             if iter != None :
                 self.code = convertToLatin(self.treestoreIncoming.get(iter, 0)[0])
+                self.currentTreeview = 0
             else:
                 selection = self.treeviewDeleted.get_selection()
                 iter = selection.get_selected()[1]
-                if iter != None :
+                if iter != None :                    
                     self.code = convertToLatin(self.treestoreDeleted.get(iter, 0)[0])        
+                    self.currentTreeview = 2
+
+    def editCheque (self , sender):
+        self.getSelection()
+        self.initChequeForm()
+        cheque = config.db.session.query(Cheque).filter(Cheque.chqId == self.code).first()        
+        #payer_id   = cheque.chqCust
+        amount = utility.LN(cheque.chqAmount, False)
+        serial = cheque.chqSerial
+        wrtDate = cheque.chqWrtDate
+        dueDate = cheque.chqDueDate
+        desc = cheque.chqDesc
+        
+        self.builder.get_object("chequeStatusLbl") .set_text( self.chequeStatus[cheque.chqStatus])
+        self.bankCombo.set_active(cheque.chqAccount - 1)
+        #self.edtPymntFlg = True
+        #self.edititer = iter        
+        self.addPymntDlg.set_title(_("Edit Non-Cash Payment"))
+        self.builder.get_object("submitBtn").set_label(_("Save Changes..."))
+        self.builder.get_object("paymentsStatusBar").push(1,"")
+        
+        self.pymntAmntEntry.set_text(amount)
+        self.serialNoEntry.set_text(serial)
+        self.writeDateEntry.showDateObject(wrtDate)
+        self.dueDateEntry.showDateObject(dueDate)
+        self.pymntDescEntry.set_text(desc)  
+
+    def initChequeForm(self):
+        self.addPymntDlg = self.builder.get_object("addPaymentDlg")
+        self.pymntAmntEntry = decimalentry.DecimalEntry()
+        self.builder.get_object("pymntAmntBox").add(self.pymntAmntEntry)
+        self.pymntAmntEntry.show()
+        
+        self.dueDateEntry = dateentry.DateEntry()
+        self.builder.get_object("pymntDueDateBox").add(self.dueDateEntry)
+        self.dueDateEntry.show()
+
+        self.writeDateEntry = dateentry.DateEntry()
+        self.builder.get_object("pymntWritingDateBox").add(self.writeDateEntry)
+        self.writeDateEntry.show()
+        self.pymntDescEntry = self.builder.get_object("pymntDescEntry")
+        self.bankEntry = self.builder.get_object("bankEntry")   
+        page = self.builder.get_object("notebook1").get_current_page()
+        sellFlag = None
+        if page == 0 :
+            sellFlag = True
+        elif page == 1:
+            sellFlag = False        
+            self.builder.get_object("payerLbl").set_text("Payid to:")        
+            self.builder.get_object("chooseBankBtn").set_sensitive(False)
+        self.bankaccounts_class = class_bankaccounts.BankAccountsClass()
+        self.bankCombo = self.builder.get_object('bank_names_combo')
+        model = Gtk.ListStore(str)
+        self.bankCombo.set_model(model)               
+        if sellFlag: # other's cheque
+            banks = self.bankaccounts_class.get_bank_names()
+        else:
+            banks =  self.bankaccounts_class.get_all_accounts()
+        for item in banks:
+            iter = model.append()
+            name = item.Name if sellFlag else item.accName
+            model.set(iter, 0, name )           
+        cell = Gtk.CellRendererText()
+        self.bankCombo.pack_start(cell, True)
+        self.serialNoEntry = self.builder.get_object("serialNoEntry")
+        self.payerEntry = self.builder.get_object("payerNameEntry")
+        self.customerNameLbl = self.builder.get_object("customerNameLbl")   
+        self.addPymntDlg.show_all()
+
+    def submitPayment(self, sender=0):
+        if self.validatePayment() == False:
+            return          
+        pymntAmnt   = self.pymntAmntEntry.get_float()
+        wrtDate     = self.writeDateEntry.getDateObject()
+        dueDte      = self.dueDateEntry.getDateObject()
+        bank = int(self.bankCombo.get_active()) + 1
+        # if self.sellFlag:
+        #     bank_name = self.bankaccounts_class.get_bank_name(bank)     
+        # else:
+        #     bank_name = self.bankaccounts_class.get_account(bank).accName
+        serial      = unicode(self.serialNoEntry.get_text())
+        pymntDesc   = unicode(self.pymntDescEntry.get_text())       
+        payer       = self.payerEntry.get_text()                
+        pymnt_str = utility.LN(pymntAmnt)
+        wrtDate_str = dateentry.dateToString(wrtDate)
+        dueDte_str = dateentry.dateToString(dueDte)
+
+        cheque = config.db.session.query(Cheque).filter(Cheque.chqId == self.code) .first()        
+        cheque.chqAmount = pymntAmnt
+        cheque.chqWrtDate = wrtDate
+        cheque.chqDueDate = dueDte
+        cheque.chqSerial = serial        
+        cheque.chqCust = int(self.builder.get_object("payerNameEntry").get_text() )
+        cheque.chqAccount = bank                        
+        cheque.chqDesc = pymntDesc  
+
+        ch = cheque
+        ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, ch.chqDesc,self.current_time )            
+        config.db.session.add(ch_history)
+        config.db.session.commit()
+        self.addPymntDlg.hide()
+        self.searchFilter()
+
+    def cancelPayment(self, sender=0, ev=0): 
+        self.addPymntDlg.hide()     
+        return True
+
+    def on_add_bank_clicked(self , sender):        
+        model = self.bankCombo.get_model()
+        self.bankaccounts_class.addNewBank(model)        
 
     def odatAzMoshtari(self, sender):
         self.getSelection()       
@@ -395,6 +510,7 @@ class ChequeReport:
         my_button.set_sensitive(True)
         my_button = self.builder.get_object("passButton")
         my_button.set_sensitive(True)
+        self.builder.get_object("editButton").set_sensitive(True)
         self.getSelection()        
         result = config.db.session.query(Cheque)
         result = result.filter(Cheque.chqId == self.code).first()        
@@ -411,8 +527,9 @@ class ChequeReport:
             my_button = self.builder.get_object("passButton")
             my_button.set_sensitive(False)
         if result.chqDelete == True:
-            my_button = self.builder.get_object("deleteButton")
-            my_button.set_sensitive(False)
+            self.builder.get_object("editButton").set_sensitive(False)
+            # my_button = self.builder.get_object("deleteButton")
+            # my_button.set_sensitive(False)
     def on_delete(self, sender):
         self.getSelection()
         result = config.db.session.query(Cheque)
@@ -526,3 +643,60 @@ class ChequeReport:
         column.set_sort_indicator(True)
         self.treeviewHistory.append_column(column)
         self.builder.connect_signals(self)
+
+
+    def validatePayment(self):    
+        errFlg  = False
+        msg = ""
+        
+        dueDte = self.dueDateEntry.get_text()
+        if dueDte == "":
+            msg += _("You must enter the due date for the non-cash payment.\n")
+            errFlg  = True
+        
+        payment = self.pymntAmntEntry.get_text()    
+        if payment =="":
+             msg+=_("You must enter the Amount for cheque ")
+             errFlg =True
+            
+        wrtDate = self.writeDateEntry.get_text()
+        if wrtDate == "":
+            msg = _("You must enter a writing date for the cheque.\n")
+            errFlg  = True
+            
+        serialNo = self.serialNoEntry.get_text()
+        if serialNo == "":
+            msg += _("You must enter the serial number for the non-cash payment.\n")
+            errFlg  = True          
+                
+        #----values:
+        if errFlg:
+            msg = _("The payment cannot be saved.\n\n%s") % msg
+            msgbox = Gtk.MessageDialog( self.addPymntDlg, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, 
+                                        Gtk.ButtonsType.OK, msg )
+            msgbox.set_title(_("Invalid data"))
+            msgbox.run()
+            msgbox.destroy()
+            return False
+        else:
+            return True
+
+
+    def selectCustomers(self,sender=0):
+        customer_win = customers.Customer()
+        customer_win.viewCustomers()
+        customer_win.connect("customer-selected", self.sellerSelected)
+        
+    def sellerSelected(self, sender, id, code):     
+        self.builder.get_object("payerNameEntry").set_text(code)
+        sender.window.destroy()     
+        self.setCustomerName()
+                
+    def setCustomerName(self, sender=0, ev=0):
+        ccode = unicode(self.builder.get_object("payerNameEntry").get_text())
+        query = config.db.session.query(Customers).select_from(Customers)
+        customer = query.filter(Customers.custCode == ccode).first()
+        self.builder.get_object("customerNameLbl").set_text("")
+        if customer:
+            self.builder.get_object("customerNameLbl").set_text(customer.custName)                            
+                
