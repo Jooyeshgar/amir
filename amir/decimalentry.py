@@ -20,6 +20,7 @@ class DecimalEntry(Gtk.Entry):
     def __init__(self, Max=0):
         GObject.GObject.__init__(self)
         self.insert_sig = self.connect("insert-text", self.insert_cb)
+        self.delete_sig = self.connect("delete-text" , self.delete_cb) 
     
     def insert(self, widget, text, pos):
     # the next three lines set up the text. this is done because we
@@ -56,6 +57,28 @@ class DecimalEntry(Gtk.Entry):
     # stop default emission
         widget.emit_stop_by_name("insert_text")
         GObject.idle_add(self.insert, widget, text, pos)
+
+    def delete_cb(self , widget , pos1  , pos2 ):
+        if pos1 <=0:
+            return        
+        text = widget.get_text()
+        text2 = ""
+        text1 = str(text)[:pos1]        
+        if pos2 !=-1 :
+            text2 = str(text)[pos2:]
+        #print widget.get_float()
+        text = text1+ text2
+        hadSlash = text.find('/')
+        text = utility.getFloatNumber(text)   
+        text = utility.LN(text)  
+        if hadSlash:
+            text.replace('.', '/')   
+        widget.emit_stop_by_name("delete_text")
+        widget.handler_block(self.insert_sig)
+        widget.set_text(text)
+        widget.handler_unblock(self.insert_sig)
+        widget.set_position(pos1)        
+
 
     def get_int(self):
         #--- This method will return the integer format of the entered  
