@@ -56,8 +56,7 @@ class ChequeReport:
         
         headers = (_("ID"), _("Amount"),_("Write Date"),_("Due Date") ,_("Serial"),_("Clear"),_("Customer Name"),_("Account"),_("Transaction ID"),\
             _("Description"),_("Bill ID"),_("Status") )
-        a = [self.treeviewIncoming ,self.treeviewOutgoing , self.treeviewDeleted ]
-        self.createHistoryTreeview()
+        a = [self.treeviewIncoming ,self.treeviewOutgoing , self.treeviewDeleted ]        
         i=0
         for header in headers:                              
             column = Gtk.TreeViewColumn(str(header), Gtk.CellRendererText(), text = i)
@@ -271,25 +270,14 @@ class ChequeReport:
             else:                
                 self.treestoreDeleted.     append(None, addingRow)
 
-    def getSelection(self):        
-        self.currentTreeview = 0
-        selection = self.treeviewOutgoing.get_selection()
+    def getSelection(self , treeview=None):        
+        self.currentTreeview = treeview
+        selection = treeview.get_selection()
         iter = selection.get_selected()[1]
         if iter != None :
-            self.code = convertToLatin(self.treestoreOutgoing.get(iter, 0)[0])     
-            self.currentTreeview = 1       
-        else:
-            selection = self.treeviewIncoming.get_selection()
-            iter = selection.get_selected()[1]
-            if iter != None :
-                self.code = convertToLatin(self.treestoreIncoming.get(iter, 0)[0])
-                self.currentTreeview = 0
-            else:
-                selection = self.treeviewDeleted.get_selection()
-                iter = selection.get_selected()[1]
-                if iter != None :                    
-                    self.code = convertToLatin(self.treestoreDeleted.get(iter, 0)[0])        
-                    self.currentTreeview = 2
+            self.code = convertToLatin(treeview.get_model().get(iter, 0)[0])   
+
+        return                        
 
     def editCheque (self , sender):
         self.getSelection()
@@ -504,42 +492,21 @@ class ChequeReport:
 
     def on_dialog_destroy(self, sender,data=None):
         sender.hide()
-        return True
-        #self.dialog.hide()
+        return True       
 
-    def selectChequeFromListIncoming(self, treeview, path, view_column):
-        selection = self.treeviewIncoming.get_selection()
-        iter = selection.get_selected()[1]
-        
+    def selectChequeFromTreeview (self , treeview , path , view_column):
+        treestore = treeview.get_model()
+        iter = treestore.get_iter(path)
         if iter != None :
-            self.code = convertToLatin(self.treestoreIncoming.get(iter, 0)[0])
-            self.showHistory(self.code)
+            self.code = convertToLatin(treestore.get(iter , 0)[0])   
+            self.showHistory(self.code)     
 
-    def selectChequeFromListOutgoing(self, treeview, path, view_column):
-        selection = self.treeviewOutgoing.get_selection()
-        iter = selection.get_selected()[1]
-        
-        if iter != None :
-            self.code = convertToLatin(self.treestoreOutgoing.get(iter, 0)[0])
-            self.showHistory(self.code)
-
-    def selectChequeFromListDeleted(self, treeview, path, view_column):
-        selection = self.treeviewOutgoing.get_selection()
-        iter = selection.get_selected()[1]
-        
-        if iter != None :
-            self.code = convertToLatin(self.treestoreOutgoing.get(iter, 0)[0])
-            self.showHistory(self.code)
-
-    def showHistory(self, code):            
-
+    def showHistory(self, code):                    
         self.treestoreHistory.clear()
         result = config.db.session.query(ChequeHistory, Cheque , Customers.custName)\
         .join(Cheque,ChequeHistory.ChequeId== Cheque.chqId).join(Customers,  Customers.custId == Cheque.chqCust)\
         .filter(ChequeHistory.ChequeId == code).all()
 
-
-        # Show
         for  chequeHistory, cheque,cust in result:                        
             if share.config.datetypes[share.config.datetype] == "jalali": 
                 year, month, day = str(chequeHistory.WrtDate).split("-")
@@ -562,10 +529,15 @@ class ChequeReport:
             else:
                 clear = 'Not Cleared'
 
-            self.treestoreHistory.append(None, (str(chequeHistory.ChequeId), str(chequeHistory.Amount), str(chqWrtDate), str(chqDueDate), str(chequeHistory.Serial), str(clear), str(cust), str(chequeHistory.Account), str(chequeHistory.TransId), str(chequeHistory.Desc), str(chequeHistory.Date) ,str(cheque.chqBillId),str(self.chequeStatus[chequeHistory.Status]) ))
+            chqBill = config.db.session.query(Notebook.bill_id).filter(Notebook.chqId==cheque.chqId).first()
+            if chqBill :
+                chqBill = chqBill.bill_id    
+            else:
+                chqBill = 0
+            self.treestoreHistory.append(None, (str(chequeHistory.ChequeId), str(chequeHistory.Amount), str(chqWrtDate), str(chqDueDate), str(chequeHistory.Serial), str(clear), str(cust), str(chequeHistory.Account), str(chequeHistory.TransId), str(chequeHistory.Desc), str(chequeHistory.Date) ,str(chqBill),str(self.chequeStatus[chequeHistory.Status]) ))
             self.historywindow.show_all()
 
-    def on_select_cell(self, sender):
+    def on_select_cell(self, sender):        
         my_button = self.builder.get_object("odatAsMoshtariButton")
         my_button.set_sensitive(True)
         my_button = self.builder.get_object("odatBeMoshtariButton")
@@ -576,7 +548,7 @@ class ChequeReport:
         my_button.set_sensitive(True)
         self.builder.get_object("deleteButton").set_sensitive(True)    
         self.builder.get_object("editButton").set_sensitive(True)        
-        self.getSelection()        
+        self.getSelection(sender)        
         result = config.db.session.query(Cheque)
         result = result.filter(Cheque.chqId == self.code).first()        
         if result.chqStatus != 1 :          # [2,3,4,5,6,7,8,9]: # 1
@@ -590,7 +562,8 @@ class ChequeReport:
             self.builder.get_object("editButton").set_sensitive(False)          
         if result.chqDelete == True:
             self.builder.get_object("editButton").set_sensitive(False)            
-            self.builder.get_object("deleteButton").set_sensitive(False)            
+            self.builder.get_object("deleteButton").set_sensitive(False) 
+
     def on_delete(self, sender):
         msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL,
                                    _("Are you sure to delete the cheque?"))
@@ -617,7 +590,7 @@ class ChequeReport:
             self.searchFilter()
         msgbox.destroy()
 
-    def createHistoryTreeview(self):
+    def createHistoryTreeview(self):        
         self.historywindow = self.builder.get_object("window1")
         self.historywindow.set_title("Cheque History")
         

@@ -780,7 +780,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <signal name="cursor-changed" handler="on_select_cell" swapped="no"/>
-                    <signal name="row-activated" handler="selectChequeFromListIncoming" swapped="no"/>
+                    <signal name="row-activated" handler="selectChequeFromTreeview" swapped="no"/>
                     <child internal-child="selection">
                       <object class="GtkTreeSelection" id="treeview-selection"/>
                     </child>
@@ -816,7 +816,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <signal name="cursor-changed" handler="on_select_cell" swapped="no"/>
-                    <signal name="row-activated" handler="selectChequeFromListOutgoing" swapped="no"/>
+                    <signal name="row-activated" handler="selectChequeFromTreeview" swapped="no"/>
                     <child internal-child="selection">
                       <object class="GtkTreeSelection" id="treeview-selection1"/>
                     </child>
@@ -847,6 +847,8 @@
               <object class="GtkTreeView" id="treeviewPassed">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <signal name="cursor-changed" handler="on_select_cell" swapped="no"/>
+                <signal name="row-activated" handler="selectChequeFromTreeview" swapped="no"/>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection" id="treeview-selection6"/>
                 </child>
@@ -870,6 +872,8 @@
               <object class="GtkTreeView" id="treeviewCashed">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <signal name="cursor-changed" handler="on_select_cell" swapped="no"/>
+                <signal name="row-activated" handler="selectChequeFromTreeview" swapped="no"/>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection" id="treeview-selection7"/>
                 </child>
@@ -893,6 +897,8 @@
               <object class="GtkTreeView" id="treeviewBounced">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <signal name="cursor-changed" handler="on_select_cell" swapped="no"/>
+                <signal name="row-activated" handler="selectChequeFromTreeview" swapped="no"/>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection" id="treeview-selection8"/>
                 </child>
@@ -916,6 +922,8 @@
               <object class="GtkTreeView" id="treeviewBouncedP">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <signal name="cursor-changed" handler="on_select_cell" swapped="no"/>
+                <signal name="row-activated" handler="selectChequeFromTreeview" swapped="no"/>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection" id="treeview-selection9"/>
                 </child>
@@ -945,7 +953,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <signal name="cursor-changed" handler="on_select_cell" swapped="no"/>
-                    <signal name="row-activated" handler="selectChequeFromListDeleted" swapped="no"/>
+                    <signal name="row-activated" handler="selectChequeFromTreeview" swapped="no"/>
                     <child internal-child="selection">
                       <object class="GtkTreeSelection" id="treeview-selection5"/>
                     </child>
@@ -1032,32 +1040,6 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="deleteButton">
-                <property name="label" translatable="yes">Delete</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <signal name="clicked" handler="on_delete" swapped="no"/>
-              </object>
-              <packing>
-                <property name="left_attach">4</property>
-                <property name="top_attach">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="odatAsMoshtariButton">
-                <property name="label" translatable="yes">Return from customer</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <signal name="clicked" handler="odatAzMoshtari" swapped="no"/>
-              </object>
-              <packing>
-                <property name="left_attach">5</property>
-                <property name="top_attach">0</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkLabel" id="label3">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -1081,6 +1063,32 @@
               </object>
               <packing>
                 <property name="left_attach">6</property>
+                <property name="top_attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="odatAsMoshtariButton">
+                <property name="label" translatable="yes">Return from customer</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <signal name="clicked" handler="odatAzMoshtari" swapped="no"/>
+              </object>
+              <packing>
+                <property name="left_attach">5</property>
+                <property name="top_attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="deleteButton">
+                <property name="label" translatable="yes">Delete</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <signal name="clicked" handler="on_delete" swapped="no"/>
+              </object>
+              <packing>
+                <property name="left_attach">4</property>
                 <property name="top_attach">0</property>
               </packing>
             </child>
