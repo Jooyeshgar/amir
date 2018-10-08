@@ -26,6 +26,7 @@ config = share.config
 
 class ChequeReport:
     chequeStatus = ["" , _("Paid-Not passed"), _("Paid-Passed"), _("Recieved-Not passed"), _("Recieved-Passed"), _("Spent") , _("Returned to customer") , _("Returned from customer") , _("Paid-Bounced"),_("Recieved-Bounced")]
+    treeviews = ["treeviewIncoming" , "treeviewOutgoing" ,"treeviewDeleted", "treeviewCashed","treeviewPassed","treeviewBounced" ,"treeviewBouncedP" ]
     def __init__(self):
         self.builder = get_builder("chequereport")
         self.window = self.builder.get_object("windowChequeReport")
@@ -160,6 +161,10 @@ class ChequeReport:
         self.treestoreIncoming.clear()
         self.treestoreOutgoing.clear()
         self.treestoreDeleted.clear()
+        self.treestorePassed.clear()
+        self.treestoreCashed.clear()
+        self.treestoreBounced.clear()
+        self.treestoreBouncedP.clear()
         result = config.db.session.query(Cheque , Customers.custName).select_from(outerjoin(Cheque , Customers, Customers.custId == Cheque.chqCust))
         # Apply filters
         delimiter = config.datedelims[config.datedelim]        
@@ -247,14 +252,18 @@ class ChequeReport:
             if (cheque.chqStatus == 2) or (cheque.chqStatus == 4):
                 clear = 'Cleared'
             else:
-                clear = 'Not Cleared'
+                clear = 'Not Cleared'            
             chqBill = config.db.session.query(Notebook.bill_id).filter(Notebook.chqId==cheque.chqId).first()
             if chqBill :
                 chqBill = chqBill.bill_id    
             else:
                 chqBill = 0
-            
-            addingRow = (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(cust), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqDesc), str(chqBill), str(unicode(self.chequeStatus[cheque.chqStatus])))        
+            self.bankaccounts_class = class_bankaccounts.BankAccountsClass()
+            if cheque.chqStatus in [1,2,6,8] :
+                chqAccount = self.bankaccounts_class.get_account(cheque.chqAccount).accName
+            else :
+                chqAccount = self.bankaccounts_class.get_bank_name(cheque.chqAccount)
+            addingRow = (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(cust), str(chqAccount), str(cheque.chqTransId), str(cheque.chqDesc), str(chqBill), str(unicode(self.chequeStatus[cheque.chqStatus])))        
             if cheque.chqDelete == False:
                 if (cheque.chqStatus == 3) or (cheque.chqStatus == 4) or (cheque.chqStatus == 7) or (cheque.chqStatus==9):
                     self.treestoreIncoming.append(None,addingRow )
@@ -279,9 +288,10 @@ class ChequeReport:
                 self.treestoreDeleted.     append(None, addingRow)
         self.totals = (totalIn , totalGo , totalPass , totalCash , totalBounced,totalBouncedp , "")
         self.builder.get_object("totalLbl").set_text(str(totalIn) )
+        self.currentTreeview = 0
 
     def getSelection(self , treeview=None):        
-        self.currentTreeview = treeview
+        treeview = self.builder.get_object(self.treeviews[self.currentTreeview ])
         selection = treeview.get_selection()
         iter = selection.get_selected()[1]
         if iter != None :
@@ -336,8 +346,7 @@ class ChequeReport:
         elif page == 1:
             sellFlag = False        
             self.builder.get_object("payerLbl").set_text("Payid to:")        
-            self.builder.get_object("chooseBankBtn").set_sensitive(False)
-        self.bankaccounts_class = class_bankaccounts.BankAccountsClass()
+            self.builder.get_object("chooseBankBtn").set_sensitive(False)        
         self.bankCombo = self.builder.get_object('bank_names_combo')
         model = Gtk.ListStore(str)
         self.bankCombo.set_model(model)               
@@ -575,7 +584,8 @@ class ChequeReport:
             self.builder.get_object("deleteButton").set_sensitive(False) 
 
     def updateTotalAmount (self , sender ,tree  ,  page , data=0):
-        #page = self.builder.get_object("notebook1").get_current_page()        
+        #page = self.builder.get_object("notebook1").get_current_page()         
+        self.currentTreeview = page 
         self.builder.get_object("totalLbl").set_text(str(self.totals[page]))
 
     def on_delete(self, sender):
