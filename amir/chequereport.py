@@ -4,7 +4,7 @@ from gi.repository import Gtk
 from sqlalchemy import or_
 from sqlalchemy.orm.util import outerjoin , join
 from sqlalchemy.sql import between, and_
-from sqlalchemy.sql.functions import sum
+from sqlalchemy.sql.functions import sum , count
 
 from database import *
 from dateentry import *
@@ -248,7 +248,11 @@ class ChequeReport:
                 clear = 'Cleared'
             else:
                 clear = 'Not Cleared'
-            chqBill = config.db.session.query(Notebook.bill_id).filter(Notebook.chqId==cheque.chqId).first().bill_id    
+            chqBill = config.db.session.query(Notebook.bill_id).filter(Notebook.chqId==cheque.chqId).first()
+            if chqBill :
+                chqBill = chqBill.bill_id    
+            else:
+                chqBill = 0
             addingRow = (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(cust), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqDesc), str(chqBill), str(unicode(self.chequeStatus[cheque.chqStatus])))        
             if cheque.chqDelete == False:
                 if (cheque.chqStatus == 3) or (cheque.chqStatus == 4) or (cheque.chqStatus == 7) or (cheque.chqStatus==9):
@@ -570,39 +574,48 @@ class ChequeReport:
         my_button.set_sensitive(True)
         my_button = self.builder.get_object("passButton")
         my_button.set_sensitive(True)
-        self.builder.get_object("editButton").set_sensitive(True)
+        self.builder.get_object("deleteButton").set_sensitive(True)    
+        self.builder.get_object("editButton").set_sensitive(True)        
         self.getSelection()        
         result = config.db.session.query(Cheque)
         result = result.filter(Cheque.chqId == self.code).first()        
-        if result.chqStatus in [2,3,4,5,6,7,8]: # 1
-            my_button = self.builder.get_object("odatAsMoshtariButton")
-            my_button.set_sensitive(False)
-        if result.chqStatus in [1,2,4,5,6,7,8]: # 3 
-            my_button = self.builder.get_object("odatBeMoshtariButton")
-            my_button.set_sensitive(False)
-        if result.chqStatus in [2,4,5,6,7,8]:   # 1 , 3
-            my_button = self.builder.get_object("bargashtButton")
-            my_button.set_sensitive(False)
-        if result.chqStatus in [2,4,6,7,8]:     # 1 , 3 , 5
-            my_button = self.builder.get_object("passButton")
-            my_button.set_sensitive(False)
+        if result.chqStatus != 1 :          # [2,3,4,5,6,7,8,9]: # 1
+            self.builder.get_object("odatAsMoshtariButton").set_sensitive(False)
+        if result.chqStatus !=3 :           # [1,2,4,5,6,7,8]: # 3 
+            self.builder.get_object("odatBeMoshtariButton").set_sensitive(False)            
+        if result.chqStatus not in [1 , 3 , 5]:  #[2,4,6,7,8]:   # 1 , 3 , 5
+            self.builder.get_object("bargashtButton").set_sensitive(False)       
+            self.builder.get_object("passButton").set_sensitive(False) 
+        if result.chqStatus not in  [1 , 3]:
+            self.builder.get_object("editButton").set_sensitive(False)          
         if result.chqDelete == True:
-            self.builder.get_object("editButton").set_sensitive(False)
-            # my_button = self.builder.get_object("deleteButton")
-            # my_button.set_sensitive(False)
+            self.builder.get_object("editButton").set_sensitive(False)            
+            self.builder.get_object("deleteButton").set_sensitive(False)            
     def on_delete(self, sender):
-        self.getSelection()
-        result = config.db.session.query(Cheque)
-        result = result.filter(Cheque.chqId == self.code).first()
-        result.chqDelete = True
-        ch_history = ChequeHistory(result.chqId, result.chqAmount, result.chqWrtDate, result.chqDueDate, result.chqSerial, result.chqStatus, result.chqCust, result.chqAccount, result.chqTransId, result.chqDesc, self.current_time, result.chqDelete)
-        config.db.session.add(ch_history)
-        config.db.session.query(Notebook).filter(Notebook.chqId == self.code).delete()
-        config.db.session.commit()
+        msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL,
+                                   _("Are you sure to delete the cheque?"))
+        msgbox.set_title(_("Are you sure?"))
+        result = msgbox.run();
+        
+        if result == Gtk.ResponseType.OK :
+            self.getSelection()
+            result = config.db.session.query(Cheque).filter(Cheque.chqId == self.code).first()
+            
+            notebook = config.db.session.query(Notebook).filter(Notebook.chqId == result.chqId)
+            bill_id = notebook.first().bill_id            
+            notebook.delete()
+            noteCount = config.db.session.query(count(Notebook.bill_id)).filter(Notebook.bill_id== bill_id).first()[0]                   
+            if noteCount == 0 :
+                config.db.session.query(Bill).filter(Bill.id == bill_id).delete()
+        
+            result.chqDelete = True
+            ch_history = ChequeHistory(result.chqId, result.chqAmount, result.chqWrtDate, result.chqDueDate, result.chqSerial, result.chqStatus, result.chqCust, result.chqAccount, result.chqTransId, result.chqDesc, self.current_time, result.chqDelete)
+            config.db.session.add(ch_history)        
+            config.db.session.commit()
 
-        share.mainwin.silent_daialog(_("The operation was completed successfully."))
-        self.searchFilter()
-
+            share.mainwin.silent_daialog(_("The operation was completed successfully."))
+            self.searchFilter()
+        msgbox.destroy()
 
     def createHistoryTreeview(self):
         self.historywindow = self.builder.get_object("window1")
