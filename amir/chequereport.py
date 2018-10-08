@@ -225,6 +225,7 @@ class ChequeReport:
             wDateFrom -= timedelta(days=1)
             result = result.filter(Cheque.chqWrtDate >= wDateFrom)
 
+        totalIn = totalGo = totalPass = totalCash = totalBouncedp = totalBounced = 0
         # Show
         for cheque , cust in result.all():                   
             if share.config.datetypes[share.config.datetype] == "jalali": 
@@ -252,23 +253,32 @@ class ChequeReport:
                 chqBill = chqBill.bill_id    
             else:
                 chqBill = 0
+            
             addingRow = (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(cust), str(cheque.chqAccount), str(cheque.chqTransId), str(cheque.chqDesc), str(chqBill), str(unicode(self.chequeStatus[cheque.chqStatus])))        
             if cheque.chqDelete == False:
                 if (cheque.chqStatus == 3) or (cheque.chqStatus == 4) or (cheque.chqStatus == 7) or (cheque.chqStatus==9):
                     self.treestoreIncoming.append(None,addingRow )
+                    totalIn +=cheque.chqAmount
                 else:
                     self.treestoreOutgoing.append(None, addingRow )
+                    totalGo  +=cheque.chqAmount
 
                 if (cheque.chqStatus == 2) :
                     self.treestorePassed.append(None , addingRow)
+                    totalPass  +=cheque.chqAmount
                 elif cheque.chqStatus== 4:
                     self.treestoreCashed.append(None , addingRow)
+                    totalCash  +=cheque.chqAmount
                 elif cheque.chqStatus== 8 :
-                    self.treestoreBouncedP.append(None , addingRow)                
+                    self.treestoreBouncedP.append(None , addingRow)  
+                    totalBouncedp  +=cheque.chqAmount              
                 elif cheque.chqStatus== 9 :
                     self.treestoreBounced.append(None , addingRow)
+                    totalBounced  +=cheque.chqAmount
             else:                
                 self.treestoreDeleted.     append(None, addingRow)
+        self.totals = (totalIn , totalGo , totalPass , totalCash , totalBounced,totalBouncedp , "")
+        self.builder.get_object("totalLbl").set_text(str(totalIn) )
 
     def getSelection(self , treeview=None):        
         self.currentTreeview = treeview
@@ -563,6 +573,10 @@ class ChequeReport:
         if result.chqDelete == True:
             self.builder.get_object("editButton").set_sensitive(False)            
             self.builder.get_object("deleteButton").set_sensitive(False) 
+
+    def updateTotalAmount (self , sender ,tree  ,  page , data=0):
+        #page = self.builder.get_object("notebook1").get_current_page()        
+        self.builder.get_object("totalLbl").set_text(str(self.totals[page]))
 
     def on_delete(self, sender):
         msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL,
