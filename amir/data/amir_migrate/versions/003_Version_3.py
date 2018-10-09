@@ -89,6 +89,7 @@ def upgrade(migrate_engine):
     s.execute('DROP TABLE exchanges;')
     s.commit()
 
+    s.execute('ALTER TABLE `customers` DROP COLUMN ')
     s.execute('ALTER TABLE `payment` ADD COLUMN `paymntNamePayer` Text;')
     s.commit()
     s.execute('ALTER TABLE `Cheque` ADD COLUMN `chqBillId` Integer;')

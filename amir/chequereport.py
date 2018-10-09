@@ -39,13 +39,13 @@ class ChequeReport:
         self.treeviewPassed = self.builder.get_object("treeviewPassed")
         self.treeviewBounced = self.builder.get_object("treeviewBounced")
         self.treeviewBouncedP = self.builder.get_object("treeviewBouncedP")
-        self.treestoreIncoming = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str, str)
-        self.treestoreOutgoing = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str, str)
-        self.treestoreDeleted = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str, str)
-        self.treestorePassed = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str, str)
-        self.treestoreCashed = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str, str)
-        self.treestoreBounced = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str, str)
-        self.treestoreBouncedP = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str, str)
+        self.treestoreIncoming = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str,str)
+        self.treestoreOutgoing = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str,str)
+        self.treestoreDeleted = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str,str)
+        self.treestorePassed = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str)
+        self.treestoreCashed = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str)
+        self.treestoreBounced = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str)
+        self.treestoreBouncedP = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str)
         self.treeviewIncoming.set_model(self.treestoreIncoming)
         self.treeviewOutgoing.set_model(self.treestoreOutgoing)
         self.treeviewDeleted.set_model(self.treestoreDeleted)
@@ -55,7 +55,7 @@ class ChequeReport:
         self.treeviewBouncedP.set_model(self.treestoreBouncedP)
 
         
-        headers = (_("ID"), _("Amount"),_("Write Date"),_("Due Date") ,_("Serial"),_("Clear"),_("Customer Name"),_("Account"),_("Transaction ID"),\
+        headers = (_("ID"), _("Amount"),_("Write Date"),_("Due Date") ,_("Serial"),_("Clear"),_("Customer Name"),_("Account"),\
             _("Description"),_("Bill ID"),_("Status") )
         a = [self.treeviewIncoming ,self.treeviewOutgoing , self.treeviewDeleted ]        
         i=0
@@ -263,7 +263,7 @@ class ChequeReport:
                 chqAccount = self.bankaccounts_class.get_account(cheque.chqAccount).accName
             else :
                 chqAccount = self.bankaccounts_class.get_bank_name(cheque.chqAccount)
-            addingRow = (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(cust), str(chqAccount), str(cheque.chqTransId), str(cheque.chqDesc), str(chqBill), str(unicode(self.chequeStatus[cheque.chqStatus])))        
+            addingRow = (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(cust), str(chqAccount), str(cheque.chqDesc), str(chqBill), str(unicode(self.chequeStatus[cheque.chqStatus])))        
             if cheque.chqDelete == False:
                 if (cheque.chqStatus == 3) or (cheque.chqStatus == 4) or (cheque.chqStatus == 7) or (cheque.chqStatus==9):
                     self.treestoreIncoming.append(None,addingRow )

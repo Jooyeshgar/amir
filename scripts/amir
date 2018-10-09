@@ -97,6 +97,7 @@ sys.path.insert(0, os.path.dirname(fullPath))
 from amir.share import share
 from amir.amirconfig import AmirConfig
 
+
 config = AmirConfig()
 share.config = config
 
@@ -384,11 +385,13 @@ class MainWindow(GObject.GObject):
 		self.window.show()
 
 		# Alerts
-		cashSum = config.db.session.query(func.sum(Notebook.value)).filter(Notebook.subject_id == 14).first()
+		import amir.dbconfig 
+		dbconf = amir.dbconfig .dbConfig()
+		cashSum = config.db.session.query(func.sum(Notebook.value)).filter(Notebook.subject_id == dbconf.get_int('cash')).first()
 		if cashSum[0] < 0 and cashSum[0] != None:
 			self.alert_dialog(_("Cash is negative"))
 
-		chqDueDate = config.db.session.query(Cheque.chqDueDate).filter(or_(Cheque.chqStatus == 1, Cheque.chqStatus == 4))
+		chqDueDate = config.db.session.query(Cheque.chqDueDate).filter( or_(Cheque.chqStatus == 1, Cheque.chqStatus == 3)).filter(Cheque.chqDelete !=1)
 		for dueDate in chqDueDate:
 			result = datetime.datetime.now().date() - dueDate[0]
 			if result.days < 7:

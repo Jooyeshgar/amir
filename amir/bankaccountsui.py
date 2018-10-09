@@ -211,6 +211,7 @@ class BankAccountsUI:
         if result > 0:
             config.db.session.commit()
             window = self.builder.get_object('add_window').hide()
+            share.mainwin.silent_daialog(_('successfully added.') )
             # infobar = Gtk.InfoBar()
             # label = Gtk.Label(label='successfully added.')
             # infobar.get_content_area().add(label)

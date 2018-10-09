@@ -51,10 +51,10 @@ class Customers(Base):
 
     def __init__( self, custCode, custName, custSubj, custPhone, custCell, custFax, custAddress,
                   custEmail, custEcnmcsCode, custWebPage, custResposible, custConnector, 
-                  custGroup, custPostalCode="", custPersonalCode="", custDesc="", custBalance=float(0), custCredit=float(0), 
+                  custGroup, custPostalCode="", custPersonalCode="", custDesc="", 
                   custRepViaEmail=False, custAccName1="", custAccNo1="", custAccBank1="", custAccName2="", custAccNo2="", 
                   custAccBank2="", custTypeBuyer=True, custTypeSeller=True, custTypeMate=False, custTypeAgent=False, 
-                  custIntroducer="", custCommission="", custMarked=False, custReason="", custDiscRate="" ):
+                  custIntroducer="", custCommission="", custMarked=False, custReason="", custDiscRate="" , custBalance=float(0), custCredit=float(0)):
 
         self.custCode        = custCode
         self.custName        = custName    

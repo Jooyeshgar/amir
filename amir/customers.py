@@ -52,13 +52,6 @@ class Customer(customergroup.Group):
         self.builder.get_object("boxDiscRateEntry").add(self.boxDiscRateEntry)
         self.boxDiscRateEntry.show()
                 
-        self.boxBalanceEntry = decimalentry.DecimalEntry(10)
-        self.builder.get_object("boxBalanceEntry").add(self.boxBalanceEntry)
-        self.boxBalanceEntry.show()
-        
-        self.boxCreditEntry = decimalentry.DecimalEntry(10)
-        self.builder.get_object("boxCreditEntry").add(self.boxCreditEntry)
-        self.boxCreditEntry.show()
     
     ## show list of customer            
     def viewCustomers(self, readonly=False):
@@ -196,8 +189,6 @@ class Customer(customergroup.Group):
         self.builder.get_object("markedChk").set_active(False)
         self.builder.get_object("markedReasonEntry").set_text("")
         #----------------------------------
-        self.boxBalanceEntry.set_text("")
-        self.boxCreditEntry.set_text("")
         self.builder.get_object("custAccName1Entry").set_text("")
         self.builder.get_object("custAccNo1Entry").set_text("")
         self.builder.get_object("custAccBank1Entry").set_text("")
@@ -255,8 +246,8 @@ class Customer(customergroup.Group):
         custMarked          = self.builder.get_object("markedChk").get_active()
         custReason          = unicode(self.builder.get_object("markedReasonEntry").get_text())
         #----------------------------------
-        custBalance         = self.boxBalanceEntry.get_float()
-        custCredit          = self.boxCreditEntry.get_float()
+        # custBalance         = self.boxBalanceEntry.get_float()
+        # custCredit          = self.boxCreditEntry.get_float()
         custAccName1        = unicode(self.builder.get_object("custAccName1Entry").get_text())
         custAccNo1          = unicode(self.builder.get_object("custAccNo1Entry").get_text())
         custAccBank1        = unicode(self.builder.get_object("custAccBank1Entry").get_text())
@@ -307,10 +298,11 @@ class Customer(customergroup.Group):
             custSubj = sub.add(dbconf.get_int('custSubject'), custName)
             customer = Customers(custCode, custName, custSubj, custPhone, custCell, custFax, custAddress,
                                 custEmail, custEcnmcsCode, custWebPage, callResponsible, custConnector,
-                                groupid, custPostalCode, custPersonalCode, custDesc, custBalance, custCredit,
+                                groupid, custPostalCode, custPersonalCode, custDesc,
                                 custRepViaEmail, custAccName1, custAccNo1, custAccBank1, custAccName2, custAccNo2, 
                                 custAccBank2, custTypeBuyer, custTypeSeller, custTypeMate, custTypeAgent, 
                                 custIntroducer, custCommission, custMarked, custReason, custDiscRate )
+            config.db.session.add(customer)
         else:
             query = config.db.session.query(Customers).select_from(Customers)
             customer = query.filter(Customers.custId == self.customerId).first()
@@ -341,8 +333,6 @@ class Customer(customergroup.Group):
             customer.custMarked = custMarked
             customer.custReason = custReason
             #----------------------------------
-            customer.custBalance = custBalance
-            customer.custCredit = custCredit
             customer.custAccName1 = custAccName1
             customer.custAccNo1 = custAccNo1
             customer.custAccBank1 = custAccBank1
@@ -350,7 +340,7 @@ class Customer(customergroup.Group):
             customer.custAccNo2 = custAccNo2
             customer.custAccBank2 = custAccBank2
             
-        config.db.session.add(customer)
+        
         config.db.session.commit()
         
         #Show new customer in table
@@ -423,9 +413,7 @@ class Customer(customergroup.Group):
             self.boxDiscRateEntry.set_text(customer.custDiscRate)
             self.builder.get_object("markedChk").set_active(customer.custMarked)
             self.builder.get_object("markedReasonEntry").set_text(customer.custReason)
-            #----------------------------------
-            self.boxBalanceEntry.set_text(LN(customer.custBalance, False))
-            self.boxCreditEntry.set_text(LN(customer.custCredit, False))
+            #----------------------------------aaaaaaaaaaaaaa
             self.builder.get_object("custAccName1Entry").set_text(customer.custAccName1)
             self.builder.get_object("custAccNo1Entry").set_text(customer.custAccNo1)
             self.builder.get_object("custAccBank1Entry").set_text(customer.custAccBank1)
