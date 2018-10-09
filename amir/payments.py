@@ -540,7 +540,7 @@ class Payments(GObject.GObject):
 			cheque.chqTransId  = history.TransId
 			cheque.chqDesc = history.Desc
 			ch = cheque
-			ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, unicode(_("Unspended")), date.today(),True)            
+			ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, ch.chqStatus, date.today(),True)            
 		if ch_history:
 			self.session.add(ch_history)		
 

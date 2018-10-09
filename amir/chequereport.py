@@ -24,9 +24,10 @@ import logging
 dbconf = dbconfig.dbConfig()
 config = share.config
 
-class ChequeReport:
-    chequeStatus = ["" , _("Paid-Not passed"), _("Paid-Passed"), _("Recieved-Not cashed"), _("Recieved-Cashed"), _("Spent") , _("Returned to customer") , _("Returned from customer") , _("Paid-Bounced"),_("Recieved-Bounced")]
-    treeviews = ["treeviewIncoming" , "treeviewOutgoing" ,"treeviewNotPassed" ,"treeviewNotCashed" , "treeviewCashed","treeviewPassed", "treeviewSpent","treeviewBounced" ,"treeviewBouncedP","treeviewDeleted" ]
+class ChequeReport(GObject.GObject):
+    chequeStatus = ["" , _("Paid-Not passed"), _("Paid-Passed"), _("Recieved-Not cashed"), _("Recieved-Cashed"), _("Spent") , _("Returned from customer") , _("Returned to customer") , _("Paid-Bounced"),_("Recieved-Bounced")]
+    treeviews = ["treeviewIncoming" , "treeviewOutgoing" ,"treeviewNotPassed" ,"treeviewNotCashed" , "treeviewPassed", "treeviewCashed",\
+                 "treeviewSpent","treeviewBounced" ,"treeviewBouncedP" , "treeviewReturnedT", "treeviewReturnedF","treeviewDeleted" ]
     def __init__(self):
         self.builder = get_builder("chequereport")
         self.window = self.builder.get_object("windowChequeReport")
@@ -42,6 +43,8 @@ class ChequeReport:
         self.treeviewSpent = self.builder.get_object("treeviewSpent")
         self.treeviewBounced = self.builder.get_object("treeviewBounced")
         self.treeviewBouncedP = self.builder.get_object("treeviewBouncedP")
+        self.treeviewReturnedT = self.builder.get_object("treeviewReturnedT")
+        self.treeviewReturnedF = self.builder.get_object("treeviewReturnedF")
         self.treestoreIncoming = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str,str)
         self.treestoreOutgoing = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str,str)
         self.treestoreNotPassed = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str,str)
@@ -52,6 +55,8 @@ class ChequeReport:
         self.treestoreSpent = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str)
         self.treestoreBounced = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str)
         self.treestoreBouncedP = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str)
+        self.treestoreReturnedT = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str)
+        self.treestoreReturnedF = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str)
         self.treeviewIncoming.set_model(self.treestoreIncoming)
         self.treeviewOutgoing.set_model(self.treestoreOutgoing)
         self.treeviewNotPassed.set_model(self.treestoreNotPassed)
@@ -62,72 +67,21 @@ class ChequeReport:
         self.treeviewSpent.set_model(self.treestoreSpent)
         self.treeviewBounced.set_model(self.treestoreBounced)
         self.treeviewBouncedP.set_model(self.treestoreBouncedP)
+        self.treeviewReturnedT.set_model(self.treestoreReturnedT)
+        self.treeviewReturnedF.set_model(self.treestoreReturnedF)
 
         
         headers = (_("ID"), _("Amount"),_("Write Date"),_("Due Date") ,_("Serial"),_("Clear"),_("Customer Name"),_("Account"), _("Description"),_("Bill ID"),_("Status") )            
-        i=0
-        for header in headers:                              
-            column = Gtk.TreeViewColumn(str(header), Gtk.CellRendererText(), text = i)
-            column.set_spacing(5)
-            column.set_resizable(True)
-            column.set_sort_column_id(i)
-            column.set_sort_indicator(True)            
-            self.treeviewIncoming.append_column(column)
-            column = Gtk.TreeViewColumn(str(header), Gtk.CellRendererText(), text = i)
-            column.set_spacing(5)
-            column.set_resizable(True)
-            column.set_sort_column_id(i)
-            column.set_sort_indicator(True)            
-            self.treeviewOutgoing.append_column(column)
-            column = Gtk.TreeViewColumn(str(header), Gtk.CellRendererText(), text = i)
-            column.set_spacing(5)
-            column.set_resizable(True)
-            column.set_sort_column_id(i)
-            column.set_sort_indicator(True)            
-            self.treeviewNotPassed.append_column(column)
-            column = Gtk.TreeViewColumn(str(header), Gtk.CellRendererText(), text = i)
-            column.set_spacing(5)
-            column.set_resizable(True)
-            column.set_sort_column_id(i)
-            column.set_sort_indicator(True)            
-            self.treeviewNotCashed.append_column(column)
-            column = Gtk.TreeViewColumn(str(header), Gtk.CellRendererText(), text = i)
-            column.set_spacing(5)
-            column.set_resizable(True)
-            column.set_sort_column_id(i)
-            column.set_sort_indicator(True)            
-            self.treeviewDeleted.append_column(column)            
-            column = Gtk.TreeViewColumn(str(header), Gtk.CellRendererText(), text = i)
-            column.set_spacing(5)
-            column.set_resizable(True)
-            column.set_sort_column_id(i)
-            column.set_sort_indicator(True)
-            self.treeviewCashed.append_column(column)            
-            column = Gtk.TreeViewColumn(str(header), Gtk.CellRendererText(), text = i)
-            column.set_spacing(5)
-            column.set_resizable(True)
-            column.set_sort_column_id(i)
-            column.set_sort_indicator(True)
-            self.treeviewPassed.append_column(column)            
-            column = Gtk.TreeViewColumn(str(header), Gtk.CellRendererText(), text = i)
-            column.set_spacing(5)
-            column.set_resizable(True)
-            column.set_sort_column_id(i)
-            column.set_sort_indicator(True)
-            self.treeviewBounced.append_column(column)            
-            column = Gtk.TreeViewColumn(str(header), Gtk.CellRendererText(), text = i)
-            column.set_spacing(5)
-            column.set_resizable(True)
-            column.set_sort_column_id(i)
-            column.set_sort_indicator(True)
-            self.treeviewBouncedP.append_column(column)            
-            column = Gtk.TreeViewColumn(str(header), Gtk.CellRendererText(), text = i)
-            column.set_spacing(5)
-            column.set_resizable(True)
-            column.set_sort_column_id(i)
-            column.set_sort_indicator(True)
-            self.treeviewSpent.append_column(column)
-            i+=1
+        for treeview in self.treeviews :
+            i=0
+            for header in headers:  
+                column = Gtk.TreeViewColumn(str(header), Gtk.CellRendererText(), text = i)
+                column.set_spacing(5)
+                column.set_resizable(True)
+                column.set_sort_column_id(i)
+                column.set_sort_indicator(True)   
+                self.builder.get_object(treeview ).append_column(column)
+                i+=1
     
         self.treeviewIncoming.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
         self.treeviewOutgoing.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
@@ -256,7 +210,7 @@ class ChequeReport:
             wDateFrom -= timedelta(days=1)
             result = result.filter(Cheque.chqWrtDate >= wDateFrom)
 
-        totalIn = totalGo = totalnotcash = totalnotpass = totalPass = totalCash = totalSpent = totalBouncedp = totalBounced = 0
+        totalIn = totalGo = totalnotcash = totalnotpass = totalPass = totalCash = totalSpent = totalBouncedp = totalBounced = totalRetT = totalRetF = 0
         # Show
         for cheque , cust in result.all():                   
             if share.config.datetypes[share.config.datetype] == "jalali": 
@@ -312,9 +266,13 @@ class ChequeReport:
                     totalCash  +=cheque.chqAmount
                 elif cheque.chqStatus ==5:
                     self.treestoreSpent.append(None , addingRow)
-                    totalSpent += cheque.chqAmount
-                    self.treestoreIncoming.append(None,addingRow )
-                    totalIn +=cheque.chqAmount              
+                    totalSpent += cheque.chqAmount            
+                elif cheque.chqStatus== 6 :
+                    self.treestoreReturnedF.append(None , addingRow)  
+                    totalRetF  +=cheque.chqAmount                         
+                elif cheque.chqStatus== 7 :
+                    self.treestoreReturnedT.append(None , addingRow)  
+                    totalRetT  +=cheque.chqAmount                         
                 elif cheque.chqStatus== 8 :
                     self.treestoreBouncedP.append(None , addingRow)  
                     totalBouncedp  +=cheque.chqAmount              
@@ -323,18 +281,16 @@ class ChequeReport:
                     totalBounced  +=cheque.chqAmount
             else:                
                 self.treestoreDeleted.     append(None, addingRow)
-        self.totals = (totalIn , totalGo ,totalnotpass , totalnotcash, totalPass , totalCash ,totalSpent, totalBounced,totalBouncedp , "")
+        self.totals = (totalIn , totalGo ,totalnotpass , totalnotcash, totalPass , totalCash ,totalSpent, totalBounced,totalBouncedp,totalRetT, totalRetF , "")
         self.builder.get_object("totalLbl").set_text(str(totalIn) )
         self.currentTreeview = 0
 
-    def getSelection(self , treeview=None):        
+    def getSelection(self):        
         treeview = self.builder.get_object(self.treeviews[self.currentTreeview ])
         selection = treeview.get_selection()
         iter = selection.get_selected()[1]
-        if iter != None :
-            self.code = convertToLatin(treeview.get_model().get(iter, 0)[0])   
-
-        return                        
+        if iter != None :            
+            self.code = convertToLatin(treeview.get_model().get(iter, 0)[0])                               
 
     def editCheque (self , sender):
         self.getSelection()
@@ -593,18 +549,14 @@ class ChequeReport:
             self.treestoreHistory.append(None, (str(chequeHistory.ChequeId), str(chequeHistory.Amount), str(chqWrtDate), str(chqDueDate), str(chequeHistory.Serial), str(clear), str(cust), str(chequeHistory.Account), str(chequeHistory.TransId), str(chequeHistory.Desc), str(chequeHistory.Date) ,str(chqBill),str(self.chequeStatus[chequeHistory.Status]) ))
             self.historywindow.show_all()
 
-    def on_select_cell(self, sender):        
-        my_button = self.builder.get_object("odatAsMoshtariButton")
-        my_button.set_sensitive(True)
-        my_button = self.builder.get_object("odatBeMoshtariButton")
-        my_button.set_sensitive(True)
-        my_button = self.builder.get_object("bargashtButton")
-        my_button.set_sensitive(True)
-        my_button = self.builder.get_object("passButton")
-        my_button.set_sensitive(True)
+    def on_select_cell(self, sender=0):              
+        self.builder.get_object("odatAsMoshtariButton").set_sensitive(True)        
+        self.builder.get_object("odatBeMoshtariButton").set_sensitive(True)        
+        self.builder.get_object("bargashtButton").set_sensitive(True)        
+        self.builder.get_object("passButton").set_sensitive(True)        
         self.builder.get_object("deleteButton").set_sensitive(True)    
-        self.builder.get_object("editButton").set_sensitive(True)        
-        self.getSelection(sender)        
+        self.builder.get_object("editButton").set_sensitive(True)            
+        self.getSelection()        
         result = config.db.session.query(Cheque)
         result = result.filter(Cheque.chqId == self.code).first()        
         if result.chqStatus != 1 :          # [2,3,4,5,6,7,8,9]: # 1
@@ -615,12 +567,21 @@ class ChequeReport:
             self.builder.get_object("bargashtButton").set_sensitive(False)       
             self.builder.get_object("passButton").set_sensitive(False) 
         if result.chqStatus not in  [1 , 3]:
-            self.builder.get_object("editButton").set_sensitive(False)          
+            self.builder.get_object("editButton").set_sensitive(False) 
+        if result.chqStatus in [2,4] : 
+            self.builder.get_object("editButton").set_sensitive(False)            
+            self.builder.get_object("deleteButton").set_sensitive(False)   
+            self.builder.get_object("passButton").set_sensitive(False) 
+            self.builder.get_object("bargashtButton").set_sensitive(False)                   
         if result.chqDelete == True:
             self.builder.get_object("editButton").set_sensitive(False)            
             self.builder.get_object("deleteButton").set_sensitive(False) 
+            self.builder.get_object("passButton").set_sensitive(False) 
+            self.builder.get_object("bargashtButton").set_sensitive(False) 
+            self.builder.get_object("odatBeMoshtariButton").set_sensitive(False) 
+            self.builder.get_object("odatAsMoshtariButton").set_sensitive(False) 
 
-    def updateTotalAmount (self , sender ,tree  ,  page , data=0):            
+    def on_switch_page (self , sender ,tree  ,  page , data=0):          
         self.currentTreeview = page 
         self.builder.get_object("totalLbl").set_text(str(self.totals[page]))
 

@@ -767,7 +767,7 @@
             <property name="height_request">400</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <signal name="switch-page" handler="updateTotalAmount" swapped="no"/>
+            <signal name="switch-page" handler="on_switch_page" swapped="no"/>
             <child>
               <object class="GtkBox" id="box2">
                 <property name="visible">True</property>
@@ -848,6 +848,8 @@
               <object class="GtkTreeView" id="treeviewNotPassed">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <signal name="cursor-changed" handler="on_select_cell" swapped="no"/>
+                <signal name="row-activated" handler="selectChequeFromTreeview" swapped="no"/>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection" id="treeview-selection12"/>
                 </child>
@@ -871,6 +873,8 @@
               <object class="GtkTreeView" id="treeviewNotCashed">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <signal name="cursor-changed" handler="on_select_cell" swapped="no"/>
+                <signal name="row-activated" handler="selectChequeFromTreeview" swapped="no"/>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection" id="treeview-selection11"/>
                 </child>
@@ -946,6 +950,8 @@
               <object class="GtkTreeView" id="treeviewSpent">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <signal name="cursor-changed" handler="on_select_cell" swapped="no"/>
+                <signal name="row-activated" handler="selectChequeFromTreeview" swapped="no"/>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection" id="treeview-selection10"/>
                 </child>
@@ -1017,6 +1023,56 @@
               </packing>
             </child>
             <child>
+              <object class="GtkTreeView" id="treeviewReturnedT">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <signal name="cursor-changed" handler="on_select_cell" swapped="no"/>
+                <signal name="row-activated" handler="selectChequeFromTreeview" swapped="no"/>
+                <child internal-child="selection">
+                  <object class="GtkTreeSelection" id="treeview-selection13"/>
+                </child>
+              </object>
+              <packing>
+                <property name="position">9</property>
+              </packing>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="label23">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes"> Returned To </property>
+              </object>
+              <packing>
+                <property name="position">9</property>
+                <property name="tab_fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkTreeView" id="treeviewReturnedF">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <signal name="cursor-changed" handler="on_select_cell" swapped="no"/>
+                <signal name="row-activated" handler="selectChequeFromTreeview" swapped="no"/>
+                <child internal-child="selection">
+                  <object class="GtkTreeSelection" id="treeview-selection14"/>
+                </child>
+              </object>
+              <packing>
+                <property name="position">10</property>
+              </packing>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="label24">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes"> Returned From </property>
+              </object>
+              <packing>
+                <property name="position">10</property>
+                <property name="tab_fill">False</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkBox" id="box3">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -1042,7 +1098,7 @@
                 </child>
               </object>
               <packing>
-                <property name="position">9</property>
+                <property name="position">11</property>
               </packing>
             </child>
             <child type="tab">
@@ -1053,7 +1109,7 @@
                 <property name="width_chars">9</property>
               </object>
               <packing>
-                <property name="position">9</property>
+                <property name="position">11</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>
