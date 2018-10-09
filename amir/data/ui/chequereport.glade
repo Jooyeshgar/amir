@@ -845,6 +845,52 @@
               </packing>
             </child>
             <child>
+              <object class="GtkTreeView" id="treeviewNotPassed">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <child internal-child="selection">
+                  <object class="GtkTreeSelection" id="treeview-selection12"/>
+                </child>
+              </object>
+              <packing>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="label22">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes"> Paid - not passed </property>
+              </object>
+              <packing>
+                <property name="position">2</property>
+                <property name="tab_fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkTreeView" id="treeviewNotCashed">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <child internal-child="selection">
+                  <object class="GtkTreeSelection" id="treeview-selection11"/>
+                </child>
+              </object>
+              <packing>
+                <property name="position">3</property>
+              </packing>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="label21">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Recieved - not cashed</property>
+              </object>
+              <packing>
+                <property name="position">3</property>
+                <property name="tab_fill">False</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkTreeView" id="treeviewPassed">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -855,17 +901,18 @@
                 </child>
               </object>
               <packing>
-                <property name="position">2</property>
+                <property name="position">4</property>
               </packing>
             </child>
             <child type="tab">
               <object class="GtkLabel" id="label13">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes"> Passed </property>
+                <property name="label" translatable="yes"> Paid - Passed </property>
+                <property name="width_chars">9</property>
               </object>
               <packing>
-                <property name="position">2</property>
+                <property name="position">4</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>
@@ -880,17 +927,42 @@
                 </child>
               </object>
               <packing>
-                <property name="position">3</property>
+                <property name="position">5</property>
               </packing>
             </child>
             <child type="tab">
               <object class="GtkLabel" id="label14">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes"> Cashed </property>
+                <property name="label" translatable="yes"> Recieved - Cashed </property>
+                <property name="width_chars">9</property>
               </object>
               <packing>
-                <property name="position">3</property>
+                <property name="position">5</property>
+                <property name="tab_fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkTreeView" id="treeviewSpent">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <child internal-child="selection">
+                  <object class="GtkTreeSelection" id="treeview-selection10"/>
+                </child>
+              </object>
+              <packing>
+                <property name="position">6</property>
+              </packing>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="label20">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes"> Spent </property>
+                <property name="width_chars">8</property>
+              </object>
+              <packing>
+                <property name="position">6</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>
@@ -905,7 +977,7 @@
                 </child>
               </object>
               <packing>
-                <property name="position">4</property>
+                <property name="position">7</property>
               </packing>
             </child>
             <child type="tab">
@@ -915,7 +987,7 @@
                 <property name="label" translatable="yes">Bounced-Recieved</property>
               </object>
               <packing>
-                <property name="position">4</property>
+                <property name="position">7</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>
@@ -930,7 +1002,7 @@
                 </child>
               </object>
               <packing>
-                <property name="position">5</property>
+                <property name="position">8</property>
               </packing>
             </child>
             <child type="tab">
@@ -940,7 +1012,7 @@
                 <property name="label" translatable="yes"> Bounced-Paid </property>
               </object>
               <packing>
-                <property name="position">5</property>
+                <property name="position">8</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>
@@ -970,7 +1042,7 @@
                 </child>
               </object>
               <packing>
-                <property name="position">6</property>
+                <property name="position">9</property>
               </packing>
             </child>
             <child type="tab">
@@ -978,9 +1050,10 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Deleted</property>
+                <property name="width_chars">9</property>
               </object>
               <packing>
-                <property name="position">6</property>
+                <property name="position">9</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>

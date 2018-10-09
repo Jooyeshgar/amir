@@ -25,8 +25,8 @@ dbconf = dbconfig.dbConfig()
 config = share.config
 
 class ChequeReport:
-    chequeStatus = ["" , _("Paid-Not passed"), _("Paid-Passed"), _("Recieved-Not passed"), _("Recieved-Passed"), _("Spent") , _("Returned to customer") , _("Returned from customer") , _("Paid-Bounced"),_("Recieved-Bounced")]
-    treeviews = ["treeviewIncoming" , "treeviewOutgoing" ,"treeviewDeleted", "treeviewCashed","treeviewPassed","treeviewBounced" ,"treeviewBouncedP" ]
+    chequeStatus = ["" , _("Paid-Not passed"), _("Paid-Passed"), _("Recieved-Not cashed"), _("Recieved-Cashed"), _("Spent") , _("Returned to customer") , _("Returned from customer") , _("Paid-Bounced"),_("Recieved-Bounced")]
+    treeviews = ["treeviewIncoming" , "treeviewOutgoing" ,"treeviewNotPassed" ,"treeviewNotCashed" , "treeviewCashed","treeviewPassed", "treeviewSpent","treeviewBounced" ,"treeviewBouncedP","treeviewDeleted" ]
     def __init__(self):
         self.builder = get_builder("chequereport")
         self.window = self.builder.get_object("windowChequeReport")
@@ -34,30 +34,37 @@ class ChequeReport:
         
         self.treeviewIncoming = self.builder.get_object("treeviewIncoming")
         self.treeviewOutgoing = self.builder.get_object("treeviewOutgoing")
+        self.treeviewNotPassed = self.builder.get_object("treeviewNotPassed")
+        self.treeviewNotCashed = self.builder.get_object("treeviewNotCashed")
         self.treeviewDeleted = self.builder.get_object("treeviewDeleted")
         self.treeviewCashed = self.builder.get_object("treeviewCashed")
         self.treeviewPassed = self.builder.get_object("treeviewPassed")
+        self.treeviewSpent = self.builder.get_object("treeviewSpent")
         self.treeviewBounced = self.builder.get_object("treeviewBounced")
         self.treeviewBouncedP = self.builder.get_object("treeviewBouncedP")
         self.treestoreIncoming = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str,str)
         self.treestoreOutgoing = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str,str)
+        self.treestoreNotPassed = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str,str)
+        self.treestoreNotCashed = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str,str)
         self.treestoreDeleted = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str,str)
         self.treestorePassed = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str)
         self.treestoreCashed = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str)
+        self.treestoreSpent = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str)
         self.treestoreBounced = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str)
         self.treestoreBouncedP = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str)
         self.treeviewIncoming.set_model(self.treestoreIncoming)
         self.treeviewOutgoing.set_model(self.treestoreOutgoing)
+        self.treeviewNotPassed.set_model(self.treestoreNotPassed)
+        self.treeviewNotCashed.set_model(self.treestoreNotCashed)
         self.treeviewDeleted.set_model(self.treestoreDeleted)
         self.treeviewPassed.set_model(self.treestorePassed)
         self.treeviewCashed.set_model(self.treestoreCashed)
+        self.treeviewSpent.set_model(self.treestoreSpent)
         self.treeviewBounced.set_model(self.treestoreBounced)
         self.treeviewBouncedP.set_model(self.treestoreBouncedP)
 
         
-        headers = (_("ID"), _("Amount"),_("Write Date"),_("Due Date") ,_("Serial"),_("Clear"),_("Customer Name"),_("Account"),\
-            _("Description"),_("Bill ID"),_("Status") )
-        a = [self.treeviewIncoming ,self.treeviewOutgoing , self.treeviewDeleted ]        
+        headers = (_("ID"), _("Amount"),_("Write Date"),_("Due Date") ,_("Serial"),_("Clear"),_("Customer Name"),_("Account"), _("Description"),_("Bill ID"),_("Status") )            
         i=0
         for header in headers:                              
             column = Gtk.TreeViewColumn(str(header), Gtk.CellRendererText(), text = i)
@@ -72,6 +79,18 @@ class ChequeReport:
             column.set_sort_column_id(i)
             column.set_sort_indicator(True)            
             self.treeviewOutgoing.append_column(column)
+            column = Gtk.TreeViewColumn(str(header), Gtk.CellRendererText(), text = i)
+            column.set_spacing(5)
+            column.set_resizable(True)
+            column.set_sort_column_id(i)
+            column.set_sort_indicator(True)            
+            self.treeviewNotPassed.append_column(column)
+            column = Gtk.TreeViewColumn(str(header), Gtk.CellRendererText(), text = i)
+            column.set_spacing(5)
+            column.set_resizable(True)
+            column.set_sort_column_id(i)
+            column.set_sort_indicator(True)            
+            self.treeviewNotCashed.append_column(column)
             column = Gtk.TreeViewColumn(str(header), Gtk.CellRendererText(), text = i)
             column.set_spacing(5)
             column.set_resizable(True)
@@ -101,7 +120,13 @@ class ChequeReport:
             column.set_resizable(True)
             column.set_sort_column_id(i)
             column.set_sort_indicator(True)
-            self.treeviewBouncedP.append_column(column)
+            self.treeviewBouncedP.append_column(column)            
+            column = Gtk.TreeViewColumn(str(header), Gtk.CellRendererText(), text = i)
+            column.set_spacing(5)
+            column.set_resizable(True)
+            column.set_sort_column_id(i)
+            column.set_sort_indicator(True)
+            self.treeviewSpent.append_column(column)
             i+=1
     
         self.treeviewIncoming.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
@@ -144,7 +169,7 @@ class ChequeReport:
         box = self.builder.get_object("amountToSearchentry")
         amountTo = box.get_text()
 
-        box = self.builder.get_object("dateFromSearchentry1")    #wire
+        box = self.builder.get_object("dateFromSearchentry1")    #Due
         dateFrom = box.get_text()
 
         box = self.builder.get_object("dateToSearchentry1")      #Due
@@ -163,6 +188,7 @@ class ChequeReport:
         self.treestoreDeleted.clear()
         self.treestorePassed.clear()
         self.treestoreCashed.clear()
+        self.treestoreSpent.clear()
         self.treestoreBounced.clear()
         self.treestoreBouncedP.clear()
         result = config.db.session.query(Cheque , Customers.custName).select_from(outerjoin(Cheque , Customers, Customers.custId == Cheque.chqCust))
@@ -230,7 +256,7 @@ class ChequeReport:
             wDateFrom -= timedelta(days=1)
             result = result.filter(Cheque.chqWrtDate >= wDateFrom)
 
-        totalIn = totalGo = totalPass = totalCash = totalBouncedp = totalBounced = 0
+        totalIn = totalGo = totalnotcash = totalnotpass = totalPass = totalCash = totalSpent = totalBouncedp = totalBounced = 0
         # Show
         for cheque , cust in result.all():                   
             if share.config.datetypes[share.config.datetype] == "jalali": 
@@ -250,9 +276,9 @@ class ChequeReport:
                 chqDueDate = str(day) + '-' + str(month) + '-' + str(year)
 
             if (cheque.chqStatus == 2) or (cheque.chqStatus == 4):
-                clear = 'Cleared'
+                clear = _('Cleared')
             else:
-                clear = 'Not Cleared'            
+                clear = _('Not Cleared' )
             chqBill = config.db.session.query(Notebook.bill_id).filter(Notebook.chqId==cheque.chqId).first()
             if chqBill :
                 chqBill = chqBill.bill_id    
@@ -265,19 +291,30 @@ class ChequeReport:
                 chqAccount = self.bankaccounts_class.get_bank_name(cheque.chqAccount)
             addingRow = (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(cust), str(chqAccount), str(cheque.chqDesc), str(chqBill), str(unicode(self.chequeStatus[cheque.chqStatus])))        
             if cheque.chqDelete == False:
-                if (cheque.chqStatus == 3) or (cheque.chqStatus == 4) or (cheque.chqStatus == 7) or (cheque.chqStatus==9):
+                if cheque.chqStatus in [3,4,7,9]:
                     self.treestoreIncoming.append(None,addingRow )
                     totalIn +=cheque.chqAmount
                 else:
                     self.treestoreOutgoing.append(None, addingRow )
                     totalGo  +=cheque.chqAmount
 
-                if (cheque.chqStatus == 2) :
+                if cheque.chqStatus == 1:
+                    self.treestoreNotPassed.append(None , addingRow)
+                    totalPass += cheque.chqAmount
+                elif (cheque.chqStatus == 2) :
                     self.treestorePassed.append(None , addingRow)
-                    totalPass  +=cheque.chqAmount
+                    totalnotpass  +=cheque.chqAmount
+                elif cheque.chqStatus == 3:
+                    self.treestoreNotCashed.append(None , addingRow)
+                    totalnotcash += cheque.chqAmount
                 elif cheque.chqStatus== 4:
                     self.treestoreCashed.append(None , addingRow)
                     totalCash  +=cheque.chqAmount
+                elif cheque.chqStatus ==5:
+                    self.treestoreSpent.append(None , addingRow)
+                    totalSpent += cheque.chqAmount
+                    self.treestoreIncoming.append(None,addingRow )
+                    totalIn +=cheque.chqAmount              
                 elif cheque.chqStatus== 8 :
                     self.treestoreBouncedP.append(None , addingRow)  
                     totalBouncedp  +=cheque.chqAmount              
@@ -286,7 +323,7 @@ class ChequeReport:
                     totalBounced  +=cheque.chqAmount
             else:                
                 self.treestoreDeleted.     append(None, addingRow)
-        self.totals = (totalIn , totalGo , totalPass , totalCash , totalBounced,totalBouncedp , "")
+        self.totals = (totalIn , totalGo ,totalnotpass , totalnotcash, totalPass , totalCash ,totalSpent, totalBounced,totalBouncedp , "")
         self.builder.get_object("totalLbl").set_text(str(totalIn) )
         self.currentTreeview = 0
 
@@ -583,8 +620,7 @@ class ChequeReport:
             self.builder.get_object("editButton").set_sensitive(False)            
             self.builder.get_object("deleteButton").set_sensitive(False) 
 
-    def updateTotalAmount (self , sender ,tree  ,  page , data=0):
-        #page = self.builder.get_object("notebook1").get_current_page()         
+    def updateTotalAmount (self , sender ,tree  ,  page , data=0):            
         self.currentTreeview = page 
         self.builder.get_object("totalLbl").set_text(str(self.totals[page]))
 

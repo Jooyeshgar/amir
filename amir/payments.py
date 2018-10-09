@@ -515,14 +515,14 @@ class Payments(GObject.GObject):
 			wasSubmited = self.session.query(Notebook).filter(cheque.chqId== Notebook.chqId).delete()			
 			ch = cheque
 			if wasSubmited :
-				ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, "deleted", date.today(),True)            
+				ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, unicode(_("deleted")), date.today(),True)            
 				
 			#self.session.delete(cheque)
 			cheque.chqDelete = True 
 		else:		# is a spended cheque
 			history = self.session.query(ChequeHistory).\
 				filter(ChequeHistory.ChequeId == cheque.chqId).\
-				filter(ChequeHistory.TransId != self.transId).\
+				filter(ChequeHistory.Status != 5).\
 				order_by(ChequeHistory.Id.desc()).limit(1).first()	
 
 			dNotes = self.session.query(Notebook).filter(cheque.chqId== Notebook.chqId).order_by(Notebook.id.desc()).limit(2).all()
@@ -540,10 +540,9 @@ class Payments(GObject.GObject):
 			cheque.chqTransId  = history.TransId
 			cheque.chqDesc = history.Desc
 			ch = cheque
-			ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, "Unspended", date.today(),True)            
+			ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, unicode(_("Unspended")), date.today(),True)            
 		if ch_history:
-			self.session.add(ch_history)
-		self.session.commit()
+			self.session.add(ch_history)		
 
 
 	def closeSltChqWnd (self , sender= None , ser_data = None):
