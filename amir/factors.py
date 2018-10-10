@@ -235,17 +235,16 @@ class Factor(Payments):
 			self.Code 	= self.editTransaction.Code									
 		else : 
 			query   = self.session.query(Factors)
-			last  = query.order_by(Factors.Code.desc()).first()
+			last  = query.order_by(Factors.Id.desc()).first()
 			if not last:				
 				self.Code  = 1
 				self.Id = 1				
 			else:
+				self.Id = int(last.Id) + 1
 				lastFactor = query.filter(Factors.Sell == self.sell).order_by(Factors.Code.desc()).first()
-				if lastFactor:					
-					self.Id = int(lastFactor.Id) +1  #self.session.query(Factors).filter(Factors.sell==self.sell).order_by(Factors.Id.desc()) . first().Id + 1
+				if lastFactor:										
 					self.Code  = int(lastFactor.Code) + 1						
-				else :					
-					self.Id = int(last.Id) + 1
+				else :										
 					self.Code = 1					
 		self.mainDlg = self.builder.get_object("FormWindow")
 
@@ -1106,7 +1105,7 @@ class Factor(Payments):
 	def registerFactorItems(self):	
 			
 		if self.editFlag:								 
-			lasttransId1 = lasttransId = self.Id # Id of editing  factor
+			lasttransId = self.Id # Id of editing  factor
 
 			# restore sold/bought products count
 			for oldProduct in self.oldProductList: # The old product list
@@ -1132,15 +1131,14 @@ class Factor(Payments):
 		for exch in self.sellListStore: # The new sell list store
 			pid = exch[8] #query.filter(Products.name == unicode(exch[1])).first().id			
 			query = self.session.query(Products).filter(Products.id == pid)
-			pro = query.first()
-		
+			pro = query.first()			
 			lastfactorItemquantity=utility.getFloat(0)
 			nowfactorItemquantity=utility.getFloat(exch[2])
 
 			if self.editFlag:
 				Item=self.session.query(FactorItems)				
 				Item=Item.filter(FactorItems.productId==pid)
-				Item =Item.filter(FactorItems.factorId==lasttransId)
+				Item =Item.filter(FactorItems.factorId==self.Id)
 				factorItem1 = Item.first()
 				
 				if (not factorItem1) or (self.editTransaction.Permanent == 0 and self.subPreInv == 0):
@@ -1149,7 +1147,7 @@ class Factor(Payments):
 					
 					factorItem = FactorItems(utility.getInt(exch[0]), pid, utility.getFloat(exch[2]),
 										 utility.getFloat(exch[3]), utility.convertToLatin(exch[5]),
-										 lasttransId1, unicode(exch[7]))
+										 self.Id, unicode(exch[7]))
 					self.session.add( factorItem )
 					#self.session.commit()										
 					if self.sell:

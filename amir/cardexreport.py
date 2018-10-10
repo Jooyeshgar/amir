@@ -31,61 +31,23 @@ class CardexReport:
         self.window = self.builder.get_object("window1")
         
         self.treeview = self.builder.get_object("factorTreeView")
-        self.treestore = Gtk.TreeStore(str, str, str, str, str, str, str)
+        self.treestore = Gtk.TreeStore(str, str, str, str, str, str, str,str)
         self.treeview.set_model(self.treestore)
 
-        column = Gtk.TreeViewColumn(_("Factor Code"), Gtk.CellRendererText(), text = 0)
-        column.set_spacing(5)
-        column.set_resizable(True)
-        column.set_sort_column_id(0)
-        column.set_sort_indicator(True)
-        self.treeview.append_column(column)
-
-        column = Gtk.TreeViewColumn(_("Customer Code"), Gtk.CellRendererText(), text = 1)
-        column.set_spacing(5)
-        column.set_resizable(True)
-        column.set_sort_column_id(1)
-        column.set_sort_indicator(True)
-        self.treeview.append_column(column)
-
-        column = Gtk.TreeViewColumn(_("Customer Name"), Gtk.CellRendererText(), text = 2)
-        column.set_spacing(5)
-        column.set_resizable(True)
-        column.set_sort_column_id(1)
-        column.set_sort_indicator(True)
-        self.treeview.append_column(column)
-        
-        column = Gtk.TreeViewColumn(_("Sell Quantity"), Gtk.CellRendererText(), text = 3)
-        column.set_spacing(5)
-        column.set_resizable(True)
-        column.set_sort_column_id(2)
-        column.set_sort_indicator(True)
-        self.treeview.append_column(column)
-
-        column = Gtk.TreeViewColumn(_("Buy Quantity"), Gtk.CellRendererText(), text = 4)
-        column.set_spacing(5)
-        column.set_resizable(True)
-        column.set_sort_column_id(3)
-        column.set_sort_indicator(True)
-        self.treeview.append_column(column)
-        
-        column = Gtk.TreeViewColumn(_("Total Price"), Gtk.CellRendererText(), text = 5)
-        column.set_spacing(5)
-        column.set_resizable(True)
-        column.set_sort_column_id(4)
-        column.set_sort_indicator(True)
-        self.treeview.append_column(column)
-
-        column = Gtk.TreeViewColumn(_("Date"), Gtk.CellRendererText(), text = 6)
-        column.set_spacing(5)
-        column.set_resizable(True)
-        column.set_sort_column_id(5)
-        column.set_sort_indicator(True)
-        self.treeview.append_column(column)
+        headers = (_("Factor Code") ,_("Customer Code"), _("Customer Name"),_("Stock inventory"),_("Sell Quantity"),_("Buy Quantity") , _("Total Price"),_("Date") ) 
+        i = 0
+        for header in headers :
+            column = Gtk.TreeViewColumn(header, Gtk.CellRendererText(), text = i)
+            column.set_spacing(5)
+            column.set_resizable(True)
+            column.set_sort_column_id(5)
+            column.set_sort_indicator(True)
+            self.treeview.append_column(column)
+            i+=1
         
         self.treeview.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
         #self.treestore.set_sort_func(0, self.sortGroupIds)
-        self.treestore.set_sort_column_id(0, Gtk.SortType.ASCENDING)
+        #self.treestore.set_sort_column_id(7, Gtk.SortType.DESCENDING)
         self.window.show_all()
         self.builder.connect_signals(self)
         self.session = config.db.session  
@@ -160,11 +122,9 @@ class CardexReport:
             query = config.db.session.query(FactorItems,Factors,Customers)
             query = query.filter(bill.id == FactorItems.productId, FactorItems.factorId == Factors.Id, Customers.custId == Factors.Cust)
             if factorType and factorType != 'All':
-                if factorType == 'Sell':
-                    print "1"
+                if factorType == 'Sell':                    
                     factorType = 1
-                else:
-                    print "0"
+                else:                    
                     factorType = 0
                 query = query.filter(Factors.Sell == factorType)
 
@@ -196,16 +156,19 @@ class CardexReport:
                 dateFrom -= DD
                 query = query.filter(Factors.tDate >= dateFrom)
                 
-
+            query = query.order_by(FactorItems.id.desc())
             result = query.all()
-            
-            for factor in result:
+            productCount = float(config.db.session.query(Products.quantity).filter(Products.id == (result[0]).FactorItems.productId).first().quantity)
+            for factor in result:                
                 if factor.Factors.Sell == True:
+                    productCount += float(factor.FactorItems.qnty)
                     buy_quantity = '-'
-                    sell_quantity = str(utility.LN(float(factor.FactorItems.qnty)))
+                    sell_quantity = str(utility.LN(float(factor.FactorItems.qnty)))                    
                 else:
+                    productCount -= float(factor.FactorItems.qnty)
                     buy_quantity = str(utility.LN(float(factor.FactorItems.qnty)))
                     sell_quantity = '-'
+
                 if share.config.datetypes[share.config.datetype] == "jalali": 
                     year, month, day = str(factor.Factors.tDate).split("-")
                     date = gregorian_to_jalali(int(year),int(month),int(day))
@@ -213,7 +176,7 @@ class CardexReport:
                 else:
                     year, month, day = str(factor.Factors.tDate).split("-")
                     date = str(day) + '-' + str(month) + '-' + str(year)
-                self.treestore.append(None, (str(factor.Factors.Code), str(factor.Customers.custCode), str(factor.Customers.custName), sell_quantity, buy_quantity,
+                self.treestore.append(None, (str(factor.Factors.Code), str(factor.Customers.custCode), str(factor.Customers.custName),str(utility.LN(productCount)), sell_quantity, buy_quantity,
                  str(utility.LN(float(factor.FactorItems.qnty * factor.FactorItems.untPrc))), str(date)))
         else:
             statusbar = self.builder.get_object('statusbar3')
