@@ -862,7 +862,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
-              <object class="GtkButton" id="button7">
+              <object class="GtkButton" id="buttonExport">
                 <property name="label" translatable="yes">Export to CSV format</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
@@ -880,7 +880,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="button6">
+              <object class="GtkButton" id="buttonPrint">
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -928,7 +928,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="button5">
+              <object class="GtkButton" id="buttonPreview">
                 <property name="label" translatable="yes">Preview</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
@@ -958,6 +958,25 @@
           </packing>
         </child>
         <child>
+          <object class="GtkLabel" id="message">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="valign">end</property>
+            <property name="xpad">10</property>
+            <property name="xalign">0</property>
+            <property name="yalign">0</property>
+            <attributes>
+              <attribute name="style" value="italic"/>
+              <attribute name="foreground" value="#cccc00000000"/>
+            </attributes>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">False</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
           <object class="GtkStatusbar" id="statusbar1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
@@ -980,7 +999,7 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">2</property>
+            <property name="position">3</property>
           </packing>
         </child>
       </object>

@@ -33,10 +33,11 @@ class DocumentReport:
         box.add(self.number)
         self.number.set_activates_default(True)
         self.number.show()
-        
-        config.db.session = config.db.session
+        self.builder.get_object("message").set_text("")
         self.window.show_all()
-        self.builder.connect_signals(self)
+        self.builder.get_object("buttonPreview").connect( "clicked", self.previewReport)
+        self.builder.get_object("buttonExport").connect( "clicked", self.exportToCSV)
+        self.builder.get_object("buttonPrint").connect( "clicked", self.printReport)       
 
     def createReport(self):
         number = unicode(self.number.get_text())
@@ -47,7 +48,7 @@ class DocumentReport:
             m = re.match('^(\d+)-(\d+)$', number)
             self.docnumbers=range(int(m.group(1)),int(m.group(2))+1)
         else:
-            print 'error'
+            self.builder.get_object("message").set_text( _("Please enter number in correct format \r\nTrue Formats: '2-11' or '2'  ") )
             return
         
 #        self.docnumber = self.number.get_text()
