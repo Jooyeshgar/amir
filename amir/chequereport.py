@@ -96,16 +96,20 @@ class ChequeReport(GObject.GObject):
         dateFromEntry1 = self.builder.get_object("dateFromSearchentry1")
         dateToEntry1 = self.builder.get_object("dateToSearchentry1")
         if share.config.datetypes[share.config.datetype] == "jalali":
-            dateToEntry.set_placeholder_text("1396:1:1")
-            dateFromEntry.set_placeholder_text("1396:1:1")            
-            dateToEntry1.set_placeholder_text("1396:1:1")
-            dateFromEntry1.set_placeholder_text("1396:1:1")
+            (year , month , day ) = ("1397","12","20")
         else:
-            dateToEntry.set_placeholder_text("1:1:2018")
-            dateFromEntry.set_placeholder_text("1:1:2018")            
-            dateToEntry1.set_placeholder_text("1:1:2018")
-            dateFromEntry1.set_placeholder_text("1:1:2018")
-        
+            (year , month , day ) = ("2018" , "12", "20")
+        datelist = ["", "", ""]
+        datelist[share.config.datefields["year"]] = year
+        datelist[share.config.datefields["month"]] = month
+        datelist[share.config.datefields["day"]] = day        
+        delimiter = share.config.datedelims[share.config.datedelim]
+        placeH = datelist[0]+delimiter+datelist[1]+delimiter+datelist[2]
+        dateToEntry.set_placeholder_text(placeH)
+        dateFromEntry.set_placeholder_text(placeH)            
+        dateToEntry1.set_placeholder_text(placeH)
+        dateFromEntry1.set_placeholder_text(placeH)
+
         self.date_entry = dateentry.DateEntry()
         self.current_time = self.date_entry.getDateObject()
         self.createHistoryTreeview()

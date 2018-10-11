@@ -54,15 +54,18 @@ class CardexReport:
 
         self.dateToEntry = self.builder.get_object("dateToEntry")
         self.dateFromEntry = self.builder.get_object("dateFromEntry")
-        delimiter = config.datedelims[config.datedelim] 
         if share.config.datetypes[share.config.datetype] == "jalali":
-            placeH = "1397"+delimiter+"1"+ delimiter +"1"
-            self.dateToEntry.set_placeholder_text(placeH)
-            self.dateFromEntry.set_placeholder_text(placeH)
+            (year , month , day ) = ("1397","12","20")
         else:
-            placeH = "1"+delimiter+"1"+delimiter+"2018"
-            self.dateToEntry.set_placeholder_text(placeH)
-            self.dateFromEntry.set_placeholder_text(placeH)
+            (year , month , day ) = ("2018" , "12", "20")
+        datelist = ["", "", ""]
+        datelist[share.config.datefields["year"]] = year
+        datelist[share.config.datefields["month"]] = month
+        datelist[share.config.datefields["day"]] = day        
+        delimiter = share.config.datedelims[share.config.datedelim]
+        placeH = datelist[0]+delimiter+datelist[1]+delimiter+datelist[2]
+        self.dateToEntry.set_placeholder_text(placeH)
+        self.dateFromEntry.set_placeholder_text(placeH)
         self.builder.get_object("typeComboBox").set_active(2)
 
     def selectProduct(self,sender=0):
@@ -99,7 +102,7 @@ class CardexReport:
 
     def showResult(self, productCode,factorType,customerCode,dateFrom,dateTo):
         query = config.db.session.query(Products)
-        query = query.filter(Products.code == productCode)
+        query = query.filter(Products.code == unicode(productCode) )
         bill  = query.first()
         self.treestore.clear()
         if bill is not None:
@@ -131,23 +134,11 @@ class CardexReport:
             if customerCode:
                 query = query.filter(Customers.custCode == customerCode)
 
-            if share.config.datetypes[share.config.datetype] == "jalali":
-                if dateTo:
-                    year, month, day = str(dateTo).split("-")
-                    e=jalali_to_gregorian(int(year),int(month),int(day))
-                    dateTo = datetime(e[0], e[1], e[2])
-                if dateFrom:
-                    year, month, day = dateFrom.split("-")
-                    e=jalali_to_gregorian(int(year),int(month),int(day))
-                    dateFrom = datetime(e[0], e[1], e[2])
-            else:
+            if dateTo:
+                dateTo = stringToDate(dateTo)
 
-                if dateTo:
-                    year, month, day = str(dateTo).split("-")
-                    dateTo = datetime(int(day),int(month),int(year))
-                if dateFrom:
-                    year, month, day = dateFrom.split("-")
-                    dateFrom = datetime(int(day),int(month),int(year))
+            if dateFrom:
+                dateFrom = stringToDate(dateFrom)
 
             if dateTo:
                 query = query.filter(Factors.tDate <= dateTo)
@@ -158,7 +149,11 @@ class CardexReport:
                 
             query = query.order_by(FactorItems.id.desc())
             result = query.all()
-            productCount = float(config.db.session.query(Products.quantity).filter(Products.id == (result[0]).FactorItems.productId).first().quantity)
+            if result == None or  not len(result):
+                return 
+            proQuan = config.db.session.query(Products.quantity).filter(Products.id == (result[0]).FactorItems.productId).first()
+            if proQuan:
+                productCount = float(proQuan.quantity)
             for factor in result:                
                 if factor.Factors.Sell == True:
                     productCount += float(factor.FactorItems.qnty)
@@ -203,10 +198,7 @@ class CardexReport:
             productType = item[0]
 
         delimiter = config.datedelims[config.datedelim] 
-        dateTo = self.dateToEntry.get_text()
-        dateTo = dateTo.replace(delimiter, "-")
-
-        dateFrom = self.dateFromEntry.get_text()
-        dateFrom = dateFrom.replace(delimiter, "-")
+        dateTo = self.dateToEntry.get_text()        
+        dateFrom = self.dateFromEntry.get_text()        
 
         self.showResult(productCode,productType,customerCode,dateFrom,dateTo)
