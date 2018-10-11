@@ -84,23 +84,17 @@ class Factor(Payments):
 		self.additionsEntry = decimalentry.DecimalEntry()
 		self.builder.get_object("additionsbox").add(self.additionsEntry)
 		self.additionsEntry.set_alignment(0.95)
-		#self.additionsEntry.show()
 		self.additionsEntry.connect("changed", self.valsChanged)
 		
 		self.subsEntry = decimalentry.DecimalEntry()
 		self.builder.get_object("subsbox").add(self.subsEntry)
 		self.subsEntry.set_alignment(0.95)
-		#self.subsEntry.show()
-		# self.subsEntry.set_sensitive(False)
 		self.subsEntry.connect("changed", self.valsChanged)
 		
 		self.cashPymntsEntry = decimalentry.DecimalEntry()
 		self.builder.get_object("cashbox").add(self.cashPymntsEntry)
-		self.cashPymntsEntry.set_alignment(0.95)
-		#self.cashPymntsEntry.show()
-		self.cashPymntsEntry.set_text("0")
+		self.cashPymntsEntry.set_alignment(0.95)	
 		self.cashPymntsEntry.connect("changed", self.paymentsChanged)
-
 		
 		self.qntyEntry = decimalentry.DecimalEntry()
 		self.builder.get_object("qntyBox").add(self.qntyEntry)
@@ -109,7 +103,6 @@ class Factor(Payments):
 		
 		self.unitPriceEntry = decimalentry.DecimalEntry()
 		self.builder.get_object("unitPriceBox").add(self.unitPriceEntry)
-		#self.unitPriceEntry.show()
 		self.unitPriceEntry.connect("focus-out-event", self.validatePrice)
 		
 		self.customerEntry      = self.builder.get_object("customerCodeEntry")

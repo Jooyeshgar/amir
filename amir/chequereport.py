@@ -156,78 +156,32 @@ class ChequeReport(GObject.GObject):
             result = result.filter(Cheque.chqAmount >= amountFrom)
         if amountTo:
             result = result.filter(Cheque.chqAmount <= amountTo)
-        if share.config.datetypes[share.config.datetype] == "jalali":
-            if dateTo:
-                try:
-                    year, month, day = str(dateTo).split(delimiter)
-                    e=jalali_to_gregorian(int(year),int(month),int(day))
-                    dateTo = datetime(e[0], e[1], e[2])
-                except:
-                    return              
-            if dateFrom:
-                try:
-                    year, month, day = dateFrom.split(delimiter)
-                    e=jalali_to_gregorian(int(year),int(month),int(day))
-                    dateFrom = datetime(e[0], e[1], e[2])
-                except:
-                    return
-            if wDateTo:
-                try:
-                    year, month, day = str(wDateTo).split(delimiter)
-                    e=jalali_to_gregorian(int(year),int(month),int(day))
-                    wDateTo = datetime(e[0], e[1], e[2])
-                except:
-                    return  
-            if wDateFrom:
-                try:
-                    year, month, day = wDateFrom.split(delimiter)
-                    e=jalali_to_gregorian(int(year),int(month),int(day))
-                    wDateFrom = datetime(e[0], e[1], e[2])
-                except:
-                    return 
-        else:
-            if dateTo:
-                year, month, day = str(dateTo).split(delimiter)
-                dateTo = datetime(int(day),int(month),int(year))
-            if dateFrom:
-                year, month, day = dateFrom.split(delimiter)
-                dateFrom = datetime(int(day),int(month),int(year))            
-            if wDateTo:
-                year, month, day = str(wDateTo).split(delimiter)
-                wDateTo = datetime(int(day),int(month),int(year))
-            if wDateFrom:
-                year, month, day = wDateFrom.split(delimiter)
-                wDateFrom = datetime(int(day),int(month),int(year))
+
+        if dateTo:
+            dateTo  = dateentry.stringToDate(dateTo)
+        if dateFrom:
+            dateFrom  = dateentry.stringToDate(dateFrom)            
+        if wDateTo:
+            wDateTo = dateentry.stringToDate(wDateTo)
+        if wDateFrom:
+            wDateFrom = dateentry.stringToDate(wDateFrom)
 
         if dateTo:
             result = result.filter(Cheque.chqDueDate <= dateTo)        
         if wDateTo:
             result = result.filter(Cheque.chqWrtDate <= wDateTo)
         if dateFrom:            
-            dateFrom -= timedelta(days=1)
+            #dateFrom -= timedelta(days=1)
             result = result.filter(Cheque.chqDueDate >= dateFrom)
         if wDateFrom:            
-            wDateFrom -= timedelta(days=1)
+            #wDateFrom -= timedelta(days=1)
             result = result.filter(Cheque.chqWrtDate >= wDateFrom)
 
         totalIn = totalGo = totalnotcash = totalnotpass = totalPass = totalCash = totalSpent = totalBouncedp = totalBounced = totalRetT = totalRetF = 0
         # Show
-        for cheque , cust in result.all():                   
-            if share.config.datetypes[share.config.datetype] == "jalali": 
-                year, month, day = str(cheque.chqWrtDate).split("-")
-                chqWrtDate = gregorian_to_jalali(int(year),int(month),int(day))
-                chqWrtDate = str(chqWrtDate[0]) + '-' + str(chqWrtDate[1]) + '-' + str(chqWrtDate[2])
-
-                year, month, day = str(cheque.chqDueDate).split("-")
-                chqDueDate = gregorian_to_jalali(int(year),int(month),int(day))
-                chqDueDate = str(chqDueDate[0]) + '-' + str(chqDueDate[1]) + '-' + str(chqDueDate[2])
-
-            else:
-                year, month, day = str(cheque.chqWrtDate).split("-")
-                chqWrtDate = str(day) + '-' + str(month) + '-' + str(year)
-
-                year, month, day = str(cheque.chqDueDate).split("-")
-                chqDueDate = str(day) + '-' + str(month) + '-' + str(year)
+        for cheque , cust in result.all():       
+            chqWrtDate = dateentry.dateToString(cheque.chqWrtDate)            
+            chqDueDate = dateentry.dateToString(cheque.chqDueDate)            
 
             if (cheque.chqStatus == 2) or (cheque.chqStatus == 4):
                 clear = _('Cleared')
@@ -373,8 +327,6 @@ class ChequeReport(GObject.GObject):
         pymntDesc   = unicode(self.pymntDescEntry.get_text())       
         payer       = self.payerEntry.get_text()                
         pymnt_str = utility.LN(pymntAmnt)
-        wrtDate_str = dateentry.dateToString(wrtDate)
-        dueDte_str = dateentry.dateToString(dueDte)
 
         cheque = config.db.session.query(Cheque).filter(Cheque.chqId == self.code) .first()        
         cheque.chqAmount = pymntAmnt

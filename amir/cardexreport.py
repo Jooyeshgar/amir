@@ -169,15 +169,10 @@ class CardexReport:
                     buy_quantity = str(utility.LN(float(factor.FactorItems.qnty)))
                     sell_quantity = '-'
 
-                if share.config.datetypes[share.config.datetype] == "jalali": 
-                    year, month, day = str(factor.Factors.tDate).split("-")
-                    date = gregorian_to_jalali(int(year),int(month),int(day))
-                    date = str(date[2]) + '-' + str(date[1]) + '-' + str(date[0])
-                else:
-                    year, month, day = str(factor.Factors.tDate).split("-")
-                    date = str(day) + '-' + str(month) + '-' + str(year)
-                self.treestore.append(None, (str(factor.Factors.Code), str(factor.Customers.custCode), str(factor.Customers.custName),str(utility.LN(productCount)), sell_quantity, buy_quantity,
-                 str(utility.LN(float(factor.FactorItems.qnty * factor.FactorItems.untPrc))), str(date)))
+                date = dateToString(factor.Factors.tDate)
+
+                self.treestore.append(None, (str(factor.Factors.Code), str(factor.Customers.custCode), str(factor.Customers.custName),str(utility.LN(productCount)),\
+                                        sell_quantity, buy_quantity,str(utility.LN(float(factor.FactorItems.qnty * factor.FactorItems.untPrc))), str(date)))
         else:
             statusbar = self.builder.get_object('statusbar3')
             context_id = statusbar.get_context_id('statusbar')

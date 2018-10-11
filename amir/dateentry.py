@@ -24,31 +24,25 @@ def dateToString(date):
     datelist[share.config.datefields["day"]] = day
         
     delim = share.config.datedelims[share.config.datedelim]
-    if share.config.datetypes[share.config.datetype] == "jalali":
-        datestring = str(datelist[2]) + delim + str(datelist[1]) + delim + str(datelist[0])
-    else:
-        datestring = str(datelist[0]) + delim + str(datelist[1]) + delim + str(datelist[2])
+    datestring = str(datelist[0]) + delim + str(datelist[1]) + delim + str(datelist[2])
     datestring = LN(datestring, False)
     return datestring
 
 def stringToDate(dateString):
     delim = share.config.datedelims[share.config.datedelim]
     dateList = dateString.split(delim)
-    if len(dateList) != 3:
-        print "Error in the date string format!"
-        pass
-    else:
-        dy = dateList[0]
-        dm = dateList[1]
-        dd = dateList[2]
-        dateObj = date(int(dy),int(dm),int(dd))
-        return dateObj 
-def arrayDateToString(dateArray):
-    delim = share.config.datedelims[share.config.datedelim]
-    date = str(date[0]) + '-' + str(date[1]) + '-' + str(date[2])
-    return date
-
-
+    if len(dateList) == 3 :
+        if dateList[0] != '' and dateList[1] != '' and dateList[2]!='' :
+            dy = int (dateList[share.config.datefields["year"]])
+            dm = int(dateList[share.config.datefields["month"]])
+            dd = int (dateList[share.config.datefields["day"]] )
+            d = (dy,dm,dd)
+            de = DateEntry(d)        
+            try:                                   
+                dateObj =  de.getDateObject()         
+            except:                
+                return
+            return dateObj   
 ## @}
     
 ## \defgroup Widgets
@@ -107,10 +101,12 @@ class DateEntry(Gtk.Entry):
         else:
             self.showDate(date.year, date.month, date.day)
         
-    def getDateObject(self):
-        if share.config.datetypes[share.config.datetype] == "jalali":
-            jd = self.cal.jalali_to_jd(self.year, self.month, self.day)
-            (gyear, gmonth, gday) = self.cal.jd_to_gregorian(jd)
+    def getDateObject(self,  d =None):        
+        if share.config.datetypes[share.config.datetype] == "jalali":            
+
+            dat = [self.year, self.month, self.day]            
+            jd = self.cal.jalali_to_jd(dat[0] , dat[1] , dat[2])             
+            (gyear, gmonth, gday) = self.cal.jd_to_gregorian(jd)            
             return date(gyear, gmonth, gday)
         else :
             return date(self.year, self.month, self.day)

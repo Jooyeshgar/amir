@@ -223,9 +223,9 @@ class AmirConfig:
         else:
             self.dateorder = int(str)
 
-        # for i in range(0,3):
-        #     field = self.dateorders[self.dateorder][i]
-        #     self.datefields[field] = i
+        for i in range(0,3):
+            field = self.dateorders[self.dateorder][i]
+            self.datefields[field] = i
 
 #        uselatin = self.configfile.returnStringValue("use_latin_numbers")
         uselatin = self.sconfig.get('General', 'use_latin_numbers')

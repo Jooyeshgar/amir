@@ -82,7 +82,7 @@ class Setting(GObject.GObject):
         self.delimiter.set_active(config.datedelim)
         
         self.dateorder = self.builder.get_object("dateorder")
-        comboInsertItems(self.dateorder, [])
+        comboInsertItems(self.dateorder, config.dateorders)
         # for order in config.dateorders:
         #     self.dateorder.append_text(order[0] + " - " + order[1] + " - " + order[2])
         self.dateorder.set_active(config.dateorder)
