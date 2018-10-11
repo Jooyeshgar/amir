@@ -51,13 +51,10 @@ class DocumentReport:
             self.builder.get_object("message").set_text( _("Please enter number in correct format \r\nTrue Formats: '2-11' or '2'  ") )
             return
         
-#        self.docnumber = self.number.get_text()
-#        if self.docnumber == "":
-#            return
-        
+        self.builder.get_object("message").set_text("")
         report_header = []
         report_data = []
-        col_width = []
+        #col_width = []
         debt_sum = 0
         credit_sum = 0
         query1 = config.db.session.query(Bill, Notebook, Subject)
@@ -73,11 +70,10 @@ class DocumentReport:
             return
         
         self.docdate = res[0][0].date
-        report_header = [_("Index"), _("Subject Code"), _("Subject Name"), _("Description"), _("Debt"), _("Credit")]
-        #define the percentage of table width that each column needs
-        col_width = [5, 11, 15, 43, 13, 13 ]
+        report_header = [_("Document No."),_("Index"), _("Date"), _("Subject Code"), _("Subject Name"), _("Description"), _("Debt"), _("Credit")]
         index = 1
-        doc_number0 = 0
+        debt_sum = credit_sum = doc_number0 = 0
+        prevDoc = res[0][0].number
         for b, n, s in res:
             desc = n.desc
             if n.value < 0:
@@ -91,17 +87,19 @@ class DocumentReport:
             code = utility.LN(s.code)
             doc_number = utility.LN(b.number)
             if doc_number != doc_number0:
+                if doc_number0:
+                    report_data.append((doc_number0, str(index), "-", "-" , "-", "Total", utility.LN(debt_sum), utility.LN(credit_sum)) )
                 index = 1
                 debt_sum = 0
                 credit_sum = 0
-            debt_sum += float(debt.replace(",", ""))
-            credit_sum += float(credit.replace(",", ""))
-            strindex = utility.LN(str(index))
+            debt_sum += utility.getFloatNumber(debt)
+            credit_sum += utility.getFloatNumber(credit)            
             doc_number0 = doc_number
             date = dateToString(b.date)
-            report_data.append((strindex, code, s.name, desc, debt, credit, doc_number, date, debt_sum, credit_sum))
-            index += 1
-        
+            report_data.append((doc_number, str(index), date, code, s.name, desc, debt, credit))
+            index += 1        
+            prevDoc = b.number
+        report_data.append((doc_number, str(index), "-", "-" , "-", "Total", utility.LN(debt_sum), utility.LN(credit_sum)) )
         return {"data":report_data ,"heading":report_header}
     
     def createPrintJob(self):
@@ -167,9 +165,10 @@ class DocumentReport:
             
         dialog = Gtk.FileChooserDialog(None, self.window, Gtk.FileChooserAction.SAVE, (Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT,
                                                                                          Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT))
-        dialog.run()
-        filename = os.path.splitext(dialog.get_filename())[0]
-        file = open(filename + ".csv", "w")
-        file.write(content)
-        file.close()
+        res = dialog.run()
+        if res ==Gtk.ResponseType.ACCEPT :
+            filename = os.path.splitext(dialog.get_filename())[0]
+            file = open(filename + ".csv", "w")
+            file.write(content)
+            file.close()
         dialog.destroy()
