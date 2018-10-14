@@ -143,12 +143,17 @@ class ChequeReport(GObject.GObject):
     def showResult(self, chequeId=None, chqSerial=None, amountFrom=None, amountTo=None, dateFrom=None, dateTo=None,wDateTo=None , wDateFrom=None):        
         self.treestoreIncoming.clear()
         self.treestoreOutgoing.clear()
+        self.treestoreNotPassed.clear()
+        self.treestoreNotCashed.clear()
         self.treestoreDeleted.clear()
         self.treestorePassed.clear()
         self.treestoreCashed.clear()
         self.treestoreSpent.clear()
         self.treestoreBounced.clear()
         self.treestoreBouncedP.clear()
+        self.treestoreReturnedT.clear()
+        self.treestoreReturnedF.clear()
+
         result = config.db.session.query(Cheque , Customers.custName).select_from(outerjoin(Cheque , Customers, Customers.custId == Cheque.chqCust))
         # Apply filters
         delimiter = config.datedelims[config.datedelim]        
@@ -358,10 +363,17 @@ class ChequeReport(GObject.GObject):
 
     def odatAzMoshtari(self, sender):
         self.getSelection()       
-        result = config.db.session.query(Cheque)
+        result = config.db.session.query(Cheque, Customers)
+        result = result.filter(Customers.custId == Cheque.chqCust)
         result = result.filter(Cheque.chqId == self.code).first()
-        result.chqStatus = 6
-        ch_history = ChequeHistory(result.chqId, result.chqAmount, result.chqWrtDate, result.chqDueDate, result.chqSerial, result.chqStatus, result.chqCust, result.chqAccount, result.chqTransId, result.chqDesc, self.current_time)
+        result.Cheque.chqStatus = 6
+        ch_history = ChequeHistory(result.Cheque.chqId, result.Cheque.chqAmount, result.Cheque.chqWrtDate, result.Cheque.chqDueDate, result.Cheque.chqSerial, result.Cheque.chqStatus, result.Cheque.chqCust, result.Cheque.chqAccount, result.Cheque.chqTransId, result.Cheque.chqDesc, self.current_time)
+
+        document = class_document.Document()
+        document.add_notebook(result.Customers.custSubj  , result.Cheque.chqAmount, _('Cheque No. '+result.Cheque.chqSerial+ 'returned from '+result.Customers.custName))
+        document.add_notebook(dbconf.get_int('other_cheque'), -result.Cheque.chqAmount, _('Cheque No. '+result.Cheque.chqSerial+ 'returned from '+result.Customers.custName))
+        document.save()
+
         config.db.session.add(ch_history)
         config.db.session.commit()
         share.mainwin.silent_daialog(_("The operation was completed successfully."))
@@ -378,8 +390,8 @@ class ChequeReport(GObject.GObject):
         config.db.session.commit()
 
         document = class_document.Document()
-        document.add_notebook(result.Customers.custSubj  , result.Cheque.chqAmount, _('Returned to Customer'))
-        document.add_notebook(dbconf.get_int('other_cheque'), -result.Cheque.chqAmount, _('Returned to Customer'))
+        document.add_notebook(result.Customers.custSubj  , -result.Cheque.chqAmount, _('Returned to Customer'))
+        document.add_notebook(dbconf.get_int('other_cheque'), result.Cheque.chqAmount, _('Returned to Customer'))
         document.save()
 
         config.db.session.commit()

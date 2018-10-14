@@ -362,7 +362,9 @@ class MainWindow(GObject.GObject):
 		main_box = self.builder.get_object('vbox2')
 		self.background = Gtk.Fixed()
 		main_box.add(self.background)
-		self.background.put(Gtk.Image.new_from_file(os.path.join(config.data_path, "media", "background.png")), 0, 0)
+		#infobar.set_size_request(self.background.get_allocated_width(), -1)
+		self.image = Gtk.Image.new_from_file(os.path.join(config.data_path, "media", "background.png"))
+		self.background.put(self.image, 0, 0)
 		self.background.show_all()
 
 		#NOTE: Bad idea, because until initial menu is shown, user can not register any bill;
@@ -396,6 +398,7 @@ class MainWindow(GObject.GObject):
 			result = datetime.datetime.now().date() - dueDate[0]
 			if result.days < 7:
 				self.alert_dialog(_("Check the due date of cheques"))
+				break
 
 
 
@@ -539,6 +542,15 @@ class MainWindow(GObject.GObject):
 		infobar.set_size_request(self.background.get_allocated_width(), -1)
 		self.background.put(infobar ,0 , 0)
 		infobar.show_all()
+
+	def on_win_resize(self , sender , a):
+		pb = self.image.get_pixbuf()
+		imageWidth = pb.get_width()	
+		imageHeight = pb.get_height()	
+		wDiff = self.background.get_allocated_width() - imageWidth		
+		hDiff = self.background.get_allocated_height() - imageHeight
+		self.background.move(self.image , wDiff/2 ,hDiff/2)
+		sender.emit_stop_by_name("on_win_resize")
 
 	def main(self):
 		Gtk.main()

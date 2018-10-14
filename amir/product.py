@@ -10,6 +10,7 @@ import  dateentry
 import  subjects
 import  productgroup
 import  utility
+import	dbconfig
 
 from    sqlalchemy.orm              import  sessionmaker, join
 from    sqlalchemy.orm.util         import  outerjoin
@@ -299,6 +300,12 @@ class Product(productgroup.ProductGroup):
 		if group == None:
 			msg += _("Group code is not valid.\n")
 		
+		if not quantity :
+			quantity = 0 					
+		else:
+			if not purchase_price or  purchase_price =="":
+				msg+= _("Product with initial balance must have purchase price. \r\n ")
+
 		firstnum = 0
 		secnum = 0
 		try:
@@ -338,6 +345,20 @@ class Product(productgroup.ProductGroup):
 			product = Products(code, name, quantity_warn, oversell, location, quantity,
 					purchase_price, sell_price, group.id, desc, formula, uMeasurement)	
 			config.db.session.add(product)
+
+			if quantity >0:
+				if config.db.session.query(Bill).filter(Bill.id == 1).first():
+					prevFund = 0
+					query = config.db.session.query(Notebook).filter(Notebook.bill_id == 1)
+					pNote = query.first()
+					if pNote:
+						prevFund = pNote.value 
+					query.delete()
+					val = float(quantity) * float(purchase_price) + abs(prevFund)
+					dbconf = dbconfig.dbConfig()					
+					config.db.session.add(Notebook(dbconf.get_int('inventories') , 1 , -val , _("Initial balance"))	 )
+					config.db.session.add(Notebook(dbconf.get_int('fund') , 1 , val , _("Initial funding (share capital)"))	 )
+
 		else:
 			product = config.db.session.query(Products).filter(Products.id == editId).first()
 			product.code            = code

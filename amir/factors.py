@@ -1198,7 +1198,7 @@ class Factor(Payments):
 			elif not self.sell: #buying - our cheque
 				self.Document.add_cheque(dbconf.get_int('our_cheque'),self.custSubj, cheque.chqAmount, cheque.chqDesc, cheque.chqId)
 			else:		 	  #selling - their cheque
-				self.Document.add_cheque(dbconf.get_int('other_cheque'),self.custSubj, cheque.chqAmount, cheque.chqDesc, cheque.chqId) 
+				self.Document.add_cheque(dbconf.get_int('other_cheque'),self.custSubj, -cheque.chqAmount, cheque.chqDesc, cheque.chqId) 
 
 			##add cheque history			
 			chequeHistoryChequeId 	= 	cheque.chqId
