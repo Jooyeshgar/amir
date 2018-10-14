@@ -95,14 +95,6 @@ payments = Table('payment', meta,
     mysql_charset='utf8'
 )
 
-notebook = Table("notebook", meta,
-    Column('id', Integer, primary_key=True),
-    Column('subject_id', Integer, ForeignKey('subject.id')),
-    Column('bill_id', Integer, ForeignKey('bill.id')),
-    Column('desc', Unicode, ColumnDefault("")),
-    Column('value', Integer, ColumnDefault(0), nullable = False),
-    mysql_charset='utf8'
-)
 cheque = Table('Cheque', meta,
     Column('chqId',          Integer,      primary_key = True                      ),
     Column('chqAmount',      Float,        ColumnDefault(0),                  nullable = False ),
@@ -233,6 +225,7 @@ def upgrade(migrate_engine):
     transactions.create(checkfirst=True)
     exchanges.create(checkfirst=True)
     payments.create(checkfirst=True)
+    notebook = Table('notebook' , meta, autoload=True)
     cheque.create(checkfirst=True)
     custGroups.create(checkfirst=True)
     customers.create(checkfirst=True)

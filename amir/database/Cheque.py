@@ -34,7 +34,7 @@ class Cheque(Base):
     chqCust       = Column(Integer,      ForeignKey('customers.custId'), nullable=True)    
     chqAccount    = Column(Integer,      ForeignKey('bankAccounts.accId'), nullable = True)
     chqTransId    = Column(Integer,      ColumnDefault(0), ForeignKey('factors.Id')) #Transaction id is zero for non-invoice cheques.
-    chqNoteBookId = Column(Integer,      ColumnDefault(0), ForeignKey('notebook.id'))
+    chqNoteBookId = Column(Integer,      ColumnDefault(0))
     chqDesc       = Column(Unicode(200), nullable = True)
     chqHistoryId  = Column(Integer)
     chqBillId     = Column(Integer,      ColumnDefault(0)) #Bill id is zero for temporary transactions.

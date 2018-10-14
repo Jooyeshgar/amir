@@ -117,12 +117,13 @@ class AddEditDoc:
         self.treeview.set_model(self.liststore)
         self.window.show_all()
         
-        if self.cl_document.permanent:
-            self.builder.get_object("editable").hide()
-            self.builder.get_object("non-editable").show()
+        self.builder.get_object("editable").hide()
+        self.builder.get_object("non-editable").hide()
+        if self.cl_document.permanent:            
+            if number != 1 :
+                self.builder.get_object("non-editable").show()
         else:
-            self.builder.get_object("editable").show()
-            self.builder.get_object("non-editable").hide()
+            self.builder.get_object("editable").show()            
         
         self.builder.connect_signals(self)
         #self.connect("database-changed", self.dbChanged)
@@ -206,7 +207,7 @@ class AddEditDoc:
             credit  = self.liststore.get(iter, 4)[0].replace(",", "")
             desctxt = self.liststore.get(iter, 5)[0]
             
-            if int(unicode(debt)) != 0:
+            if float(unicode(debt)) != 0:
                 self.builder.get_object("debtor").set_active(True)
                 self.amount.set_text(debt)
             else:
@@ -221,16 +222,16 @@ class AddEditDoc:
             if result == 1:
                 type = not (self.builder.get_object("debtor").get_active() == True)
                     
-                if int(unicode(debt)) != 0:
-                    self.debt_sum -= int(unicode(debt))
+                if float(unicode(debt)) != 0:
+                    self.debt_sum -= float(unicode(debt))
                 else:
-                    self.credit_sum -= int(unicode(credit))
+                    self.credit_sum -= float(unicode(credit))
                     
                 code = self.code.get_text()
-                amount = self.amount.get_text()
+                amount = self.amount.get_float()
                 if code != '' and amount != '':
                     self.saveRow(utility.convertToLatin(code),
-                                 int(unicode(amount)),
+                                 amount,
                                  int(type),
                                  desc.get_text(),
                                  iter)
@@ -336,15 +337,15 @@ class AddEditDoc:
         iter = self.liststore.get_iter_first()
         while iter != None :
             code = utility.convertToLatin(self.liststore.get(iter, 1)[0])
-            debt = unicode(self.liststore.get(iter, 3)[0].replace(",", ""))
-            value = -(int(debt))
+            debt = utility.getFloatNumber(self.liststore.get(iter, 3)[0])
+            value = -(debt)
             if(self.liststore.get(iter,6)[0] != None):
                 id = self.liststore.get(iter,6)[0]
             else:
                 id = 0
             if value == 0 :
-                credit = unicode(self.liststore.get(iter, 4)[0].replace(",", ""))
-                value = int(credit)
+                credit = utility.getFloatNumber(self.liststore.get(iter, 4)[0])
+                value = credit
             desctxt = unicode(self.liststore.get(iter, 5)[0])
             
             query = config.db.session.query(Subject).select_from(Subject)
@@ -355,7 +356,7 @@ class AddEditDoc:
             
             iter = self.liststore.iter_next(iter)
 
-        result = self.cl_document.save(self.deleted_items)
+        result = self.cl_document.save(delete_items= self.deleted_items)
         if result == -1:
             msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, 
                                        _("Document should not be empty"))

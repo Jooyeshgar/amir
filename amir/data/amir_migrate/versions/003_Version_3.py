@@ -5,6 +5,7 @@ from sqlalchemy import *
 from migrate import *
 import logging
 from migrate.changeset.constraint import ForeignKeyConstraint
+from datetime import date
 
 def _2to3digits(num):
     _3digit = ""
@@ -92,10 +93,10 @@ def upgrade(migrate_engine):
     
     s.execute('ALTER TABLE `payment` ADD COLUMN `paymntNamePayer` Text;')
     s.commit()
-    s.execute('ALTER TABLE `Cheque` ADD COLUMN `chqBillId` Integer;')
-    s.commit()
-    s.execute('ALTER TABLE `Cheque` ADD COLUMN `chqOrder` Integer;')
-    s.commit()
+    # s.execute('ALTER TABLE `Cheque` ADD COLUMN `chqBillId` Integer;')
+    # s.commit()
+    # s.execute('ALTER TABLE `Cheque` ADD COLUMN `chqOrder` Integer;')
+    # s.commit()
     s.execute('ALTER TABLE `Cheque` ADD COLUMN `chqDelete` Boolean;')
     s.commit()
     s.execute('ALTER TABLE `chequehistory` ADD COLUMN `Delete` Boolean;')
@@ -106,10 +107,27 @@ def upgrade(migrate_engine):
     s.commit()
 
     s.execute('ALTER TABLE `products` ADD COLUMN `uMeasurement`  Text;')
-    s.execute('ALTER TABLE `notebook` ADD COLUMN `factorId` Integer NOT NULL DEFAULT 0 ; ')
-    s.execute('ALTER TABLE `notebook` ADD COLUMN `chqId` Integer NOT NULL DEFAULT 0 ; ')
-    s.commit()
 
+    # notebook = Table("notebook", meta,
+    #     Column('id', Integer, primary_key=True),
+    #     Column('subject_id', Integer, ForeignKey('subject.id')),
+    #     Column('bill_id', Integer, ForeignKey('bill.id')),
+    #     Column('desc', Unicode, ColumnDefault("")),
+    #     Column('value', Float, ColumnDefault(0), nullable = False),
+    #     Column('factorId',Integer, ColumnDefault(0) , nullable=False ),
+    #     Column('chqId',Integer, ColumnDefault(0) , nullable=False )
+    #     mysql_charset='utf8' 
+    # )
+   # notebook.create(checkfirst=True)
+    notebook = Table('notebook', meta, autoload=True)
+    colFactor = Column('factorId' , Integer, default =0)
+    colFactor.create(notebook ,  populate_default=True)
+    assert colFactor is notebook.c.factorId
+    colChq = Column('chqId' , Integer, default =0)
+    colChq.create(notebook ,  populate_default=True)
+    assert colChq is notebook.c.chqId
+    notebook.c.value.alter(type=Float)
+    assert notebook.c.value.type
 
     factorItems = Table('factorItems', meta, autoload=True)
     factorItems.c.exchngId.alter(name='id')
@@ -169,10 +187,9 @@ def upgrade(migrate_engine):
         {'cfgId' :25, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-postal-code'         , 'cfgValue' : u'postal code ',  'cfgDesc':u'Your postal code'},
         {'cfgId' :26, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-phone-number'        , 'cfgValue' : u'phone number ',  'cfgDesc':u'Your phone number'},
         {'cfgId' :27, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'sell-adds'              , 'cfgValue' : u'36',  'cfgDesc':u'Additions when selling'},
-        {'cfgId' :28, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'buy-adds'               , 'cfgValue' : u'32',  'cfgDesc':u'Additions when buying'}
-        #{'cfgId' :11, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'fund'          , 'cfgValue' : u'??', 'cfgDesc':u'Enter here'},  #TODO cfgKey
-        #{'cfgId' :12, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'acc-receivable', 'cfgValue' : u'??', 'cfgDesc':u'Enter here',}, #TODO cfgKey
-        #{'cfgId' :13, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' :u'commission'     , 'cfgValue' : u'??', 'cfgDesc':u'Enter here'}   #TODO cfgKey
+        {'cfgId' :28, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'buy-adds'               , 'cfgValue' : u'32',  'cfgDesc':u'Additions when buying'},
+        {'cfgId' :29, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'inventories'            , 'cfgValue' : u'69',  'cfgDesc':u'Initial inventory'},
+        {'cfgId' :30, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'fund'                   , 'cfgValue' : u'21',  'cfgDesc':u'Share capital'}
     )
     customers = Table('customers', meta, autoload=True)
     op = customers.insert()
@@ -192,6 +209,9 @@ def upgrade(migrate_engine):
     op.execute({'id':1, 'code':1 , 'name': u"عمومی" , 'accGroup':1, 'location':u'محل در انبار', 'quantity':100, 'qntyWarning': 10 , 'oversell':True , 'purchacePrice':2000 ,
          'sellingPrice':3000 , 'discountFormula':u"" ,'productDesc': u"توضیح کالا: این یک کالای پیشفرض آزمایشی است.", 'uMeasurement':u"عدد" })
 
+    bill = Table('bill' , meta , autoload = True)
+    op = bill.insert()
+    op.execute({'id':1 , 'number':1 , 'creation_date' : date.today() , 'lastedit_date': date.today() , 'date': date.today(), 'permanent':True  })
 
 def downgrade(migrate_engine):
     # Operations to reverse the above upgrade go here.

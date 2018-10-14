@@ -16,7 +16,7 @@ class Notebook(Base):
     subject_id    = Column(Integer, ForeignKey('subject.id'))
     bill_id       = Column(Integer, ForeignKey('bill.id'))
     desc          = Column(UnicodeText, ColumnDefault(""))
-    value         = Column(Integer, ColumnDefault(0), nullable = False)
+    value         = Column(Float, ColumnDefault(0), nullable = False)
     factorId      = Column(Integer, ColumnDefault(0), nullable = False)
     chqId         = Column(Integer, ForeignKey('Cheque.chqId'))
     

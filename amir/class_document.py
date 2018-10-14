@@ -82,36 +82,31 @@ class Document:
             return -1
 
         if self.number > 0:
-            logging.error ("class_document : function save : if self.number")
+            logging.debug ("class_document : function save : if self.number")
             bill = share.config.db.session.query(Bill)            
             bill = bill.filter(Bill.number == self.number).first()
             bill.lastedit_date = date.today()
             bill.date = self.date            
             #notebook_ides = []
             notebooks = share.config.db.session.query(Notebook)
-            for notbook in self.notebooks:     
-                from gi.repository import Gtk
-                self.msgbox = Gtk.MessageDialog(self.window,Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK , notbook[3])
-                self.msgbox.set_title(_("alarm!"))
-                self.msgbox.run()   
-                self.msgbox.destroy()
+            for notbook in self.notebooks:                     
                 if notbook[3] == 0:  # notebook id == 0    # self.id = bill.ID
                     share.config.db.session.add(Notebook(notbook[0], self.id, notbook[1], notbook[2]))
                 else:
-                    logging.error ("class_document : function save : else_1")
-                    temp = None
+                    logging.debug ("class_document : function save : else_1")                   
                     temp = notebooks.filter(Notebook.id == notbook[3]).first()                    
-                    temp.subject_id = notbook[0]
-                    temp.desc = notbook[2]
-                    temp.value = notbook[1]
-                    temp_2 = None
-                    temp_2 = share.config.db.session.query(Cheque).filter(Cheque.chqNoteBookId == notbook[3]).first()
-                    if temp_2 != None:
-                        temp_2.chqAmount = abs(notbook[1])
-                        temp_2.chqDesc = notbook[2]
-                        cheque_his = ChequeHistory(temp_2.chqId,temp_2.chqAmount,temp_2.chqWrtDate,temp_2.chqDueDate,temp_2.chqSerial,temp_2.chqStatus
-                                                            , temp_2.chqCust, temp_2.chqAccount, temp_2.chqTransId, temp_2.chqDesc , date.today())
-                        share.config.db.session.add(cheque_his)
+                    if temp:
+                        temp.subject_id = notbook[0]
+                        temp.desc = notbook[2]
+                        temp.value = notbook[1]
+                    # temp_2 = None
+                    # temp_2 = share.config.db.session.query(Cheque).filter(Cheque.chqNoteBookId == notbook[3]).first()
+                    # if temp_2 != None:
+                    #     temp_2.chqAmount = abs(notbook[1])
+                    #     temp_2.chqDesc = notbook[2]
+                    #     cheque_his = ChequeHistory(temp_2.chqId,temp_2.chqAmount,temp_2.chqWrtDate,temp_2.chqDueDate,temp_2.chqSerial,temp_2.chqStatus
+                    #                                         , temp_2.chqCust, temp_2.chqAccount, temp_2.chqTransId, temp_2.chqDesc , date.today())
+                    #     share.config.db.session.add(cheque_his)
             for deletes in delete_items:
                 share.config.db.session.query(Notebook).filter(Notebook.id == deletes).delete()
         else:
@@ -128,24 +123,6 @@ class Document:
                 old_notebooks = share.config.db.session.query(Notebook)    . filter(Notebook.bill_id == billId)  .all()
                 for nb in old_notebooks:                    
                     share.config.db.session.delete(nb)
-                # q = share.config.db.session.query(Notebook).filter(Notebook.bill_id == self.id) . filter(Notebook.subject_id== notebook[0]).first()
-                # dbSubmitedNotebooks =  share.config.db.session.query(Notebook).filter(Notebook.bill_id == self.id)                
-                # for nb in  dbSubmitedNotebooks :   
-                #     found =  False
-                #     for notebook in self.notebooks:                       
-                #         if nb.subject_id == notebook[0]:
-                #             found = True
-                #             nb.value = notebook[1]
-                #             nb.desc = notebook[2]
-                #             break
-                #     if  not found :
-                #         share.config.db.session.delete(nb) 
-
-                # for notebook in self.notebooks :
-                #     found = [f for f in dbSubmitedNotebooks if f.subject_id == notebook[0]]                        
-                #     if  len (found) == 0 :
-                #         share.config.db.session.add(Notebook(notebook[0], self.id, notebook[1], notebook[2]))
-               
             else :  # adding new factor and bill
                 logging.debug("class_document : function save: else_2 / else not factorId")
                 query = share.config.db.session.query(Bill.number)
@@ -162,14 +139,14 @@ class Document:
                 query = query.filter(Bill.number == self.number)
                 self.id = query.first().id                                    
 
-        for notebook in self.notebooks:
-            share.config.db.session.add(Notebook(notebook[0], self.id, notebook[1], notebook[2],factId=notebook[3]))                            
+            for notebook in self.notebooks:
+                share.config.db.session.add(Notebook(notebook[0], self.id, notebook[1], notebook[2],factId=notebook[3]))                            
 
-                #  pay attention ...   :/
-        for cheque in self.cheques:            
-           n = Notebook(cheque[0], self.id, cheque[1], cheque[2],chqId=cheque[3])           
-           share.config.db.session.add(n)        
-           share.config.db.session.commit()                      
+                    #  pay attention ...   :/
+            for cheque in self.cheques:            
+               n = Notebook(cheque[0], self.id, cheque[1], cheque[2],chqId=cheque[3])           
+               share.config.db.session.add(n)        
+        share.config.db.session.commit()                      
         self.clear_notebook
         
         return self.id      # bill id   
