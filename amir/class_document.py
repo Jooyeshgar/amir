@@ -76,7 +76,7 @@ class Document:
         self.cheques.append((subject_id, float(value), desctxt, cheque_id))  
         self.cheques.append ((custId  , -float(value), desctxt, cheque_id))  
             
-    def save(self, factorId = 0 ,delete_items=None):
+    def save(self, factorId = None ,delete_items=None):
         if (len(self.notebooks) == 0) and (len(self.cheques)==0) : 
             self.clear_notebook
             return -1
@@ -131,8 +131,8 @@ class Document:
                     self.number = last[0] + 1
                 else:
                     self.number = 1
-
-                bill = Bill(self.number, self.creation_date, date.today(), self.date, False)
+                permanent = True if (factorId ==0 or self.cheques!=[]) else False
+                bill = Bill(self.number, self.creation_date, date.today(), self.date, permanent)
                 share.config.db.session.add(bill)                
 
                 query = share.config.db.session.query(Bill)
@@ -142,7 +142,7 @@ class Document:
             for notebook in self.notebooks:
                 share.config.db.session.add(Notebook(notebook[0], self.id, notebook[1], notebook[2],factId=notebook[3]))                            
 
-                    #  pay attention ...   :/
+                    # triggers in automatic accounting 
             for cheque in self.cheques:            
                n = Notebook(cheque[0], self.id, cheque[1], cheque[2],chqId=cheque[3])           
                share.config.db.session.add(n)        

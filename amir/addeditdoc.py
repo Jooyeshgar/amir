@@ -8,6 +8,7 @@ import automaticaccounting
 from share import share
 from database import Subject
 from helpers import get_builder
+from sqlalchemy import or_ , and_
 
 config = share.config
 
@@ -119,7 +120,9 @@ class AddEditDoc:
         
         self.builder.get_object("editable").hide()
         self.builder.get_object("non-editable").hide()
-        if self.cl_document.permanent:            
+        if self.cl_document.permanent:           
+            # Pbill = config.db.session.query(Notebook).filter(Notebook.bill_id ==1).filter(or_(Notebook.chqId != 0 , Notebook.factorId != 0 ) ).first()
+            # if Pbill  :
             if number != 1 :
                 self.builder.get_object("non-editable").show()
         else:

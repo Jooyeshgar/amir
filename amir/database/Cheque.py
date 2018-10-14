@@ -37,12 +37,12 @@ class Cheque(Base):
     chqNoteBookId = Column(Integer,      ColumnDefault(0))
     chqDesc       = Column(Unicode(200), nullable = True)
     chqHistoryId  = Column(Integer)
-    chqBillId     = Column(Integer,      ColumnDefault(0)) #Bill id is zero for temporary transactions.
-    chqOrder      = Column(Integer ,     nullable=False)
+    #chqBillId     = Column(Integer,      ColumnDefault(0)) #Bill id is zero for temporary transactions.
+    #chqOrder      = Column(Integer ,     nullable=False)
     chqDelete     = Column(Boolean)
 
     def __init__( self, chqAmount, chqWrtDate, chqDueDate, chqSerial,
-                  chqStatus, chqCust , chqAccount, chqTransId, chqNoteBookId, chqDesc,chqHistoryId ,chqBillId,chqOrder=0,chqDelete=False , chqId=0) :
+                  chqStatus, chqCust , chqAccount, chqTransId, chqNoteBookId, chqDesc,chqHistoryId ,chqOrder=0,chqDelete=False , chqId=0) :
         if chqId != 0:
             self.chqId = chqId
         self.chqAmount   = chqAmount
@@ -57,8 +57,8 @@ class Cheque(Base):
         self.chqNoteBookId = chqNoteBookId
         self.chqDesc     = chqDesc
         self.chqHistoryId = chqHistoryId
-        self.chqBillId   = chqBillId
-        self.chqOrder    =  chqOrder
+        #self.chqBillId   = chqBillId
+        #self.chqOrder    =  chqOrder
         self.chqDelete    =  chqDelete
 ## @}
 
