@@ -164,6 +164,7 @@ class Product(productgroup.ProductGroup):
 		dialog = self.builder.get_object("addProductDlg")
 		dialog.set_title(_("Add New Product"))
 		
+		self.builder.get_object("qnttyLbl").set_text(_("Initial inventory:") )
 		lastProCode = config.db.session.query(Products.code).filter(Products.accGroup==accgrp).order_by(Products.code.desc()).first()
 		if lastProCode:
 			lastProCode = lastProCode.code	
@@ -215,6 +216,7 @@ class Product(productgroup.ProductGroup):
 				dialog = self.builder.get_object("addProductDlg")
 				dialog.set_title(_("Edit Product"))
 				
+				self.builder.get_object("qnttyLbl").set_text(_("Quantity:")  ) 
 				code = self.treestore.get_value(iter, 0)
 				id = self.treestore.get_value(iter, 6)				
 				query = config.db.session.query(Products, ProductGroups.code)
@@ -239,6 +241,7 @@ class Product(productgroup.ProductGroup):
 				self.builder.get_object("proLocEntry" ).set_text(product.location)
 				self.builder.get_object("proDescEntry").set_text(product.productDesc)
 				self.builder.get_object("discFormulaEntry").set_text(product.discountFormula)
+				self.qntyEntry.set_sensitive(False)
 				self.qntyEntry.set_text(quantity)
 				self.qntyWrnEntry.set_text(quantity_warn)
 				self.purchPriceEntry.set_text(p_price)

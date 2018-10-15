@@ -117,7 +117,7 @@ class Factor(Payments):
 		self.feeEntry           = self.builder.get_object("feeEntry")
 		
 		self.treeview = self.builder.get_object("TreeView")		# factors List
-		self.treestore = Gtk.TreeStore(int, str, str, str, str,str)
+		self.treestore = Gtk.TreeStore(int, str, str, str, str,str,str)
 		self.treestore.clear()
 		self.treeview.set_model(self.treestore)
 		
@@ -130,7 +130,14 @@ class Factor(Payments):
 		self.treeview.append_column(column)
 		
 		
-		column = Gtk.TreeViewColumn(_("factor"), Gtk.CellRendererText(), text = 1)
+		column = Gtk.TreeViewColumn(_("Factor"), Gtk.CellRendererText(), text = 1)
+		column.set_spacing(5)
+		column.set_resizable(True)
+		column.set_sort_column_id(0)
+		column.set_sort_indicator(True)
+		self.treeview.append_column(column)		
+
+		column = Gtk.TreeViewColumn(_("Document"), Gtk.CellRendererText(), text = 1)
 		column.set_spacing(5)
 		column.set_resizable(True)
 		column.set_sort_column_id(0)
@@ -189,6 +196,7 @@ class Factor(Payments):
 		self.whiteClr = Gdk.color_parse("#FFFFFF")
 	
 	def viewSells(self,sender=0):
+		self.treestore.clear()
 		query = config.db.session.query(Factors,Customers)
 		query = query.select_from(outerjoin(Factors,Customers, Factors.Cust == Customers.custId))
 		query = query.order_by(Factors.Code.asc())
@@ -199,8 +207,12 @@ class Factor(Payments):
 		for t ,c in reversed(result):		
 			date = t.tDate
 			date = dateToString(date)
-			pre_invoice = "pre-invoice" if not t.Permanent else ""
-			grouprow = self.treestore.append(None, (int(t.Id), t.Code, str(date), c.custName, utility.LN(t.PayableAmnt) , pre_invoice))
+			pre_invoice = _("pre-invoice") if not t.Permanent else ""
+			bill_id = "-"
+			bill = config.db.session.query(Bill).select_from(Notebook).filter(Notebook.factorId == t.Id).filter(Notebook.bill_id == Bill.id).first()
+			if bill:
+				bill_id = str( bill.id) 
+			grouprow = self.treestore.append(None, (int(t.Id), t.Code, bill_id,str(date), c.custName, utility.LN(t.PayableAmnt) , pre_invoice))
 			
 		self.window.show_all()
 
@@ -1007,7 +1019,8 @@ class Factor(Payments):
 			self.registerFactorItems()			
 			if not self.subPreInv:
 				self.registerDocument()			
-			self.mainDlg.hide()						
+			self.mainDlg.hide()			
+			self.viewSells()			
 				
 	def checkFullFactor(self):
 						
@@ -1093,7 +1106,7 @@ class Factor(Payments):
 		query =	query.filter(Customers.custId==self.custId)
 		customer = query.first()
 		pre_invoice = "pre-invoice" if not permanent else ""
-		self.treestore.append(None,(int(self.Id), LN(self.subCode), str(self.subDate), customer.custName, str(self.totalFactor), pre_invoice))
+		#self.treestore.append(None,(int(self.Id), LN(self.subCode), str(self.subDate), customer.custName, str(self.totalFactor), pre_invoice))		
 		
 	def registerFactorItems(self):	
 			
