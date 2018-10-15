@@ -180,6 +180,10 @@ def upgrade(migrate_engine):
 			   {"id": 37, "code":"6701", "name": u"جاری شرکا"                   , "parent_id": 8 , "lft": 48, "rgt": 49 , "type":1},
 			   ) 
 
+    bill = Table('bill' , meta , autoload = True)
+    op = bill.insert()
+    op.execute({'id':1 , 'number':1 , 'creation_date' : date.today() , 'lastedit_date': date.today() , 'date': date.today(), 'permanent':True  })
+    
     logging.debug("upgrade to 1")
    
 

@@ -90,17 +90,10 @@ def upgrade(migrate_engine):
     s.execute('DROP TABLE exchanges;')
     s.commit()
 
-    
-    s.execute('ALTER TABLE `payment` ADD COLUMN `paymntNamePayer` Text;')
-    s.commit()
-    # s.execute('ALTER TABLE `Cheque` ADD COLUMN `chqBillId` Integer;')
-    # s.commit()
-    # s.execute('ALTER TABLE `Cheque` ADD COLUMN `chqOrder` Integer;')
-    # s.commit()
     s.execute('ALTER TABLE `Cheque` ADD COLUMN `chqDelete` Boolean;')
     s.commit()
-    s.execute('ALTER TABLE `chequehistory` ADD COLUMN `Delete` Boolean;')
-    s.commit()
+    # s.execute('ALTER TABLE `chequehistory` ADD COLUMN `Delete` Boolean;')
+    # s.commit()
     s.execute('DROP TABLE users;')
     s.commit()
     s.execute('DELETE FROM config')
@@ -108,17 +101,6 @@ def upgrade(migrate_engine):
 
     s.execute('ALTER TABLE `products` ADD COLUMN `uMeasurement`  Text;')
 
-    # notebook = Table("notebook", meta,
-    #     Column('id', Integer, primary_key=True),
-    #     Column('subject_id', Integer, ForeignKey('subject.id')),
-    #     Column('bill_id', Integer, ForeignKey('bill.id')),
-    #     Column('desc', Unicode, ColumnDefault("")),
-    #     Column('value', Float, ColumnDefault(0), nullable = False),
-    #     Column('factorId',Integer, ColumnDefault(0) , nullable=False ),
-    #     Column('chqId',Integer, ColumnDefault(0) , nullable=False )
-    #     mysql_charset='utf8' 
-    # )
-   # notebook.create(checkfirst=True)
     notebook = Table('notebook', meta, autoload=True)
     colFactor = Column('factorId' , Integer, default =0)
     colFactor.create(notebook ,  populate_default=True)
@@ -191,27 +173,8 @@ def upgrade(migrate_engine):
         {'cfgId' :29, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'inventories'            , 'cfgValue' : u'69',  'cfgDesc':u'Initial inventory'},
         {'cfgId' :30, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'fund'                   , 'cfgValue' : u'21',  'cfgDesc':u'Share capital'}
     )
-    customers = Table('customers', meta, autoload=True)
-    op = customers.insert()
-    op.execute({'custId': 1 , 'custCode': u'001', 'custSubj' : 58 , 'custName': u'متفرقه', 'custGroup':1 ,
-        'custPhone': u'', 'custCell':u'' , 'custFax' : u'' , 'custAddress':u'' , 'custPostalCode':'', 'custEmail' : u'' , 'custEcnmcsCode':u'' , 'custPersonalCode':'', 'custWebPage':u'',
-        'custResposible': u'','custConnector':u'' , 'custDesc': u'' , 'custBalance': 0 , 'custCredit':0,'custRepViaEmail':False,
-        'custAccName1':u'', 'custAccNo1':u'' , 'custAccBank1':u'', 'custAccName2':u'' , 'custAccNo2':u'', 'custAccBank2':u'', 
-        'custTypeBuyer':True , 'custTypeSeller':True,'custTypeMate':False, 'custTypeAgent':False,'custMarked':False ,
-        'custIntroducer': u'' , 'custCommission': u'' , 'custReason':u'' , 'custDiscRate':u'' })
-    
-    productgroups = Table('productgroups' , meta , autoload = True)
-    op = productgroups.insert()
-    op.execute({'id':1 , 'code': 1 , 'name':u"گروه عمومی کالا" , 'buyId':19 , 'sellId': 20})
 
-    products = Table('products', meta , autoload=True)    
-    op = products.insert()
-    op.execute({'id':1, 'code':1 , 'name': u"عمومی" , 'accGroup':1, 'location':u'محل در انبار', 'quantity':100, 'qntyWarning': 10 , 'oversell':True , 'purchacePrice':2000 ,
-         'sellingPrice':3000 , 'discountFormula':u"" ,'productDesc': u"توضیح کالا: این یک کالای پیشفرض آزمایشی است.", 'uMeasurement':u"عدد" })
 
-    bill = Table('bill' , meta , autoload = True)
-    op = bill.insert()
-    op.execute({'id':1 , 'number':1 , 'creation_date' : date.today() , 'lastedit_date': date.today() , 'date': date.today(), 'permanent':True  })
 
 def downgrade(migrate_engine):
     # Operations to reverse the above upgrade go here.
