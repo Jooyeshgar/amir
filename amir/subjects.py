@@ -535,10 +535,13 @@ class Subjects(GObject.GObject):
 
     def searchName(self, sender):
         name = unicode(self.builder.get_object('nameEntry').get_text())
+        self.highlightSubject('040004')
         if name == "":
             self.treeview.collapse_all()
-        code = config.db.session.query(Subject.code).filter(Subject.name.like(name+"%")).first().code        
-        self.highlightSubject(code)
+        code = config.db.session.query(Subject.code).filter(Subject.name.like('%'+ name+"%")).first()       
+        if code :
+            code = code.code 
+            self.highlightSubject(code)
 
     def highlightSubject(self, code):
         i = 3
@@ -559,7 +562,7 @@ class Subjects(GObject.GObject):
                         if self.treestore.get_value(iter, 0) == "":
                             self.populateChildren(self.treeview, parent, None)
                             iter = self.treestore.iter_children(parent)
-                        i += 2
+                        i += 3
                         part = code[0:i]
                 else:
                     break
