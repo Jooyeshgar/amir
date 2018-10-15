@@ -25,7 +25,7 @@ class DecimalEntry(Gtk.Entry):
     def insert(self, widget, text, pos):
     # the next three lines set up the text. this is done because we
     # can't use insert_text(): it always inserts at position zero.
-        orig_text = unicode(widget.get_text())        
+        orig_text = unicode(widget.get_text())                   # **** unicode is neccessary for persian numbers!!  ****
         text = unicode(text)        
         new_text = orig_text[:pos] + text + orig_text[pos:]
         hadSlash = new_text.find('/')
@@ -63,9 +63,9 @@ class DecimalEntry(Gtk.Entry):
             return        
         text = widget.get_text()
         text2 = ""
-        text1 = str(text)[:pos1]        
+        text1 = unicode(text)[:pos1]                            # **** unicode is neccessary for persian numbers!!  ****
         if pos2 !=-1 :
-            text2 = str(text)[pos2:]
+            text2 = unicode(text)[pos2:]
         #print widget.get_float()
         text = text1+ text2
         hadSlash = text.find('/')
