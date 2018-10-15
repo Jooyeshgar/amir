@@ -52,7 +52,7 @@ class Document:
 
     def set_permanent(self, permanent):
         if self.id == 0:
-            raise Exception('You should save the document before make it permanent')
+            raise Exception(_('You should save the document before make it permanent') )
         
         self.permanent = permanent
         query = share.config.db.session.query(Bill).select_from(Bill).filter(Bill.id == self.id)
@@ -153,8 +153,8 @@ class Document:
 
     def get_error_message(self, code):
         if   code == -1:
-            return "add some notebook items"
+            return _("Add some notebook items")
         elif code == -2:
-            return "transation sum should be 0"
+            return _("Transation sum should be 0")
 
 ## @}

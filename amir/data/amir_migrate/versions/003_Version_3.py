@@ -5,7 +5,7 @@ from sqlalchemy import *
 from migrate import *
 import logging
 from migrate.changeset.constraint import ForeignKeyConstraint
-from datetime import date
+
 
 def _2to3digits(num):
     _3digit = ""

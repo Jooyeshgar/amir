@@ -304,7 +304,7 @@ def upgrade(migrate_engine):
         { 'custGrpId': 1, 'custGrpCode': 1, "custGrpName":u"عمومی", 'custGrpDesc': u"مشتریان عمومی"},
     )
 
-    customers = Table('customers', meta, autoload=True)
+    #customers = Table('customers', meta, autoload=True)
     op = customers.insert()
     op.execute({'custId': 1 , 'custCode': u'001', 'custSubj' : 58 , 'custName': u'متفرقه', 'custGroup':1 ,
         'custPhone': u'', 'custCell':u'' , 'custFax' : u'' , 'custAddress':u'' , 'custPostalCode':'', 'custEmail' : u'' , 'custEcnmcsCode':u'' , 'custPersonalCode':'', 'custWebPage':u'',
@@ -313,11 +313,11 @@ def upgrade(migrate_engine):
         'custTypeBuyer':True , 'custTypeSeller':True,'custTypeMate':False, 'custTypeAgent':False,'custMarked':False ,
         'custIntroducer': u'' , 'custCommission': u'' , 'custReason':u'' , 'custDiscRate':u'' })
     
-    productgroups = Table('productgroups' , meta , autoload = True)
-    op = productgroups.insert()
+    #productgroups = Table('productgroups' , meta , autoload = True)
+    op = productGroups.insert()
     op.execute({'id':1 , 'code': 1 , 'name':u"گروه عمومی کالا" , 'buyId':19 , 'sellId': 20})
 
-    products = Table('products', meta , autoload=True)    
+    #products = Table('products', meta , autoload=True)    
     op = products.insert()
     op.execute({'id':1, 'code':1 , 'name': u"عمومی" , 'accGroup':1, 'location':u'محل در انبار', 'quantity':100, 'qntyWarning': 10 , 'oversell':True , 'purchacePrice':2000 ,
          'sellingPrice':3000 , 'discountFormula':u"" ,'productDesc': u"توضیح کالا: این یک کالای پیشفرض آزمایشی است.", 'uMeasurement':u"عدد" })
