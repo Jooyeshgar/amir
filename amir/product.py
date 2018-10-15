@@ -348,6 +348,7 @@ class Product(productgroup.ProductGroup):
 			product = Products(code, name, quantity_warn, oversell, location, quantity,
 					purchase_price, sell_price, group.id, desc, formula, uMeasurement)	
 			config.db.session.add(product)
+			config.db.session.commit()
 
 			if quantity >0:
 				if config.db.session.query(Bill).filter(Bill.id == 1).first():
@@ -361,6 +362,7 @@ class Product(productgroup.ProductGroup):
 					dbconf = dbconfig.dbConfig()					
 					config.db.session.add(Notebook(dbconf.get_int('inventories') , 1 , -val , _("Initial balance"))	 )
 					config.db.session.add(Notebook(dbconf.get_int('fund') , 1 , val , _("Initial funding (share capital)"))	 )
+					config.db.session.add(FactorItems(1,product.id , quantity, purchase_price, 0,0,_("Initial inventory")))
 
 		else:
 			product = config.db.session.query(Products).filter(Products.id == editId).first()

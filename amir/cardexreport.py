@@ -103,27 +103,30 @@ class CardexReport:
     def showResult(self, productCode,factorType,customerCode,dateFrom,dateTo):
         query = config.db.session.query(Products)
         query = query.filter(Products.code == unicode(productCode) )
-        bill  = query.first()
+        product  = query.first()
         self.treestore.clear()
-        if bill is not None:
+        if product is not None:
             statusbar = self.builder.get_object('statusbar3')
             context_id = statusbar.get_context_id('statusbar')
             statusbar.remove_all(context_id)
-            self.builder.get_object("nameTextView").get_buffer().set_text(bill.name)
-            self.builder.get_object("groupTextView").get_buffer().set_text(str(bill.accGroup))
-            self.builder.get_object("locationTextView").get_buffer().set_text(bill.location)
-            self.builder.get_object("quantityTextView").get_buffer().set_text(utility.LN(format(float(bill.quantity))))
-            self.builder.get_object("quantityWarningTextView").get_buffer().set_text(utility.LN(format(float(bill.qntyWarning))))
-            self.builder.get_object("oversellTextView").get_buffer().set_text(str(bill.oversell))
-            self.builder.get_object("purchacePriceTextView").get_buffer().set_text(utility.LN(format(float(bill.purchacePrice))))
-            self.builder.get_object("dicountFormulaTextView").get_buffer().set_text(str(bill.discountFormula))
-            self.builder.get_object("sellingPriceTextView").get_buffer().set_text(utility.LN(format(float(bill.sellingPrice))))
-            self.builder.get_object("productDescriptionTextView").get_buffer().set_text(bill.productDesc)
+            self.builder.get_object("nameTextView").get_buffer().set_text(product.name)
+            self.builder.get_object("groupTextView").get_buffer().set_text(str(product.accGroup))
+            self.builder.get_object("locationTextView").get_buffer().set_text(product.location)
+            self.builder.get_object("quantityTextView").get_buffer().set_text(utility.LN(format(float(product.quantity))))
+            self.builder.get_object("quantityWarningTextView").get_buffer().set_text(utility.LN(format(float(product.qntyWarning))))
+            self.builder.get_object("oversellTextView").get_buffer().set_text(str(product.oversell))
+            self.builder.get_object("purchacePriceTextView").get_buffer().set_text(utility.LN(format(float(product.purchacePrice))))
+            self.builder.get_object("dicountFormulaTextView").get_buffer().set_text(str(product.discountFormula))
+            self.builder.get_object("sellingPriceTextView").get_buffer().set_text(utility.LN(format(float(product.sellingPrice))))
+            self.builder.get_object("productDescriptionTextView").get_buffer().set_text(product.productDesc)
 
             
             #Fill factor treeview
+            initQ = config.db.session.query(FactorItems).filter(FactorItems.factorId == 0).first()
+            if initQ:
+                self.treestore.append(None, (_("Initial inventory") , "-" , "-" ,str(utility.LN(0)) , "-",str(utility.LN( initQ.qnty)),str(utility.LN(initQ.untPrc)), "-" ) ) 
             query = config.db.session.query(FactorItems,Factors,Customers)
-            query = query.filter(bill.id == FactorItems.productId, FactorItems.factorId == Factors.Id, Customers.custId == Factors.Cust)
+            query = query.filter(product.id == FactorItems.productId, FactorItems.factorId == Factors.Id, Customers.custId == Factors.Cust)
             if factorType and factorType != 'All':
                 if factorType == 'Sell':                    
                     factorType = 1
@@ -167,7 +170,7 @@ class CardexReport:
                 date = dateToString(factor.Factors.tDate)
 
                 self.treestore.append(None, (str(factor.Factors.Code), str(factor.Customers.custCode), str(factor.Customers.custName),str(utility.LN(productCount)),\
-                                        sell_quantity, buy_quantity,str(utility.LN(float(factor.FactorItems.qnty * factor.FactorItems.untPrc))), str(date)))
+                                        sell_quantity, buy_quantity,str(utility.LN(float(factor.FactorItems.untPrc))), str(date)))
         else:
             statusbar = self.builder.get_object('statusbar3')
             context_id = statusbar.get_context_id('statusbar')
