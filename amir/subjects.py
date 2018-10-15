@@ -484,14 +484,13 @@ class Subjects(GObject.GObject):
                 #remove empty subledger to add real children instead
                 self.treestore.remove(chiter)
 
-                parent_id = share.session.query(Subject.id).select_from(Subject).filter(Subject.code == value).all()
-                
+                parent_id = config.db.session.query(Subject.id).filter(Subject.code == value).first() .id                
                 Sub = aliased(Subject, name="s")
                 Child = aliased(Subject, name="c")
                 
                 query = config.db.session.query(Sub.code, Sub.name, Sub.type, count(Child.id), Sub.lft, Sub.rgt)
                 query = query.select_from(outerjoin(Sub, Child, Sub.id == Child.parent_id))
-                result = query.filter(Sub.parent_id == parent_id[0][0]).group_by(Sub.id).all()
+                result = query.filter(Sub.parent_id == parent_id).group_by(Sub.id).all()
                 for row in result :
                     code = row[0]
                     code = LN(code, False)
@@ -525,7 +524,7 @@ class Subjects(GObject.GObject):
         
     def match_func(self, iter, data):
         (column, key) = data   # data is a tuple containing column number, key
-        value = self.treestore.get_value(iter, column)
+        value = convertToLatin(self.treestore.get_value(iter, column) )             
         if value < key:
             return -1
         elif value == key:
@@ -534,13 +533,14 @@ class Subjects(GObject.GObject):
             return 1
 
     def searchName(self, sender):
-        name = unicode(self.builder.get_object('nameEntry').get_text())
-        self.highlightSubject('040004')
+        name = unicode(self.builder.get_object('nameEntry').get_text())        
         if name == "":
             self.treeview.collapse_all()
-        code = config.db.session.query(Subject.code).filter(Subject.name.like('%'+ name+"%")).first()       
-        if code :
-            code = code.code 
+        code = config.db.session.query(Subject.code).filter(Subject.name.like( name+"%")).first()       
+        if not code:            
+            code =  config.db.session.query(Subject.code).filter(Subject.name.like("% "+ name+"%")).first()       
+        if code :            
+            code = code.code             
             self.highlightSubject(code)
 
     def highlightSubject(self, code):
@@ -552,14 +552,14 @@ class Subjects(GObject.GObject):
         
         while iter:
             res = self.match_func(iter, (0, part))
-            if res < 0:
+            if res < 0:                
                 iter = self.treestore.iter_next(iter)
-            elif res == 0:
-                if len(code) > i:
+            elif res == 0:                
+                if len(code) > i:                    
                     parent = iter
                     iter = self.treestore.iter_children(parent)
-                    if iter:
-                        if self.treestore.get_value(iter, 0) == "":
+                    if iter:                        
+                        if self.treestore.get_value(iter, 0) == "":                            
                             self.populateChildren(self.treeview, parent, None)
                             iter = self.treestore.iter_children(parent)
                         i += 3
