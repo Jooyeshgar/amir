@@ -1482,7 +1482,7 @@ class Factor(Payments):
 							<span>' + utility.convertToPersian(str(unitPrice)) + '</span> \
 						</td> \
 						<td class="border center" style="border-right: none;" > \
-							<span style="text-align: right;">'+sell.Products.uMeasurement+'</span> \
+							<span style="text-align: right;">'+unicode(sell.Products.uMeasurement)+'</span> \
 						</td> \
 						<td class="border center" style="border-right: none;" > \
 							<span>' + utility.convertToPersian(str(quantity)) + '</span> \

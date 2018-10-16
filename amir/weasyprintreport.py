@@ -100,5 +100,9 @@ class WeasyprintReport:
                     html += '<td>' + str(data) + '</td>'
                 html += '</tr>'
             html += '</table>'
-        html = '<!DOCTYPE html> <html> <head> <style> @font-face {font-family: Vazir; src: url(data/font/Vazir.woff); } html {font-family: myFirstFont; } table {border-collapse: collapse;} table, td, th {border: 2px solid black; padding: 10px;font-size:10px; text-align:'+text_align+';}  </style> <meta charset="UTF-8"> </head> <body>' + html + '</body> </html>'        
+        html = '<!DOCTYPE html> <html> <head> \
+                <style> @font-face {font-family: Vazir; src: url(data/font/Vazir.woff); } html {font-family: myFirstFont; } \
+                table {border-collapse: collapse;  text-align:'+text_align+';} \
+                table, th {border-top: 2px solid; border-bottom: 2px solid; border-left:1px solid; border-right:1px solid black; padding: 10px;font-size:10px;}\
+                 td {border-left:1px solid; border-right:1px solid; padding: 10px;} </style> <meta charset="UTF-8"> </head> <body>' + html + '</body> </html>'        
         return html

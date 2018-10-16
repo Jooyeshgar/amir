@@ -11,7 +11,6 @@ from sqlalchemy.sql.functions import sum
 
 import numberentry
 import utility
-import printreport
 import previewreport
 from database import *
 from dateentry import *
@@ -52,27 +51,109 @@ class DocumentReport:
             return
         
         self.builder.get_object("message").set_text("")
-        report_header = []
-        report_data = []
-        #col_width = []
-        debt_sum = 0
-        credit_sum = 0
-        query1 = config.db.session.query(Bill, Notebook, Subject)
-        query1 = query1.select_from(outerjoin(outerjoin(Notebook, Subject, Notebook.subject_id == Subject.id), Bill, Notebook.bill_id == Bill.id))
-        query1 = query1.filter(Bill.number.in_(self.docnumbers)).order_by(Bill.number.asc(),Notebook.id.asc())
-        res = query1.all()
-        if len(res) == 0:
-            msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, 
-                                       _("No document found with the requested number."))
-            msgbox.set_title(_("Invalid document number"))
-            msgbox.run()
-            msgbox.destroy()
-            return
-        
-        self.docdate = res[0][0].date
-        report_header = [_("Document No."),_("Index"), _("Date"), _("Subject Code"), _("Subject Name"), _("Description"), _("Debt"), _("Credit")]
-        index = 1
-        debt_sum = credit_sum = doc_number0 = 0
+        report_header = [_("Index"), _("Subject Code"), _("Subject Name"), _("Description"), _("Debt"), _("Credit")]
+        html = "" 
+        bills = config.db.session.query(Bill).filter(Bill.number.in_(self.docnumbers)).order_by(Bill.number.asc()).all()
+        if config.locale == 'en_US':
+            doDirection = 'left'
+            daDirection = 'right'
+            text_align = "left"
+        else:
+            doDirection = 'right'
+            daDirection = 'left'
+            text_align = "right"
+        todaystr = dateToString(date.today())
+        for b in bills:
+            report_data = []       
+            query = config.db.session.query(Notebook,Subject).select_from(outerjoin(Notebook, Subject, Notebook.subject_id == Subject.id)).filter(Notebook.bill_id==b.id).order_by(Notebook.id.asc())
+            res = query.all()            
+            if len(res) == 0:
+                msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, 
+                                           _("No document found with the requested number."))
+                msgbox.set_title(_("Invalid document number"))
+                msgbox.run()
+                msgbox.destroy()
+                return
+
+            self.docdate = b.date            
+            index = 1
+            debt_sum = credit_sum =  0
+            datestr = dateToString(self.docdate)
+            docnumber = b.number
+            if config.digittype == 1:
+                docnumber = utility.convertToPersian(docnumber)
+
+            html += '<p ' + self.reportObj.subjectHeaderStyle + '><u>' + _("Accounting Document") + '</u></p>\
+                <div style="text-align:' + doDirection + '; font-size:12px;float:'+doDirection+'">' + _("Document Number") + ': ' + str(docnumber) + '</div>\
+                <div style="text-align:' + daDirection + '; font-size:12px;float:'+daDirection+'">' + _("Date") + ': ' + todaystr +'</div> <br/>'
+            for n , s in res :
+                desc = n.desc
+                if n.value < 0:
+                    credit = utility.LN(0)
+                    debt = utility.LN(-(n.value))
+                else:
+                    credit = utility.LN(n.value)
+                    debt = utility.LN(0)
+                    desc = "   " + desc
+                    
+                code = utility.LN(s.code)
+                doc_number = utility.LN(b.number)
+
+                debt_sum += utility.getFloatNumber(debt)
+                credit_sum += utility.getFloatNumber(credit)                            
+                report_data.append(( str(index), code, s.name, desc, debt, credit))
+                index += 1                        
+                
+            html += '<table style="width:100%"><tr>'
+            if config.locale == 'en_US':                            
+                for header in report_header:
+                    html += '<th>' + header + '</th>'
+                html += '</tr>'
+                for row in report_data:
+                    html += '<tr>'
+                    for data in row:
+                        html += '<td>' + str(data) + '</td>'
+                    html += '</tr>'                
+            else:                
+                report_header = report_header[::-1]
+                for header in report_header:
+                    html += '<th>' + header + '</th>'
+                html += '</tr>'
+                for row in report_data:
+                    row = row[::-1]
+                    html += '<tr>'
+                    for data in row:
+                        html += '<td>' + str(data) + '</td>'
+                    html += '</tr>'
+            row = [unicode('<td colspan="3" >'+unicode(_("Total"))+'</td>'),unicode('<td>'+unicode(utility.LN(debt_sum))+'</td>'), unicode('<td>'+unicode(utility.LN(credit_sum))+'</td>') ]
+            if config.locale != 'en_US':   
+                row = row[::-1]
+           # html+= '<tr>'+row[0], row[1],row[2]+'</tr>'
+            html += '</table><p style="page-break-before: always" ></p>'
+
+        html = '<!DOCTYPE html> <html> <head> \
+                <style> @font-face {font-family: Vazir; src: url(data/font/Vazir.woff); } html {font-family: myFirstFont; } \
+                table {border-collapse: collapse;  text-align:'+text_align+';} \
+                table, th {border-top: 2px solid; border-bottom: 2px solid; border-left:1px solid; border-right:1px solid black; padding: 10px;font-size:10px;}\
+                 td {border-left:1px solid; border-right:1px solid; padding: 10px;} </style> <meta charset="UTF-8"> </head> <body>' + html + '</body> </html>'             
+        return html
+
+        # query1 = config.db.session.query(Bill, Notebook, Subject)
+        # query1 = query1.select_from(outerjoin(outerjoin(Notebook, Subject, Notebook.subject_id == Subject.id), Bill, Notebook.bill_id == Bill.id))
+        # query1 = query1.filter(Bill.number.in_(self.docnumbers)).order_by(Bill.number.asc(),Notebook.id.asc())
+        # res = query1.all()
+        # if len(res) == 0:
+        #     msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, 
+        #                                _("No document found with the requested number."))
+        #     msgbox.set_title(_("Invalid document number"))
+        #     msgbox.run()
+        #     msgbox.destroy()
+        #     return
+
+        # self.docdate = res[0][0].date
+        # report_header = [_("Index"), _("Subject Code"), _("Subject Name"), _("Description"), _("Debt"), _("Credit")]
+        # index = 1
+        # debt_sum = credit_sum = doc_number0 = 0
         prevDoc = res[0][0].number
         for b, n, s in res:
             desc = n.desc
@@ -88,36 +169,34 @@ class DocumentReport:
             doc_number = utility.LN(b.number)
             if doc_number != doc_number0:
                 if doc_number0:
-                    report_data.append((doc_number0, str(index), "-", "-" , "-", "Total", utility.LN(debt_sum), utility.LN(credit_sum)) )
+                    report_data.append(( str(index), "-" , "-", "Total", utility.LN(debt_sum), utility.LN(credit_sum)) )
                 index = 1
                 debt_sum = 0
                 credit_sum = 0
             debt_sum += utility.getFloatNumber(debt)
             credit_sum += utility.getFloatNumber(credit)            
-            doc_number0 = doc_number
-            date = dateToString(b.date)
-            report_data.append((doc_number, str(index), date, code, s.name, desc, debt, credit))
+            doc_number0 = doc_number            
+            report_data.append(( str(index), code, s.name, desc, debt, credit))
             index += 1        
             prevDoc = b.number
-        report_data.append((doc_number, str(index), "-", "-" , "-", "Total", utility.LN(debt_sum), utility.LN(credit_sum)) )
+        report_data.append(( str(index), "-" , "-", "Total", utility.LN(debt_sum), utility.LN(credit_sum)) )
         return {"data":report_data ,"heading":report_header}
     
     def createPrintJob(self):
+
+
         report = self.createReport()
         if report == None:
             return
         #if len(report["data"]) == 0:
-        datestr = dateToString(self.docdate)
-        docnumber = self.docnumbers[0]
-        if config.digittype == 1:
-            docnumber = utility.convertToPersian(docnumber)
+
             
-        # printjob.setHeader(_("Accounting Document"), {_("Document Number"):docnumber, _("Date"):datestr})        
-        report_header = report['heading']
-        report_data = report['data']
-        todaystr = dateToString(date.today())
-        html = '<p ' + self.reportObj.subjectHeaderStyle + '><u>' + _("Accounting Document") + '</u></p><p style="text-align:center;">' + _("Document Number") + ': ' + str(docnumber) + '</p><p ' + self.reportObj.detailHeaderStyle + '>' + _("Date") + ': ' + todaystr +'</p>'
-        html += self.reportObj.createTable(report_header,report_data)
+        html = report
+        # report_header = report['heading']
+        # report_data = report['data']
+
+
+        #html += self.createTable(report_header,report_data)
 
         return html
     
@@ -172,3 +251,38 @@ class DocumentReport:
             file.write(content)
             file.close()
         dialog.destroy()
+
+
+    def createTable (self,report_header, report_data):
+        if config.locale == 'en_US':
+            text_align = "left"
+            html = '<table style="width:100%"><tr>'
+            for header in report_header:
+                html += '<th>' + header + '</th>'
+            html += '</tr>'
+            for row in report_data:
+                html += '<tr>'
+                for data in row:
+                    html += '<td>' + str(data) + '</td>'
+                html += '</tr>'
+            html += '</table>'
+        else:
+            text_align =  "right"
+            html = '<table style="width:100%; "><tr>'
+            report_header = report_header[::-1]
+            for header in report_header:
+                html += '<th>' + header + '</th>'
+            html += '</tr>'
+            for row in report_data:
+                row = row[::-1]
+                html += '<tr>'
+                for data in row:
+                    html += '<td>' + str(data) + '</td>'
+                html += '</tr>'
+            html += '</table>'
+        # html = '<!DOCTYPE html> <html> <head> \
+        #         <style> @font-face {font-family: Vazir; src: url(data/font/Vazir.woff); } html {font-family: myFirstFont; } \
+        #         table {border-collapse: collapse;  text-align:'+text_align+';} \
+        #         table, th {border-top: 2px solid; border-bottom: 2px solid; border-left:1px solid; border-right:1px solid black; padding: 10px;font-size:10px;}\
+        #          td {border-left:1px solid; border-right:1px solid; padding: 10px;} </style> <meta charset="UTF-8"> </head> <body>' + html + '</body> </html>'        
+        return html
