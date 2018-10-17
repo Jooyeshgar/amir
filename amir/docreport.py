@@ -63,6 +63,7 @@ class DocumentReport:
             daDirection = 'left'
             text_align = "right"
         todaystr = dateToString(date.today())
+        billCount = 1
         for b in bills:
             report_data = []       
             query = config.db.session.query(Notebook,Subject).select_from(outerjoin(Notebook, Subject, Notebook.subject_id == Subject.id)).filter(Notebook.bill_id==b.id).order_by(Notebook.id.asc())
@@ -104,7 +105,7 @@ class DocumentReport:
                 report_data.append(( str(index), code, s.name, desc, debt, credit))
                 index += 1                        
                 
-            html += '<table style="width:100%"><tr>'
+            html += '<table class="notebooks"><tr>'
             if config.locale == 'en_US':                            
                 for header in report_header:
                     html += '<th>' + header + '</th>'
@@ -125,17 +126,28 @@ class DocumentReport:
                     for data in row:
                         html += '<td>' + str(data) + '</td>'
                     html += '</tr>'
-            row = [unicode('<td colspan="3" >'+unicode(_("Total"))+'</td>'),unicode('<td>'+unicode(utility.LN(debt_sum))+'</td>'), unicode('<td>'+unicode(utility.LN(credit_sum))+'</td>') ]
+            row = ['<td colspan="4" >'+unicode(_("Total")+'</td>'),'<td>'+unicode(utility.LN(debt_sum)+'</td>'),'<td>'+unicode(utility.LN(credit_sum))+'</td>' ]
+            signaturesRow = [unicode(_("Accounting")), unicode(_("Financial Manager")) , unicode(_("Managing Director")) ]
             if config.locale != 'en_US':   
-                row = row[::-1]
-           # html+= '<tr>'+row[0], row[1],row[2]+'</tr>'
-            html += '</table><p style="page-break-before: always" ></p>'
+                row = row[::-1]     
+                signaturesRow = signaturesRow[::-1]       
+            html+= '<tr style="border:1px solid black;">'+row[0]+ row[1]+row[2]+'</tr>'
+            html += '</table> <br/><br/>'
+            html+= '<table class="signatures" > \
+                    <tr style="border:0px" ><td>'+signaturesRow[0]+'</td> <td>'+signaturesRow[1]+'</td> <td>'+signaturesRow[2]+'</td> </tr>\
+                    <tr></tr> \
+                    </table>'
+            billCount +=1
+            if billCount <= len(bills):
+                html+= '<p style="page-break-before: always" ></p>'
 
         html = '<!DOCTYPE html> <html> <head> \
                 <style> @font-face {font-family: Vazir; src: url(data/font/Vazir.woff); } html {font-family: myFirstFont; } \
-                table {border-collapse: collapse;  text-align:'+text_align+';} \
-                table, th {border-top: 2px solid; border-bottom: 2px solid; border-left:1px solid; border-right:1px solid black; padding: 10px;font-size:10px;}\
-                 td {border-left:1px solid; border-right:1px solid; padding: 10px;} </style> <meta charset="UTF-8"> </head> <body>' + html + '</body> </html>'             
+                table {border-collapse: collapse;  text-align:'+text_align+'; width:100%;} \
+                th {border:1px solid black; padding: 10px;font-size:10px;}\
+                .notebooks td {border-left:1px solid; border-right:1px solid; padding: 10px;font-size:10px;} \
+                .signatures {border:0px; font-size:14px; text-align:center}\
+                </style> <meta charset="UTF-8"> </head> <body>' + html + '</body> </html>'             
         return html
 
         # query1 = config.db.session.query(Bill, Notebook, Subject)
