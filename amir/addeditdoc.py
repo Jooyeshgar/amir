@@ -300,8 +300,8 @@ class AddEditDoc:
                                        _("Are you sure to remove this row?"))
             msgbox.set_title(_("Are you sure?"))
             result = msgbox.run();
-            if result == Gtk.ResponseType.OK :
-                id     = int(unicode(self.liststore.get(iter, 0)[0]))
+            if result == Gtk.ResponseType.OK :                
+                id     = int(unicode(self.liststore.get(iter, 6)[0]))
                 code   = int(unicode(self.liststore.get(iter, 1)[0]))
                 debt   = int(unicode(self.liststore.get(iter, 3)[0].replace(",", "")))
                 credit = int(unicode(self.liststore.get(iter, 4)[0].replace(",", "")))
@@ -339,7 +339,7 @@ class AddEditDoc:
         #TODO if number is not equal to the maximum BigInteger value, prevent bill registration.
         iter = self.liststore.get_iter_first()
         while iter != None :
-            code = utility.convertToLatin(self.liststore.get(iter, 1)[0])
+            code = utility.convertToLatin(self.liststore.get(iter, 1)[0])            
             debt = utility.getFloatNumber(self.liststore.get(iter, 3)[0])
             value = -(debt)
             if(self.liststore.get(iter,6)[0] != None):
@@ -351,15 +351,15 @@ class AddEditDoc:
                 value = credit
             desctxt = unicode(self.liststore.get(iter, 5)[0])
             
-            query = config.db.session.query(Subject).select_from(Subject)
+            query = config.db.session.query(Subject)
             query = query.filter(Subject.code == code)
             subject_id = query.first().id
             
             self.cl_document.add_notebook(subject_id, value, desctxt, int(id))
             
-            iter = self.liststore.iter_next(iter)
-
+            iter = self.liststore.iter_next(iter)        
         result = self.cl_document.save(delete_items= self.deleted_items)
+        self.deleted_items = []
         if result == -1:
             msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, 
                                        _("Document should not be empty"))
@@ -379,6 +379,7 @@ class AddEditDoc:
         else:
             self.liststore.clear()
             self.deleted_items = []
+            self.cl_document.clear_notebook()
             self.showRows()
         
         docnum = utility.LN(self.cl_document.number)
@@ -440,7 +441,7 @@ class AddEditDoc:
     ##Call subjects::Subjects to show Subject window
     def selectSubject(self, sender):
         subject_win = subjects.Subjects()
-        code = self.code.get_text()
+        code = utility.convertToLatin(self.code.get_text() )
         subject_win.highlightSubject(code)
         subject_win.connect("subject-selected", self.subjectSelected)
         
