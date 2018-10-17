@@ -55,7 +55,7 @@ class Document:
             raise Exception(_('You should save the document before make it permanent') )
         
         self.permanent = permanent
-        query = share.config.db.session.query(Bill).select_from(Bill).filter(Bill.id == self.id)
+        query = share.config.db.session.query(Bill).filter(Bill.id == self.id)
         query.update({Bill.permanent:self.permanent})
         share.config.db.session.commit()
 
