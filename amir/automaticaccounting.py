@@ -198,7 +198,16 @@ class AutomaticAccounting:
                 keys = self.type_configs[self.type_index][5]
                 parent_id=[]
                 for key in keys.split(','):
-                    parent_id+=dbconf.get_int_list(key)
+                    if key == 'cash':
+                        val = dbconf.get_value(key)
+                        sub = share.config.db.session.query(Subject).filter(Subject.id == val).first()
+                        pID = sub.parent_id 
+                        if pID !=0:
+                            parent_id.append(pID)
+                        else:
+                            parent_id.append(key)
+                    else:
+                        parent_id+=dbconf.get_int_list(key)
                 sub = subjects.Subjects(parent_id=parent_id)
             sub.connect('subject-selected', self.on_subject_selected, entry, False)
         else:
