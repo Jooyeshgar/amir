@@ -473,7 +473,7 @@
                           <packing>
                             <property name="left_attach">4</property>
                             <property name="top_attach">3</property>
-                            <property name="width">5</property>
+                            <property name="width">3</property>
                           </packing>
                         </child>
                         <child>
@@ -487,6 +487,28 @@
                           <packing>
                             <property name="left_attach">8</property>
                             <property name="top_attach">5</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkTextView" id="profitTextview">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">8</property>
+                            <property name="top_attach">3</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Estimated profit</property>
+                            <property name="xalign">0</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">7</property>
+                            <property name="top_attach">3</property>
                           </packing>
                         </child>
                         <child>

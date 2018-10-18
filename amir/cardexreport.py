@@ -1,17 +1,10 @@
 import gi
 from gi.repository import Gtk
-from datetime import date
+from datetime import date , timedelta
 import os
 import platform
 
-from sqlalchemy import or_
-from sqlalchemy.orm.util import outerjoin
-from sqlalchemy.sql import between, and_
-from sqlalchemy.sql.functions import sum
-
 import utility
-import printreport
-import previewreport
 from database import *
 from dateentry import *
 from share import share
@@ -19,9 +12,7 @@ from helpers import get_builder
 import  customers
 import  product
 from gi.repository import Gdk
-from calverter import calverter
 from converter import *
-from datetime import datetime, timedelta
 
 config = share.config
 
@@ -120,11 +111,13 @@ class CardexReport:
             self.builder.get_object("sellingPriceTextView").get_buffer().set_text(utility.LN(format(float(product.sellingPrice))))
             self.builder.get_object("productDescriptionTextView").get_buffer().set_text(product.productDesc)
 
-            
+            totalSellQnt = totalBuyQnt = totalSellIncome = totalBuyPrice = 0
             #Fill factor treeview
             initQ = config.db.session.query(FactorItems).filter(FactorItems.factorId == 0).first()
             if initQ:
                 self.treestore.append(None, (_("Initial inventory") , "-" , "-" ,str(utility.LN(0)) , "-",str(utility.LN( initQ.qnty)),str(utility.LN(initQ.untPrc)), "-" ) ) 
+                totalBuyPrice += float(initQ.untPrc) * float(initQ.qnty)                
+                totalBuyQnt += float(initQ.qnty)
             query = config.db.session.query(FactorItems,Factors,Customers)
             query = query.filter(product.id == FactorItems.productId, FactorItems.factorId == Factors.Id, Customers.custId == Factors.Cust)
             if factorType and factorType != 'All':
@@ -157,20 +150,29 @@ class CardexReport:
             proQuan = config.db.session.query(Products.quantity).filter(Products.id == (result[0]).FactorItems.productId).first()
             if proQuan:
                 productCount = float(proQuan.quantity)
+
             for factor in result:                
                 if factor.Factors.Sell == True:
                     productCount += float(factor.FactorItems.qnty)
                     buy_quantity = '-'
-                    sell_quantity = str(utility.LN(float(factor.FactorItems.qnty)))                    
+                    sell_quantity = str(utility.LN(float(factor.FactorItems.qnty)))    
+                    totalSellIncome += float(factor.FactorItems.qnty) * float(factor. FactorItems.untPrc)    # kole foroosh = sum(tedad * gheymat)
+                    totalSellQnt += float(factor.FactorItems.qnty)                            # kole tedade forush = sum (tedad)
                 else:
                     productCount -= float(factor.FactorItems.qnty)
                     buy_quantity = str(utility.LN(float(factor.FactorItems.qnty)))
                     sell_quantity = '-'
+                    totalBuyPrice += float(factor.FactorItems.qnty) * float(factor. FactorItems.untPrc)   # kole kharid = sum(tedad * gheymat)                    
+                    totalBuyQnt += float(factor.FactorItems.qnty) 
 
                 date = dateToString(factor.Factors.tDate)
 
                 self.treestore.append(None, (str(factor.Factors.Code), str(factor.Customers.custCode), str(factor.Customers.custName),str(utility.LN(productCount)),\
                                         sell_quantity, buy_quantity,str(utility.LN(float(factor.FactorItems.untPrc))), str(date)))
+
+            profit = totalSellIncome - ((totalBuyPrice/totalBuyQnt) *totalSellQnt )
+            profit = "{0:.3f}".format(profit)           # rounding floating point number
+            self.builder.get_object("profitTextview").get_buffer().set_text(utility.LN(profit))
         else:
             statusbar = self.builder.get_object('statusbar3')
             context_id = statusbar.get_context_id('statusbar')
