@@ -183,6 +183,9 @@ class AddEditDoc:
         self.code.set_text("")
         
         desc = self.builder.get_object("desc")
+        desc.set_text("")
+        zero = 0 if config.digittype == 1 else utility.convertToPersian('0')
+        self.amount.set_text(zero)
         
         result = dialog.run()
         if result == 1:

@@ -39,7 +39,7 @@ class DocumentReport:
         self.builder.get_object("buttonPrint").connect( "clicked", self.printReport)       
 
     def createReport(self):
-        number = unicode(self.number.get_text())
+        number = utility.convertToLatin(unicode(self.number.get_text()) )
         
         if re.match('^\d+$', number) != None:
             self.docnumbers=[int(number)]
@@ -105,11 +105,11 @@ class DocumentReport:
                 report_data.append(( str(index), code, s.name, desc, debt, credit))
                 index += 1                        
                 
-            html += '<table class="notebooks"><tr>'
+            html += '<table class="notebooks"><thead><tr>'
             if config.locale == 'en_US':                            
                 for header in report_header:
                     html += '<th>' + header + '</th>'
-                html += '</tr>'
+                html += '</tr></thead><tbody>'
                 for row in report_data:
                     html += '<tr>'
                     for data in row:
@@ -119,7 +119,7 @@ class DocumentReport:
                 report_header = report_header[::-1]
                 for header in report_header:
                     html += '<th>' + header + '</th>'
-                html += '</tr>'
+                html += '</tr></thead><tbody>'
                 for row in report_data:
                     row = row[::-1]
                     html += '<tr>'
@@ -132,7 +132,7 @@ class DocumentReport:
                 row = row[::-1]     
                 signaturesRow = signaturesRow[::-1]       
             html+= '<tr style="border:1px solid black;">'+row[0]+ row[1]+row[2]+'</tr>'
-            html += '</table> <br/><br/>'
+            html += '</tbody></table> <br/><br/>'
             html+= '<table class="signatures" > \
                     <tr style="border:0px" ><td>'+signaturesRow[0]+'</td> <td>'+signaturesRow[1]+'</td> <td>'+signaturesRow[2]+'</td> </tr>\
                     <tr></tr> \
@@ -142,92 +142,19 @@ class DocumentReport:
                 html+= '<p style="page-break-before: always" ></p>'
 
         html = '<!DOCTYPE html> <html> <head> \
-                <style> @font-face {font-family: Vazir; src: url(data/font/Vazir.woff); } html {font-family: myFirstFont; } \
+                <style> @font-face {font-family: "Vazir"; src: url(data/font/Vazir.woff); }\
                 table {border-collapse: collapse;  text-align:'+text_align+'; width:100%;} \
                 th {border:1px solid black; padding: 10px;font-size:10px;}\
+                thead {display: table-header-group;} \
                 .notebooks td {border-left:1px solid; border-right:1px solid; padding: 10px;font-size:10px;} \
                 .signatures {border:0px; font-size:14px; text-align:center}\
-                </style> <meta charset="UTF-8"> </head> <body>' + html + '</body> </html>'             
+                </style> <meta charset="UTF-8"> </head> <body>' + html + '</body> </html>'                     
         return html
 
-        # query1 = config.db.session.query(Bill, Notebook, Subject)
-        # query1 = query1.select_from(outerjoin(outerjoin(Notebook, Subject, Notebook.subject_id == Subject.id), Bill, Notebook.bill_id == Bill.id))
-        # query1 = query1.filter(Bill.number.in_(self.docnumbers)).order_by(Bill.number.asc(),Notebook.id.asc())
-        # res = query1.all()
-        # if len(res) == 0:
-        #     msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, 
-        #                                _("No document found with the requested number."))
-        #     msgbox.set_title(_("Invalid document number"))
-        #     msgbox.run()
-        #     msgbox.destroy()
-        #     return
-
-        # self.docdate = res[0][0].date
-        # report_header = [_("Index"), _("Subject Code"), _("Subject Name"), _("Description"), _("Debt"), _("Credit")]
-        # index = 1
-        # debt_sum = credit_sum = doc_number0 = 0
-        prevDoc = res[0][0].number
-        for b, n, s in res:
-            desc = n.desc
-            if n.value < 0:
-                credit = utility.LN(0)
-                debt = utility.LN(-(n.value))
-            else:
-                credit = utility.LN(n.value)
-                debt = utility.LN(0)
-                desc = "   " + desc
-                
-            code = utility.LN(s.code)
-            doc_number = utility.LN(b.number)
-            if doc_number != doc_number0:
-                if doc_number0:
-                    report_data.append(( str(index), "-" , "-", "Total", utility.LN(debt_sum), utility.LN(credit_sum)) )
-                index = 1
-                debt_sum = 0
-                credit_sum = 0
-            debt_sum += utility.getFloatNumber(debt)
-            credit_sum += utility.getFloatNumber(credit)            
-            doc_number0 = doc_number            
-            report_data.append(( str(index), code, s.name, desc, debt, credit))
-            index += 1        
-            prevDoc = b.number
-        report_data.append(( str(index), "-" , "-", "Total", utility.LN(debt_sum), utility.LN(credit_sum)) )
-        return {"data":report_data ,"heading":report_header}
+    def createPrintJob(self):       
+        return   self.createReport()
     
-    def createPrintJob(self):
-
-
-        report = self.createReport()
-        if report == None:
-            return
-        #if len(report["data"]) == 0:
-
-            
-        html = report
-        # report_header = report['heading']
-        # report_data = report['data']
-
-
-        #html += self.createTable(report_header,report_data)
-
-        return html
-    
-    def createPreviewJob(self):
-        report = self.createReport()
-        if report == None:
-            return
-        #if len(report["data"]) == 0:
-        datestr = dateToString(self.docdate)
-        docnumber = self.docnumber
-        if config.digittype == 1:
-            docnumber = utility.convertToPersian(docnumber)
-            
-        preview = previewreport.PreviewReport(report["data"], report["heading"])
-        #preview.setHeader(_("Accounting Document"), {_("Document Number"):docnumber, _("Date"):datestr})
-        preview.setDrawFunction("drawDocument")
-        return preview
-    
-    def previewReport(self, sender):
+    def previewReport(self, sender):        
         self.reportObj = WeasyprintReport()
         printjob = self.createPrintJob()
         if printjob != None:

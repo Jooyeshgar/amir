@@ -65,7 +65,7 @@ class WeasyprintReport:
         Printo(html, landscape).run()
         
     def showPreview(self, html, landscape = False):
-        HTML(string=html).write_pdf('report.pdf')
+        HTML(string=html,base_url=__file__).write_pdf('report.pdf')
         if sys.platform == 'linux2':
             subprocess.call(["xdg-open", 'report.pdf'])
         else:
