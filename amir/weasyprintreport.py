@@ -73,36 +73,49 @@ class WeasyprintReport:
         time.sleep(3)
         os.remove('report.pdf');
         
-    def createTable(self,report_header,report_data):
+    def createTable(self,report_header,report_data , col_width=[]):   
+        hasWidth = True if len(col_width) else False     
+        for i in range(0, len(report_header)):
+            col_width[i] = 'style="width:'+str(col_width[i]) + 'pt" ' if hasWidth else ""
+        i = 0
         if config.locale == 'en_US':
             text_align = "left"
-            html = '<table style="width:100%"><tr>'
+            html = '<table>\
+                    <thead><tr>'
             for header in report_header:
-                html += '<th>' + header + '</th>'
-            html += '</tr>'
+                html += '<th '+col_width[i]+'>' + header + '</th>'
+                i +=1
+            html += '</tr></thead>\
+                    <tbody>'
             for row in report_data:
                 html += '<tr>'
                 for data in row:
                     html += '<td>' + str(data) + '</td>'
                 html += '</tr>'
-            html += '</table>'
+            html += '</tbody></table>'
         else:
             text_align =  "right"
-            html = '<table style="width:100%; "><tr>'
+            html = '<table >\
+                    <thead><tr>'
             report_header = report_header[::-1]
+            col_width = col_width[::-1]
             for header in report_header:
-                html += '<th>' + header + '</th>'
-            html += '</tr>'
+                html += '<th '+col_width[i]+'>' + header + '</th>'
+                i +=1
+            html += '</tr></thead>\
+                    <tbody>'
             for row in report_data:
                 row = row[::-1]
                 html += '<tr>'
                 for data in row:
                     html += '<td>' + str(data) + '</td>'
                 html += '</tr>'
-            html += '</table>'
+            html += '</tbody></table>'
         html = '<!DOCTYPE html> <html> <head> \
-                <style> @font-face {font-family: Vazir; src: url(data/font/Vazir.woff); } html {font-family: myFirstFont; } \
-                table {border-collapse: collapse;  text-align:'+text_align+';} \
-                table, th {border-top: 2px solid; border-bottom: 2px solid; border-left:1px solid; border-right:1px solid black; padding: 10px;font-size:10px;}\
-                 td {border-left:1px solid; border-right:1px solid; padding: 10px;} </style> <meta charset="UTF-8"> </head> <body>' + html + '</body> </html>'        
+                <style> @font-face {font-family: Vazir; src: url(data/font/Vazir.woff); } \
+                table {border-collapse: collapse; border-bottom:1px solid black; text-align:'+text_align+'; width:100%; font-size:8pt;}\
+                th {border: 2px solid black;  padding: 7pt;font-size:10pt;}\
+                td {border-left:1px solid; border-right:1px solid; padding: 10pt;} </style> \
+                <meta charset="UTF-8"> </head>\
+                <body>' + html + '</body> </html>'                
         return html

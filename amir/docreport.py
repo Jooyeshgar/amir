@@ -52,6 +52,9 @@ class DocumentReport:
         
         self.builder.get_object("message").set_text("")
         report_header = [_("Index"), _("Subject Code"), _("Subject Name"), _("Description"), _("Debt"), _("Credit")]
+        col_width = [23, 25, 45, 250, 40, 40 ]
+        for i in range(0, len(report_header)):
+            col_width[i] = 'style="width:'+str(col_width[i]) + 'pt" ' 
         html = "" 
         bills = config.db.session.query(Bill).filter(Bill.number.in_(self.docnumbers)).order_by(Bill.number.asc()).all()
         if config.locale == 'en_US':
@@ -105,10 +108,12 @@ class DocumentReport:
                 report_data.append(( str(index), code, s.name, desc, debt, credit))
                 index += 1                        
                 
+            i = 0
             html += '<table class="notebooks"><thead><tr>'
             if config.locale == 'en_US':                            
                 for header in report_header:
-                    html += '<th>' + header + '</th>'
+                    html += '<th '+col_width[i]+'>' + header + '</th>'
+                    i+=1
                 html += '</tr></thead><tbody>'
                 for row in report_data:
                     html += '<tr>'
@@ -117,8 +122,10 @@ class DocumentReport:
                     html += '</tr>'                
             else:                
                 report_header = report_header[::-1]
+                col_width = col_width[::-1]
                 for header in report_header:
-                    html += '<th>' + header + '</th>'
+                    html += '<th '+col_width[i]+'>' + header + '</th>'
+                    i+=1
                 html += '</tr></thead><tbody>'
                 for row in report_data:
                     row = row[::-1]
@@ -191,37 +198,3 @@ class DocumentReport:
             file.close()
         dialog.destroy()
 
-
-    def createTable (self,report_header, report_data):
-        if config.locale == 'en_US':
-            text_align = "left"
-            html = '<table style="width:100%"><tr>'
-            for header in report_header:
-                html += '<th>' + header + '</th>'
-            html += '</tr>'
-            for row in report_data:
-                html += '<tr>'
-                for data in row:
-                    html += '<td>' + str(data) + '</td>'
-                html += '</tr>'
-            html += '</table>'
-        else:
-            text_align =  "right"
-            html = '<table style="width:100%; "><tr>'
-            report_header = report_header[::-1]
-            for header in report_header:
-                html += '<th>' + header + '</th>'
-            html += '</tr>'
-            for row in report_data:
-                row = row[::-1]
-                html += '<tr>'
-                for data in row:
-                    html += '<td>' + str(data) + '</td>'
-                html += '</tr>'
-            html += '</table>'
-        # html = '<!DOCTYPE html> <html> <head> \
-        #         <style> @font-face {font-family: Vazir; src: url(data/font/Vazir.woff); } html {font-family: myFirstFont; } \
-        #         table {border-collapse: collapse;  text-align:'+text_align+';} \
-        #         table, th {border-top: 2px solid; border-bottom: 2px solid; border-left:1px solid; border-right:1px solid black; padding: 10px;font-size:10px;}\
-        #          td {border-left:1px solid; border-right:1px solid; padding: 10px;} </style> <meta charset="UTF-8"> </head> <body>' + html + '</body> </html>'        
-        return html

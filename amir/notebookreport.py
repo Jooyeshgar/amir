@@ -178,9 +178,9 @@ class NotebookReport(PreviewReport):
         #Prepare report data for PrintReport class
         res = query1.all()
         if self.type == self.__class__.DAILY:
-            report_header = [_("Doc. Number"), _("Date"), _("Subject Code"), _("Description"), _("Debt"), _("Credit")]
+            report_header = [_("Doc."), _("Date"), _("Subject Code"), _("Description"), _("Debt"), _("Credit")]
             #define the percentage of table width that each column needs
-            col_width = [10, 10, 11, 43, 13, 13 ]
+            col_width = [23, 25, 27, 250, 40, 40 ]
             for n, code, b in res:
                 desc = n.desc
                 if n.value < 0:
@@ -202,9 +202,9 @@ class NotebookReport(PreviewReport):
                 remaining = query2.first()[0]
             
             #if self.type == self.__class__.LEDGER:
-            report_header = [_("Doc. Number"), _("Date"), _("Description"), _("Debt"), _("Credit"), _("Diagnosis"), _("Remaining")]
+            report_header = [_("Doc."), _("Date"), _("Description"), _("Debt"), _("Credit"), _("Diagnosis"), _("Remaining")]
             #define the percentage of table width that each column needs
-            col_width = [10, 10, 37, 13, 13, 4, 13]
+            col_width = [23, 25, 160, 40, 40, 15, 32]
             for n, code, b in res:
                 if n.value < 0:
                     credit = utility.LN("0")
@@ -241,6 +241,7 @@ class NotebookReport(PreviewReport):
             return
         report_header = report['heading']
         report_data = report['data']
+        col_width  = report['col-width']
         if self.type == self.__class__.DAILY:
             todaystr = dateToString(date.today())
             html = '<p ' + self.reportObj.subjectHeaderStyle + '><u>' + _("Daily NoteBook") + '</u></p><p ' + self.reportObj.detailHeaderStyle + '>' + _("Date") + ': ' + todaystr +'</p>'
@@ -254,7 +255,7 @@ class NotebookReport(PreviewReport):
                 html = '<p ' + self.reportObj.subjectHeaderStyle + '><u>' + _("Ledgers Notebook") + '</u></p><p style="text-align:center;">' + _("Subject Name") + ': ' + self.subname + '</p><p ' + self.reportObj.detailHeaderStyle + '>' + _("Subject Code") + ': ' + code +'</p>'
             else:
                 html = '<p ' + self.reportObj.subjectHeaderStyle + '><u>' + _("Sub-ledgers Notebook") + '</u></p><p style="text-align:center;">' + _("Subject Name") + ': ' + self.subname + '</p><p ' + self.reportObj.detailHeaderStyle + '>' + _("Subject Code") + ': ' + code +'</p>'
-        html += self.reportObj.createTable(report_header,report_data)
+        html += self.reportObj.createTable(report_header,report_data,col_width)
 
 
         return html
