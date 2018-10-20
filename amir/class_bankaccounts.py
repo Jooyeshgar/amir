@@ -29,10 +29,18 @@ class BankAccountsClass:
         return config.db.session.query(BankAccounts).select_from(BankAccounts).all()
 
     def get_bank_id(self, name):
-        return config.db.session.query(BankNames).select_from(BankNames).filter(BankNames.Name == unicode(name)).first().Id
+        bank = config.db.session.query(BankNames).select_from(BankNames).filter(BankNames.Name == unicode(name)).first()
+        bank_id  = None
+        if bank: 
+            bank_id = bank.Id
+        return bank_id
 
     def get_bank_name(self, id):
-        return config.db.session.query(BankNames).select_from(BankNames).filter(BankNames.Id == id).first().Name
+        bank = config.db.session.query(BankNames).select_from(BankNames).filter(BankNames.Id == id).first()
+        bank_name = None
+        if bank:
+            bank_name = bank.Name
+        return bank_name
 
     def add_bank(self, bank_name):
         bank_name = unicode(bank_name)
@@ -98,7 +106,7 @@ class BankAccountsClass:
                            BankAccounts.accDesc        : desc})           
         
 
-        if id == -1:
+        if id == -1 and bank_account:
             return bank_account.accId
         return id
 
@@ -106,8 +114,9 @@ class BankAccountsClass:
     #
     ## @param Integer bank account id
     def delete_account(self, id):
-        query = config.db.session.query(BankAccounts).filter(BankAccounts.accId == id)
-        accName = query.first().accName
+        query = config.db.session.query(BankAccounts).filter(BankAccounts.accId == id).first()
+        if query:
+            accName = query.accName
         query.delete()
         bankSubject = dbconfig.dbConfig().get_int('bank')
         config.db.session.query(Subject).filter(Subject.parent_id==bankSubject).filter(Subject.name== accName).delete()

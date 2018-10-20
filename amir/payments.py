@@ -317,7 +317,7 @@ class Payments(GObject.GObject):
 		if self.sellFlag:
 			bank_name = self.bankaccounts_class.get_bank_name(bank)		
 		else:
-			bank_name = self.bankaccounts_class.get_account(bank).accName
+			bank_name = self.bankaccounts_class.get_account(bank) .accName
 		serial 		= unicode(self.serialNoEntry.get_text())
 		pymntDesc 	= unicode(self.pymntDescEntry.get_text())		
 		payer		= self.payerEntry.get_text()		
@@ -409,27 +409,31 @@ class Payments(GObject.GObject):
 		
 		dueDte = self.dueDateEntry.get_text()
 		if dueDte == "":
-			msg += _("You must enter the due date for the non-cash payment.\n")
-			errFlg  = True
+			msg += _("You must enter the due date for the non-cash payment.\n")			
 		
 		payment = self.pymntAmntEntry.get_text()	
 		if payment =="":
-			 msg+=_("You must enter the Amount cheaue or reciep")
-			 errFlg =True
-		
+			 msg+=_("You must enter the Amount cheaue or reciep.")			 		
 	
 		wrtDate = self.writeDateEntry.get_text()
 		if wrtDate == "":
-			msg = _("You must enter a writing date for the cheque.\n")
-			errFlg  = True
+			msg = _("You must enter a writing date for the cheque.\n")			
 			
 		serialNo = self.serialNoEntry.get_text()
 		if serialNo == "":
-			msg += _("You must enter the serial number for the non-cash payment.\n")
-			errFlg  = True			
-				
+			msg += _("You must enter the serial number for the non-cash payment.\n")				
+		
+		bank = int(self.bankCombo.get_active()) + 1		
+		if self.sellFlag:
+			bank_name = self.bankaccounts_class.get_bank_name(bank)		
+			if not bank_name:
+				msg += _("No bank is defined.")
+		else:
+			bank_name = self.bankaccounts_class.get_account(bank)
+			if not bank_name :
+				msg += _("No bank is defined. (Go to 'management->Bank Accounts' in order to define new bank accounts)\n")
 		#----values:
-		if errFlg:
+		if msg!="":
 			msg = _("The payment cannot be saved.\n\n%s") % msg
 			msgbox = Gtk.MessageDialog( self.addPymntDlg, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, 
 										Gtk.ButtonsType.OK, msg )

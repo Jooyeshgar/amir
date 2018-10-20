@@ -25,7 +25,7 @@ class ChequeHistory(Base):
     TransId  = Column(Integer,      ColumnDefault(0)) #Transaction id is zero for non-invoice cheques.
     Desc     = Column(Unicode(200), nullable = True)
     Date     = Column(Date, nullable=False)
-    Delete   = Column(Boolean)
+    # Delete   = Column(Boolean)
 
     def __init__( self, ChequeId, Amount, WrtDate, DueDate, Serial,
                   Status, Cust, Account, TransId, Desc, Date, Delete = False):
@@ -40,7 +40,7 @@ class ChequeHistory(Base):
         self.TransId  = TransId
         self.Desc     = Desc
         self.Date     = Date
-        self.Delete   = Delete
+        # self.Delete   = Delete
 
 ## @}
 
