@@ -61,8 +61,7 @@ if sys.platform == 'win32':
 import logging
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
-from gi.repository import GObject
+from gi.repository import Gtk , GdkPixbuf , GObject
 import gettext
 import locale
 from amir.database import *
@@ -410,20 +409,22 @@ class MainWindow(GObject.GObject):
 		else:
 			Gtk.Widget.set_default_direction(Gtk.TextDirection.LTR)
 
-		icondir = os.path.join(config.data_path, "media", "icon")
-
-		# try:
-		#   icon16 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "16.png"))
-		#   icon22 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "22.png"))
-		#   icon32 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "32.png"))
-		#   icon48 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "48.png"))
-		#   icon64 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "64.png"))
-		#   icon128 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "128.png"))
-		#   Gtk.window_set_default_icon_list(icon16, icon22, icon32, icon48, icon64, icon128)
-		# except GObject.GError:
-		#   pass
-
 		self.builder = helpers.get_builder("mainwin")
+		mainWin = self.builder.get_object("window1")
+		icondir = os.path.join(config.data_path, "media", "icon")
+		#self.window. set_default_icon_name(icondir+".icon")
+		try:
+			icon16 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "16.png"))
+			icon22 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "22.png"))
+			icon32 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "32.png"))
+			icon48 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "48.png"))
+			icon64 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "64.png"))
+			icon128 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "128.png"))
+			mainWin.set_default_icon_list([icon16, icon22, icon32, icon48, icon64, icon128])
+		except GObject.GError:
+			pass
+
+		
 		# self.loggedIn()
 		self.window = self.builder.get_object("login")
 		self.window.show()
