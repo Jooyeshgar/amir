@@ -1157,6 +1157,7 @@ Nazanin Sharifzadeh &lt;jouanii@gmail.com&gt;</property>
     </action-widgets>
   </object>
   <object class="GtkDialog" id="selectdoc">
+    <property name="width_request">300</property>
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Select document to edit</property>

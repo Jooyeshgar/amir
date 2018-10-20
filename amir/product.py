@@ -424,6 +424,12 @@ class Product(productgroup.ProductGroup):
 		iter = selection.get_selected()[1]
 		
 		if iter != None:
+			msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL, _("Are you sure to remove this row?"))
+			msgbox.set_title(_("Are you sure?"))
+			result = msgbox.run();
+			msgbox.destroy() 
+			if result != Gtk.ResponseType.OK : 
+				return 			
 			if self.treestore.iter_parent(iter) == None:
 			#Iter points to a product group
 				self.deleteProductGroup(sender)

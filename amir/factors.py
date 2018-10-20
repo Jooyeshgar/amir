@@ -339,6 +339,15 @@ class Factor(Payments):
 	def removeFactor(self, sender):
 		selection = self.treeview.get_selection()
 		iter1 = selection.get_selected()[1]	
+		if iter == None :
+			return
+		else:
+			msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL, _("Are you sure to remove this row?"))
+			msgbox.set_title(_("Are you sure?"))
+			result = msgbox.run();
+			msgbox.destroy() 
+			if result != Gtk.ResponseType.OK : 
+				return 			
 		code = self.treestore.get_value(iter1, 0)	
 		factor = config.db.session.query(Factors).filter(Factors.Id ==unicode(code) ).first()
 		TransactionId = factor  . Id		

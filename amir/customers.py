@@ -19,7 +19,6 @@ from    helpers                     import  get_builder
 from    share                       import  share
 from    datetime                    import  date
 from    database                    import  *
-from amir.dbconfig import dbconf
 import gi
 from gi.repository import Gtk
 from gi.repository import GObject
@@ -153,7 +152,7 @@ class Customer(customergroup.Group):
         self.customerForm.set_title(_("Add New Customer"))
         self.builder.get_object("addCustSubmitBtn").set_label(_("Add Customer"))
 
-        query = config.db.session.query(Subject.code).select_from(Subject).order_by(Subject.id.desc())
+        query = config.db.session.query(Subject.code).order_by(Subject.id.desc())
         code = query.filter(Subject.parent_id == dbconf.get_int('custSubject')).first()
         if code == None :
             lastcode = "001"
@@ -433,19 +432,28 @@ class Customer(customergroup.Group):
     def deleteCustAndGrps(self, sender):
         selection = self.treeview.get_selection()
         iter = selection.get_selected()[1]
-        
+        if iter != None:
+            msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL, _("Are you sure to remove this row?"))
+            msgbox.set_title(_("Are you sure?"))
+            result = msgbox.run();
+            msgbox.destroy() 
+            if result != Gtk.ResponseType.OK : 
+                return          
         if self.treestore.iter_parent(iter) == None:
             #Iter points to a customer group
             self.deleteCustomerGroup(sender)
         else:
             #Iter points to a customer
             code = self.treestore.get_value(iter, 0)
-            query = config.db.session.query(Customers).select_from(Customers)
+            query = config.db.session.query(Customers)
             customer = query.filter(Customers.custCode ==unicode(code) ).first()
-            
+
+            subjectCode = config.db.session.query(Subject).filter(Subject.id ==  dbconf.get_int('custSubject')).first().code     
+            subjectCode = unicode(subjectCode)  + unicode (code)
             #TODO check if this customer is used somewhere else
             
             config.db.session.delete(customer)
+            config.db.session.delete(config.db.session.query(Subject).filter(Subject.code== subjectCode).first())
             config.db.session.commit()
             self.treestore.remove(iter)
                 
