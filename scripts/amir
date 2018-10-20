@@ -387,7 +387,7 @@ class MainWindow(GObject.GObject):
 		self.window.show()
 
 		# Alerts
-		import amir.dbconfig 
+		import amir.dbconfig 				
 		dbconf = amir.dbconfig .dbConfig()
 		cashSum = config.db.session.query(func.sum(Notebook.value)).filter(Notebook.subject_id == dbconf.get_int('cash')).first()
 		if cashSum[0] < 0 and cashSum[0] != None:
@@ -458,6 +458,8 @@ class MainWindow(GObject.GObject):
 			utility.setPermissionValue(long(permission.value))
 		if self.loginUser and self.loginUser.validate_password(password.get_text()):
 			self.window.hide()
+			self.infobar = []
+			self.h = 30
 			self.loggedIn()
 		else:
 			statusbar = self.builder.get_object('statusbar1')
@@ -534,14 +536,20 @@ class MainWindow(GObject.GObject):
 		self.background.put(infobar ,0 , 0)
 		infobar.show_all()
 
-		GObject.timeout_add(3000, lambda w: w.destroy(), infobar)
+		GObject.timeout_add(9000, lambda w: w.destroy(), infobar)
 
 	def alert_dialog(self, text):
+		yPos = 0
+		#self.h = 30
+		alertBarCnt = len(self.infobar)	
+		if alertBarCnt:			
+			yPos = float(self.infobar[0].get_size_request().height) * float(alertBarCnt) 				
 		infobar = Gtk.InfoBar()
 		infobar.get_content_area().add(Gtk.Label(label=text))
-		infobar.set_size_request(self.background.get_allocated_width(), -1)
-		self.background.put(infobar ,0 , 0)
+		infobar.set_size_request(self.background.get_allocated_width(), self.h)
+		self.background.put(infobar ,0 , yPos)
 		infobar.show_all()
+		self.infobar.append(infobar)
 
 	def on_win_resize(self , sender , a):
 		pb = self.image.get_pixbuf()
@@ -549,8 +557,10 @@ class MainWindow(GObject.GObject):
 		imageHeight = pb.get_height()	
 		wDiff = self.background.get_allocated_width() - imageWidth		
 		hDiff = self.background.get_allocated_height() - imageHeight
-		self.background.move(self.image , wDiff/2 ,hDiff/2)
-		sender.emit_stop_by_name("on_win_resize")
+		self.background.move(self.image , wDiff/2 ,hDiff/2)		
+		if len(self.infobar):
+			for ib in self.infobar:
+				ib.set_size_request(self.background.get_allocated_width() , self.h)
 
 	def main(self):
 		Gtk.main()
