@@ -42,7 +42,7 @@ class Cheque(Base):
     chqDelete     = Column(Boolean)
 
     def __init__( self, chqAmount, chqWrtDate, chqDueDate, chqSerial,
-                  chqStatus, chqCust , chqAccount, chqTransId, chqNoteBookId, chqDesc,chqHistoryId ,chqOrder=0,chqDelete=False , chqId=0) :
+                  chqStatus, chqCust , chqAccount, chqTransId, chqNoteBookId, chqDesc,chqHistoryId=0 ,chqOrder=0,chqDelete=False , chqId=0) :
         if chqId != 0:
             self.chqId = chqId
         self.chqAmount   = chqAmount
@@ -56,9 +56,9 @@ class Cheque(Base):
         self.chqTransId  = chqTransId
         self.chqNoteBookId = chqNoteBookId
         self.chqDesc     = chqDesc
-        self.chqHistoryId = chqHistoryId
+        self.chqHistoryId = 0
         #self.chqBillId   = chqBillId
         #self.chqOrder    =  chqOrder
-        self.chqDelete    =  chqDelete
+        self.chqDelete    =  False
 ## @}
 

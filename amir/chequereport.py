@@ -202,7 +202,13 @@ class ChequeReport(GObject.GObject):
             else:
                 chqBill = 0
             self.bankaccounts_class = class_bankaccounts.BankAccountsClass()
-            if cheque.chqStatus in [1,2,6,8] :
+            isSpended  = False
+            if cheque.chqStatus == 6 :
+                history = config.db.session.query(ChequeHistory).filter(ChequeHistory.ChequeId==cheque.chqId).order_by(ChequeHistory.Id.desc()).limit(2).all()
+                if len(history):
+                    history = history[1]                    
+                    isSpended  = True if history.Status == 5 else False
+            if cheque.chqStatus in [1,2,6,8] and not isSpended:
                 chqAccount = self.bankaccounts_class.get_account(cheque.chqAccount).accName
             else :
                 chqAccount = self.bankaccounts_class.get_bank_name(cheque.chqAccount)
@@ -371,11 +377,11 @@ class ChequeReport(GObject.GObject):
         ch_history = ChequeHistory(result.Cheque.chqId, result.Cheque.chqAmount, result.Cheque.chqWrtDate, result.Cheque.chqDueDate, result.Cheque.chqSerial, result.Cheque.chqStatus, result.Cheque.chqCust, result.Cheque.chqAccount, result.Cheque.chqTransId, result.Cheque.chqDesc, self.current_time)
 
         document = class_document.Document()
-        document.add_notebook(result.Customers.custSubj  , result.Cheque.chqAmount, _('Cheque No. '+result.Cheque.chqSerial+ 'returned from '+result.Customers.custName))
+        document.add_notebook(result.Customers.custSubj  , result.Cheque.chqAmount, _('Cheque No. '+result.Cheque.chqSerial+ ' returned from '+result.Customers.custName))
         if stat == 5 :
-            document.add_notebook(dbconf.get_int('our_cheque'), -result.Cheque.chqAmount, _('Cheque No. '+result.Cheque.chqSerial+ 'returned from '+result.Customers.custName))
+            document.add_notebook(dbconf.get_int('other_cheque'), -result.Cheque.chqAmount, _('Cheque No. '+result.Cheque.chqSerial+ ' returned from '+result.Customers.custName))
         else:
-            document.add_notebook(dbconf.get_int('our_cheque'), -result.Cheque.chqAmount, _('Cheque No. '+result.Cheque.chqSerial+ 'returned from '+result.Customers.custName))
+            document.add_notebook(dbconf.get_int('our_cheque'), -result.Cheque.chqAmount, _('Cheque No. '+result.Cheque.chqSerial+ ' returned from '+result.Customers.custName))
         document.save()
 
         config.db.session.add(ch_history)
@@ -531,7 +537,7 @@ class ChequeReport(GObject.GObject):
         self.getSelection()        
         result = config.db.session.query(Cheque)
         result = result.filter(Cheque.chqId == self.code).first()        
-        if result.chqStatus != 1 :          # [2,3,4,5,6,7,8,9]: # 1
+        if result.chqStatus not in [1,5] :          # [2,3,4,5,6,7,8,9]: # 1
             self.builder.get_object("odatAsMoshtariButton").set_sensitive(False)
         if result.chqStatus !=3 :           # [1,2,4,5,6,7,8]: # 3 
             self.builder.get_object("odatBeMoshtariButton").set_sensitive(False)            

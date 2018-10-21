@@ -244,7 +244,7 @@ class Payments(GObject.GObject):
 			number = utility.convertToLatin(self.cheqListStore.get(iter, 1)[0])		
 			number = utility.getInt(number)						
 			cheque = self.chequesList [number-1]		# reads from cheques list that holds temporary changes in cheque table. for adding or edditing without effect on database before submiting factor form				
-			if cheque.chequeStatus == 5 :
+			if cheque.chqStatus == 5 :
 				return
 			self.editid = cheque.chqId
 			#payer_id   = cheque.chqCust
@@ -364,9 +364,7 @@ class Payments(GObject.GObject):
 			            self.transId					, 
 			            0					, #notebook ID 
 			            pymntDesc						, 
-			            0					,	#TODO must be a valid cheque history ID
-			            0					,	#bill Id
-			            number  			,	#order
+			            0					,	#history			            		           
 			            chqId = cheque.chqId			)	
 		else:		# adding cheque
 			self.numcheqs += 1
@@ -384,8 +382,6 @@ class Payments(GObject.GObject):
 			            0						,
 			            pymntDesc						, 
 			            0					,
-			            0					,
-			           	order				,
 			           	chqId = self.lastChqID	)				            				
 			
 			self.session.add(cheque)

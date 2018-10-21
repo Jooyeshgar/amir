@@ -422,15 +422,7 @@ class AutomaticAccounting:
             self.on_destroy(self.builder.get_object('general'))
             
             share.mainwin.silent_daialog(_('successfully added. Document number : %d') % document.number)
-#            infobar = Gtk.InfoBar()
-#            label = Gtk.Label(label=_('successfully added. Document number : %d') % document.number)
-#            infobar.get_content_area().add(label)
-#            width , height = self.main_window_background.window.get_size()
-#            infobar.set_size_request(width, -1)
-#            self.main_window_background.put(infobar ,0 , 0)
-#            infobar.show_all()
-#
-#            glib.timeout_add_seconds(3, lambda w: w.destroy(), infobar)
+
 
         #Store result in list store for showing in addeditdoc
         else:
