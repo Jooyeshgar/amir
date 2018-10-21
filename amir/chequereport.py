@@ -366,12 +366,16 @@ class ChequeReport(GObject.GObject):
         result = config.db.session.query(Cheque, Customers)
         result = result.filter(Customers.custId == Cheque.chqCust)
         result = result.filter(Cheque.chqId == self.code).first()
+        stat = result.Cheque.chqStatus
         result.Cheque.chqStatus = 6
         ch_history = ChequeHistory(result.Cheque.chqId, result.Cheque.chqAmount, result.Cheque.chqWrtDate, result.Cheque.chqDueDate, result.Cheque.chqSerial, result.Cheque.chqStatus, result.Cheque.chqCust, result.Cheque.chqAccount, result.Cheque.chqTransId, result.Cheque.chqDesc, self.current_time)
 
         document = class_document.Document()
         document.add_notebook(result.Customers.custSubj  , result.Cheque.chqAmount, _('Cheque No. '+result.Cheque.chqSerial+ 'returned from '+result.Customers.custName))
-        document.add_notebook(dbconf.get_int('other_cheque'), -result.Cheque.chqAmount, _('Cheque No. '+result.Cheque.chqSerial+ 'returned from '+result.Customers.custName))
+        if stat == 5 :
+            document.add_notebook(dbconf.get_int('our_cheque'), -result.Cheque.chqAmount, _('Cheque No. '+result.Cheque.chqSerial+ 'returned from '+result.Customers.custName))
+        else:
+            document.add_notebook(dbconf.get_int('our_cheque'), -result.Cheque.chqAmount, _('Cheque No. '+result.Cheque.chqSerial+ 'returned from '+result.Customers.custName))
         document.save()
 
         config.db.session.add(ch_history)

@@ -78,8 +78,7 @@ class Payments(GObject.GObject):
 		
 		self.chequeStatusLbl = self.builder.get_object("chequeStatusLbl")			
         
-		self.isCheque = self.builder.get_object("chequeRadioButton")
-		self.isRecpt = self.builder.get_object("recieptRadioButton")
+		self.isCheque = self.builder.get_object("chequeRadioButton")		
 		self.pymntDescEntry = self.builder.get_object("pymntDescEntry")
 		self.bankEntry = self.builder.get_object("bankEntry")	
 		if not self.sellFlag:
@@ -245,6 +244,8 @@ class Payments(GObject.GObject):
 			number = utility.convertToLatin(self.cheqListStore.get(iter, 1)[0])		
 			number = utility.getInt(number)						
 			cheque = self.chequesList [number-1]		# reads from cheques list that holds temporary changes in cheque table. for adding or edditing without effect on database before submiting factor form				
+			if cheque.chequeStatus == 5 :
+				return
 			self.editid = cheque.chqId
 			#payer_id   = cheque.chqCust
 			amount = utility.LN(cheque.chqAmount, False)
@@ -455,14 +456,16 @@ class Payments(GObject.GObject):
 		ttlNonCashLabel.set_text(total_str)
 		self.emit("payments-changed", total_str)
 	
-	def chequeTreeView_button_press(self, sender, event):
+	def chequeTreeView_button_press(self, sender, event):		
 		if event.type == Gdk.EventType._2BUTTON_PRESS:
 			selection = self.cheqTreeView.get_selection()
 			iter = selection.get_selected()[1]
 			if iter != None :
-				self.editPay(sender)
+				if self.builder.get_object("addpaymentBtn") . get_sensitive():
+					self.editPay(sender)
 			else:
-				self.addPayment(sender, True)
+				if self.builder.get_object("editPaymentBtn") . get_sensitive():
+					self.addPayment(sender, True)
 
 	def on_add_bank_clicked(self, sender):
 		model = self.bankCombo.get_model()

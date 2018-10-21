@@ -351,7 +351,7 @@ class AutomaticAccounting:
 
     def on_spend_cheque_buttun_clicked(self,button):
         cl_cheque = class_cheque.ClassCheque()                
-        self.spendChequeui. showPayments()        
+        self.spendChequeui. showPayments()              
         
     def on_save_button_clicked(self, button):
         share.config.db.session.rollback() 
@@ -449,13 +449,15 @@ class AutomaticAccounting:
             self.on_destroy(self.builder.get_object('general'))
 
 
-    def on_destroy(self, window):
+    def on_destroy(self, window,d=None):
+        share.config.db.session.rollback()
         window.destroy()
 
     #TODO get a parameter to can send data to parent
     def run(self, parent=None, liststore=None):
         self.liststore = liststore
         self.win  = self.builder.get_object('general')
+        self.win.connect('delete-event', self.on_destroy)
         self.win.connect('destroy', self.on_destroy)
 
         if parent:
