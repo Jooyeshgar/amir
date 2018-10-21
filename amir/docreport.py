@@ -47,7 +47,7 @@ class DocumentReport:
             m = re.match('^(\d+)-(\d+)$', number)
             self.docnumbers=range(int(m.group(1)),int(m.group(2))+1)
         else:
-            self.builder.get_object("message").set_text( _("Please enter number in correct format \r\nTrue Formats: '2-11' or '2'  ") )
+            self.builder.get_object("message").set_text( _("Please enter number in correct format \nTrue Formats: '2-11' or '2'  ") )
             return
         
         self.builder.get_object("message").set_text("")

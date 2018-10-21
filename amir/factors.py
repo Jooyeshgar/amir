@@ -1656,9 +1656,9 @@ class Factor(Payments):
 			exch_totalAmnt = utility.getFloat(exch[2]) * utility.getFloat(exch[3])
 			#TODO Use unit name specified for each product
 			if self.sell:
-				self.Document.add_notebook(sellid, exch_totalAmnt, _("Selling %s units, invoice number %s") % (exch[2], trans_code),self.Id)
+				self.Document.add_notebook(sellid, exch_totalAmnt, _("Selling %(units)s units, invoice number %(factor)s") % ({'units':exch[2], 'factor':trans_code}),self.Id)
 			else:
-				self.Document.add_notebook(sellid, -exch_totalAmnt, _("Buying %s units, invoice number %s") % (exch[2], trans_code),self.Id)
+				self.Document.add_notebook(sellid, -exch_totalAmnt, _("Buying  %(units)s units, invoice number  %(factor)s") % ({'units':exch[2], 'factor':trans_code}),self.Id)
 
 		isTrueFactorId = self.Id  * self.editFlag   # 0 means inserting new factor and bill . otherwise is a valid factor ID
 		docnum = self.Document.save(isTrueFactorId)

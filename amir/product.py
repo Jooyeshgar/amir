@@ -307,7 +307,7 @@ class Product(productgroup.ProductGroup):
 			quantity = 0 					
 		else:
 			if not purchase_price or  purchase_price =="":
-				msg+= _("Product with initial balance must have purchase price. \r\n ")
+				msg+= _("Product with initial balance must have purchase price. \n ")
 
 		firstnum = 0
 		secnum = 0
