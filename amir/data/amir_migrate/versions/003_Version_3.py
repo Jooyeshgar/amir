@@ -35,9 +35,14 @@ def upgrade(migrate_engine):
     query = s.query(subject)
     al = query.all()
     for subj in al :       
-        #query.filter(subject.c.id == subj.id).update({subject.c.code : _2to3digits(subj.code)})    # TODO       try this instead of raw sql command
-        s.execute("update subject set code = '"+ str(_2to3digits(subj.code))+"' where id ="+str(subj.id) + ";")
+       # query.filter(subject.c.id == subj.id).first().update({subject.c.code : _2to3digits(subj.code)})    # TODO       try this instead of raw sql command
+        s.execute("UPDATE subject set code = '"+ str(_2to3digits(subj.code))+"' where id ="+str(subj.id) + ";")
     s.commit()
+
+    customers = Table('customers' , meta , autoload =True)
+    al = s.query(customers).all()
+    for cust in al:
+        s.execute("UPDATE customers set custCode='"+str(_2to3digits(cust.custCode)+"' WHERE custId  = "+str(cust.custId) ) )
 
     s.execute('CREATE TABLE factors (\
                 "Id" INTEGER NOT NULL, \
