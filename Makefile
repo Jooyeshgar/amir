@@ -1,7 +1,7 @@
 
 extract:
 	xgettext -k_ -kN_ -L Python -o po/amir.pot amir/*.py amir/database/*.py scripts/amir 
-	xgettext -k_ -kN_ -L Glade -o po/amir.pot amir/data/ui/*.glade
+	xgettext -k_ -kN_ -j -L Glade -o po/amir.pot amir/data/ui/*.glade
 
 fa:
 	msgmerge  --backup=none -N -U po/fa.po po/amir.pot

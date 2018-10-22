@@ -1252,7 +1252,7 @@ Information</property>
                       <object class="GtkLabel" id="customerTypesLbl">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">&lt;b&gt; customer Types &lt;/b&gt;</property>
+                        <property name="label" translatable="yes">&lt;b&gt; Customer Types &lt;/b&gt;</property>
                         <property name="use_markup">True</property>
                       </object>
                     </child>

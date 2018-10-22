@@ -51,7 +51,7 @@ class BankAccountsUI:
         combo.pack_start(cell, True)
         combo.add_attribute(cell, 'text', 0)
 
-        for item in ('جاری', 'حساب پس انداز'):
+        for item in (_("Current Account"), _("Savings Account")):
             iter = model.append()
             model.set(iter, 0, item)
 
@@ -59,17 +59,17 @@ class BankAccountsUI:
         model = Gtk.ListStore(str, str, str, str, str, str)
         treeview.set_model(model)
 
-        column = Gtk.TreeViewColumn('id', Gtk.CellRendererText(), text=0)
+        column = Gtk.TreeViewColumn(_('Id'), Gtk.CellRendererText(), text=0)
         treeview.append_column(column)
-        column = Gtk.TreeViewColumn('Account Name', Gtk.CellRendererText(), text=1)
+        column = Gtk.TreeViewColumn(_('Account Name'), Gtk.CellRendererText(), text=1)
         treeview.append_column(column)
-        column = Gtk.TreeViewColumn('Number', Gtk.CellRendererText(), text=2)
+        column = Gtk.TreeViewColumn(_('Number'), Gtk.CellRendererText(), text=2)
         treeview.append_column(column)
-        column = Gtk.TreeViewColumn('Owner', Gtk.CellRendererText(), text=3)
+        column = Gtk.TreeViewColumn(_('Owner'), Gtk.CellRendererText(), text=3)
         treeview.append_column(column)
-        column = Gtk.TreeViewColumn('Type', Gtk.CellRendererText(), text=4)
+        column = Gtk.TreeViewColumn(_('Type'), Gtk.CellRendererText(), text=4)
         treeview.append_column(column)
-        column = Gtk.TreeViewColumn('Bank Name', Gtk.CellRendererText(), text=5)
+        column = Gtk.TreeViewColumn(_('Bank Name'), Gtk.CellRendererText(), text=5)
         treeview.append_column(column)
 
     ## List all accounts in a window
@@ -85,9 +85,9 @@ class BankAccountsUI:
         for account in accounts:
             iter = model.append()
             if account.accType == 0:
-                accType = 'جاری'
+                accType = _("Current Account")
             else:
-                accType = 'حساب پس انداز'            
+                accType = _("Savings Account")          
             accBank = self.bankaccounts_class.get_bank_name(account.accBank)
             model.set(iter, 0, unicode(account.accId), 1, account.accName, 2, unicode(account.accNumber), 3, account.accOwner, 4, accType, 5, accBank)
         window.show_all()

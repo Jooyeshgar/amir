@@ -131,37 +131,37 @@ class Factor(Payments):
 		
 		
 		column = Gtk.TreeViewColumn(_("Factor"), Gtk.CellRendererText(), text = 1)
-		column.set_spacing(5)
+		column.set_spacing(4)
 		column.set_resizable(True)
 		column.set_sort_column_id(0)
 		column.set_sort_indicator(True)
 		self.treeview.append_column(column)		
 
-		column = Gtk.TreeViewColumn(_("Document"), Gtk.CellRendererText(), text = 1)
-		column.set_spacing(5)
+		column = Gtk.TreeViewColumn(_("Doc."), Gtk.CellRendererText(), text = 2)
+		column.set_spacing(3)
 		column.set_resizable(True)
 		column.set_sort_column_id(0)
 		column.set_sort_indicator(True)
 		self.treeview.append_column(column)
 		
-		column = Gtk.TreeViewColumn(_("Date"), Gtk.CellRendererText(), text = 2)
+		column = Gtk.TreeViewColumn(_("Date"), Gtk.CellRendererText(), text = 3)
 		column.set_spacing(5)
 		column.set_resizable(True)
 # 		column.set_sort_column_id(1)
 # 		column.set_sort_indicator(True)
 		self.treeview.append_column(column)		
 		
-		column = Gtk.TreeViewColumn(_("Customer"), Gtk.CellRendererText(), text = 3)
+		column = Gtk.TreeViewColumn(_("Customer"), Gtk.CellRendererText(), text = 4)
 		column.set_spacing(5)
 		column.set_resizable(True)
 		self.treeview.append_column(column)	
 		
-		column = Gtk.TreeViewColumn(_("Total"), Gtk.CellRendererText(), text = 4)
+		column = Gtk.TreeViewColumn(_("Total"), Gtk.CellRendererText(), text = 5)
 		column.set_spacing(5)
 		column.set_resizable(True)
 		self.treeview.append_column(column)		
 
-		column = Gtk.TreeViewColumn(_("Pre Invoice"), Gtk.CellRendererText(), text = 5)
+		column = Gtk.TreeViewColumn(_("Pre Invoice"), Gtk.CellRendererText(), text = 6)
 		column.set_spacing(5)
 		column.set_resizable(True)
 		self.treeview.append_column(column)	
@@ -207,12 +207,12 @@ class Factor(Payments):
 		for t ,c in reversed(result):		
 			date = t.tDate
 			date = dateToString(date)
-			pre_invoice = _("pre-invoice") if not t.Permanent else ""
-			bill_id = "-"
+			pre_invoice = _("pre-invoice") if not t.Permanent else "-"
+			bill_id = "-"			
 			bill = config.db.session.query(Bill).select_from(Notebook).filter(Notebook.factorId == t.Id).filter(Notebook.bill_id == Bill.id).first()
 			if bill:
-				bill_id = str( bill.id) 
-			grouprow = self.treestore.append(None, (int(t.Id), t.Code, bill_id,str(date), c.custName, utility.LN(t.PayableAmnt) , pre_invoice))
+				bill_id = str( bill.id) 			
+			grouprow = self.treestore.append(None, (int(t.Id), t.Code, bill_id, date, c.custName, utility.LN(t.PayableAmnt) , pre_invoice))
 			
 		self.window.show_all()
 
@@ -274,13 +274,9 @@ class Factor(Payments):
 				self.sellListStore.append(None,list)
 		
 		
-		if self.editFlag:						
-		
-			#self.builder.get_object("fullFactorSellBtn").set_label("Save Changes ...")
-			saveBtn = "fullFactorSellBtn" if self.sell else "fullFactorBuyBtn"
-		#	self.builder.get_object("fullFactorBuyBtn").set_label("Save Changes")
-			self.builder.get_object(saveBtn).set_label("Save Changes")
-			self.builder.get_object("printTransBtn").set_label("Save and Print")
+		if self.editFlag:										
+			saveBtn = "fullFactorSellBtn" if self.sell else "fullFactorBuyBtn"		
+			self.builder.get_object(saveBtn).set_label(_("Save Changes") )			
 			
 			self.Codeentry = self.builder.get_object("transCode")
 			if config.digittype == 1:

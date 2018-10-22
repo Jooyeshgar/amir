@@ -1079,7 +1079,7 @@
             </child>
             <child>
               <object class="GtkButton" id="printTransBtn">
-                <property name="label" translatable="yes">save and print</property>
+                <property name="label" translatable="yes">Save and Print</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>

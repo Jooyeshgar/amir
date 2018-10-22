@@ -29,7 +29,7 @@ config = share.config
 
 class Payments(GObject.GObject):
 	
-	chequeStatus = ["" , _("Paid-Not passed"), _("Paid-Passed"), _("Recieved-Not passed"), _("Recieved-Passed"), _("Spent") , _("Returned to customer") , _("Returned from customer") , _("Bounced")]
+	chequeStatus = ["" , _("Paid-Not passed"), _("Paid-Passed"), _("Recieved-Not cashed"), _("Recieved-Cashed"), _("Spent") , _("Returned to customer") , _("Returned from customer") ,  _("Paid-Bounced"),_("Recieved-Bounced")]
 	chequePayment=[]
 	recieptPayment=[]	
 	
@@ -410,7 +410,7 @@ class Payments(GObject.GObject):
 		
 		payment = self.pymntAmntEntry.get_text()	
 		if payment =="":
-			 msg+=_("You must enter the Amount cheaue or reciep.")			 		
+			 msg+=_("You must enter the Amount for cheque ")			 		
 	
 		wrtDate = self.writeDateEntry.get_text()
 		if wrtDate == "":

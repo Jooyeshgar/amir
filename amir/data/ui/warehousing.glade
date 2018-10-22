@@ -69,6 +69,15 @@
               <placeholder/>
             </child>
             <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
               <object class="GtkLabel" id="proCdeLbl">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -176,7 +185,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="xpad">5</property>
-                <property name="label" translatable="yes">Quantity:</property>
+                <property name="label" translatable="yes">Initial Inventory:</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -399,15 +408,6 @@
                 <property name="top_attach">4</property>
                 <property name="bottom_attach">5</property>
               </packing>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
             </child>
             <child>
               <object class="GtkEntry" id="discFormulaEntry">

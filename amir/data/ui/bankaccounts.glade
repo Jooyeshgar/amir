@@ -273,7 +273,7 @@
                       <object class="GtkLabel" id="label9">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Adress</property>
+                        <property name="label" translatable="yes">Address</property>
                       </object>
                       <packing>
                         <property name="top_attach">2</property>
