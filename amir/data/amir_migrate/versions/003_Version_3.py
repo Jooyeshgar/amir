@@ -30,6 +30,9 @@ def upgrade(migrate_engine):
     Session = scoped_session(sessionmaker(bind=migrate_engine))
     s = Session()
 
+    payments = Table('payment', meta, autoload=True)
+    payments.drop()
+
     subject = Table('subject', meta, autoload=True)    
    # s.query(subject).update({subject.c.code: _2to3digits(subject.c.code)})      #TODO try this instead of raw sql command
     query = s.query(subject)
@@ -37,14 +40,14 @@ def upgrade(migrate_engine):
     for subj in al :       
        # query.filter(subject.c.id == subj.id).first().update({subject.c.code : _2to3digits(subj.code)})    # TODO       try this instead of raw sql command
         s.execute("UPDATE subject set code = '"+ str(_2to3digits(subj.code))+"' where id ="+str(subj.id) + ";")
-    s.commit()
+    
 
     customers = Table('customers' , meta , autoload =True)
     al = s.query(customers).all()
     for cust in al:
         s.execute("UPDATE customers set custCode='"+str(_2to3digits(cust.custCode)+"' WHERE custId  = "+str(cust.custId) ) )
 
-    s.execute('CREATE TABLE factors (\
+    s.execute('CREATE TABLE IF NOT EXISTS factors (\
                 "Id" INTEGER NOT NULL, \
                 "Code" VARCHAR(50) NOT NULL, \
                 "tDate" DATE NOT NULL, \
@@ -70,13 +73,13 @@ def upgrade(migrate_engine):
                 CHECK ("Activated" IN (0, 1)), \
                 FOREIGN KEY("Cust") REFERENCES customers ("custId") \
             );')
-    s.commit()
+  
     s.execute('INSERT INTO factors (Id, Code, tDate, Bill, Cust, Addition, Subtraction, VAT, CashPayment, ShipDate, Permanent, `Desc`, Sell, Activated, Fee, PayableAmnt, LastEdit)\
                SELECT transId, transCode, transDate, transBill, transCust, transAddition, transSubtraction, transTax, transCashPayment, transShipDate, transPermanent,  transDesc, transSell, 0, 0, 0, 0 FROM transactions;')
     s.execute('DROP TABLE transactions;')
-    s.commit()
+    
 
-    s.execute('CREATE TABLE factorItems ( \
+    s.execute('CREATE TABLE IF NOT EXISTS factorItems ( \
                 "exchngId" INTEGER NOT NULL, \
                 "exchngNo" INTEGER NOT NULL, \
                 "exchngProduct" INTEGER, \
@@ -89,20 +92,16 @@ def upgrade(migrate_engine):
                 FOREIGN KEY("exchngProduct") REFERENCES products (id), \
                 FOREIGN KEY("exchngTransId") REFERENCES factors ("Id")\
             );')
-    s.commit()
+    
     s.execute('INSERT INTO factorItems (exchngId, exchngNo, exchngProduct, exchngQnty, exchngUntPrc, exchngUntDisc, exchngTransId, exchngDesc)\
                SELECT exchngId, exchngNo, exchngProduct, exchngQnty, exchngUntPrc, exchngUntDisc, exchngTransId, exchngDesc FROM exchanges;')
-    s.execute('DROP TABLE exchanges;')
-    s.commit()
+    s.execute('DROP TABLE exchanges;')    
 
-    s.execute('ALTER TABLE `Cheque` ADD COLUMN `chqDelete` Boolean;')
-    s.commit()
-    # s.execute('ALTER TABLE `chequehistory` ADD COLUMN `Delete` Boolean;')
-    # s.commit()
+    s.execute('ALTER TABLE `Cheque` ADD COLUMN `chqDelete` Boolean;')    
+
     s.execute('DROP TABLE users;')
-    s.commit()
-    s.execute('DELETE FROM config')
-    s.commit()
+    
+    s.execute('DELETE FROM config')    
 
     s.execute('ALTER TABLE `products` ADD COLUMN `uMeasurement`  Text;')
 
@@ -179,13 +178,9 @@ def upgrade(migrate_engine):
         {'cfgId' :30, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'fund'                   , 'cfgValue' : u'21',  'cfgDesc':u'Share capital'}
     )
 
+    s.commit()
 
-
-def downgrade(migrate_engine):
-    # Operations to reverse the above upgrade go here.
-    meta.bind = migrate_engine
-    # TODO 
-
-    logging.debug("downgrade to 2")
+def downgrade(migrate_engine):    
+    logging.error("Downgrade to 2 is not possible!")
     
 
