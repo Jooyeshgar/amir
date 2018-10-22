@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-22 10:34+0330\n"
+"POT-Creation-Date: 2018-10-22 12:16+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -532,6 +532,18 @@ msgstr ""
 
 #: amir/customers.py:388
 msgid "Save Customer"
+msgstr ""
+
+#: amir/customers.py:457
+msgid ""
+"Customer can not be deleted, Because there are some Factors or Cheques "
+"related to it. \n"
+"Please delete them first.\n"
+"(Note: If there is some cheque, deleting that will not be usefull.)"
+msgstr ""
+
+#: amir/customers.py:458
+msgid "Error deleting customer"
 msgstr ""
 
 #: amir/docreport.py:50

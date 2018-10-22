@@ -448,14 +448,25 @@ class Customer(customergroup.Group):
             query = config.db.session.query(Customers)
             customer = query.filter(Customers.custCode ==unicode(code) ).first()
 
-            subjectCode = config.db.session.query(Subject).filter(Subject.id ==  dbconf.get_int('custSubject')).first().code     
-            subjectCode = unicode(subjectCode)  + unicode (code)
-            #TODO check if this customer is used somewhere else
-            
-            config.db.session.delete(customer)
-            config.db.session.delete(config.db.session.query(Subject).filter(Subject.code== subjectCode).first())
-            config.db.session.commit()
-            self.treestore.remove(iter)
+            custId = customer.custId
+            q1 = config.db.session.query(Factors.Cust).filter(Factors.Cust==custId)#.limit(1)
+            q2 = config.db.session.query(Cheque.chqCust).filter(Cheque.chqCust==custId)#.limit(1)
+            existsFlag =  (q1.union(q2) ).first()
+            if existsFlag :
+                msgbox =  Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.CLOSE,
+                           _("Customer can not be deleted, Because there are some Factors or Cheques related to it. \nPlease delete them first.\n(Note: If there is some cheque, deleting that will not be usefull.)"))
+                msgbox.set_title(_("Error deleting customer"))
+                msgbox.run()
+                msgbox.destroy()
+            else:
+                subjectCode = config.db.session.query(Subject).filter(Subject.id ==  dbconf.get_int('custSubject')).first().code     
+                subjectCode = unicode(subjectCode)  + unicode (code)
+                #TODO check if this customer is used somewhere else
+                
+                config.db.session.delete(customer)
+                config.db.session.delete(config.db.session.query(Subject).filter(Subject.code== subjectCode).first())
+                config.db.session.commit()
+                self.treestore.remove(iter)
                 
     
     #@param treeiter: the TreeIter which data should be saved in

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: amir\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-22 10:31+0330\n"
-"PO-Revision-Date: 2018-10-22 10:42+0330\n"
+"POT-Creation-Date: 2018-10-22 12:16+0330\n"
+"PO-Revision-Date: 2018-10-22 12:16+0330\n"
 "Last-Translator: Golnaz Nilieh <g382nilieh@gmail.com>\n"
 "Language-Team: persian <info@jooyeshgar.com>\n"
 "Language: fa\n"
@@ -195,11 +195,11 @@ msgstr "واگذار شده"
 msgid "successfully added. Document number : %d"
 msgstr "با موفقیت اضافه شد. شماره سند : %d"
 
-#: amir/bankaccountsui.py:54
+#: amir/bankaccountsui.py:54 amir/bankaccountsui.py:88
 msgid "Current Account"
 msgstr "حساب جاری"
 
-#: amir/bankaccountsui.py:54
+#: amir/bankaccountsui.py:54 amir/bankaccountsui.py:90
 msgid "Savings Account"
 msgstr "حساب پس انداز"
 
@@ -541,6 +541,21 @@ msgstr "ویرایش طرف حساب"
 #: amir/customers.py:388
 msgid "Save Customer"
 msgstr "ذخیره طرف حساب"
+
+#: amir/customers.py:457
+msgid ""
+"Customer can not be deleted, Because there are some Factors or Cheques "
+"related to it. \n"
+"Please delete them first.\n"
+"(Note: If there is some cheque, deleting that will not be usefull.)"
+msgstr ""
+"امکان حذف این مشتری نیست؛ زیرا فاکتور یا چکی مرتبط با او ثبت شده است.\n"
+"ابتدا آن ها را پاک کنید.\n"
+"(توجه: اگر چکی ثبت شده باشد, حذف آن بی فایده است.)"
+
+#: amir/customers.py:458
+msgid "Error deleting customer"
+msgstr "خطا در حذف مشتری"
 
 #: amir/docreport.py:50
 msgid ""
@@ -994,7 +1009,7 @@ msgstr "کد خرید"
 #: amir/productgroup.py:191
 msgid ""
 "Group can not be deleted, Because there are some products registered in it."
-msgstr "گروه قابل حذف کردن نیست،‌چون طرف حسایهایی در آن ثبت شده است."
+msgstr "گروه قابل حذف کردن نیست،‌چون کالاهایی در آن ثبت شده است."
 
 #: amir/productgroup.py:206
 msgid "Group code should not be empty.\n"
@@ -2876,6 +2891,16 @@ msgid "Insert: Add product    Ctrl+G: Add Group   Ctrl+E: Edit    Del: Delete"
 msgstr ""
 " Insert: اضافه کردن محصول    Ctrl+E: ویرایش  Del: حذف  Ctrl+G: اضافه کردن "
 "گروه   "
+
+#~ msgid ""
+#~ "Customer can not be deleted, Because there are some Factors or Cheques "
+#~ "related to it. \n"
+#~ "Please delete them first.\n"
+#~ "(Note: If there is some cheque, deleting that would not effect)"
+#~ msgstr ""
+#~ "امکان حذف این مشتری نیست؛ زیرا فاکتور یا چکی مرتبط با او ثبت شده است.\n"
+#~ "ابتدا آن ها را پاک کنید.\n"
+#~ "(توجه: اگر چکی ثبت شده باشد, حذف آن بی فایده است.)"
 
 #~ msgid "Bounced"
 #~ msgstr "برگشت خورده"
