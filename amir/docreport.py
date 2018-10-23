@@ -6,7 +6,7 @@ import platform
 import re
 
 from sqlalchemy.orm.util import outerjoin
-from sqlalchemy.sql import between
+from sqlalchemy.sql import between 
 from sqlalchemy.sql.functions import sum
 
 import numberentry
@@ -21,7 +21,6 @@ from weasyprintreport import *
 config = share.config
 
 class DocumentReport:
-    
     def __init__(self):
         self.builder = get_builder("report")
         
@@ -38,7 +37,7 @@ class DocumentReport:
         self.builder.get_object("buttonExport").connect( "clicked", self.exportToCSV)
         self.builder.get_object("buttonPrint").connect( "clicked", self.printReport)       
 
-    def createReport(self):
+    def createReport(self,printFlag = True):
         number = utility.convertToLatin(unicode(self.number.get_text()) )
         
         if re.match('^\d+$', number) != None:
@@ -51,45 +50,56 @@ class DocumentReport:
             return
         
         self.builder.get_object("message").set_text("")
-        report_header = [_("Index"), _("Subject Code"), _("Subject Name"), _("Description"), _("Debt"), _("Credit")]
-        col_width = [23, 25, 45, 250, 40, 40 ]
-        for i in range(0, len(report_header)):
-            col_width[i] = 'style="width:'+str(col_width[i]) + 'pt" ' 
+
+        if printFlag:       # preparing data for csv file
+            report_header = [_("Index"), _("Subject Code"), _("Subject Name"), _("Description"), _("Debt"), _("Credit")]
+        else:
+            report_header = [_("Doc."),_("Index"), _("Subject Code"), _("Subject Name"), _("Description"), _("Debt"), _("Credit"),_("Date")]
+            
         html = "" 
+        bill_ids= []
         bills = config.db.session.query(Bill).filter(Bill.number.in_(self.docnumbers)).order_by(Bill.number.asc()).all()
+        for bill in bills:
+            bill_ids.append(bill.id)
+        
+        query = config.db.session.query(Notebook,Subject).select_from(outerjoin(Notebook, Subject, Notebook.subject_id == Subject.id)).filter(Notebook.bill_id.in_(bill_ids)).order_by(Notebook.id.asc())
+        res = query.all()            
+        if len(res) == 0:
+            msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, 
+                                       _("No document found with the requested number."))
+            msgbox.set_title(_("Invalid document number"))
+            msgbox.run()
+            msgbox.destroy()
+            return
         if config.locale == 'en_US':
             doDirection = 'left'
             daDirection = 'right'
             text_align = "left"
         else:
+            report_header = report_header[::-1]
             doDirection = 'right'
             daDirection = 'left'
             text_align = "right"
         todaystr = dateToString(date.today())
         billCount = 1
-        for b in bills:
-            report_data = []       
+        table_h = 8
+                
+        for b in bills:     
+            if printFlag:      
+                report_data = [( "", "","", "", "", "")] * table_h
+            else :
+                report_data = [( "","", "", "", "", "", "", "")]          
             query = config.db.session.query(Notebook,Subject).select_from(outerjoin(Notebook, Subject, Notebook.subject_id == Subject.id)).filter(Notebook.bill_id==b.id).order_by(Notebook.id.asc())
             res = query.all()            
-            if len(res) == 0:
-                msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, 
-                                           _("No document found with the requested number."))
-                msgbox.set_title(_("Invalid document number"))
-                msgbox.run()
-                msgbox.destroy()
-                return
 
-            self.docdate = b.date            
+            docdate = b.date            
             index = 1
             debt_sum = credit_sum =  0
-            datestr = dateToString(self.docdate)
+            datestr = dateToString(docdate)
             docnumber = b.number
             if config.digittype == 1:
                 docnumber = utility.convertToPersian(docnumber)
 
-            html += '<p ' + self.reportObj.subjectHeaderStyle + '><u>' + _("Accounting Document") + '</u></p>\
-                <div style="text-align:' + doDirection + '; font-size:12px;float:'+doDirection+'">' + _("Document Number") + ': ' + str(docnumber) + '</div>\
-                <div style="text-align:' + daDirection + '; font-size:12px;float:'+daDirection+'">' + _("Date") + ': ' + todaystr +'</div> <br/>'
             for n , s in res :
                 desc = n.desc
                 if n.value < 0:
@@ -104,11 +114,29 @@ class DocumentReport:
                 doc_number = utility.LN(b.number)
 
                 debt_sum += utility.getFloatNumber(debt)
-                credit_sum += utility.getFloatNumber(credit)                            
-                report_data.append(( str(index), code, s.name, desc, debt, credit))
-                index += 1                        
-                
+                credit_sum += utility.getFloatNumber(credit)                
+                if printFlag:        
+                    if index < table_h:
+                        report_data[index-1] = ( utility.LN(index,0), code, s.name, desc, debt, credit)
+                    else:
+                        report_data.append(( utility.LN(index,0), code, s.name, desc, debt, credit))
+                else:
+                    if index < table_h :
+                        report_data[index-1] = (doc_number,utility.LN(index,0), code, s.name, desc, debt, credit, datestr)
+                    else:
+                        report_data.append((doc_number,utility.LN(index,0), code, s.name, desc, debt, credit, datestr))
+                index += 1    
+
+            if not printFlag:   # preparing data for csv file
+                continue
+
+            col_width = [19, 25, 45, 250, 40, 40 ]
+            for i in range(0, len(report_header)):
+                col_width[i] = 'style="width:'+str(col_width[i]) + 'pt" ' 
             i = 0
+            html += '<p ' + self.reportObj.subjectHeaderStyle + '><b>' + _("Accounting Document") + '</b></p>\
+                <div style="text-align:' + doDirection + '; font-size:12px;float:'+doDirection+'">' + _("Document Number") + ': ' + str(docnumber) + '</div>\
+                <div style="text-align:' + daDirection + '; font-size:12px;float:'+daDirection+'">' + _("Date") + ': ' + todaystr +'</div> <br/>'
             html += '<table class="notebooks"><thead><tr>'
             if config.locale == 'en_US':                            
                 for header in report_header:
@@ -121,7 +149,6 @@ class DocumentReport:
                         html += '<td>' + str(data) + '</td>'
                     html += '</tr>'                
             else:                
-                report_header = report_header[::-1]
                 col_width = col_width[::-1]
                 for header in report_header:
                     html += '<th '+col_width[i]+'>' + header + '</th>'
@@ -147,19 +174,24 @@ class DocumentReport:
             billCount +=1
             if billCount <= len(bills):
                 html+= '<p style="page-break-before: always" ></p>'
+            report_data = []   
+
+        if not printFlag:
+            return {"data":report_data, "heading":report_header}
 
         html = '<!DOCTYPE html> <html> <head> \
                 <style> @font-face {font-family: "Vazir"; src: url(data/font/Vazir.woff); }\
-                table {border-collapse: collapse;  text-align:'+text_align+'; width:100%;} \
+                table {border-collapse: collapse;  text-align:'+text_align+'; width:100%; } \
                 th {border:1px solid black; padding: 10px;font-size:10px;}\
                 thead {display: table-header-group;} \
                 .notebooks td {border-left:1px solid; border-right:1px solid; padding: 10px;font-size:10px;} \
                 .signatures {border:0px; font-size:14px; text-align:center}\
+                body {font-family: "Vazir"} \
                 </style> <meta charset="UTF-8"> </head> <body>' + html + '</body> </html>'                     
         return html
 
     def createPrintJob(self):       
-        return   self.createReport()
+        return   self.createReport(True)
     
     def previewReport(self, sender):        
         self.reportObj = WeasyprintReport()
@@ -174,7 +206,7 @@ class DocumentReport:
             self.reportObj.doPrint(printjob)
     
     def exportToCSV(self, sender):
-        report = self.createReport()
+        report = self.createReport(False)
         if report == None:
             return
         
