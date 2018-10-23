@@ -902,8 +902,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="xpad">10</property>
-                <property name="label" translatable="yes">Personal
-Information</property>
+                <property name="label" translatable="yes">Personal Information</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -1272,8 +1271,7 @@ Information</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="xpad">10</property>
-                <property name="label" translatable="yes">Customer
-Type</property>
+                <property name="label" translatable="yes">Customer Type</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -1290,6 +1288,8 @@ Type</property>
                   <object class="GtkFrame" id="accountOneFrame">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="margin_left">8</property>
+                    <property name="margin_right">9</property>
                     <property name="label_xalign">0</property>
                     <property name="shadow_type">out</property>
                     <child>
@@ -1299,28 +1299,9 @@ Type</property>
                         <property name="top_padding">5</property>
                         <property name="bottom_padding">5</property>
                         <child>
-                          <object class="GtkTable" id="table9">
+                          <object class="GtkGrid" id="grid1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="n_rows">3</property>
-                            <property name="n_columns">2</property>
-                            <property name="column_spacing">5</property>
-                            <property name="row_spacing">5</property>
-                            <child>
-                              <object class="GtkLabel" id="custAccNo1Lbl">
-                                <property name="width_request">145</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="xpad">20</property>
-                                <property name="label" translatable="yes">Account Number:</property>
-                                <property name="xalign">0</property>
-                              </object>
-                              <packing>
-                                <property name="top_attach">1</property>
-                                <property name="bottom_attach">2</property>
-                                <property name="x_options"/>
-                              </packing>
-                            </child>
                             <child>
                               <object class="GtkLabel" id="custAccName1Lbl">
                                 <property name="width_request">145</property>
@@ -1331,7 +1312,22 @@ Type</property>
                                 <property name="xalign">0</property>
                               </object>
                               <packing>
-                                <property name="x_options"/>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="custAccNo1Lbl">
+                                <property name="width_request">145</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="xpad">20</property>
+                                <property name="label" translatable="yes">Account Number:</property>
+                                <property name="xalign">0</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">1</property>
                               </packing>
                             </child>
                             <child>
@@ -1344,9 +1340,8 @@ Type</property>
                                 <property name="xalign">0</property>
                               </object>
                               <packing>
+                                <property name="left_attach">0</property>
                                 <property name="top_attach">2</property>
-                                <property name="bottom_attach">3</property>
-                                <property name="x_options"/>
                               </packing>
                             </child>
                             <child>
@@ -1360,7 +1355,7 @@ Type</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
-                                <property name="right_attach">2</property>
+                                <property name="top_attach">0</property>
                               </packing>
                             </child>
                             <child>
@@ -1374,9 +1369,7 @@ Type</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
-                                <property name="right_attach">2</property>
                                 <property name="top_attach">1</property>
-                                <property name="bottom_attach">2</property>
                               </packing>
                             </child>
                             <child>
@@ -1390,9 +1383,7 @@ Type</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
-                                <property name="right_attach">2</property>
                                 <property name="top_attach">2</property>
-                                <property name="bottom_attach">3</property>
                               </packing>
                             </child>
                           </object>
@@ -1419,6 +1410,8 @@ Type</property>
                   <object class="GtkFrame" id="accountTwoFrame">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="margin_left">7</property>
+                    <property name="margin_right">8</property>
                     <property name="label_xalign">0</property>
                     <property name="shadow_type">out</property>
                     <child>
@@ -1428,13 +1421,9 @@ Type</property>
                         <property name="top_padding">5</property>
                         <property name="bottom_padding">5</property>
                         <child>
-                          <object class="GtkTable" id="table10">
+                          <object class="GtkGrid" id="grid2">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="n_rows">3</property>
-                            <property name="n_columns">2</property>
-                            <property name="column_spacing">5</property>
-                            <property name="row_spacing">5</property>
                             <child>
                               <object class="GtkLabel" id="custAccName2Lbl">
                                 <property name="width_request">145</property>
@@ -1445,7 +1434,8 @@ Type</property>
                                 <property name="xalign">0</property>
                               </object>
                               <packing>
-                                <property name="x_options"/>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">0</property>
                               </packing>
                             </child>
                             <child>
@@ -1458,9 +1448,8 @@ Type</property>
                                 <property name="xalign">0</property>
                               </object>
                               <packing>
+                                <property name="left_attach">0</property>
                                 <property name="top_attach">1</property>
-                                <property name="bottom_attach">2</property>
-                                <property name="x_options"/>
                               </packing>
                             </child>
                             <child>
@@ -1473,41 +1462,8 @@ Type</property>
                                 <property name="xalign">0</property>
                               </object>
                               <packing>
+                                <property name="left_attach">0</property>
                                 <property name="top_attach">2</property>
-                                <property name="bottom_attach">3</property>
-                                <property name="x_options"/>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkEntry" id="custAccBank2Entry">
-                                <property name="width_request">250</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="invisible_char">●</property>
-                                <property name="primary_icon_activatable">False</property>
-                                <property name="secondary_icon_activatable">False</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="right_attach">2</property>
-                                <property name="top_attach">2</property>
-                                <property name="bottom_attach">3</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkEntry" id="custAccNo2Entry">
-                                <property name="width_request">250</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="invisible_char">●</property>
-                                <property name="primary_icon_activatable">False</property>
-                                <property name="secondary_icon_activatable">False</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="right_attach">2</property>
-                                <property name="top_attach">1</property>
-                                <property name="bottom_attach">2</property>
                               </packing>
                             </child>
                             <child>
@@ -1521,7 +1477,35 @@ Type</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
-                                <property name="right_attach">2</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="custAccNo2Entry">
+                                <property name="width_request">250</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="invisible_char">●</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="custAccBank2Entry">
+                                <property name="width_request">250</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="invisible_char">●</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">2</property>
                               </packing>
                             </child>
                           </object>
@@ -1553,8 +1537,7 @@ Type</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="xpad">10</property>
-                <property name="label" translatable="yes">Financial
-Information</property>
+                <property name="label" translatable="yes">Financial Information</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -1566,6 +1549,7 @@ Information</property>
           <packing>
             <property name="expand">True</property>
             <property name="fill">True</property>
+            <property name="padding">20</property>
             <property name="position">0</property>
           </packing>
         </child>

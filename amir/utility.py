@@ -18,6 +18,10 @@ def LN (num, comma=True):
         if num[-2:]==".0":
             num = num[:-2]   
 
+    minus = False
+    if num[0] =='-':
+        num = num[1:]
+        minus= True
     if comma:
         s = num
         dot_pos = s.find('.')
@@ -36,6 +40,8 @@ def LN (num, comma=True):
         
     if share.config.digittype == 1:
         num = convertToPersian(num)
+    if minus:
+        num = '-' + num
     return num
 
 def getFloatNumber (number_string):
@@ -98,7 +104,7 @@ def convertToPersian (input_string):
     """
     
     en_numbers = '0123456789.%'
-    fa_numbers = u'۰۱۲۳۴۵۶۷۸۹,٪'
+    fa_numbers = u'۰۱۲۳۴۵۶۷۸۹/٪'
     
     output_string = u''
     for c in unicode(input_string):

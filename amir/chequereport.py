@@ -25,9 +25,9 @@ dbconf = dbconfig.dbConfig()
 config = share.config
 
 class ChequeReport(GObject.GObject):
-    chequeStatus = ["" , _("Paid-Not passed"), _("Paid-Passed"), _("Recieved-Not cashed"), _("Recieved-Cashed"), _("Spent") , _("Returned from customer") , _("Returned to customer") , _("Paid-Bounced"),_("Recieved-Bounced")]
+    chequeStatus = ["" , _("Paid-Not passed"), _("Paid-Passed"), _("Recieved-Not cashed"), _("Recieved-Cashed"), _("Spent") , _("Returned from customer") , _("Returned to customer") , _("Paid-Bounced"),_("Recieved-Bounced"),_("Float")]
     treeviews = ["treeviewIncoming" , "treeviewOutgoing" ,"treeviewNotPassed" ,"treeviewNotCashed" , "treeviewPassed", "treeviewCashed",\
-                 "treeviewSpent","treeviewBounced" ,"treeviewBouncedP" , "treeviewReturnedT", "treeviewReturnedF","treeviewDeleted" ]
+                 "treeviewSpent","treeviewBounced" ,"treeviewBouncedP" , "treeviewReturnedT", "treeviewReturnedF","treeviewFloat","treeviewDeleted" ]
     def __init__(self):
         self.builder = get_builder("chequereport")
         self.window = self.builder.get_object("windowChequeReport")
@@ -45,18 +45,20 @@ class ChequeReport(GObject.GObject):
         self.treeviewBouncedP = self.builder.get_object("treeviewBouncedP")
         self.treeviewReturnedT = self.builder.get_object("treeviewReturnedT")
         self.treeviewReturnedF = self.builder.get_object("treeviewReturnedF")
-        self.treestoreIncoming = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str,str)
-        self.treestoreOutgoing = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str,str)
-        self.treestoreNotPassed = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str,str)
-        self.treestoreNotCashed = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str,str)
-        self.treestoreDeleted = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str,str)
-        self.treestorePassed = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str)
-        self.treestoreCashed = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str)
-        self.treestoreSpent = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str)
-        self.treestoreBounced = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str)
-        self.treestoreBouncedP = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str)
-        self.treestoreReturnedT = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str)
-        self.treestoreReturnedF = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str)
+        self.treeviewFloat = self.builder.get_object("treeviewFloat")
+        self.treestoreIncoming = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str)
+        self.treestoreOutgoing = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str)
+        self.treestoreNotPassed = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str)
+        self.treestoreNotCashed = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str)
+        self.treestoreDeleted = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str)
+        self.treestorePassed = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str)
+        self.treestoreCashed = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str)
+        self.treestoreSpent = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str)
+        self.treestoreBounced = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str)
+        self.treestoreBouncedP = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str)
+        self.treestoreReturnedT = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str)
+        self.treestoreReturnedF = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str)
+        self.treestoreFloat  = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str)
         self.treeviewIncoming.set_model(self.treestoreIncoming)
         self.treeviewOutgoing.set_model(self.treestoreOutgoing)
         self.treeviewNotPassed.set_model(self.treestoreNotPassed)
@@ -69,9 +71,10 @@ class ChequeReport(GObject.GObject):
         self.treeviewBouncedP.set_model(self.treestoreBouncedP)
         self.treeviewReturnedT.set_model(self.treestoreReturnedT)
         self.treeviewReturnedF.set_model(self.treestoreReturnedF)
+        self.treeviewFloat.set_model(self.treestoreFloat)
 
         
-        headers = (_("ID"), _("Amount"),_("Write Date"),_("Due Date") ,_("Serial"),_("Clear"),_("Customer Name"),_("Account"), _("Description"),_("Bill ID"),_("Status") )            
+        headers = (_("ID"), _("Amount"),_("Write Date"),_("Due Date") ,_("Serial"),_("Customer Name"),_("Account"), _("Description"),_("Bill ID"),_("Status") )            
         for treeview in self.treeviews :
             i=0
             for header in headers:  
@@ -82,12 +85,7 @@ class ChequeReport(GObject.GObject):
                 column.set_sort_indicator(True)   
                 self.builder.get_object(treeview ).append_column(column)
                 i+=1
-    
-        self.treeviewIncoming.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
-        self.treeviewOutgoing.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
-        self.treeviewDeleted.get_selection().set_mode(Gtk.SelectionMode.SINGLE)        
-        #self.treestore.set_sort_func(0, self.sortGroupIds)
-        # self.treestore.set_sort_column_id(0, Gtk.SortType.ASCENDING)
+        
         self.window.show_all()
         self.builder.connect_signals(self)
 
@@ -186,16 +184,16 @@ class ChequeReport(GObject.GObject):
             #wDateFrom -= timedelta(days=1)
             result = result.filter(Cheque.chqWrtDate >= wDateFrom)
 
-        totalIn = totalGo = totalnotcash = totalnotpass = totalPass = totalCash = totalSpent = totalBouncedp = totalBounced = totalRetT = totalRetF = 0
+        totalIn = totalGo = totalnotcash = totalnotpass = totalPass = totalCash = totalSpent = totalBouncedp = totalBounced = totalRetT = totalRetF = totalFloat= 0
         # Show
         for cheque , cust in result.all():       
             chqWrtDate = dateentry.dateToString(cheque.chqWrtDate)            
             chqDueDate = dateentry.dateToString(cheque.chqDueDate)            
 
-            if (cheque.chqStatus == 2) or (cheque.chqStatus == 4):
-                clear = _('Cleared')
-            else:
-                clear = _('Not Cleared' )
+            # if (cheque.chqStatus == 2) or (cheque.chqStatus == 4):
+            #     clear = _('Cleared')
+            # else:
+            #     clear = _('Not Cleared' )
             chqBill = config.db.session.query(Notebook.bill_id).filter(Notebook.chqId==cheque.chqId).first()
             if chqBill :
                 chqBill = chqBill.bill_id    
@@ -203,54 +201,58 @@ class ChequeReport(GObject.GObject):
                 chqBill = 0
             self.bankaccounts_class = class_bankaccounts.BankAccountsClass()
             isSpended  = False
-            if cheque.chqStatus == 6 :
+            stat = cheque.chqStatus
+            if stat == 6 :
                 history = config.db.session.query(ChequeHistory).filter(ChequeHistory.ChequeId==cheque.chqId).order_by(ChequeHistory.Id.desc()).limit(2).all()
                 if len(history):
                     history = history[1]                    
                     isSpended  = True if history.Status == 5 else False
-            if cheque.chqStatus in [1,2,6,8] and not isSpended:
+            if stat in [1,2,6,8] and not isSpended:
                 chqAccount = self.bankaccounts_class.get_account(cheque.chqAccount).accName
             else :
                 chqAccount = self.bankaccounts_class.get_bank_name(cheque.chqAccount)
-            addingRow = (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(clear), str(cust), str(chqAccount), str(cheque.chqDesc), str(chqBill), str(unicode(self.chequeStatus[cheque.chqStatus])))        
+            addingRow = (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(cust), str(chqAccount), str(cheque.chqDesc), str(chqBill), str(unicode(self.chequeStatus[cheque.chqStatus])))        
             if cheque.chqDelete == False:
-                if cheque.chqStatus in [3,4,7,9]:
+                if stat in [3,4,7,9]:
                     self.treestoreIncoming.append(None,addingRow )
                     totalIn +=cheque.chqAmount
                 else:
                     self.treestoreOutgoing.append(None, addingRow )
                     totalGo  +=cheque.chqAmount
 
-                if cheque.chqStatus == 1:
+                if stat == 1:
                     self.treestoreNotPassed.append(None , addingRow)
                     totalPass += cheque.chqAmount
-                elif (cheque.chqStatus == 2) :
+                elif (stat== 2) :
                     self.treestorePassed.append(None , addingRow)
                     totalnotpass  +=cheque.chqAmount
-                elif cheque.chqStatus == 3:
+                elif stat == 3:
                     self.treestoreNotCashed.append(None , addingRow)
                     totalnotcash += cheque.chqAmount
-                elif cheque.chqStatus== 4:
+                elif stat == 4:
                     self.treestoreCashed.append(None , addingRow)
                     totalCash  +=cheque.chqAmount
-                elif cheque.chqStatus ==5:
+                elif stat  ==5:
                     self.treestoreSpent.append(None , addingRow)
                     totalSpent += cheque.chqAmount            
-                elif cheque.chqStatus== 6 :
+                elif stat == 6 :
                     self.treestoreReturnedF.append(None , addingRow)  
                     totalRetF  +=cheque.chqAmount                         
-                elif cheque.chqStatus== 7 :
+                elif stat == 7 :
                     self.treestoreReturnedT.append(None , addingRow)  
                     totalRetT  +=cheque.chqAmount                         
-                elif cheque.chqStatus== 8 :
+                elif stat == 8 :
                     self.treestoreBouncedP.append(None , addingRow)  
                     totalBouncedp  +=cheque.chqAmount              
-                elif cheque.chqStatus== 9 :
+                elif stat == 9 :
                     self.treestoreBounced.append(None , addingRow)
-                    totalBounced  +=cheque.chqAmount
+                    totalBounced  +=cheque.chqAmount                
+                elif stat == 10 :
+                    self.treestoreFloat.append(None , addingRow)
+                    totalFloat  +=cheque.chqAmount
             else:                
                 self.treestoreDeleted.     append(None, addingRow)
-        self.totals = (totalIn , totalGo ,totalnotpass , totalnotcash, totalPass , totalCash ,totalSpent, totalBounced,totalBouncedp,totalRetT, totalRetF , "")
+        self.totals = (totalIn , totalGo ,totalnotpass , totalnotcash, totalPass , totalCash ,totalSpent, totalBounced,totalBouncedp,totalRetT, totalRetF ,totalFloat, "")
         self.builder.get_object("totalLbl").set_text(str(totalIn) )
         self.currentTreeview = 0
 
@@ -437,31 +439,37 @@ class ChequeReport(GObject.GObject):
 
     def passShode(self, sender):
         self.getSelection()
-        result = config.db.session.query(Cheque, Customers)
-        result = result.filter(Customers.custId == Cheque.chqCust)
-        result = result.filter(Cheque.chqId == self.code).first()
-        status = result.Cheque.chqStatus
+        result = config.db.session.query(Cheque).filter(Cheque.chqId == self.code).first()          
+        status = result.chqStatus
         if status == 5:
             sub = subjects.Subjects(parent_id=[1,14])
             sub.connect('subject-selected', self.on_subject_selected)
         if status == 1 or status == 3:
             document = class_document.Document()
-            result.Cheque.chqStatus = 2 if status == 1 else 4
+            result.chqStatus = 2 if status == 1 else 4
             if status == 1 : # pass
                 ba = class_bankaccounts.BankAccountsClass()
-                accName = ba.get_account(result.Cheque.chqAccount).accName
+                accName = ba.get_account(result.chqAccount).accName
                 banksub  = config.db.session.query(Subject).filter(Subject.parent_id== (dbconf.get_int('bank')) ).filter(Subject.name==accName).first().id
-                document.add_notebook(banksub, result.Cheque.chqAmount, _('Passed'))
-                document.add_notebook(dbconf.get_int('our_cheque'), -result.Cheque.chqAmount, _('Passed'))
+                document.add_notebook(banksub, result.chqAmount, _('Passed'))
+                document.add_notebook(dbconf.get_int('our_cheque'), -result.chqAmount, _('Passed'))
             else: # vosul
-                document.add_notebook(dbconf.get_int('cash'), -result.Cheque.chqAmount, _('Passed'))
-                document.add_notebook(dbconf.get_int('other_cheque'), result.Cheque.chqAmount, _('Passed'))
-            ch_history = ChequeHistory(result.Cheque.chqId, result.Cheque.chqAmount, result.Cheque.chqWrtDate, result.Cheque.chqDueDate, result.Cheque.chqSerial, result.Cheque.chqStatus, result.Cheque.chqCust, result.Cheque.chqAccount, result.Cheque.chqTransId, result.Cheque.chqDesc, self.current_time)
+                document.add_notebook(dbconf.get_int('cash'), -result.chqAmount, _('Cashed'))
+                document.add_notebook(dbconf.get_int('other_cheque'), result.chqAmount, _('Cashed'))
+            ch_history = ChequeHistory(result.chqId, result.chqAmount, result.chqWrtDate, result.chqDueDate, result.chqSerial, result.chqStatus, result.chqCust, result.chqAccount, result.chqTransId, result.chqDesc, self.current_time)
             config.db.session.add(ch_history)                                    
             document.save()
             config.db.session.commit()
             share.mainwin.silent_daialog(_("The operation was completed successfully."))
             self.searchFilter()
+
+    def darJaryanVosul (self , sender):
+        self.getSelection()
+        #result = config.db.session.query(Cheque).filter(Cheque.chqId == self.code).first()      
+        # status = result.chqStatus
+        # result.chqStatus = 10
+        # document = class_document.Document()  
+        
 
     def on_subject_selected(self, subject, id, code, name):
         result = config.db.session.query(Cheque, Customers)
@@ -541,7 +549,7 @@ class ChequeReport(GObject.GObject):
             self.builder.get_object("odatAsMoshtariButton").set_sensitive(False)
         if result.chqStatus !=3 :           # [1,2,4,5,6,7,8]: # 3 
             self.builder.get_object("odatBeMoshtariButton").set_sensitive(False)            
-        if result.chqStatus not in [1 , 3 , 5]:  #[2,4,6,7,8]:   # 1 , 3 , 5
+        if result.chqStatus not in [1 , 3 , 5 ,10]:  #[2,4,6,7,8]:   # 1 , 3 , 5
             self.builder.get_object("bargashtButton").set_sensitive(False)       
             self.builder.get_object("passButton").set_sensitive(False) 
         if result.chqStatus not in  [1 , 3]:
@@ -550,7 +558,7 @@ class ChequeReport(GObject.GObject):
             self.builder.get_object("editButton").set_sensitive(False)            
             self.builder.get_object("deleteButton").set_sensitive(False)   
             self.builder.get_object("passButton").set_sensitive(False) 
-            self.builder.get_object("bargashtButton").set_sensitive(False)                   
+            self.builder.get_object("bargashtButton").set_sensitive(False)           
         if result.chqDelete == True:
             self.builder.get_object("editButton").set_sensitive(False)            
             self.builder.get_object("deleteButton").set_sensitive(False) 

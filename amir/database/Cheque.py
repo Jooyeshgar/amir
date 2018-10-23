@@ -27,7 +27,9 @@ class Cheque(Base):
     # 5 Kharj shode
     # 6 Odat az moshtari shode
     # 7 Odat be moshtari shode
-    # 8 Bargasht shode
+    # 8 Pardakhti, Bargasht shode
+    # 9 Daryafti, Bargasht shode
+    # 10 Dar jaryan e vosul 
     
     chqStatus     = Column(Integer,      ColumnDefault(0), nullable = False)
     #chqOwnerName  = Column(Unicode(200),  nullable=True)

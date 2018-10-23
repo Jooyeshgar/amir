@@ -18,8 +18,10 @@
             <property name="spacing">10</property>
             <child>
               <object class="GtkFrame" id="frame1">
+                <property name="height_request">-1</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="margin_bottom">5</property>
                 <property name="label_xalign">0</property>
                 <property name="label_yalign">0</property>
                 <property name="shadow_type">in</property>
@@ -68,6 +70,7 @@
                               <packing>
                                 <property name="expand">True</property>
                                 <property name="fill">True</property>
+                                <property name="padding">12</property>
                                 <property name="position">0</property>
                               </packing>
                             </child>
@@ -96,12 +99,15 @@
               <object class="GtkFrame" id="frame2">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="margin_bottom">4</property>
                 <property name="label_xalign">0</property>
                 <property name="shadow_type">in</property>
                 <child>
                   <object class="GtkAlignment" id="alignment2">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="margin_left">8</property>
+                    <property name="margin_right">8</property>
                     <property name="left_padding">12</property>
                     <child>
                       <object class="GtkVBox" id="vbox3">
@@ -175,6 +181,10 @@
               <object class="GtkAlignment" id="alignment3">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="margin_left">8</property>
+                <property name="margin_right">10</property>
+                <property name="margin_top">5</property>
+                <property name="margin_bottom">5</property>
                 <property name="left_padding">12</property>
                 <child>
                   <object class="GtkTable" id="names-table">
@@ -292,9 +302,14 @@
               <object class="GtkTable" id="payment-table">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="margin_left">8</property>
+                <property name="margin_right">8</property>
+                <property name="margin_top">5</property>
+                <property name="margin_bottom">5</property>
                 <property name="n_rows">4</property>
                 <property name="n_columns">3</property>
                 <property name="column_spacing">10</property>
+                <property name="row_spacing">2</property>
                 <child>
                   <placeholder/>
                 </child>
@@ -303,7 +318,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">Cash Payment</property>
-                    <property name="xalign">0</property>
+                    <property name="xalign">0.059999998658895493</property>
                   </object>
                   <packing>
                     <property name="y_options">GTK_SHRINK</property>
@@ -314,7 +329,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">Non-Cash Payment</property>
-                    <property name="xalign">0</property>
+                    <property name="xalign">0.059999998658895493</property>
                   </object>
                   <packing>
                     <property name="top_attach">1</property>
@@ -342,7 +357,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">discount</property>
-                    <property name="xalign">0</property>
+                    <property name="xalign">0.059999998658895493</property>
                   </object>
                   <packing>
                     <property name="top_attach">3</property>
@@ -354,7 +369,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">Spend Cheque</property>
-                    <property name="xalign">0</property>
+                    <property name="xalign">0.059999998658895493</property>
                   </object>
                   <packing>
                     <property name="top_attach">2</property>
@@ -386,6 +401,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="margin_right">6</property>
                     <signal name="clicked" handler="on_discount_clicked" swapped="no"/>
                   </object>
                   <packing>
@@ -403,6 +419,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="margin_right">6</property>
                     <signal name="clicked" handler="on_spend_cheque_buttun_clicked" swapped="no"/>
                   </object>
                   <packing>
@@ -420,6 +437,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="margin_right">6</property>
                     <signal name="clicked" handler="on_non_cash_payment_button_clicked" swapped="no"/>
                   </object>
                   <packing>
@@ -460,6 +478,10 @@
                   <object class="GtkTable" id="table1">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="margin_left">8</property>
+                    <property name="margin_right">8</property>
+                    <property name="margin_top">5</property>
+                    <property name="margin_bottom">5</property>
                     <property name="n_rows">3</property>
                     <property name="n_columns">3</property>
                     <child>
@@ -532,6 +554,7 @@
                       <object class="GtkEntry" id="desc">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <property name="margin_right">6</property>
                         <property name="invisible_char">●</property>
                         <property name="primary_icon_activatable">False</property>
                         <property name="secondary_icon_activatable">False</property>
@@ -569,9 +592,6 @@
               <placeholder/>
             </child>
             <child>
-              <placeholder/>
-            </child>
-            <child>
               <object class="GtkButton" id="save-button">
                 <property name="label">gtk-save</property>
                 <property name="use_action_appearance">False</property>
@@ -584,9 +604,13 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
+                <property name="padding">3</property>
                 <property name="pack_type">end</property>
-                <property name="position">2</property>
+                <property name="position">1</property>
               </packing>
+            </child>
+            <child>
+              <placeholder/>
             </child>
           </object>
           <packing>

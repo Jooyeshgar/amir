@@ -148,9 +148,9 @@ class AutomaticAccounting:
 
         self.from_entry.set_text("")
         self.to_entry.set_text("")
-        self.cash_payment_entry.set_text('0')
-        self.total_credit_entry.set_text('0')
-        self.discount_entry.set_text('0')
+        self.cash_payment_entry.set_text(LN(0))
+        self.total_credit_entry.set_text(LN(0))
+        self.discount_entry.set_text(LN(0))
 
         dbconf = dbconfig.dbConfig()
 
@@ -280,12 +280,14 @@ class AutomaticAccounting:
 
         paid = val1+val2+val3+discount
         paid_label = self.builder.get_object('paid')
-        paid_label.set_text(str(paid))
+        paid_label.set_direction(Gtk.TextDirection.LTR)
+        paid_label.set_text(LN(paid))
 
         total = self.total_credit_entry.get_float()
         r = total - (paid)
         mod = self.builder.get_object('mod')
-        mod.set_text(str(r))
+        mod.set_direction(Gtk.TextDirection.LTR)
+        mod.set_text(LN(r))
 
         self.check_save_button()
 
