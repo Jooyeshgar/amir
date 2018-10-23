@@ -117,5 +117,6 @@ class WeasyprintReport:
                 th {border: 2px solid black;  padding: 7pt;font-size:10pt;}\
                 td {border-left:1px solid; border-right:1px solid; padding: 10pt;} </style> \
                 <meta charset="UTF-8"> </head>\
+                body {font-family: "Vazir"} \
                 <body>' + html + '</body> </html>'                
         return html

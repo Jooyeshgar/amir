@@ -1311,7 +1311,9 @@ class Factor(Payments):
 		html = '<html> \
 					<head> \
 						<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> \
-						<style> .none{border:none;} .border{border:1px solid #000;} .right{text-align:right;direction:rtl;} .center{text-align:center !important;direction:rtl;} .pink{background-color:#ffe0eb;} body,table {font-family: Vazir;font-size:15px; height:100%;} .bold{font-weight:bold; font-size:11px;} .lheight{line-height:1.7em;text-align:right;} \
+						<style>@font-face {font-family: Vazir; src: url(data/font/Vazir.woff); }\
+							 .none{border:none;} .border{border:1px solid #000;} .right{text-align:right;direction:rtl;} .center{text-align:center !important;direction:rtl;} .pink{background-color:#ffe0eb;} \
+							body,table {font-family: Vazir;font-size:15px; height:100%;} .bold{font-weight:bold; font-size:11px;} .lheight{line-height:1.7em;text-align:right;} \
 							.date-number td{padding: 10px;} \
 							.date-number {border-collapse: separate;}\
 							@page {size: A4 landscape;margin: 3mm 3mm 3mm 3mm;} \
