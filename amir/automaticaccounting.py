@@ -12,7 +12,7 @@ from share import share
 from database import Subject
 from database import Customers
 from class_subject import Subjects
-from utility import LN
+from utility import LN ,convertToLatin ,getFloat
 
 from gi.repository import Gtk
 
@@ -344,7 +344,7 @@ class AutomaticAccounting:
         if self.total_credit_entry.get_float() == 0:
             return
         mod = self.builder.get_object('mod')
-        if float(mod.get_text()) != 0:
+        if getFloat(mod.get_text()) != 0:
             return
         save_button.set_sensitive(True)
 
@@ -379,12 +379,15 @@ class AutomaticAccounting:
                 mode = 'our'                
             else:
                 mode = 'other'            
+            desc = result['desc']
+            if desc =="":
+                desc = self.type_names[self.type_index][1]            
             document = class_document.Document()
             if result['cash_payment']  :
-                document.add_notebook(result['from'], -result['cash_payment'], unicode(result['desc']))
-                document.add_notebook(result['to']  ,  result['cash_payment'], unicode(result['desc']))
+                document.add_notebook(result['from'], -result['cash_payment'], unicode(desc))
+                document.add_notebook(result['to']  ,  result['cash_payment'], unicode(desc ))
             if result['discount'] :
-                document.add_notebook(dbconf.get_int('sell-discount'), -result['discount'], result['desc'])            
+                document.add_notebook(dbconf.get_int('sell-discount'), -result['discount'], desc)            
 
             if self.type_configs[self.type_index][3] == True: # from is subject
                 custSubj = self.to_id                
