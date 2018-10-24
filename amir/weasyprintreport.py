@@ -73,10 +73,11 @@ class WeasyprintReport:
         time.sleep(3)
         os.remove('report.pdf');
         
-    def createTable(self,report_header,report_data , col_width=[]):   
-        hasWidth = True if len(col_width) else False     
+    def createTable(self,report_header,report_data , col_wid=[]):   
+        hasWidth = True if len(col_wid) else False      
+        col_width = [None] * len(report_header)
         for i in range(0, len(report_header)):
-            col_width[i] = 'style="width:'+str(col_width[i]) + 'pt" ' if hasWidth else ""
+            col_width[i] = 'style="width:'+str(col_wid[i]) + 'pt" ' if hasWidth else ""
         i = 0
         if config.locale == 'en_US':
             text_align = "left"

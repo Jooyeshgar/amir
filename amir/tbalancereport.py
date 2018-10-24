@@ -54,7 +54,7 @@ class TBalanceReport:
         report_data = []
         remaining = 0
         report_header = [_("Code") , _("Ledger name"), _("Debt"), _("Credit"), _("Remaining")]
-        col_width = [31, 23, 23, 23]
+        col_width = [25, 45, 40, 40 , 40]
         
         query = config.db.session.query(Subject).select_from(Subject)
         result = query.order_by(Subject.code).all()
