@@ -7,7 +7,7 @@ import  numberentry
 import  dateentry
 import  subjects
 import  customergroup
-from    utility                     import  LN,readNumber
+import    utility                     
 from    dbconfig                    import dbconf
 
 from    sqlalchemy.orm              import  sessionmaker, join
@@ -124,7 +124,7 @@ class Customer(customergroup.Group):
         grouprow = None
         for g, c in result:
             if g.custGrpId != last_gid:
-                grouprow = self.treestore.append(None, (g.custGrpCode, g.custGrpName, "", "", ""))
+                grouprow = self.treestore.append(None, (utility.readNumber(g.custGrpCode),utility.readNumber(g.custGrpName), "", "", ""))
                 last_gid = g.custGrpId
             if c != None:
                 try:
@@ -137,10 +137,10 @@ class Customer(customergroup.Group):
                     debt = 0
                 balance = credit - debt
                 if balance < 0:
-                    showBalance = "(" + str(abs(balance)) + ")"
+                    showBalance = "(" + utility.LN(abs(balance)) + ")"
                 else:
-                    showBalance = str(balance)
-                self.treestore.append(grouprow, (c.custCode, c.custName, str(debt), str(credit), showBalance))
+                    showBalance = utility.LN(balance)
+                self.treestore.append(grouprow, (utility.readNumber(c.custCode), unicode(c.custName), utility.LN(debt), utility.LN(credit), showBalance))
         
         self.window.show_all()    
 
@@ -158,7 +158,7 @@ class Customer(customergroup.Group):
             lastcode = "001"
         else :
             lastcode = "%03d" % (int(code[0][-2:]) + 1)
-        self.builder.get_object("custCodeEntry").set_text(LN(lastcode))
+        self.builder.get_object("custCodeEntry").set_text(utility.LN(lastcode))
         #self.custgrpentry.set_text("")
         self.builder.get_object("custNameEntry").set_text("")
         self.builder.get_object("custEcnmcsCodeEntry").set_text("")
@@ -215,7 +215,7 @@ class Customer(customergroup.Group):
     ## save customer to database
     #@return: -1 on error, 0 for success
     def saveCustomer(self):
-        custCode			= unicode(self.builder.get_object("custCodeEntry").get_text())
+        custCode			= utility.convertToLatin(self.builder.get_object("custCodeEntry").get_text())
         custGrp 			= self.custgrpentry.get_int()
         custName 			= unicode(self.builder.get_object("custNameEntry").get_text())
         custEcnmcsCode      = unicode(self.builder.get_object("custEcnmcsCodeEntry").get_text())
@@ -275,7 +275,7 @@ class Customer(customergroup.Group):
             query = config.db.session.query( CustGroups.custGrpId ).select_from( CustGroups ).filter( CustGroups.custGrpCode == custGrp )
             groupid = query.first()
             if groupid == None:
-                msg += _("No customer group registered with code %s.\n") % custGrp
+                msg += _("No customer group registered with code %s.\n") % utility.readNumber(custGrp)
             else:
                 groupid = groupid[0]
         
@@ -344,17 +344,16 @@ class Customer(customergroup.Group):
         
         #Show new customer in table
         if self.treestore != None:
-            parent_iter = self.treestore.get_iter_first()
-            while parent_iter:
+            parent_iter = self.treestore.get_iter_first()            
+            while parent_iter:                
                 itercode = self.treestore.get_value(parent_iter, 0)
-                if itercode == str(custGrp):
+                if itercode == utility.readNumber(custGrp):
                     break
-                parent_iter = self.treestore.iter_next(parent_iter)
-                
-            custCode = LN(custCode)
+                parent_iter = self.treestore.iter_next(parent_iter)            
+            custCode = utility.LN(custCode)
             
             if not self.editCustomer:
-                self.treestore.append(parent_iter, (custCode, custName, "0", "0", "0"))
+                self.treestore.append(parent_iter, (custCode, custName, utility.readNumber("0"), utility.readNumber("0"), utility.readNumber("0") ) )
             else:
                 self.treestore.set(self.editIter, 0, custCode, 1, custName)
                 
@@ -369,19 +368,19 @@ class Customer(customergroup.Group):
             self.editCustomerGroup(sender)
         else:            
             code = self.treestore.get_value(iter, 0)
-            code = readNumber(code)
+            code = utility.convertToLatin(code)            
             query = config.db.session.query(Customers, CustGroups.custGrpCode)
             query = query.select_from(outerjoin(CustGroups, Customers, CustGroups.custGrpId == Customers.custGroup))
             result = query.filter(Customers.custCode == code).first()
             customer = result[0]
             groupcode = result[1]
             
-            custCode = LN(customer.custCode, False)
-            custGrp = LN(groupcode, False)
-            custPhone = LN(customer.custPhone, False)
-            custCell = LN(customer.custCell, False)
-            custFax = LN(customer.custFax, False)
-            custPostalCode = LN(customer.custPostalCode, False)
+            custCode =utility. LN(customer.custCode, False)
+            custGrp = utility. LN(groupcode, False)
+            custPhone = utility. LN(customer.custPhone, False)
+            custCell = utility. LN(customer.custCell, False)
+            custFax = utility.LN(customer.custFax, False)
+            custPostalCode = utility. LN(customer.custPostalCode, False)
             
             self.customerForm = self.builder.get_object("customersWindow")
             self.customerForm.set_title(_("Edit Customer"))
@@ -420,7 +419,7 @@ class Customer(customergroup.Group):
             self.builder.get_object("custAccNo2Entry").set_text(customer.custAccNo2)
             self.builder.get_object("custAccBank2Entry").set_text(customer.custAccBank2)
             
-            self.builder.get_object("cusPostalCodeEntry").set_text(LN(customer.custPostalCode, False))
+            self.builder.get_object("cusPostalCodeEntry").set_text(utility.LN(customer.custPostalCode, False))
             self.builder.get_object("markedReasonEntry").set_sensitive(self.builder.get_object("markedChk").get_active())
             
             self.customerForm.show_all()
@@ -444,9 +443,9 @@ class Customer(customergroup.Group):
             self.deleteCustomerGroup(sender)
         else:
             #Iter points to a customer
-            code = self.treestore.get_value(iter, 0)
+            code =  utility.convertToLatin(self.treestore.get_value(iter, 0))
             query = config.db.session.query(Customers)
-            customer = query.filter(Customers.custCode ==unicode(code) ).first()
+            customer = query.filter(Customers.custCode ==code ).first()
 
             custId = customer.custId
             q1 = config.db.session.query(Factors.Cust).filter(Factors.Cust==custId)#.limit(1)

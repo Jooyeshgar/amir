@@ -139,18 +139,18 @@ class Product(productgroup.ProductGroup):
 		for g, p in result:
 
 			if g.id != last_gid:				
-				grouprow = self.treestore.append(None, (g.code, g.name, "", "", "" , "",0))
+				grouprow = self.treestore.append(None, (utility.readNumber(g.code),utility.readNumber(g.name), "", "", "" , "",0))
 				last_gid = g.id
 				
 			if p != None:
-				self.treestore.append(grouprow, (p.code, p.name, utility.LN(p.quantity), 
-										utility.LN(p.purchacePrice), utility.LN(p.sellingPrice) ,p.uMeasurement,p.id))
+				self.treestore.append(grouprow,(utility.readNumber(p.code),utility.readNumber(p.name), utility.LN(p.quantity), 
+										utility.LN(p.purchacePrice), utility.LN(p.sellingPrice) ,p.uMeasurement,p.id) )
 
 
 	def addProduct(self, sender, pcode = ""):
 		#self.treestore = Gtk.TreeStore(str, str, str, str, str)				
 		
-		accgrp = ""
+		accgrp = "0"
 		try:
 			selection = self.treeview.get_selection()
 		except AttributeError:
@@ -160,7 +160,7 @@ class Product(productgroup.ProductGroup):
 			iter = selection.get_selected()[1]
 			if iter != None and self.treestore.iter_parent(iter) == None:
 				accgrp = self.treestore.get_value(iter, 0)
-		
+		accgrp =utility.convertToLatin(accgrp)
 		dialog = self.builder.get_object("addProductDlg")
 		dialog.set_title(_("Add New Product"))
 		
@@ -390,6 +390,8 @@ class Product(productgroup.ProductGroup):
 			#skip if there is no table to show
 			pass
 		else:
+			if not parent_iter:
+				return True			
 			while self.treestore.iter_is_valid(parent_iter):
 				itercode = self.treestore.get_value(parent_iter, 0)
 				if itercode == accgrp:
@@ -495,9 +497,9 @@ class Product(productgroup.ProductGroup):
 	def selectProductFromList(self, treeview, path, view_column):
 		iter = self.treestore.get_iter(path)
 		if self.treestore.iter_parent(iter) != None:
-			code = unicode(self.treestore.get_value(iter, 0))
+			code = utility.convertToLatin(self.treestore.get_value(iter, 0))
 			parent_iter = self.treestore.iter_parent(iter)
-			group = self.treestore.get_value(parent_iter , 0)
+			group = utility.convertToLatin(self.treestore.get_value(parent_iter , 0) )
 			query = config.db.session.query(Products).select_from(Products)
 			query = query.filter(Products.code == code).filter(Products.accGroup== group)
 			product_id = query.first().id			

@@ -267,7 +267,7 @@ class MainWindow(GObject.GObject):
 		window = user.User()
 
 	def quitMainWindow(self, sender):
-		msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL, "Are you sure to close the app?")
+		msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL, _("Are you sure to close the app?") )
 		msgbox.set_title(_("Are you sure?") )
 		result = msgbox.run();
 		if result == Gtk.ResponseType.OK:

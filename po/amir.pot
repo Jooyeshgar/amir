@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-24 12:51+0330\n"
+"POT-Creation-Date: 2018-10-24 16:43+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -93,13 +93,13 @@ msgid "No subjects found"
 msgstr ""
 
 #: amir/addeditdoc.py:303 amir/customers.py:436 amir/factors.py:346
-#: amir/product.py:427
+#: amir/product.py:429
 msgid "Are you sure to remove this row?"
 msgstr ""
 
 #: amir/addeditdoc.py:304 amir/addeditdoc.py:410 amir/addeditdoc.py:426
 #: amir/chequereport.py:577 amir/customers.py:437 amir/factors.py:347
-#: amir/factors.py:667 amir/product.py:428 amir/setting.py:180
+#: amir/factors.py:667 amir/product.py:430 amir/setting.py:180
 #: amir/setting.py:226 amir/warehousing.py:216 amir/warehousing.py:245
 #: amir/warehousing.py:803 scripts/amir:271 scripts/amir:484
 msgid "Are you sure?"
@@ -724,8 +724,48 @@ msgid ""
 "The Unit Sell Price you entered is less than the product Purchase Price!\""
 msgstr ""
 
+#: amir/factors.py:794
+msgid "Product code is invalid"
+msgstr ""
+
+#: amir/factors.py:825 amir/factors.py:827
+msgid "Quantity must be greater than 0."
+msgstr ""
+
+#: amir/factors.py:831
+msgid "Quantity is more than the available storage. (Over-Sell is Off)"
+msgstr ""
+
+#: amir/factors.py:879
+msgid "Unit Price cannot be negative."
+msgstr ""
+
+#: amir/factors.py:887
+msgid "Unit Price is less than the product purchase price."
+msgstr ""
+
+#: amir/factors.py:922
+msgid "Invalid discount range. (Discount must be between 0 and 100 percent)"
+msgstr ""
+
+#: amir/factors.py:935
+msgid "Invalid discount. (Use numbers and percentage sign only)"
+msgstr ""
+
+#: amir/factors.py:939
+msgid "Invalid discount. (Put percentage sign before or after discount amount)"
+msgstr ""
+
+#: amir/factors.py:949
+msgid "Applying discount decreases product price below its purchase price!"
+msgstr ""
+
 #: amir/factors.py:1037
 msgid "The customer code you entered is not valid."
+msgstr ""
+
+#: amir/factors.py:1045
+msgid "There is no product selected for the invoice."
 msgstr ""
 
 #: amir/factors.py:1070
@@ -956,8 +996,8 @@ msgstr ""
 msgid "Edit Product"
 msgstr ""
 
-#: amir/product.py:219 amir/data/ui/BuyingForm.glade:1442
-#: amir/data/ui/SellingForm.glade:1283
+#: amir/product.py:219 amir/data/ui/BuyingForm.glade:1477
+#: amir/data/ui/SellingForm.glade:1312
 msgid "Quantity:"
 msgstr ""
 
@@ -1381,6 +1421,10 @@ msgstr ""
 msgid "Backup restored successfully"
 msgstr ""
 
+#: scripts/amir:270
+msgid "Are you sure to close the app?"
+msgstr ""
+
 #: scripts/amir:393
 msgid "Cash is negative"
 msgstr ""
@@ -1413,12 +1457,12 @@ msgstr ""
 msgid "Amir Warehousing Buy Form"
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:35 amir/data/ui/BuyingForm.glade:1848
+#: amir/data/ui/BuyingForm.glade:35 amir/data/ui/BuyingForm.glade:1854
 #: amir/data/ui/mainwin.glade:195
 msgid "Add Buy"
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:50 amir/data/ui/BuyingForm.glade:1873
+#: amir/data/ui/BuyingForm.glade:50 amir/data/ui/BuyingForm.glade:1879
 #: amir/data/ui/SellingForm.glade:49 amir/data/ui/SellingForm.glade:1717
 #: amir/data/ui/cheque.glade:627 amir/data/ui/customers.glade:1658
 #: amir/data/ui/customers.glade:1807 amir/data/ui/notebook.glade:69
@@ -1449,8 +1493,8 @@ msgid "Total Payments:"
 msgstr ""
 
 #: amir/data/ui/BuyingForm.glade:209 amir/data/ui/BuyingForm.glade:687
-#: amir/data/ui/BuyingForm.glade:703 amir/data/ui/BuyingForm.glade:855
-#: amir/data/ui/BuyingForm.glade:870 amir/data/ui/SellingForm.glade:208
+#: amir/data/ui/BuyingForm.glade:703 amir/data/ui/BuyingForm.glade:861
+#: amir/data/ui/BuyingForm.glade:876 amir/data/ui/SellingForm.glade:208
 #: amir/data/ui/SellingForm.glade:556 amir/data/ui/SellingForm.glade:583
 #: amir/data/ui/SellingForm.glade:692 amir/data/ui/SellingForm.glade:707
 #: amir/data/ui/automaticaccounting.glade:344
@@ -1469,13 +1513,13 @@ msgid "Balance Due:"
 msgstr ""
 
 #: amir/data/ui/BuyingForm.glade:256 amir/data/ui/BuyingForm.glade:279
-#: amir/data/ui/BuyingForm.glade:918 amir/data/ui/BuyingForm.glade:1523
-#: amir/data/ui/BuyingForm.glade:1562 amir/data/ui/BuyingForm.glade:1575
-#: amir/data/ui/BuyingForm.glade:1742 amir/data/ui/BuyingForm.glade:1755
-#: amir/data/ui/BuyingForm.glade:1770 amir/data/ui/SellingForm.glade:255
+#: amir/data/ui/BuyingForm.glade:924 amir/data/ui/BuyingForm.glade:1558
+#: amir/data/ui/BuyingForm.glade:1597 amir/data/ui/BuyingForm.glade:1610
+#: amir/data/ui/BuyingForm.glade:1748 amir/data/ui/BuyingForm.glade:1761
+#: amir/data/ui/BuyingForm.glade:1776 amir/data/ui/SellingForm.glade:255
 #: amir/data/ui/SellingForm.glade:278 amir/data/ui/SellingForm.glade:755
-#: amir/data/ui/SellingForm.glade:1367 amir/data/ui/SellingForm.glade:1406
-#: amir/data/ui/SellingForm.glade:1419 amir/data/ui/SellingForm.glade:1586
+#: amir/data/ui/SellingForm.glade:1396 amir/data/ui/SellingForm.glade:1435
+#: amir/data/ui/SellingForm.glade:1448 amir/data/ui/SellingForm.glade:1586
 #: amir/data/ui/SellingForm.glade:1599 amir/data/ui/SellingForm.glade:1614
 #: amir/data/ui/cheque.glade:705
 msgid "0.0"
@@ -1493,8 +1537,8 @@ msgstr ""
 msgid "Date Shipped:"
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:391 amir/data/ui/BuyingForm.glade:1629
-#: amir/data/ui/SellingForm.glade:390 amir/data/ui/SellingForm.glade:1473
+#: amir/data/ui/BuyingForm.glade:391 amir/data/ui/BuyingForm.glade:1623
+#: amir/data/ui/SellingForm.glade:390 amir/data/ui/SellingForm.glade:1461
 #: amir/data/ui/cheque.glade:122 amir/data/ui/chequereport.glade:118
 #: amir/data/ui/customers.glade:118 amir/data/ui/customers.glade:853
 #: amir/data/ui/document.glade:726
@@ -1529,24 +1573,24 @@ msgstr ""
 msgid "Fee:"
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:886 amir/data/ui/SellingForm.glade:723
+#: amir/data/ui/BuyingForm.glade:892 amir/data/ui/SellingForm.glade:723
 msgid "(Total Discount) :"
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:900 amir/data/ui/BuyingForm.glade:1729
+#: amir/data/ui/BuyingForm.glade:906 amir/data/ui/BuyingForm.glade:1735
 #: amir/data/ui/SellingForm.glade:737 amir/data/ui/SellingForm.glade:1573
 msgid "Payable Amount:"
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:937 amir/data/ui/SellingForm.glade:774
+#: amir/data/ui/BuyingForm.glade:943 amir/data/ui/SellingForm.glade:774
 msgid "Subtotal:"
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:996
+#: amir/data/ui/BuyingForm.glade:1002
 msgid "Buy from:"
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:1041 amir/data/ui/SellingForm.glade:893
+#: amir/data/ui/BuyingForm.glade:1047 amir/data/ui/SellingForm.glade:893
 #: amir/data/ui/automaticaccounting.glade:237
 #: amir/data/ui/automaticaccounting.glade:253 amir/data/ui/cardex.glade:407
 #: amir/data/ui/cardex.glade:421 amir/data/ui/chequereport.glade:397
@@ -1557,92 +1601,92 @@ msgstr ""
 msgid "Select"
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:1096 amir/data/ui/SellingForm.glade:937
+#: amir/data/ui/BuyingForm.glade:1102 amir/data/ui/SellingForm.glade:937
 msgid "Pre-Invoice"
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:1138 amir/data/ui/SellingForm.glade:979
+#: amir/data/ui/BuyingForm.glade:1144 amir/data/ui/SellingForm.glade:979
 msgid "Invoice Number:"
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:1153 amir/data/ui/SellingForm.glade:994
+#: amir/data/ui/BuyingForm.glade:1159 amir/data/ui/SellingForm.glade:994
 #: amir/data/ui/document.glade:258 amir/data/ui/document.glade:339
 #: amir/data/ui/document.glade:377 amir/data/ui/document.glade:417
 msgid "----"
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:1179 amir/data/ui/SellingForm.glade:1020
+#: amir/data/ui/BuyingForm.glade:1185 amir/data/ui/SellingForm.glade:1020
 #: amir/data/ui/automaticaccounting.glade:124 amir/data/ui/document.glade:205
 msgid "Date:"
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:1240 amir/data/ui/SellingForm.glade:1082
+#: amir/data/ui/BuyingForm.glade:1246 amir/data/ui/SellingForm.glade:1082
 msgid "Save and Print"
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:1260 amir/data/ui/cardex.glade:15
+#: amir/data/ui/BuyingForm.glade:1266 amir/data/ui/cardex.glade:15
 msgid "Buy"
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:1278 amir/data/ui/BuyingForm.glade:1351
+#: amir/data/ui/BuyingForm.glade:1284 amir/data/ui/BuyingForm.glade:1357
 #: amir/data/ui/SellingForm.glade:1118 amir/data/ui/SellingForm.glade:1192
 #: amir/data/ui/cheque.glade:39 amir/data/ui/chequereport.glade:38
 #: amir/data/ui/customers.glade:1577
 msgid "Cancel"
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:1382 amir/data/ui/SellingForm.glade:1223
+#: amir/data/ui/BuyingForm.glade:1388 amir/data/ui/SellingForm.glade:1223
 msgid "Product:"
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:1429 amir/data/ui/SellingForm.glade:1270
-msgid "Group Number:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:1468 amir/data/ui/SellingForm.glade:1312
-msgid "Unit Price:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:1497 amir/data/ui/SellingForm.glade:1341
-msgid "Discount:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:1510 amir/data/ui/SellingForm.glade:1354
-msgid "Quantity Available:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:1536
-msgid "Standard Buying Price:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:1549 amir/data/ui/SellingForm.glade:1393
-msgid "Standard Discount:"
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:1591 amir/data/ui/SellingForm.glade:1435
-msgid " "
-msgstr ""
-
-#: amir/data/ui/BuyingForm.glade:1602 amir/data/ui/SellingForm.glade:1446
+#: amir/data/ui/BuyingForm.glade:1430 amir/data/ui/SellingForm.glade:1265
 #: amir/data/ui/SellingForm.glade:1827 amir/data/ui/customers.glade:331
 #: amir/data/ui/customers.glade:1118
 msgid "..."
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:1708 amir/data/ui/SellingForm.glade:1552
+#: amir/data/ui/BuyingForm.glade:1464 amir/data/ui/SellingForm.glade:1299
+msgid "Group Number:"
+msgstr ""
+
+#: amir/data/ui/BuyingForm.glade:1503 amir/data/ui/SellingForm.glade:1341
+msgid "Unit Price:"
+msgstr ""
+
+#: amir/data/ui/BuyingForm.glade:1532 amir/data/ui/SellingForm.glade:1370
+msgid "Discount:"
+msgstr ""
+
+#: amir/data/ui/BuyingForm.glade:1545 amir/data/ui/SellingForm.glade:1383
+msgid "Quantity Available:"
+msgstr ""
+
+#: amir/data/ui/BuyingForm.glade:1571
+msgid "Standard Buying Price:"
+msgstr ""
+
+#: amir/data/ui/BuyingForm.glade:1584 amir/data/ui/SellingForm.glade:1422
+msgid "Standard Discount:"
+msgstr ""
+
+#: amir/data/ui/BuyingForm.glade:1666 amir/data/ui/SellingForm.glade:1504
+msgid " "
+msgstr ""
+
+#: amir/data/ui/BuyingForm.glade:1714 amir/data/ui/SellingForm.glade:1552
 #: amir/data/ui/cheque.glade:691
 msgid "Total Amount:"
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:1716 amir/data/ui/SellingForm.glade:1560
+#: amir/data/ui/BuyingForm.glade:1722 amir/data/ui/SellingForm.glade:1560
 msgid "Total Discount:"
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:1830
+#: amir/data/ui/BuyingForm.glade:1836
 msgid "Buying"
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:1888 amir/data/ui/SellingForm.glade:1732
+#: amir/data/ui/BuyingForm.glade:1894 amir/data/ui/SellingForm.glade:1732
 #: amir/data/ui/chequereport.glade:1228 amir/data/ui/customers.glade:1673
 #: amir/data/ui/customers.glade:1821 amir/data/ui/notebook.glade:86
 #: amir/data/ui/user.glade:689 amir/data/ui/user.glade:1266
@@ -1651,7 +1695,7 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:1942 amir/data/ui/SellingForm.glade:1917
+#: amir/data/ui/BuyingForm.glade:1948 amir/data/ui/SellingForm.glade:1917
 #: amir/data/ui/customers.glade:1727 amir/data/ui/user.glade:1320
 msgid "Insert: Add group    Ctrl+E: Edit    Del: Delete"
 msgstr ""
@@ -1673,7 +1717,7 @@ msgstr ""
 msgid "Sell"
 msgstr ""
 
-#: amir/data/ui/SellingForm.glade:1380
+#: amir/data/ui/SellingForm.glade:1409
 msgid "Standard Selling Price:"
 msgstr ""
 
@@ -2803,7 +2847,7 @@ msgid "Product Description:"
 msgstr ""
 
 #: amir/data/ui/warehousing.glade:141
-msgid "Accounting Group:"
+msgid "Product Group:"
 msgstr ""
 
 #: amir/data/ui/warehousing.glade:155

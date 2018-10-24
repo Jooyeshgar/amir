@@ -104,7 +104,7 @@ class ProductGroup(GObject.GObject):
                 #code = utility.convertToPersian(code)
                 buyId = utility.convertToPersian(buyId)
                 sellId = utility.convertToPersian(sellId)
-            self.treestore.append(None, (str(code), str(group.name), str(buyId), str(sellId)))
+            self.treestore.append(None, (utility.readNumber(code), str(group.name), utility.readNumber(buyId), utility.readNumber(sellId)))
             
         self.window.show_all()
         self.window.grab_focus()
@@ -222,7 +222,7 @@ class ProductGroup(GObject.GObject):
             group = query.filter(ProductGroups.code == pcode).first()
             gid = group.id
         
-        #code = utility.convertToLatin(code)
+        code = utility.convertToLatin(code)
         buy_code = utility.convertToLatin(buy_code)
         sell_code = utility.convertToLatin(sell_code)
         
@@ -394,6 +394,8 @@ class ProductGroup(GObject.GObject):
         self.sellCodeEntry.set_text(code)
         sender.window.destroy()
         
+    def selectProductGroup(self, sender):    
+        return
         
 GObject.type_register(ProductGroup)
 GObject.signal_new("group-selected", ProductGroup, GObject.SignalFlags.RUN_LAST,

@@ -24,8 +24,8 @@ class NumberEntry(Gtk.Entry):
     def insert(self, widget, text, pos):
     # the next three lines set up the text. this is done because we
     # can't use insert_text(): it always inserts at position zero.
-        orig_text = unicode(widget.get_text())
-        text = unicode(text)
+        orig_text = utility.readNumber(widget.get_text())
+        text = utility.readNumber(text)
         new_text = orig_text[:pos] + text + orig_text[pos:]
         try:
             int(new_text)

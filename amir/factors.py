@@ -791,7 +791,7 @@ class Factor(Payments):
 			product = self.session.query(Products).filter(and_(Products.id==productCd, Products.accGroup == productGroup ) ).first()
 			if not product:
 				self.proVal.modify_base(Gtk.StateType.NORMAL,self.redClr)
-				msg = "Product code is invalid"
+				msg = _("Product code is invalid")
 				self.proVal.set_tooltip_text(msg)
 				self.addStBar.push(1,msg)
 				self.proNameLbl.set_text("")
@@ -822,13 +822,13 @@ class Factor(Payments):
 				if qnty < 0:
 					self.qntyEntry.modify_base(Gtk.StateType.NORMAL,self.redClr)
 					if not stMsg:
-						stMsg  = "Quantity must be greater than 0."
+						stMsg  = _("Quantity must be greater than 0.")
 						severe = True
-					self.qntyEntry.set_tooltip_text("Quantity must be greater than 0.")
+					self.qntyEntry.set_tooltip_text(_("Quantity must be greater than 0.") )
 
 				elif qnty > qntyAvlble and not over:
 					self.qntyEntry.modify_base(Gtk.StateType.NORMAL,self.redClr)
-					msg = "Quantity is more than the available storage. (Over-Sell is Off)"
+					msg = _("Quantity is more than the available storage. (Over-Sell is Off)")
 					if not stMsg:
 						stMsg  = msg
 						severe = False
@@ -876,7 +876,7 @@ class Factor(Payments):
 				purcPrc = self.product.purchacePrice
 				if untPrc < 0:
 					self.unitPriceEntry.modify_base(Gtk.StateType.NORMAL,self.redClr)
-					erMsg  = "Unit Price cannot be negative."
+					erMsg  = _("Unit Price cannot be negative.")
 					self.unitPriceEntry.set_tooltip_text(erMsg)
 					if not stMsg:
 						stMsg   = erMsg
@@ -884,7 +884,7 @@ class Factor(Payments):
 
 				elif untPrc < purcPrc:
 					self.unitPriceEntry.modify_base(Gtk.StateType.NORMAL,self.redClr)
-					err  = "Unit Price is less than the product purchase price."
+					err  = _("Unit Price is less than the product purchase price.")
 					self.unitPriceEntry.set_tooltip_text(err)
 					if not stMsg:
 						stMsg  = err
@@ -919,7 +919,7 @@ class Factor(Payments):
 						
 						if discp > 100 or discp < 0:
 							self.discountEntry.modify_base(Gtk.StateType.NORMAL,self.redClr)
-							errMess  = "Invalid discount range. (Discount must be between 0 and 100 percent)"
+							errMess  = _("Invalid discount range. (Discount must be between 0 and 100 percent)")
 							self.discountEntry.set_tooltip_text(errMess)
 							if not stMsg:
 								stMsg  = errMess
@@ -932,11 +932,11 @@ class Factor(Payments):
 							discval = float(disc)
 						except ValueError:
 							self.discountEntry.modify_base(Gtk.StateType.NORMAL,self.redClr)
-							errMess  = "Invalid discount. (Use numbers and percentage sign only)"
+							errMess  = _("Invalid discount. (Use numbers and percentage sign only)")
 							self.discountEntry.set_tooltip_text(errMess)
 					else:
 						self.discountEntry.modify_base(Gtk.StateType.NORMAL,self.redClr)
-						errMess  = "Invalid discount. (Put percentage sign before or after discount amount)"
+						errMess  = _("Invalid discount. (Put percentage sign before or after discount amount)")
 						self.discountEntry.set_tooltip_text(errMess)
 						if not stMsg:
 							stMsg  = errMess
@@ -946,7 +946,7 @@ class Factor(Payments):
 			if not severe:
 				if untPrc < discval:
 					self.discountEntry.modify_base(Gtk.StateType.NORMAL,self.redClr)
-					errMess  = "Applying discount decreases product price below its purchase price!"
+					errMess  = _("Applying discount decreases product price below its purchase price!")
 					self.discountEntry.set_tooltip_text(errMess)
 					if not stMsg:
 						self.addStBar.push(1,errMess)
@@ -1042,7 +1042,7 @@ class Factor(Payments):
 			self.custSubj = cust.custSubj
 								
 		if len(self.sellListStore)<1:
-			self.statusBar.push(1, "There is no product selected for the invoice.")
+			self.statusBar.push(1, _("There is no product selected for the invoice.") )
 			return False
 						
 		self.subCode    = self.Code
