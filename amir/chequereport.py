@@ -31,7 +31,7 @@ class ChequeReport(GObject.GObject):
     def __init__(self):
         self.builder = get_builder("chequereport")
         self.window = self.builder.get_object("windowChequeReport")
-        self.window.set_title("Cheques Report")
+        self.window.set_title(_("Cheques Report"))
         
         self.treeviewIncoming = self.builder.get_object("treeviewIncoming")
         self.treeviewOutgoing = self.builder.get_object("treeviewOutgoing")
@@ -379,11 +379,11 @@ class ChequeReport(GObject.GObject):
         ch_history = ChequeHistory(result.Cheque.chqId, result.Cheque.chqAmount, result.Cheque.chqWrtDate, result.Cheque.chqDueDate, result.Cheque.chqSerial, result.Cheque.chqStatus, result.Cheque.chqCust, result.Cheque.chqAccount, result.Cheque.chqTransId, result.Cheque.chqDesc, self.current_time)
 
         document = class_document.Document()
-        document.add_notebook(result.Customers.custSubj  , result.Cheque.chqAmount, _('Cheque No. '+result.Cheque.chqSerial+ ' returned from '+result.Customers.custName))
+        document.add_notebook(result.Customers.custSubj  , result.Cheque.chqAmount, _('Cheque with serial No. ')+result.Cheque.chqSerial+ _(' returned from ')+result.Customers.custName)
         if stat == 5 :
-            document.add_notebook(dbconf.get_int('other_cheque'), -result.Cheque.chqAmount, _('Cheque No. '+result.Cheque.chqSerial+ ' returned from '+result.Customers.custName))
+            document.add_notebook(dbconf.get_int('other_cheque'), -result.Cheque.chqAmount, _('Cheque with serial No. ')+result.Cheque.chqSerial+ _(' returned from ')+result.Customers.custName)
         else:
-            document.add_notebook(dbconf.get_int('our_cheque'), -result.Cheque.chqAmount, _('Cheque No. '+result.Cheque.chqSerial+ ' returned from '+result.Customers.custName))
+            document.add_notebook(dbconf.get_int('our_cheque'), -result.Cheque.chqAmount, _('Cheque with serial No. ')+result.Cheque.chqSerial+ _(' returned from ')+result.Customers.custName)
         document.save()
 
         config.db.session.add(ch_history)
@@ -402,8 +402,8 @@ class ChequeReport(GObject.GObject):
         config.db.session.commit()
 
         document = class_document.Document()
-        document.add_notebook(result.Customers.custSubj  , -result.Cheque.chqAmount, _('Returned to Customer'))
-        document.add_notebook(dbconf.get_int('other_cheque'), result.Cheque.chqAmount, _('Returned to Customer'))
+        document.add_notebook(result.Customers.custSubj  , -result.Cheque.chqAmount, _('Cheque with serial No. ')+result.Cheque.chqSerial+ _(' returned to ')+result.Customers.custName)
+        document.add_notebook(dbconf.get_int('other_cheque'), result.Cheque.chqAmount, _('Cheque with serial No. ')+result.Cheque.chqSerial+ _(' returned to ')+result.Customers.custName)
         document.save()
 
         config.db.session.commit()

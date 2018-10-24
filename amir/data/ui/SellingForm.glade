@@ -1347,20 +1347,6 @@
               </packing>
             </child>
             <child>
-              <object class="GtkEntry" id="discountEntry">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="invisible_char">●</property>
-                <property name="primary_icon_activatable">False</property>
-                <property name="secondary_icon_activatable">False</property>
-                <signal name="focus-out-event" handler="validateDiscnt" swapped="no"/>
-              </object>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="top_attach">3</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkLabel" id="availableQntyLbl">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -1505,6 +1491,22 @@
                 <property name="left_attach">1</property>
                 <property name="top_attach">4</property>
                 <property name="width">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox" id="unitDiscBox">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">3</property>
               </packing>
             </child>
           </object>

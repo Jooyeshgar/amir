@@ -411,7 +411,7 @@ class AutomaticAccounting:
             result = document.save()
 
             if result < 0:
-                dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, 'Failed, %s' % document.get_error_message(result))
+                dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, _('Failed, %s') % document.get_error_message(result))
                 dialog.run()
                 dialog.destroy()
                 return

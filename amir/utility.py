@@ -17,7 +17,8 @@ def LN (num, comma=True):
         num = str(num)
         if num[-2:]==".0":
             num = num[:-2]   
-
+    if not len (num):
+        return ""
     minus = False
     if num[0] =='-':
         num = num[1:]
@@ -82,7 +83,11 @@ def getInt (number_string):
     return int(number_string)
     
 def readNumber (number):
-    return number.replace('0123456789', u'۰۱۲۳۴۵۶۷۸۹')
+    #return number.replace('0123456789', u'۰۱۲۳۴۵۶۷۸۹')
+    if share.config.digittype == 1:
+        return convertToPersian(number)
+    else:
+        return convertToLatin(number)
 
 def convertToLatin (input_string):
     """

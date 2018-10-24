@@ -833,7 +833,7 @@ class Warehousing(GObject.GObject):
             title       = _("Edit Group: %s") %code
             self.editFlg    = True
         else:
-            title       = "Add New Group"
+            title       = _("Add New Group")
             self.editFlg    = False
         
         self.addGrpWindow   = None

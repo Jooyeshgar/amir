@@ -104,6 +104,10 @@ class Factor(Payments):
 		self.unitPriceEntry = decimalentry.DecimalEntry()
 		self.builder.get_object("unitPriceBox").add(self.unitPriceEntry)
 		self.unitPriceEntry.connect("focus-out-event", self.validatePrice)
+
+		self.discountEntry = decimalentry.DecimalEntry()
+		self.builder.get_object("unitDiscBox").add(self.discountEntry)
+		self.discountEntry.connect("focus-out-event", self.validateDiscnt)
 		
 		self.customerEntry      = self.builder.get_object("customerCodeEntry")
 		self.totalEntry         = self.builder.get_object("subtotalEntry")
@@ -212,7 +216,7 @@ class Factor(Payments):
 			bill = config.db.session.query(Bill).select_from(Notebook).filter(Notebook.factorId == t.Id).filter(Notebook.bill_id == Bill.id).first()
 			if bill:
 				bill_id = str( bill.id) 			
-			grouprow = self.treestore.append(None, (int(t.Id), t.Code, bill_id, date, c.custName, utility.LN(t.PayableAmnt) , pre_invoice))
+			grouprow = self.treestore.append(None, (int(t.Id),utility.readNumber(t.Code),utility.readNumber(bill_id), date, c.custName, utility.LN(t.PayableAmnt) , pre_invoice))
 			
 		self.window.show_all()
 
@@ -264,13 +268,14 @@ class Factor(Payments):
 		self.paymentManager.customerNameLbl.set_text(self.customerNameEntry.get_text())		
 		self.paymentManager.payerEntry.set_text(self.customerEntry.get_text())		
 
+		self.sellListStore.clear()
 		if transId:
 			sellsQuery  = self.session.query(FactorItems)
 			sellsQuery  = sellsQuery.filter(FactorItems.factorId==transId).order_by(FactorItems.number.asc()).all()
-			for sell in sellsQuery:
+			for sell in sellsQuery:				
 				ttl     = sell.untPrc * sell.qnty
 				disc    = sell.untDisc * sell.qnty				
-				list    = (sell.number,sell.productId,sell.qnty,str(sell.untPrc),str(ttl),str(sell.untDisc),str(disc),sell.desc,sell.productId)
+				list    = (utility.readNumber(sell.number,sell.productId,sell.qnty,utility.LN(sell.untPrc),utility.LN(ttl),utility.LN(sell.untDisc),str(disc),sell.desc,sell.productId) )
 				self.sellListStore.append(None,list)
 		
 		
@@ -292,13 +297,13 @@ class Factor(Payments):
 			factorItems = query.filter(FactorItems.factorId==self.editTransaction.Id).all()
 			self.oldProductList = factorItems
 			number=1
-			for factorItem in factorItems:							
+			for factorItem in factorItems:						
 				query=self.session.query(Products).select_from(Products)
 				product = query.filter(Products.id==factorItem.productId).first()
-				sellList = (str(number), product.name, str(factorItem.qnty), str(factorItem.untPrc),
-						 str(factorItem.qnty*factorItem.untPrc), str(factorItem.untDisc),
-						 str(float(factorItem.qnty)*float(factorItem.untDisc)), factorItem.desc,factorItem.productId)
-				self.sellListStore.append(None,sellList)
+				sellList = (utility.readNumber(number), product.name, utility.LN(factorItem.qnty), utility.LN(factorItem.untPrc),\
+						 utility.LN(factorItem.qnty*factorItem.untPrc), utility.LN(factorItem.untDisc),\
+						 utility.LN(float(factorItem.qnty)*float(factorItem.untDisc)), factorItem.desc,factorItem.productId) 
+				self.sellsItersDict[number] =  self.sellListStore.append(None,sellList)				
 				self.appendPrice(factorItem.qnty*factorItem.untPrc)
 				self.appendDiscount(float(factorItem.qnty)*float(factorItem.untDisc))
 				self.valsChanged()
@@ -449,24 +454,24 @@ class Factor(Payments):
 		self.edtSellFlg = False
 		if edit:
 			self.editCde    = edit[0]
-			ttl = "Edit sell:\t%s - %s" %(self.editCde,edit[1])
+			ttl = _("Edit sell:\t%s - %s") %(self.editCde,edit[1]) 
 			self.addDlg.set_title(ttl)
 			self.edtSellFlg = True		#TODO find usage
 			self.oldTtl     = utility.getFloat(edit[4])
 			self.oldTtlDisc = utility.getFloat(edit[6])
-			btnVal  = "Save Changes..."
+			btnVal  = _("Save Changes...")
 		else:
 			self.editingSell    = None
 			if self.sell:
-				self.addDlg.set_title("Choose sell information")
+				self.addDlg.set_title(_("Choose sell information") )
 			else:
-				self.addDlg.set_title("Choose buy information")
+				self.addDlg.set_title(_("Choose buy information"))
 			
-			btnVal  = "Add to list"
+			btnVal  = _("Add to list")
 		
 		self.proVal        = self.builder.get_object("proEntry")		# product's Code
 		self.productGroup  = self.builder.get_object("lblAccGroup")
-		self.discountEntry = self.builder.get_object("discountEntry")
+		#self.discountEntry = self.builder.get_object("discountEntry")
 		self.descVal       = self.builder.get_object("descVal")
 		self.proNameLbl    = self.builder.get_object("proNameLbl")
 		self.avQntyVal     = self.builder.get_object("availableQntyVal")
@@ -506,8 +511,8 @@ class Factor(Payments):
 			self.avQntyVal.set_text(utility.LN(pro.quantity))
 			self.stndrdPVal.set_text(utility.LN(pro.sellingPrice))
 			
-			self.ttlAmntVal.set_text(ttlPrc)
-			self.discTtlVal.set_text(ttlDisc)
+			self.ttlAmntVal.set_text(ttlPrc) 
+			self.discTtlVal.set_text(ttlDisc) 
 			total_payable = utility.getFloat(ttlPrc) - utility.getFloat(ttlDisc)
 			discval = self.calcDiscount(pro.discountFormula, utility.getFloat(qnty), 
 										pro.sellingPrice)
@@ -555,6 +560,7 @@ class Factor(Payments):
 			self.reduceDiscount(ttlDisc)
 			self.sellListStore.remove(delIter)
 			self.valsChanged()
+			No = utility.getInt(No)
 			length  = len(self.sellsItersDict) -1
 			if len(self.sellsItersDict) > 1:
 				while No < length:			
@@ -674,7 +680,7 @@ class Factor(Payments):
 		untDisc = self.discountEntry.get_text()
 		if self.edtSellFlg:
 			No  = self.editCde
-			sellList    = (str(No),productName,str(qnty),str(slPrc),str(total),untDisc,discnt,descp , product.id)
+			sellList    = (utility.readNumber(No),productName,utility.LN(qnty),utility.LN(slPrc),utility.LN(total), utility.LN(untDisc),discnt,descp , product.id)
 			for i in range(len(sellList)):
 				self.sellListStore.set(self.editingSell,i,sellList[i])
 			
@@ -685,18 +691,12 @@ class Factor(Payments):
 			self.addDlg.hide()
 			
 		else:
-			No = len(self.sellsItersDict) + 1
-			
-			No_str = str(No)
-			qnty_str = str(qnty)
-			slPrc_str = str(slPrc)
-			total_str = str(total)
-			if config.digittype == 1:
-				No_str = utility.convertToPersian(No_str)
-				qnty_str = utility.LN(qnty_str)
-				slPrc_str = utility.LN(slPrc_str)
-				total_str = utility.LN(total_str)
-				untDisc = utility.convertToPersian(untDisc)
+			No = len(self.sellsItersDict) + 1				
+			No_str = utility.readNumber(No)
+			qnty_str = utility.LN(qnty)
+			slPrc_str = utility.LN(slPrc)
+			total_str = utility.LN(total)
+			untDisc = utility.LN(untDisc)
 				
 			sellList = (No_str, productName, qnty_str, slPrc_str, total_str, untDisc, discnt, descp, product.id )
 			iter = self.sellListStore.append(None, sellList)
@@ -1110,8 +1110,7 @@ class Factor(Payments):
 		query = config.db.session.query(Customers)
 		query =	query.filter(Customers.custId==self.custId)
 		customer = query.first()
-		pre_invoice = "pre-invoice" if not permanent else ""
-		#self.treestore.append(None,(int(self.Id), LN(self.subCode), str(self.subDate), customer.custName, str(self.totalFactor), pre_invoice))		
+		pre_invoice = "pre-invoice" if not permanent else ""		
 		
 	def registerFactorItems(self):	
 			
@@ -1135,8 +1134,7 @@ class Factor(Payments):
 						pro.quantity += oldProduct.qnty
 					else:
 						pro.quantity -= oldProduct.qnty
-					self.session.query(FactorItems).filter(FactorItems.productId == oldProduct.productId).delete()
-					#self.session.commit()		
+					self.session.query(FactorItems).filter(FactorItems.productId == oldProduct.productId).delete()					
 
 		
 		for exch in self.sellListStore: # The new sell list store
@@ -1159,27 +1157,23 @@ class Factor(Payments):
 					factorItem = FactorItems(utility.getInt(exch[0]), pid, utility.getFloat(exch[2]),
 										 utility.getFloat(exch[3]), utility.convertToLatin(exch[5]),
 										 self.Id, unicode(exch[7]))
-					self.session.add( factorItem )
-					#self.session.commit()										
+					self.session.add( factorItem )									
 					if self.sell:
 						pro.quantity -= nowfactorItemquantity
 					else:
-						pro.quantity += nowfactorItemquantity
-					#self.session.commit()										
+						pro.quantity += nowfactorItemquantity							
 				else:   #  product exists in factor
 					lastfactorItemquantity = utility.getFloat(str(factorItem1.qnty))
 					nowfactorItemquantity = utility.getFloat(exch[2])
 					
 					Item.update({FactorItems.number: utility.getInt(exch[0]) , FactorItems.productId : pid ,FactorItems.qnty: utility.getFloat(exch[2]) , 
 						FactorItems.untPrc :utility.getFloat(exch[3]), 	 FactorItems.untDisc : utility.convertToLatin(exch[5]) , FactorItems.desc : unicode(exch[7]) })
-
-					#self.session.commit()
+					
 					if lastfactorItemquantity != nowfactorItemquantity:												
 						if self.sell:
 							pro.quantity += lastfactorItemquantity - nowfactorItemquantity
 						else:
-							pro.quantity -= lastfactorItemquantity - nowfactorItemquantity
-						#self.session.commit()
+							pro.quantity -= lastfactorItemquantity - nowfactorItemquantity						
 					
 			# in add mode transaction																						
 			else:					
