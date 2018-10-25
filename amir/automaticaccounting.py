@@ -384,8 +384,8 @@ class AutomaticAccounting:
                 desc = self.type_names[self.type_index][1]            
             document = class_document.Document()
             if result['cash_payment']  :
-                document.add_notebook(result['from'], -result['cash_payment'], unicode(desc))
-                document.add_notebook(result['to']  ,  result['cash_payment'], unicode(desc ))
+                document.add_notebook(result['from'], result['cash_payment'], unicode(desc))
+                document.add_notebook(result['to']  ,  -result['cash_payment'], unicode(desc ))
             if result['discount'] :
                 document.add_notebook(dbconf.get_int('sell-discount'), -result['discount'], desc)            
 
@@ -406,7 +406,7 @@ class AutomaticAccounting:
             #spendble cheques
             for sp_cheque in self.spendChequeui.chequesList:
                 cl_cheque.update_status(sp_cheque.chqId,5 , customer_id)
-                document.add_cheque(dbconf.get_int('other_cheque'),custSubj, -sp_cheque.chqAmount , unicode(_('spended')) , sp_cheque.chqId)
+                document.add_cheque(custSubj, dbconf.get_int('other_cheque'), -sp_cheque.chqAmount , unicode(_('Cheque No. %s spended') % sp_cheque.chqSerial) , sp_cheque.chqId)
                     
             result = document.save()
 

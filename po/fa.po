@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: amir\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-24 16:43+0330\n"
-"PO-Revision-Date: 2018-10-24 17:42+0330\n"
+"POT-Creation-Date: 2018-10-25 09:33+0330\n"
+"PO-Revision-Date: 2018-10-25 09:35+0330\n"
 "Last-Translator: Golnaz Nilieh <g382nilieh@gmail.com>\n"
 "Language-Team: persian <info@jooyeshgar.com>\n"
 "Language: fa\n"
@@ -97,13 +97,13 @@ msgstr "هیچ سرفصلی با کد %s ثبت نشده است"
 msgid "No subjects found"
 msgstr "هیچ سرفصلی پیدا نشد"
 
-#: amir/addeditdoc.py:303 amir/customers.py:436 amir/factors.py:346
+#: amir/addeditdoc.py:303 amir/customers.py:435 amir/factors.py:346
 #: amir/product.py:429
 msgid "Are you sure to remove this row?"
 msgstr "آیا از حذف این ردیف مطمئن هستید؟"
 
 #: amir/addeditdoc.py:304 amir/addeditdoc.py:410 amir/addeditdoc.py:426
-#: amir/chequereport.py:577 amir/customers.py:437 amir/factors.py:347
+#: amir/chequereport.py:577 amir/customers.py:436 amir/factors.py:347
 #: amir/factors.py:667 amir/product.py:430 amir/setting.py:180
 #: amir/setting.py:226 amir/warehousing.py:216 amir/warehousing.py:245
 #: amir/warehousing.py:803 scripts/amir:271 scripts/amir:484
@@ -122,7 +122,7 @@ msgstr "امکان ذخیره سند وجود ندارد"
 msgid "Debt sum and Credit sum should be equal"
 msgstr "جمع بدهکاری و جمع بستانکاری باید با هم برابر باشند"
 
-#: amir/addeditdoc.py:391 amir/factors.py:1657
+#: amir/addeditdoc.py:391 amir/factors.py:1658
 #, python-format
 msgid "Document saved with number %s."
 msgstr "سند با شماره %s ذخیره شد."
@@ -187,9 +187,10 @@ msgstr "درآمد"
 msgid "Removal"
 msgstr "برداشت"
 
-#: amir/automaticaccounting.py:409 amir/factors.py:1209
-msgid "spended"
-msgstr "واگذار شده"
+#: amir/automaticaccounting.py:409
+#, python-format
+msgid "Cheque No. %s spended"
+msgstr "چک شماره %s واگذار شد."
 
 #: amir/automaticaccounting.py:414
 #, python-format
@@ -549,15 +550,15 @@ msgstr "نام طرف حساب نباید خالی باشد.\n"
 msgid "Can not save customer"
 msgstr "امکان ذخیره طرف حساب وجود ندارد"
 
-#: amir/customers.py:387
+#: amir/customers.py:386
 msgid "Edit Customer"
 msgstr "ویرایش طرف حساب"
 
-#: amir/customers.py:388
+#: amir/customers.py:387
 msgid "Save Customer"
 msgstr "ذخیره طرف حساب"
 
-#: amir/customers.py:457
+#: amir/customers.py:456
 msgid ""
 "Customer can not be deleted, Because there are some Factors or Cheques "
 "related to it. \n"
@@ -568,7 +569,7 @@ msgstr ""
 "ابتدا آن ها را پاک کنید.\n"
 "(توجه: اگر چکی ثبت شده باشد, حذف آن بی فایده است.)"
 
-#: amir/customers.py:458
+#: amir/customers.py:457
 msgid "Error deleting customer"
 msgstr "خطا در حذف مشتری"
 
@@ -778,19 +779,19 @@ msgstr "تخفیف نادرست (علامت درصد را قبل یا بعد م�
 msgid "Applying discount decreases product price below its purchase price!"
 msgstr "اعمال تخفیف باعث کاهش قیمت کالا تا زیر قیمت فروش آن می شود!"
 
-#: amir/factors.py:1037
+#: amir/factors.py:1038
 msgid "The customer code you entered is not valid."
 msgstr "کد مشتری که وارد کرده اید معتبر نیست."
 
-#: amir/factors.py:1045
+#: amir/factors.py:1046
 msgid "There is no product selected for the invoice."
 msgstr "هیچ کالایی برای این صورت حساب انتخاب نشده است."
 
-#: amir/factors.py:1070
+#: amir/factors.py:1071
 msgid ", "
 msgstr "،"
 
-#: amir/factors.py:1075
+#: amir/factors.py:1076
 #, python-format
 msgid ""
 "The available quantity of %s is not enough for the invoice. You can save it "
@@ -799,47 +800,51 @@ msgstr ""
 "مقدار موجود از %s در فاکتور کافی نیست شما می توانید آن را  به عنوان پیش "
 "فاکتور ذخیره کنید."
 
-#: amir/factors.py:1625
+#: amir/factors.py:1210
+msgid "spended"
+msgstr "واگذار شده"
+
+#: amir/factors.py:1626
 #, python-format
 msgid "Debit for invoice number %s"
 msgstr "بدهکاری برای فاکتور شماره %s"
 
-#: amir/factors.py:1627 amir/factors.py:1628
+#: amir/factors.py:1628 amir/factors.py:1629
 #, python-format
 msgid "Cash Payment for invoice number %s"
 msgstr "پرداخت نقدی برای فاکتور شماره %s"
 
-#: amir/factors.py:1630
+#: amir/factors.py:1631
 #, python-format
 msgid "Discount for invoice number %s"
 msgstr "تخفیف برای فاکتور شماره %s"
 
-#: amir/factors.py:1632
+#: amir/factors.py:1633
 #, python-format
 msgid "Additions for invoice number %s"
 msgstr "اضافه شده برای فاکتور شماره %s"
 
-#: amir/factors.py:1634
+#: amir/factors.py:1635
 #, python-format
 msgid "VAT for invoice number %s"
 msgstr "مالیات برای فاکتور شماره %s"
 
-#: amir/factors.py:1636
+#: amir/factors.py:1637
 #, python-format
 msgid "Fee for invoice number %s"
 msgstr "عوارض برای فاکتور شماره %s"
 
-#: amir/factors.py:1638
+#: amir/factors.py:1639
 #, python-format
 msgid "Discount on items for invoice number %s"
 msgstr "تخفیف روی کالاهای فاکتور شماره %s"
 
-#: amir/factors.py:1651
+#: amir/factors.py:1652
 #, python-format
 msgid "Selling %(units)s units, invoice number %(factor)s"
 msgstr "فروش %(units)s کالا, فاکتور شماره  %(factor)s"
 
-#: amir/factors.py:1653
+#: amir/factors.py:1654
 #, python-format
 msgid "Buying  %(units)s units, invoice number  %(factor)s"
 msgstr "خرید %(units)s کالا, فاکتور شماره  %(factor)s"
@@ -2361,11 +2366,11 @@ msgstr "ویرایش سند"
 
 #: amir/data/ui/mainwin.glade:230
 msgid "_Quit"
-msgstr "ـخروج"
+msgstr "خروج"
 
 #: amir/data/ui/mainwin.glade:249
 msgid "_Reports"
-msgstr "_گزارش‌ها"
+msgstr "گزارش‌ها"
 
 #: amir/data/ui/mainwin.glade:271
 msgid "Daily Notebook"

@@ -1024,8 +1024,9 @@ class Factor(Payments):
 			self.registerFactorItems()			
 			if not self.subPreInv:
 				self.registerDocument()			
-			self.mainDlg.hide()			
-			self.viewSells()			
+			self.mainDlg.hide()	
+			if self.window.props.visible:				
+				self.viewSells()			
 				
 	def checkFullFactor(self):
 						

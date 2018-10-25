@@ -29,7 +29,7 @@ config = share.config
 
 class Payments(GObject.GObject):
 	
-	chequeStatus = ["" , _("Paid-Not passed"), _("Paid-Passed"), _("Recieved-Not cashed"), _("Recieved-Cashed"), _("Spent") , _("Returned to customer") , _("Returned from customer") ,  _("Paid-Bounced"),_("Recieved-Bounced")]
+	chequeStatus = ["" , _("Paid-Not passed"), _("Paid-Passed"), _("Recieved-Not cashed"), _("Recieved-Cashed"), _("Spent") , _("Returned from customer") , _("Returned to customer") ,  _("Paid-Bounced"),_("Recieved-Bounced")]
 	chequePayment=[]
 	recieptPayment=[]	
 	
@@ -554,7 +554,7 @@ class Payments(GObject.GObject):
 		
 	def onFreeChequeSelected (self , sender , path = None , col = 0):		
 		treeiter = self.sltCheqListStore.get_iter(path)
-		chequeId = self.sltCheqListStore.get_value(treeiter , 0)
+		chequeId = utility.convertToLatin(self.sltCheqListStore.get_value(treeiter , 0) )
 		cheque = self.session.query(Cheque ) . filter(Cheque.chqId == chequeId).first()		
 		cheque.chqStatus = 5		
 		cheque.chqTransId = self.transId 

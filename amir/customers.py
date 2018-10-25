@@ -538,7 +538,7 @@ class Customer(customergroup.Group):
     def selectCustomerFromList(self, treeview, path, view_column):
         iter = self.treestore.get_iter(path)
         if self.treestore.iter_parent(iter) != None:
-            code = unicode(self.treestore.get_value(iter, 0))
+            code = utility.convertToLatin(self.treestore.get_value(iter, 0))
 			
             query = config.db.session.query(Customers).select_from(Customers)
             query = query.filter(Customers.custCode == code)
