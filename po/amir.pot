@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-25 09:33+0330\n"
+"POT-Creation-Date: 2018-10-25 12:32+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -221,7 +221,8 @@ msgstr ""
 msgid "Owner"
 msgstr ""
 
-#: amir/bankaccountsui.py:70 amir/data/ui/cardex.glade:295
+#: amir/bankaccountsui.py:70 amir/cardexreport.py:28
+#: amir/data/ui/cardex.glade:295
 msgid "Type"
 msgstr ""
 
@@ -233,34 +234,6 @@ msgstr ""
 msgid "successfully added."
 msgstr ""
 
-#: amir/cardexreport.py:28
-msgid "Factor Code"
-msgstr ""
-
-#: amir/cardexreport.py:28 amir/data/ui/cardex.glade:306
-msgid "Customer Code"
-msgstr ""
-
-#: amir/cardexreport.py:28 amir/chequereport.py:77 amir/chequereport.py:650
-msgid "Customer Name"
-msgstr ""
-
-#: amir/cardexreport.py:28
-msgid "Stock inventory"
-msgstr ""
-
-#: amir/cardexreport.py:28
-msgid "Sell Quantity"
-msgstr ""
-
-#: amir/cardexreport.py:28
-msgid "Buy Quantity"
-msgstr ""
-
-#: amir/cardexreport.py:28 amir/factors.py:187
-msgid "Total Price"
-msgstr ""
-
 #: amir/cardexreport.py:28 amir/docreport.py:57 amir/docreport.py:139
 #: amir/factors.py:151 amir/notebookreport.py:181 amir/notebookreport.py:205
 #: amir/notebookreport.py:247 amir/printreport.py:612
@@ -268,11 +241,54 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: amir/cardexreport.py:118 amir/product.py:365
+#: amir/cardexreport.py:28 amir/factors.py:186 amir/product.py:83
+#: amir/warehousing.py:84 amir/data/ui/cardex.glade:109
+msgid "Quantity"
+msgstr ""
+
+#: amir/cardexreport.py:28 amir/factors.py:186
+msgid "Unit Price"
+msgstr ""
+
+#: amir/cardexreport.py:28 amir/factors.py:187
+msgid "Total Price"
+msgstr ""
+
+#: amir/cardexreport.py:28
+msgid "Remained"
+msgstr ""
+
+#: amir/cardexreport.py:28
+msgid "Factor Code"
+msgstr ""
+
+#: amir/cardexreport.py:28 amir/chequereport.py:77 amir/chequereport.py:650
+msgid "Customer Name"
+msgstr ""
+
+#: amir/cardexreport.py:101
+msgid "Yes"
+msgstr ""
+
+#: amir/cardexreport.py:101
+msgid "No"
+msgstr ""
+
+#: amir/cardexreport.py:117 amir/product.py:365
 msgid "Initial inventory"
 msgstr ""
 
-#: amir/cardexreport.py:179
+#: amir/cardexreport.py:152 amir/data/ui/SellingForm.glade:1100
+#: amir/data/ui/cardex.glade:15
+msgid "Sell"
+msgstr ""
+
+#: amir/cardexreport.py:157 amir/data/ui/BuyingForm.glade:1266
+#: amir/data/ui/cardex.glade:12
+msgid "Buy"
+msgstr ""
+
+#: amir/cardexreport.py:175
 msgid "Not Found"
 msgstr ""
 
@@ -624,15 +640,6 @@ msgstr ""
 
 #: amir/factors.py:186
 msgid "Product Name"
-msgstr ""
-
-#: amir/factors.py:186 amir/product.py:83 amir/warehousing.py:84
-#: amir/data/ui/cardex.glade:109
-msgid "Quantity"
-msgstr ""
-
-#: amir/factors.py:186
-msgid "Unit Price"
 msgstr ""
 
 #: amir/factors.py:187
@@ -1629,10 +1636,6 @@ msgstr ""
 msgid "Save and Print"
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:1266 amir/data/ui/cardex.glade:15
-msgid "Buy"
-msgstr ""
-
 #: amir/data/ui/BuyingForm.glade:1284 amir/data/ui/BuyingForm.glade:1357
 #: amir/data/ui/SellingForm.glade:1118 amir/data/ui/SellingForm.glade:1192
 #: amir/data/ui/cheque.glade:39 amir/data/ui/chequereport.glade:38
@@ -1716,10 +1719,6 @@ msgstr ""
 
 #: amir/data/ui/SellingForm.glade:833
 msgid "Sold To:"
-msgstr ""
-
-#: amir/data/ui/SellingForm.glade:1100 amir/data/ui/cardex.glade:12
-msgid "Sell"
 msgstr ""
 
 #: amir/data/ui/SellingForm.glade:1409
@@ -1889,6 +1888,10 @@ msgstr ""
 msgid "Product Description"
 msgstr ""
 
+#: amir/data/ui/cardex.glade:306
+msgid "Customer Code"
+msgstr ""
+
 #: amir/data/ui/cardex.glade:317
 msgid "Date From"
 msgstr ""
@@ -2043,7 +2046,7 @@ msgid "Return to customer"
 msgstr ""
 
 #: amir/data/ui/chequereport.glade:1177
-msgid "Bounce check"
+msgid "Bounce cheque"
 msgstr ""
 
 #: amir/data/ui/chequereport.glade:1190

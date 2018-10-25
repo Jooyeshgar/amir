@@ -397,7 +397,7 @@ class AutomaticAccounting:
 
             for cheque in self.addChequeui.chequesList:
                 if mode == 'our':
-                    document.add_cheque(dbconf.get_int('our_cheque'),custSubj,-(cheque.chqAmount), cheque.chqDesc, cheque.chqId)
+                    document.add_cheque(dbconf.get_int('our_cheque'),custSubj,(cheque.chqAmount), cheque.chqDesc, cheque.chqId)
                 else:
                     document.add_cheque(dbconf.get_int('other_cheque'),custSubj, -cheque.chqAmount, cheque.chqDesc, cheque.chqId)            
 

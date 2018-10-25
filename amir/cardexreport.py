@@ -25,20 +25,18 @@ class CardexReport:
         self.treestore = Gtk.TreeStore(str, str, str, str, str, str, str,str)
         self.treeview.set_model(self.treestore)
 
-        headers = (_("Factor Code") ,_("Customer Code"), _("Customer Name"),_("Stock inventory"),_("Sell Quantity"),_("Buy Quantity") , _("Total Price"),_("Date") ) 
+        headers = (_("Date"),_("Type"),_("Quantity"), _("Unit Price"),_("Total Price"),_("Remained"), _("Factor Code") , _("Customer Name") ) 
+        #headers = (_("Factor Code") ,_("Customer Code"), _("Customer Name"),_("Stock inventory"),_("Sell Quantity"),_("Buy Quantity") , _("Total Price"),_("Date") ) 
         i = 0
         for header in headers :
             column = Gtk.TreeViewColumn(header, Gtk.CellRendererText(), text = i)
             column.set_spacing(5)
             column.set_resizable(True)
-            column.set_sort_column_id(5)
+            column.set_sort_column_id(i)
             column.set_sort_indicator(True)
             self.treeview.append_column(column)
             i+=1
         
-        self.treeview.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
-        #self.treestore.set_sort_func(0, self.sortGroupIds)
-        #self.treestore.set_sort_column_id(7, Gtk.SortType.DESCENDING)
         self.window.show_all()
         self.builder.connect_signals(self)
         self.session = config.db.session  
@@ -93,42 +91,41 @@ class CardexReport:
 
     def showResult(self, productCode,factorType,customerCode,dateFrom,dateTo):
         query = config.db.session.query(Products)
-        query = query.filter(Products.code == unicode(productCode) )
+        query = query.filter(Products.code == utility.convertToLatin(productCode) )
         product  = query.first()
         self.treestore.clear()
+        rows = []
         if product is not None:
             statusbar = self.builder.get_object('statusbar3')
             context_id = statusbar.get_context_id('statusbar')
             statusbar.remove_all(context_id)
+            oversellTxt = _("Yes") if product.oversell else _("No")
             self.builder.get_object("nameTextView").get_buffer().set_text(product.name)
-            self.builder.get_object("groupTextView").get_buffer().set_text(str(product.accGroup))
+            self.builder.get_object("groupTextView").get_buffer().set_text(utility.readNumber(product.accGroup))
             self.builder.get_object("locationTextView").get_buffer().set_text(product.location)
-            self.builder.get_object("quantityTextView").get_buffer().set_text(utility.LN(format(float(product.quantity))))
-            self.builder.get_object("quantityWarningTextView").get_buffer().set_text(utility.LN(format(float(product.qntyWarning))))
-            self.builder.get_object("oversellTextView").get_buffer().set_text(str(product.oversell))
-            self.builder.get_object("purchacePriceTextView").get_buffer().set_text(utility.LN(format(float(product.purchacePrice))))
+            self.builder.get_object("quantityTextView").get_buffer().set_text(utility.LN(float(product.quantity)))
+            self.builder.get_object("quantityWarningTextView").get_buffer().set_text(utility.LN(float(product.qntyWarning)))
+            self.builder.get_object("oversellTextView").get_buffer().set_text(oversellTxt)
+            self.builder.get_object("purchacePriceTextView").get_buffer().set_text(utility.LN(float(product.purchacePrice)))
             self.builder.get_object("dicountFormulaTextView").get_buffer().set_text(str(product.discountFormula))
-            self.builder.get_object("sellingPriceTextView").get_buffer().set_text(utility.LN(format(float(product.sellingPrice))))
+            self.builder.get_object("sellingPriceTextView").get_buffer().set_text(utility.LN(float(product.sellingPrice)))
             self.builder.get_object("productDescriptionTextView").get_buffer().set_text(product.productDesc)
 
             totalSellQnt = totalBuyQnt = totalSellIncome = totalBuyPrice = 0
             #Fill factor treeview
             initQ = config.db.session.query(FactorItems).filter(FactorItems.factorId == 0).first()
             if initQ:
-                self.treestore.append(None, (_("Initial inventory") , "-" , "-" ,str(utility.LN(0)) , "-",str(utility.LN( initQ.qnty)),str(utility.LN(initQ.untPrc)), "-" ) ) 
+                totalPrice = float(initQ.untPrc) * float(initQ.qnty)
+                self.treestore.append(None, ("-" ,_("Initial inventory") ,utility.LN( initQ.qnty),utility.LN(initQ.untPrc),utility.LN(totalPrice) ,utility.LN(initQ.qnty),  "-" , "-" ) ) 
                 totalBuyPrice += float(initQ.untPrc) * float(initQ.qnty)                
                 totalBuyQnt += float(initQ.qnty)
             query = config.db.session.query(FactorItems,Factors,Customers)
-            query = query.filter(product.id == FactorItems.productId, FactorItems.factorId == Factors.Id, Customers.custId == Factors.Cust)
-            if factorType and factorType != 'All':
-                if factorType == 'Sell':                    
-                    factorType = 1
-                else:                    
-                    factorType = 0
+            query = query.filter(product.id == FactorItems.productId, FactorItems.factorId == Factors.Id, Customers.custId == Factors.Cust)            
+            if factorType>= 0 and factorType != 2:
                 query = query.filter(Factors.Sell == factorType)
 
             if customerCode:
-                query = query.filter(Customers.custCode == customerCode)
+                query = query.filter(Customers.custCode == utility.convertToLatin(customerCode) )
 
             if dateTo:
                 dateTo = stringToDate(dateTo)
@@ -138,9 +135,7 @@ class CardexReport:
 
             if dateTo:
                 query = query.filter(Factors.tDate <= dateTo)
-            if dateFrom:
-                DD = timedelta(days=1)
-                dateFrom -= DD
+            if dateFrom:   
                 query = query.filter(Factors.tDate >= dateFrom)
                 
             query = query.order_by(FactorItems.id.desc())
@@ -152,27 +147,31 @@ class CardexReport:
                 productCount = float(proQuan.quantity)
 
             for factor in result:                
+                quantity = utility.LN(factor.FactorItems.qnty)
+                unitPrice = utility.LN(factor.FactorItems.untPrc)
+                totalPrice = utility.LN(factor.FactorItems.untPrc * factor.FactorItems.qnty)
                 if factor.Factors.Sell == True:
-                    productCount += float(factor.FactorItems.qnty)
-                    buy_quantity = '-'
-                    sell_quantity = str(utility.LN(float(factor.FactorItems.qnty)))    
+                    ftype = _("Sell")
+                    productChange = float(factor.FactorItems.qnty)                                    
                     totalSellIncome += float(factor.FactorItems.qnty) * float(factor. FactorItems.untPrc)    # kole foroosh = sum(tedad * gheymat)
                     totalSellQnt += float(factor.FactorItems.qnty)                            # kole tedade forush = sum (tedad)
                 else:
-                    productCount -= float(factor.FactorItems.qnty)
-                    buy_quantity = str(utility.LN(float(factor.FactorItems.qnty)))
-                    sell_quantity = '-'
+                    ftype = _("Buy")
+                    productChange = -float(factor.FactorItems.qnty)
                     totalBuyPrice += float(factor.FactorItems.qnty) * float(factor. FactorItems.untPrc)   # kole kharid = sum(tedad * gheymat)                    
                     totalBuyQnt += float(factor.FactorItems.qnty) 
 
                 date = dateToString(factor.Factors.tDate)
-
-                self.treestore.append(None, (str(factor.Factors.Code), str(factor.Customers.custCode), str(factor.Customers.custName),str(utility.LN(productCount)),\
-                                        sell_quantity, buy_quantity,str(utility.LN(float(factor.FactorItems.untPrc))), str(date)))
-
+                rows.append((date,ftype,quantity,unitPrice, totalPrice ,utility.LN(productCount), utility.readNumber(factor.Factors.Code), unicode(factor.Customers.custName)))                
+                productCount += productChange
+            rows = rows[::-1]
+            for row in rows:
+                self.treestore.append(None,  row)
             profit = totalSellIncome - ((totalBuyPrice/totalBuyQnt) *totalSellQnt )
             profit = "{0:.3f}".format(profit)           # rounding floating point number
-            self.builder.get_object("profitTextview").get_buffer().set_text(utility.LN(profit))
+            profitTxt = self.builder.get_object("profitTextview")
+            profitTxt.get_buffer().set_text(utility.LN(profit))
+            profitTxt.set_direction(Gtk.TextDirection.LTR)
         else:
             statusbar = self.builder.get_object('statusbar3')
             context_id = statusbar.get_context_id('statusbar')
@@ -181,29 +180,18 @@ class CardexReport:
 
     def searchProduct(self,sender):
         # Get data from DB
-        box = self.builder.get_object("productCodeSearchEntry")
+        box = self.builder.get_object("productCodeSearchEntry") 
         productCode = box.get_text()
-        self.showResult(productCode,0,0,0,0)
+        self.showResult(productCode,2,0,0,0)
         
 
     def factorFilter(self,sender):
         combo = self.builder.get_object("typeComboBox")
         index = combo.get_active()
-        model = combo.get_model()
-        item = model[index]
-
-        box = self.builder.get_object("productCodeSearchEntry")
-        productCode = box.get_text()
-
-        box = self.builder.get_object("customerCodeEntry")
-        customerCode = box.get_text()
-        if index == -1:
-            productType = None
-        else:
-            productType = item[0]
-
+        productCode = self.builder.get_object("productCodeSearchEntry").get_text()        
+        customerCode = self.builder.get_object("customerCodeEntry").get_text()
         delimiter = config.datedelims[config.datedelim] 
         dateTo = self.dateToEntry.get_text()        
         dateFrom = self.dateFromEntry.get_text()        
 
-        self.showResult(productCode,productType,customerCode,dateFrom,dateTo)
+        self.showResult(productCode,index,customerCode,dateFrom,dateTo)

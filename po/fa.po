@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: amir\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-25 09:33+0330\n"
-"PO-Revision-Date: 2018-10-25 09:35+0330\n"
+"POT-Creation-Date: 2018-10-25 12:32+0330\n"
+"PO-Revision-Date: 2018-10-25 12:32+0330\n"
 "Last-Translator: Golnaz Nilieh <g382nilieh@gmail.com>\n"
 "Language-Team: persian <info@jooyeshgar.com>\n"
 "Language: fa\n"
@@ -226,7 +226,8 @@ msgstr "شماره حساب"
 msgid "Owner"
 msgstr "صاحب حساب"
 
-#: amir/bankaccountsui.py:70 amir/data/ui/cardex.glade:295
+#: amir/bankaccountsui.py:70 amir/cardexreport.py:28
+#: amir/data/ui/cardex.glade:295
 msgid "Type"
 msgstr "نوع"
 
@@ -238,34 +239,6 @@ msgstr "نام بانک"
 msgid "successfully added."
 msgstr "با موفقیت افزوده شد."
 
-#: amir/cardexreport.py:28
-msgid "Factor Code"
-msgstr "کد فاکتور"
-
-#: amir/cardexreport.py:28 amir/data/ui/cardex.glade:306
-msgid "Customer Code"
-msgstr "کد مشتری"
-
-#: amir/cardexreport.py:28 amir/chequereport.py:77 amir/chequereport.py:650
-msgid "Customer Name"
-msgstr "نام طرف حساب"
-
-#: amir/cardexreport.py:28
-msgid "Stock inventory"
-msgstr "موجودی اولیه"
-
-#: amir/cardexreport.py:28
-msgid "Sell Quantity"
-msgstr "مقدار فروش"
-
-#: amir/cardexreport.py:28
-msgid "Buy Quantity"
-msgstr "مقدار خرید"
-
-#: amir/cardexreport.py:28 amir/factors.py:187
-msgid "Total Price"
-msgstr "قیمت کل."
-
 #: amir/cardexreport.py:28 amir/docreport.py:57 amir/docreport.py:139
 #: amir/factors.py:151 amir/notebookreport.py:181 amir/notebookreport.py:205
 #: amir/notebookreport.py:247 amir/printreport.py:612
@@ -273,11 +246,54 @@ msgstr "قیمت کل."
 msgid "Date"
 msgstr "تاریخ"
 
-#: amir/cardexreport.py:118 amir/product.py:365
+#: amir/cardexreport.py:28 amir/factors.py:186 amir/product.py:83
+#: amir/warehousing.py:84 amir/data/ui/cardex.glade:109
+msgid "Quantity"
+msgstr "مقدار"
+
+#: amir/cardexreport.py:28 amir/factors.py:186
+msgid "Unit Price"
+msgstr "قیمت واحد"
+
+#: amir/cardexreport.py:28 amir/factors.py:187
+msgid "Total Price"
+msgstr "قیمت کل."
+
+#: amir/cardexreport.py:28
+msgid "Remained"
+msgstr "مانده"
+
+#: amir/cardexreport.py:28
+msgid "Factor Code"
+msgstr "کد فاکتور"
+
+#: amir/cardexreport.py:28 amir/chequereport.py:77 amir/chequereport.py:650
+msgid "Customer Name"
+msgstr "نام طرف حساب"
+
+#: amir/cardexreport.py:101
+msgid "Yes"
+msgstr "بلی"
+
+#: amir/cardexreport.py:101
+msgid "No"
+msgstr "خیر"
+
+#: amir/cardexreport.py:117 amir/product.py:365
 msgid "Initial inventory"
 msgstr "موجودی اولیه"
 
-#: amir/cardexreport.py:179
+#: amir/cardexreport.py:152 amir/data/ui/SellingForm.glade:1100
+#: amir/data/ui/cardex.glade:15
+msgid "Sell"
+msgstr "فروش"
+
+#: amir/cardexreport.py:157 amir/data/ui/BuyingForm.glade:1266
+#: amir/data/ui/cardex.glade:12
+msgid "Buy"
+msgstr "خرید"
+
+#: amir/cardexreport.py:175
 msgid "Not Found"
 msgstr "یافت نشد"
 
@@ -638,15 +654,6 @@ msgstr "شماره"
 #: amir/factors.py:186
 msgid "Product Name"
 msgstr "نام محصول"
-
-#: amir/factors.py:186 amir/product.py:83 amir/warehousing.py:84
-#: amir/data/ui/cardex.glade:109
-msgid "Quantity"
-msgstr "مقدار"
-
-#: amir/factors.py:186
-msgid "Unit Price"
-msgstr "قیمت واحد"
 
 #: amir/factors.py:187
 msgid "Unit Disc."
@@ -1474,7 +1481,7 @@ msgstr "موحودی منفی است"
 
 #: scripts/amir:399
 msgid "Check the due date of cheques"
-msgstr "تاریخ سررسید چک را بررسی کنید"
+msgstr "تاریخ سررسید چک ها را بررسی کنید"
 
 #: scripts/amir:434
 msgid "Repairing database, Please wait..."
@@ -1610,7 +1617,7 @@ msgstr "(کسورات):"
 
 #: amir/data/ui/BuyingForm.glade:615 amir/data/ui/SellingForm.glade:536
 msgid "VAT"
-msgstr "ارزش افزوده"
+msgstr "مالیات"
 
 #: amir/data/ui/BuyingForm.glade:635 amir/data/ui/SellingForm.glade:570
 msgid "Fee:"
@@ -1666,10 +1673,6 @@ msgstr "تاریخ:"
 #: amir/data/ui/BuyingForm.glade:1246 amir/data/ui/SellingForm.glade:1082
 msgid "Save and Print"
 msgstr "ذخیره و مشاهده فاکتور"
-
-#: amir/data/ui/BuyingForm.glade:1266 amir/data/ui/cardex.glade:15
-msgid "Buy"
-msgstr "خرید"
 
 #: amir/data/ui/BuyingForm.glade:1284 amir/data/ui/BuyingForm.glade:1357
 #: amir/data/ui/SellingForm.glade:1118 amir/data/ui/SellingForm.glade:1192
@@ -1755,10 +1758,6 @@ msgstr "اضافه کردن فروش"
 #: amir/data/ui/SellingForm.glade:833
 msgid "Sold To:"
 msgstr "فروخته شده به:"
-
-#: amir/data/ui/SellingForm.glade:1100 amir/data/ui/cardex.glade:12
-msgid "Sell"
-msgstr "فروش"
 
 #: amir/data/ui/SellingForm.glade:1409
 msgid "Standard Selling Price:"
@@ -1927,13 +1926,17 @@ msgstr "فرمول تخفیف"
 msgid "Product Description"
 msgstr "توضیح محصول"
 
+#: amir/data/ui/cardex.glade:306
+msgid "Customer Code"
+msgstr "کد مشتری"
+
 #: amir/data/ui/cardex.glade:317
 msgid "Date From"
 msgstr "تاریخ از"
 
 #: amir/data/ui/cardex.glade:341
 msgid "Date To"
-msgstr "تاریخ به"
+msgstr "تاریخ تا"
 
 #: amir/data/ui/cardex.glade:506
 msgid "Estimated profit"
@@ -2081,8 +2084,8 @@ msgid "Return to customer"
 msgstr "عودت به مشتری"
 
 #: amir/data/ui/chequereport.glade:1177
-msgid "Bounce check"
-msgstr "برگشت"
+msgid "Bounce cheque"
+msgstr "برگشت چک"
 
 #: amir/data/ui/chequereport.glade:1190
 msgid "Pass"
@@ -2969,6 +2972,18 @@ msgid "Insert: Add product    Ctrl+G: Add Group   Ctrl+E: Edit    Del: Delete"
 msgstr ""
 " Insert: اضافه کردن محصول    Ctrl+E: ویرایش  Del: حذف  Ctrl+G: اضافه کردن "
 "گروه   "
+
+#~ msgid "Bounce check"
+#~ msgstr "برگشت"
+
+#~ msgid "Stock inventory"
+#~ msgstr "موجودی اولیه"
+
+#~ msgid "Sell Quantity"
+#~ msgstr "مقدار فروش"
+
+#~ msgid "Buy Quantity"
+#~ msgstr "مقدار خرید"
 
 #~ msgid "Accounting Group:"
 #~ msgstr "گروه حسابداری"

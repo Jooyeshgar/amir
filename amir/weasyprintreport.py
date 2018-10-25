@@ -116,8 +116,9 @@ class WeasyprintReport:
                 <style> @font-face {font-family: Vazir; src: url(data/font/Vazir.woff); } \
                 table {border-collapse: collapse; border-bottom:1px solid black; text-align:'+text_align+'; width:100%; font-size:8pt;}\
                 th {border: 2px solid black;  padding: 7pt;font-size:10pt;}\
-                td {border-left:1px solid; border-right:1px solid; padding: 10pt;} </style> \
+                td {border-left:1px solid; border-right:1px solid; padding: 10pt;} \
+                 body {font-family: "Vazir"} \
+                 </style> \
                 <meta charset="UTF-8"> </head>\
-                body {font-family: "Vazir"} \
                 <body>' + html + '</body> </html>'                
         return html

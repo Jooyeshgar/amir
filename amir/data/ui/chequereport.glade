@@ -1174,7 +1174,7 @@
                 </child>
                 <child>
                   <object class="GtkButton" id="bargashtButton">
-                    <property name="label" translatable="yes">Bounce check</property>
+                    <property name="label" translatable="yes">Bounce cheque</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>

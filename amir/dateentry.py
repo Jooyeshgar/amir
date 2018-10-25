@@ -29,6 +29,7 @@ def dateToString(date):
     return datestring
 
 def stringToDate(dateString):
+    dateString = convertToLatin(dateString)
     delim = share.config.datedelims[share.config.datedelim]
     dateList = dateString.split(delim)
     if len(dateList) == 3 :
