@@ -819,7 +819,7 @@
                       <object class="GtkTable" id="table10">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="n_columns">4</property>
+                        <property name="n_columns">5</property>
                         <child>
                           <object class="GtkBox" id="hbox4">
                             <property name="visible">True</property>
@@ -829,7 +829,6 @@
                                 <property name="height_request">35</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xpad">29</property>
                                 <property name="label" translatable="yes">Sold To:</property>
                                 <property name="use_markup">True</property>
                                 <property name="xalign">0</property>
@@ -849,7 +848,7 @@
                                   <object class="GtkLabel" id="customerNameEntry">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="width_chars">16</property>
+                                    <property name="width_chars">15</property>
                                     <property name="max_width_chars">30</property>
                                     <property name="xalign">0.10000000149011612</property>
                                   </object>
@@ -864,6 +863,7 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="invisible_char">●</property>
+                                    <property name="width_chars">5</property>
                                     <property name="primary_icon_activatable">False</property>
                                     <property name="secondary_icon_activatable">False</property>
                                     <signal name="activate" handler="selectCustomers" swapped="no"/>
@@ -990,7 +990,7 @@
                                 <property name="height_request">25</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xpad">22</property>
+                                <property name="xpad">10</property>
                                 <property name="label" translatable="yes">----</property>
                                 <property name="xalign">0.20000000298023224</property>
                               </object>
@@ -1045,6 +1045,41 @@
                           <packing>
                             <property name="left_attach">1</property>
                             <property name="right_attach">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkBox" id="box3">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <child>
+                              <object class="GtkLabel" id="label3">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Doc. Number:</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="billId">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="xpad">10</property>
+                                <property name="label" translatable="yes"> ----</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">4</property>
+                            <property name="right_attach">5</property>
                           </packing>
                         </child>
                       </object>

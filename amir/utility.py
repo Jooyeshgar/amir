@@ -19,6 +19,7 @@ def LN (num, comma=True):
             num = num[:-2]   
     if not len (num):
         return ""
+    num.replace(',', '')
     minus = False
     if num[0] =='-':
         num = num[1:]
