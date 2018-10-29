@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: amir\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-29 11:14+0330\n"
-"PO-Revision-Date: 2018-10-29 11:15+0330\n"
+"POT-Creation-Date: 2018-10-29 15:17+0330\n"
+"PO-Revision-Date: 2018-10-29 15:24+0330\n"
 "Last-Translator: Golnaz Nilieh <g382nilieh@gmail.com>\n"
 "Language-Team: persian <info@jooyeshgar.com>\n"
 "Language: fa\n"
@@ -124,7 +124,7 @@ msgstr "امکان ذخیره سند وجود ندارد"
 msgid "Debt sum and Credit sum should be equal"
 msgstr "جمع بدهکاری و جمع بستانکاری باید با هم برابر باشند"
 
-#: amir/addeditdoc.py:391 amir/factors.py:1665
+#: amir/addeditdoc.py:391 amir/factors.py:1672
 #, python-format
 msgid "Document saved with number %s."
 msgstr "سند با شماره %s ذخیره شد."
@@ -875,54 +875,65 @@ msgstr ""
 "مقدار موجود از %s در فاکتور کافی نیست شما می توانید آن را  به عنوان پیش "
 "فاکتور ذخیره کنید."
 
-#: amir/factors.py:1228
+#: amir/factors.py:1232
 msgid "spended"
 msgstr "واگذار شده"
 
-#: amir/factors.py:1633
+#: amir/factors.py:1638
 #, python-format
 msgid "Debit for invoice number %s"
 msgstr "بدهکاری برای فاکتور شماره %s"
 
-#: amir/factors.py:1635 amir/factors.py:1636
+#: amir/factors.py:1640 amir/factors.py:1641
 #, python-format
 msgid "Cash Payment for invoice number %s"
 msgstr "پرداخت نقدی برای فاکتور شماره %s"
 
-#: amir/factors.py:1638
+#: amir/factors.py:1643
 #, python-format
 msgid "Discount for invoice number %s"
 msgstr "تخفیف برای فاکتور شماره %s"
 
-#: amir/factors.py:1640
+#: amir/factors.py:1645
 #, python-format
 msgid "Additions for invoice number %s"
 msgstr "اضافه شده برای فاکتور شماره %s"
 
-#: amir/factors.py:1642
+#: amir/factors.py:1647
 #, python-format
 msgid "VAT for invoice number %s"
 msgstr "مالیات برای فاکتور شماره %s"
 
-#: amir/factors.py:1644
+#: amir/factors.py:1649
 #, python-format
 msgid "Fee for invoice number %s"
 msgstr "عوارض برای فاکتور شماره %s"
 
-#: amir/factors.py:1646
+#: amir/factors.py:1651
 #, python-format
 msgid "Discount on items for invoice number %s"
 msgstr "تخفیف روی کالاهای فاکتور شماره %s"
 
-#: amir/factors.py:1659
-#, python-format
-msgid "Selling %(units)s units, invoice number %(factor)s"
-msgstr "فروش %(units)s کالا, فاکتور شماره  %(factor)s"
+#: amir/factors.py:1663 amir/data/ui/SellingForm.glade:1709
+msgid "Selling"
+msgstr "فروختن"
 
-#: amir/factors.py:1661
+#: amir/factors.py:1663 amir/data/ui/BuyingForm.glade:1901
+msgid "Buying"
+msgstr "خریدن"
+
+#: amir/factors.py:1663
+msgid "Returning sales"
+msgstr "برگشت از فروش "
+
+#: amir/factors.py:1663
+msgid "Returning purchases"
+msgstr "برگشت از خرید "
+
+#: amir/factors.py:1664
 #, python-format
-msgid "Buying  %(units)s units, invoice number  %(factor)s"
-msgstr "خرید %(units)s کالا, فاکتور شماره  %(factor)s"
+msgid " %(units)s units, invoice number %(factor)s"
+msgstr " میزان  %(units)s واحد کالا, فاکتور شماره %(factor)s"
 
 #: amir/notebookreport.py:90 amir/notebookreport.py:247
 msgid "Daily NoteBook"
@@ -1800,10 +1811,6 @@ msgstr "مقدار کل: "
 msgid "Total Discount:"
 msgstr "جمع تخفیفات:"
 
-#: amir/data/ui/BuyingForm.glade:1901
-msgid "Buying"
-msgstr "خریدن"
-
 #: amir/data/ui/BuyingForm.glade:1919 amir/data/ui/mainwin.glade:195
 msgid "Add Buy"
 msgstr "اضافه کردن خرید"
@@ -1833,10 +1840,6 @@ msgstr "اضافه کردن فروش"
 #: amir/data/ui/SellingForm.glade:1444
 msgid "Standard Selling Price:"
 msgstr "قیمت فروش"
-
-#: amir/data/ui/SellingForm.glade:1709
-msgid "Selling"
-msgstr "فروختن"
 
 #: amir/data/ui/SellingForm.glade:1807
 msgid "No. : "
@@ -3042,6 +3045,12 @@ msgid "Insert: Add product    Ctrl+G: Add Group   Ctrl+E: Edit    Del: Delete"
 msgstr ""
 " Insert: اضافه کردن محصول    Ctrl+E: ویرایش  Del: حذف  Ctrl+G: اضافه کردن "
 "گروه   "
+
+#~ msgid "Selling %(units)s units, invoice number %(factor)s"
+#~ msgstr "فروش %(units)s کالا, فاکتور شماره  %(factor)s"
+
+#~ msgid "Buying  %(units)s units, invoice number  %(factor)s"
+#~ msgstr "خرید %(units)s کالا, فاکتور شماره  %(factor)s"
 
 #~ msgid "Are you sure to do this?"
 #~ msgstr "آیا از انجام این کار مطمئنید؟"

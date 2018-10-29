@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-29 11:14+0330\n"
+"POT-Creation-Date: 2018-10-29 15:22+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -119,7 +119,7 @@ msgstr ""
 msgid "Debt sum and Credit sum should be equal"
 msgstr ""
 
-#: amir/addeditdoc.py:391 amir/factors.py:1665
+#: amir/addeditdoc.py:391 amir/factors.py:1672
 #, python-format
 msgid "Document saved with number %s."
 msgstr ""
@@ -855,53 +855,64 @@ msgid ""
 "as pre-invoice."
 msgstr ""
 
-#: amir/factors.py:1228
+#: amir/factors.py:1232
 msgid "spended"
-msgstr ""
-
-#: amir/factors.py:1633
-#, python-format
-msgid "Debit for invoice number %s"
-msgstr ""
-
-#: amir/factors.py:1635 amir/factors.py:1636
-#, python-format
-msgid "Cash Payment for invoice number %s"
 msgstr ""
 
 #: amir/factors.py:1638
 #, python-format
+msgid "Debit for invoice number %s"
+msgstr ""
+
+#: amir/factors.py:1640 amir/factors.py:1641
+#, python-format
+msgid "Cash Payment for invoice number %s"
+msgstr ""
+
+#: amir/factors.py:1643
+#, python-format
 msgid "Discount for invoice number %s"
 msgstr ""
 
-#: amir/factors.py:1640
+#: amir/factors.py:1645
 #, python-format
 msgid "Additions for invoice number %s"
 msgstr ""
 
-#: amir/factors.py:1642
+#: amir/factors.py:1647
 #, python-format
 msgid "VAT for invoice number %s"
 msgstr ""
 
-#: amir/factors.py:1644
+#: amir/factors.py:1649
 #, python-format
 msgid "Fee for invoice number %s"
 msgstr ""
 
-#: amir/factors.py:1646
+#: amir/factors.py:1651
 #, python-format
 msgid "Discount on items for invoice number %s"
 msgstr ""
 
-#: amir/factors.py:1659
-#, python-format
-msgid "Selling %(units)s units, invoice number %(factor)s"
+#: amir/factors.py:1663 amir/data/ui/SellingForm.glade:1709
+msgid "Selling"
 msgstr ""
 
-#: amir/factors.py:1661
+#: amir/factors.py:1663 amir/data/ui/BuyingForm.glade:1901
+msgid "Buying"
+msgstr ""
+
+#: amir/factors.py:1663
+msgid "Returning sales"
+msgstr ""
+
+#: amir/factors.py:1663
+msgid "Returning purchases"
+msgstr ""
+
+#: amir/factors.py:1664
 #, python-format
-msgid "Buying  %(units)s units, invoice number  %(factor)s"
+msgid " %(units)s units, invoice number %(factor)s"
 msgstr ""
 
 #: amir/notebookreport.py:90 amir/notebookreport.py:247
@@ -1762,10 +1773,6 @@ msgstr ""
 msgid "Total Discount:"
 msgstr ""
 
-#: amir/data/ui/BuyingForm.glade:1901
-msgid "Buying"
-msgstr ""
-
 #: amir/data/ui/BuyingForm.glade:1919 amir/data/ui/mainwin.glade:195
 msgid "Add Buy"
 msgstr ""
@@ -1794,10 +1801,6 @@ msgstr ""
 
 #: amir/data/ui/SellingForm.glade:1444
 msgid "Standard Selling Price:"
-msgstr ""
-
-#: amir/data/ui/SellingForm.glade:1709
-msgid "Selling"
 msgstr ""
 
 #: amir/data/ui/SellingForm.glade:1807

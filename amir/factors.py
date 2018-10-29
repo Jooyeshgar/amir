@@ -1110,30 +1110,31 @@ class Factor(Payments):
 
 	def registerTransaction(self):
 		permanent = self.subPreInv ^ 1
+		factorType = 2*int(self.returning) + int(self.sell )	# 0: buy   1: sell 	 2:purchase return 	3:sales return		
 		if self.editFlag:
 			query=self.session.query(Factors)
 			factor=query.filter(Factors.Code==self.subCode)
-			factor = factor.filter(Factors.Sell == self.sell)
+			factor = factor.filter(Factors.Sell == factorType)
 
 			'''Factors.Delivery: self.subFOB  ,'''
 			factor.update({Factors.Cust : self.custId  , Factors.Addition : self.subAdd , Factors.Subtraction : self.subSub ,  Factors.VAT : self.VAT , Factors.CashPayment:self.cashPayment , Factors.ShipDate : self.subShpDate,
-				 Factors.ShipVia : self.subShipVia , Factors.Permanent : permanent , Factors.Desc:self.subDesc , Factors.Sell: self.sell, Factors.Fee: self.fee , Factors.PayableAmnt : self.totalFactor,
+				 Factors.ShipVia : self.subShipVia , Factors.Permanent : permanent , Factors.Desc:self.subDesc , Factors.Sell: factorType, Factors.Fee: self.fee , Factors.PayableAmnt : self.totalFactor,
 				Factors.LastEdit : self.editDate  })
 
 		else:
 			'''self.subFOB,'''
 			sell = Factors(self.subCode, self.subDate, 0, self.custId, self.subAdd, self.subSub, self.VAT, self.fee, self.totalFactor, self.cashPayment,
-					self.subShpDate,'', self.subShipVia, permanent, self.subDesc, self.sell, self.subDate, 1)#editdate=subdate
+					self.subShpDate,'', self.subShipVia, permanent, self.subDesc, factorType, self.subDate, 1)#editdate=subdate
 
-			self.session.add(sell)
-		#self.session.commit()
-		query = config.db.session.query(Customers)
-		query =	query.filter(Customers.custId==self.custId)
-		customer = query.first()
-		pre_invoice = "pre-invoice" if not permanent else ""		
+			self.session.add(sell)	
+		self.session.commit()	
+		# query = config.db.session.query(Customers)
+		# query =	query.filter(Customers.custId==self.custId)
+		# customer = query.first()
+		# pre_invoice = "pre-invoice" if not permanent else ""		
 		
 	def registerFactorItems(self):	
-			
+		factorType = 2*int(self.returning) + int(self.sell )	# 0: buy   1: sell 	 2:purchase return 	3:sales return		
 		if self.editFlag:								 
 			lasttransId = self.Id # Id of editing  factor
 
@@ -1150,12 +1151,13 @@ class Factor(Payments):
 				if not foundFlag:
 					query   = self.session.query(Products).filter(Products.id == oldProduct.productId ) 
 					pro = query.first()
-					if self.sell:
+					if factorType in (1,2):
+						print "if not found flag + return from buy"
 						pro.quantity += oldProduct.qnty
-					else:
+					elif factorType in (0,3):
 						pro.quantity -= oldProduct.qnty
+						print "if not found flag + return from sell"
 					self.session.query(FactorItems).filter(FactorItems.productId == oldProduct.productId).delete()					
-
 		
 		for exch in self.sellListStore: # The new sell list store
 			pid = exch[8] #query.filter(Products.name == unicode(exch[1])).first().id			
@@ -1178,9 +1180,9 @@ class Factor(Payments):
 										 utility.getFloat(exch[3]), utility.getFloat(exch[5]),
 										 self.Id, unicode(exch[7]))
 					self.session.add( factorItem )									
-					if self.sell:
+					if factorType in (1,2):				
 						pro.quantity -= nowfactorItemquantity
-					else:
+					elif factorType in (0,3):
 						pro.quantity += nowfactorItemquantity							
 				else:   #  product exists in factor
 					lastfactorItemquantity = utility.getFloat(str(factorItem1.qnty))
@@ -1190,9 +1192,9 @@ class Factor(Payments):
 						FactorItems.untPrc :utility.getFloat(exch[3]), 	 FactorItems.untDisc : utility.getFloat(exch[5]) , FactorItems.desc : unicode(exch[7]) })
 					
 					if lastfactorItemquantity != nowfactorItemquantity:												
-						if self.sell:
+						if factorType in (1,2):
 							pro.quantity += lastfactorItemquantity - nowfactorItemquantity
-						else:
+						elif factorType in (0,3):
 							pro.quantity -= lastfactorItemquantity - nowfactorItemquantity						
 					
 			# in add mode transaction																						
@@ -1206,15 +1208,14 @@ class Factor(Payments):
 							
 				#---- Updating the products quantity
 				if not self.subPreInv:																	
-					if self.sell:
+					if factorType in (1,2):						
 						pro.quantity -= nowfactorItemquantity
-					else:
+					elif factorType in (0,3):						
 						pro.quantity += nowfactorItemquantity
 					
 					lastfactorItemquantity=utility.getFloat(0)
 					nowfactorItemquantity=utility.getFloat(0)
 		self.session.commit()
-					
 		
 	def registerDocument(self):
 		cust_code = unicode(self.customerEntry.get_text())				
@@ -1615,21 +1616,17 @@ class Factor(Payments):
 		self.paymentsChanged()
 
 	def close(self, sender=0 , user_data = None):		
-		self.session.rollback()		
-		'''self.session.query(Cheque).filter(Cheque.chqTransId == self.Id).delete()
-								self.session.query(Payment).filter(Payment.paymntTransId == self.Id).delete()
-								self.session.commit()'''	
+		self.session.rollback()			
 		self.mainDlg.hide()
 		return True;
 
 	def saveDocument(self):
 		dbconf = dbconfig.dbConfig()
-		# total = self.payableAmnt - self.totalDisc + self.subAdd + self.subTax
-		
-		trans_code = utility.LN(self.subCode, False)
-		
+		# total = self.payableAmnt - self.totalDisc + self.subAdd + self.subTax		
+		trans_code = utility.LN(self.subCode, False)		
 		noteBookSell =  "sell" if self.sell  else "buy"
-		sellN = (-1) ** (not self.sell )				
+		sellN = (-1) ** ((not self.sell) ^ self.returning)			
+
 		self.Document.add_notebook(self.custSubj, -(self.totalFactor * sellN), _("Debit for invoice number %s") % trans_code,self.Id)
 		if self.cashPayment:
 			self.Document.add_notebook(self.custSubj, (self.cashPayment) * sellN, _("Cash Payment for invoice number %s") % trans_code,self.Id)
@@ -1649,16 +1646,12 @@ class Factor(Payments):
 		for exch in self.sellListStore:
 			query = self.session.query(ProductGroups)
 			query = query.select_from(outerjoin(Products, ProductGroups, Products.accGroup == ProductGroups.id))
-			result = query.filter(Products.id == unicode(exch[8])).first()
-			#sellid = result[0]
+			result = query.filter(Products.id == unicode(exch[8])).first()			
 			sellid = result.sellId if self.sell else result.buyId
-
 			exch_totalAmnt = utility.getFloat(exch[2]) * utility.getFloat(exch[3])
-			#TODO Use unit name specified for each product
-			if self.sell:
-				self.Document.add_notebook(sellid, exch_totalAmnt, _("Selling %(units)s units, invoice number %(factor)s") % ({'units':exch[2], 'factor':trans_code}),self.Id)
-			else:
-				self.Document.add_notebook(sellid, -exch_totalAmnt, _("Buying  %(units)s units, invoice number  %(factor)s") % ({'units':exch[2], 'factor':trans_code}),self.Id)
+			factorType = 2*int(self.returning) + int(self.sell )	# 0: buy   1: sell 	 2:purchase return 	3:sales return		
+			fType = [_("Selling") , _("Buying") , _("Returning sales"), _("Returning purchases")]
+			self.Document.add_notebook(sellid, sellN * exch_totalAmnt, fType[factorType]+_(" %(units)s units, invoice number %(factor)s") % ({'units':exch[2], 'factor':trans_code}),self.Id)
 
 		isTrueFactorId = self.Id  * self.editFlag   # 0 means inserting new factor and bill . otherwise is a valid factor ID
 		docnum = self.Document.save(isTrueFactorId)

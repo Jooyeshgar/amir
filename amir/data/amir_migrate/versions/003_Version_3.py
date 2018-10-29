@@ -62,14 +62,14 @@ def upgrade(migrate_engine):
                 "ShipVia" VARCHAR(100), \
                 "Permanent" BOOLEAN, \
                 "Desc" VARCHAR(200), \
-                "Sell" BOOLEAN, \
+                "Sell" INTEGER NOT NULL, \
                 "Activated" BOOLEAN DEFAULT 0, \
                 "Fee" FLOAT DEFAULT 0, \
                 "PayableAmnt" FLOAT DEFAULT 0, \
                 "LastEdit" DATE, \
                 PRIMARY KEY ("Id"), \
                 CHECK ("Permanent" IN (0, 1)), \
-                CHECK ("Sell" IN (0, 1)), \
+                CHECK ("Sell" IN (0, 1,2,3)), \
                 CHECK ("Activated" IN (0, 1)), \
                 FOREIGN KEY("Cust") REFERENCES customers ("custId") \
             );')

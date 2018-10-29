@@ -30,7 +30,7 @@ class Factors (Base):
     ShipVia = Column(Unicode(100), nullable=True)
     Permanent = Column(Boolean, ColumnDefault(0))
     Desc = Column(Unicode(200), nullable=True)
-    Sell = Column(Boolean, ColumnDefault(0), nullable=False)
+    Sell = Column(Integer,  nullable=False)
     LastEdit = Column(Date, nullable=True)
     Activated = Column(Boolean, ColumnDefault(0), nullable=False)
 
