@@ -318,6 +318,14 @@ class MainWindow(GObject.GObject):
 		obj = factors.Factor(False)
 		obj.viewSells()
 
+	def viewBuyReturns(self , sender):
+		obj = factors.Factor(sell = False , returning=True)
+		obj.viewSells()	
+
+	def viewSellReturns(self , sender):
+		obj = factors.Factor(sell = True , returning=True)
+		obj.viewSells()		
+
 	def delete_event(self, widget, event, data=None):
 #         msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL, _("Are you sure to close the app?"))
 #         msgbox.set_title(_("Are you sure?"))

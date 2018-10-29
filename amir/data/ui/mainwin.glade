@@ -583,6 +583,24 @@
                         <signal name="activate" handler="ViewBuying" swapped="no"/>
                       </object>
                     </child>
+                    <child>
+                      <object class="GtkMenuItem" id="editSellRetMenuitem">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">View all Sale returns</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="viewSellReturns" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="editBuyRetMenuitem">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">View All Purchase Returns</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="viewBuyReturns" swapped="no"/>
+                      </object>
+                    </child>
                   </object>
                 </child>
               </object>

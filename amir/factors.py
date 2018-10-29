@@ -216,14 +216,15 @@ class Factor(Payments):
 	
 	def viewSells(self,sender=0):
 		self.treestore.clear()
+		factorType = 2*int(self.returning) + int(self.sell )	# 0: buy   1: sell 	 2:purchase return 	3:sales return		
 		query = config.db.session.query(Factors,Customers)
 		query = query.select_from(outerjoin(Factors,Customers, Factors.Cust == Customers.custId))
-		query = query.order_by(Factors.Code.asc())
-		query =	query.filter(Factors.Sell==self.sell).filter(Factors.Activated==1)
+		query = query.order_by(Factors.Id.asc())
+		query =	query.filter(Factors.Sell==factorType)
 		result = query.all()
 
 		self.cal = calverter()
-		for t ,c in reversed(result):		
+		for t ,c in result:	
 			date = t.tDate
 			date = dateToString(date)
 			pre_invoice = _("pre-invoice") if not t.Permanent else "-"
@@ -303,7 +304,7 @@ class Factor(Payments):
 		
 		
 		if self.editFlag:										
-			saveBtn = "fullFactorSellBtn" if self.sell else "fullFactorBuyBtn"		
+			saveBtn = "fullFactorBuyBtn"		
 			self.builder.get_object(saveBtn).set_label(_("Save Changes") )			
 			
 			self.Codeentry = self.builder.get_object("transCode")
@@ -357,6 +358,7 @@ class Factor(Payments):
 		query = query.select_from(outerjoin(Factors, Customers, Factors.Cust== Customers.custId))
 		result,result2 = query.filter(Factors.Id == code).first() 		
 		self.editTransaction=result
+		self.returning = bool (result.Sell - 2 ) 
 		self.customer=result2
 		self.addNew() 		
 																						
