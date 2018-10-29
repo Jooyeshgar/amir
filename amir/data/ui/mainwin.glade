@@ -93,7 +93,7 @@
   <object class="GtkImage" id="image11">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="stock">gtk-missing-image</property>
+    <property name="stock">gtk-add</property>
   </object>
   <object class="GtkImage" id="image12">
     <property name="visible">True</property>
@@ -199,6 +199,24 @@
                         <property name="use_stock">False</property>
                         <signal name="activate" handler="addNewBuy" swapped="no"/>
                         <accelerator key="F6" signal="activate"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="sellRetMenuitem">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Sales Return </property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="addSaleReturn" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="buyRetMenuitem">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Purchase Return</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="addBuyReturn" swapped="no"/>
                       </object>
                     </child>
                     <child>

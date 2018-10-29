@@ -32,7 +32,7 @@
                     <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Add Buy</property>
+                    <property name="label" translatable="yes">Add Product</property>
                     <property name="stock_id">gtk-add</property>
                     <signal name="clicked" handler="addProduct" swapped="no"/>
                     <accelerator key="plus" signal="clicked"/>
@@ -823,6 +823,12 @@
                             <child>
                               <placeholder/>
                             </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
                           </object>
                         </child>
                       </object>
@@ -994,7 +1000,7 @@
                       <object class="GtkTable" id="table10">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="n_columns">5</property>
+                        <property name="n_columns">6</property>
                         <child>
                           <object class="GtkHBox" id="hbox4">
                             <property name="visible">True</property>
@@ -1023,6 +1029,8 @@
                                   <object class="GtkLabel" id="customerNameEntry">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="xpad">2</property>
+                                    <property name="width_chars">10</property>
                                     <property name="xalign">0.10000000149011612</property>
                                   </object>
                                   <packing>
@@ -1036,6 +1044,7 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="invisible_char">●</property>
+                                    <property name="width_chars">4</property>
                                     <property name="primary_icon_activatable">False</property>
                                     <property name="secondary_icon_activatable">False</property>
                                     <signal name="activate" handler="selectCustomers" swapped="no"/>
@@ -1111,8 +1120,11 @@
                                 <property name="can_focus">True</property>
                                 <property name="can_default">True</property>
                                 <property name="receives_default">False</property>
+                                <property name="margin_left">2</property>
+                                <property name="margin_right">2</property>
                                 <property name="focus_on_click">False</property>
                                 <property name="xalign">0.5</property>
+                                <property name="yalign">0.51999998092651367</property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
@@ -1161,7 +1173,7 @@
                                 <property name="height_request">25</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xpad">22</property>
+                                <property name="xpad">19</property>
                                 <property name="label" translatable="yes">----</property>
                                 <property name="xalign">0.20000000298023224</property>
                               </object>
@@ -1225,6 +1237,7 @@
                               <object class="GtkLabel" id="label3">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="xpad">3</property>
                                 <property name="label" translatable="yes">Doc. Number:</property>
                               </object>
                               <packing>
@@ -1246,6 +1259,17 @@
                                 <property name="position">1</property>
                               </packing>
                             </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">5</property>
+                            <property name="right_attach">6</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSeparator" id="separator1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="orientation">vertical</property>
                           </object>
                           <packing>
                             <property name="left_attach">4</property>

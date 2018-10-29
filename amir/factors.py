@@ -35,12 +35,12 @@ config = share.config
 class Factor(Payments):
 	"""Manage sell and buy form."""
 
-	def __init__(self,sell = True, transId=None):
+	def __init__(self,sell = True, transId=None, returning=False):
 		self.sell = sell 	#Sell or buy
 		#self.addFalg = True
 		self.editFlag = False   #  false means  adding
 		self.editTransaction = None
-		self.removeFlag = False
+		self.returning = returning
 		self.listTotalDiscount = 0.0
 		self.totalFactor = 0
 		self.totalTax = 0
@@ -59,10 +59,25 @@ class Factor(Payments):
 			lastId  = lastId.Id
 		self.Id = lastId + 1
 				
+		self.builder    = get_builder("BuyingForm")				
 		if sell:
-			self.builder    = get_builder("SellingForm")
+			if returning:			
+				self.builder.get_object("FormWindow").set_title(_("Amir - Sales return form"))				
+				self.builder.get_object("BuyerLbl").set_text(_("Return Sale from:"))
+				self.builder.get_object("fullFactorBuyBtn").set_label(_("Return Sales"))			
+			else:
+				self.builder.get_object("FormWindow").set_title(_("Amir - Sell form"))				
+				self.builder.get_object("BuyerLbl").set_text(_("Sold To:"))
+				self.builder.get_object("fullFactorBuyBtn").set_label(_("Sell"))
 		else:
-			self.builder    = get_builder("BuyingForm")
+			if returning:
+				self.builder.get_object("FormWindow").set_title(_("Amir - Purchase return form"))			
+				self.builder.get_object("BuyerLbl").set_text(_("Return buy to:"))
+				self.builder.get_object("fullFactorBuyBtn").set_label(_("Buy"))			
+			else:
+				self.builder.get_object("FormWindow").set_title(_("Amir - Buy form"))			
+				self.builder.get_object("BuyerLbl").set_text(_("Buy from:"))
+				self.builder.get_object("fullFactorBuyBtn").set_label(_("Buy"))
 
 		self.window = self.builder.get_object("viewWindow")
 	#	self.window.set_skip_taskbar_hint(True)

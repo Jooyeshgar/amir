@@ -299,7 +299,15 @@ class MainWindow(GObject.GObject):
 		obj.addNew()
 
 	def addNewBuy(self, sender):
-		obj = factors.Factor(False)
+		obj = factors.Factor(sell=False)
+		obj.addNew()
+
+	def addSaleReturn(self , sender):
+		obj = factors.Factor(returning=True)
+		obj.addNew()	
+
+	def addBuyReturn(self , sender):
+		obj = factors.Factor(sell=False,returning=True)
 		obj.addNew()
 
 	def ViewSelling(self , sender   ):
