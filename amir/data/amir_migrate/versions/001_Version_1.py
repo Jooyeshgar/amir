@@ -80,7 +80,7 @@ def upgrade(migrate_engine):
                {"id": 14, "code":"1101"  , "name": u"صندوق"                     , "parent_id": 3 , "lft": 30, "rgt": 31 , "type":2},			   
 			   {"id": 3 , "code":"11"  , "name": u"موجودیهای نقدی"              , "parent_id": 0 , "lft": 29, "rgt": 32 , "type":2},
 			   {"id": 59, "code":"1102", "name": u"تنخواه گردانها"              , "parent_id": 3 , "lft": 30, "rgt": 31 , "type":2},
-			   {"id": 4 , "code":"12"  , "name": u"بدهکاران"      				, "parent_id": 0 , "lft": 33, "rgt": 34 , "type":2},  
+			   {"id": 4 , "code":"12"  , "name": u"بدهکاران/بستانکاران"      				, "parent_id": 0 , "lft": 33, "rgt": 34 , "type":2},  
 			   {"id": 58 , "code":"1201"  , "name": u"اشخاص متفرقه"      		, "parent_id": 4 , "lft": 33, "rgt": 34 , "type":2},  
 			   {"id": 6 , "code":"13"  , "name": u"اسناد دریافتنی"              , "parent_id": 0 , "lft": 39, "rgt": 42 , "type":2},
 			   {"id": 44, "code":"1301", "name": u"اسناد دریافتنی"              , "parent_id": 6 , "lft": 40, "rgt": 41 , "type":2},			   			              			                                                                           
@@ -114,7 +114,7 @@ def upgrade(migrate_engine):
 			   {"id": 22, "code":"20"  , "name": u"اسناد پرداختنی"              , "parent_id": 0 , "lft": 65, "rgt": 68 , "type":2},
                {"id": 46, "code":"2001", "name": u"اسناد پرداختنی"              , "parent_id": 22, "lft": 66, "rgt": 67 , "type":2},    
                
-			  # {"id": 70, "code":"21", "name": u"بستانکاران"            	    , "parent_id": 0, "lft": 66, "rgt": 67 , "type":2},    
+			     
 
 			   {"id": 81, "code":"22", "name": u"پیش دریافت ها"                , "parent_id": 0 , "lft": 30, "rgt": 31 , "type":2},
 			   {"id": 82, "code":"2201", "name": u"پیش دریافت فروش محصولات"                , "parent_id": 82 , "lft": 30, "rgt": 31 , "type":2},
