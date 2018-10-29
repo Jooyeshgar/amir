@@ -1645,17 +1645,27 @@ class Factor(Payments):
 			self.Document.add_notebook(dbconf.get_int(noteBookSell+"-discount"), -(self.totalDisc)*sellN, _("Discount on items for invoice number %s") % trans_code,self.Id)
 
 		# Create a row for each sold product
+		totalRet = totalRetAmnt = 0
+		factorType = 2*int(self.returning) + int(self.sell )	# 0: buy   1: sell 	 2:purchase return 	3:sales return		
+		fType = [ _("Buying") ,_("Selling") , _("Returning purchases"), _("Returning sales")]
 		for exch in self.sellListStore:
 			query = self.session.query(ProductGroups)
 			query = query.select_from(outerjoin(Products, ProductGroups, Products.accGroup == ProductGroups.id))
 			result = query.filter(Products.id == unicode(exch[8])).first()			
-			sellid = result.sellId if self.sell else result.buyId
-			exch_totalAmnt = utility.getFloat(exch[2]) * utility.getFloat(exch[3])
-			factorType = 2*int(self.returning) + int(self.sell )	# 0: buy   1: sell 	 2:purchase return 	3:sales return		
-			fType = [_("Selling") , _("Buying") , _("Returning sales"), _("Returning purchases")]
-			self.Document.add_notebook(sellid, sellN * exch_totalAmnt, fType[factorType]+_(" %(units)s units, invoice number %(factor)s") % ({'units':exch[2], 'factor':trans_code}),self.Id)
+			if not self.returning : 
+				sellid = result.sellId if self.sell else result.buyId
+				exch_totalAmnt = utility.getFloat(exch[2]) * utility.getFloat(exch[3])
+				self.Document.add_notebook(sellid, sellN * exch_totalAmnt, fType[factorType]+_(" %(units)s units, invoice number %(factor)s") % ({'units':exch[2], 'factor':trans_code}),self.Id)
+			else:
+				totalRet += utility.getFloat(exch[2])
+				totalRetAmnt += utility.getFloat(exch[2]) * utility.getFloat(exch[3])
 
-		isTrueFactorId = self.Id  * self.editFlag   # 0 means inserting new factor and bill . otherwise is a valid factor ID
+		if self.returning:
+			ret_subj = 'sale-return' if self.sell else 'purchase-return' 
+			sellid = dbconf.get_int(ret_subj)				
+			self.Document.add_notebook(sellid, sellN * totalRetAmnt, fType[factorType]+_(" %(units)s units, invoice number %(factor)s") % ({'units':totalRet, 'factor':trans_code}),self.Id)
+
+		isTrueFactorId = self.Id  * self.editFlag   # 0 means inserting new factor and bill . otherwise is a valid factor ID		
 		docnum = self.Document.save(isTrueFactorId)
 		share.mainwin.silent_daialog(_("Document saved with number %s.") % docnum)
 		return docnum
