@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-28 10:30+0330\n"
+"POT-Creation-Date: 2018-10-29 09:47+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -53,7 +53,7 @@ msgstr ""
 msgid "Credit"
 msgstr ""
 
-#: amir/addeditdoc.py:83 amir/chequereport.py:77 amir/chequereport.py:671
+#: amir/addeditdoc.py:83 amir/chequereport.py:77 amir/chequereport.py:737
 #: amir/customergroup.py:68 amir/docreport.py:55 amir/docreport.py:57
 #: amir/factors.py:187 amir/notebookreport.py:181 amir/notebookreport.py:205
 #: amir/payments.py:115 amir/payments.py:132 amir/warehousing.py:144
@@ -92,16 +92,18 @@ msgstr ""
 msgid "No subjects found"
 msgstr ""
 
-#: amir/addeditdoc.py:303 amir/customers.py:435 amir/factors.py:353
+#: amir/addeditdoc.py:303 amir/customers.py:435 amir/factors.py:354
 #: amir/product.py:429
 msgid "Are you sure to remove this row?"
 msgstr ""
 
 #: amir/addeditdoc.py:304 amir/addeditdoc.py:410 amir/addeditdoc.py:426
-#: amir/chequereport.py:577 amir/customers.py:436 amir/factors.py:354
-#: amir/factors.py:674 amir/product.py:430 amir/setting.py:180
-#: amir/setting.py:226 amir/warehousing.py:216 amir/warehousing.py:245
-#: amir/warehousing.py:803 scripts/amir:271 scripts/amir:484
+#: amir/chequereport.py:375 amir/chequereport.py:406 amir/chequereport.py:434
+#: amir/chequereport.py:470 amir/chequereport.py:510 amir/chequereport.py:643
+#: amir/customers.py:436 amir/factors.py:355 amir/factors.py:675
+#: amir/product.py:430 amir/setting.py:180 amir/setting.py:226
+#: amir/warehousing.py:216 amir/warehousing.py:245 amir/warehousing.py:803
+#: scripts/amir:271 scripts/amir:484
 msgid "Are you sure?"
 msgstr ""
 
@@ -262,7 +264,7 @@ msgstr ""
 msgid "Factor Code"
 msgstr ""
 
-#: amir/cardexreport.py:28 amir/chequereport.py:77 amir/chequereport.py:650
+#: amir/cardexreport.py:28 amir/chequereport.py:77 amir/chequereport.py:716
 msgid "Customer Name"
 msgstr ""
 
@@ -333,7 +335,7 @@ msgid "Recieved-Bounced"
 msgstr ""
 
 #: amir/chequereport.py:28 amir/data/ui/chequereport.glade:1093
-#: amir/data/ui/chequereport.glade:1256
+#: amir/data/ui/chequereport.glade:1243
 msgid "Float"
 msgstr ""
 
@@ -341,39 +343,39 @@ msgstr ""
 msgid "Cheques Report"
 msgstr ""
 
-#: amir/chequereport.py:77 amir/chequereport.py:608 amir/payments.py:114
+#: amir/chequereport.py:77 amir/chequereport.py:674 amir/payments.py:114
 #: amir/payments.py:131 amir/user.py:72 amir/user.py:160
 msgid "ID"
 msgstr ""
 
-#: amir/chequereport.py:77 amir/chequereport.py:615 amir/payments.py:114
+#: amir/chequereport.py:77 amir/chequereport.py:681 amir/payments.py:114
 #: amir/payments.py:131
 msgid "Amount"
 msgstr ""
 
-#: amir/chequereport.py:77 amir/chequereport.py:622
+#: amir/chequereport.py:77 amir/chequereport.py:688
 msgid "Write Date"
 msgstr ""
 
-#: amir/chequereport.py:77 amir/chequereport.py:629 amir/payments.py:114
+#: amir/chequereport.py:77 amir/chequereport.py:695 amir/payments.py:114
 #: amir/payments.py:131
 msgid "Due Date"
 msgstr ""
 
-#: amir/chequereport.py:77 amir/chequereport.py:636
+#: amir/chequereport.py:77 amir/chequereport.py:702
 msgid "Serial"
 msgstr ""
 
-#: amir/chequereport.py:77 amir/chequereport.py:657
+#: amir/chequereport.py:77 amir/chequereport.py:723
 #: amir/data/ui/bankaccounts.glade:218
 msgid "Account"
 msgstr ""
 
-#: amir/chequereport.py:77 amir/chequereport.py:685
+#: amir/chequereport.py:77 amir/chequereport.py:751
 msgid "Bill ID"
 msgstr ""
 
-#: amir/chequereport.py:77 amir/chequereport.py:692 amir/payments.py:115
+#: amir/chequereport.py:77 amir/chequereport.py:758 amir/payments.py:115
 #: amir/payments.py:132
 msgid "Status"
 msgstr ""
@@ -382,75 +384,100 @@ msgstr ""
 msgid "Edit Non-Cash Payment"
 msgstr ""
 
-#: amir/chequereport.py:282 amir/factors.py:469 amir/payments.py:263
+#: amir/chequereport.py:282 amir/factors.py:470 amir/payments.py:263
 msgid "Save Changes..."
 msgstr ""
 
-#: amir/chequereport.py:382 amir/chequereport.py:384 amir/chequereport.py:386
-#: amir/chequereport.py:405 amir/chequereport.py:406
+#: amir/chequereport.py:374 amir/chequereport.py:405
+msgid "Are you sure to return this cheque?"
+msgstr ""
+
+#: amir/chequereport.py:390 amir/chequereport.py:392 amir/chequereport.py:394
+#: amir/chequereport.py:422 amir/chequereport.py:423
 msgid "Cheque with serial No. "
 msgstr ""
 
-#: amir/chequereport.py:382 amir/chequereport.py:384 amir/chequereport.py:386
+#: amir/chequereport.py:390 amir/chequereport.py:392 amir/chequereport.py:394
 msgid " returned from "
 msgstr ""
 
-#: amir/chequereport.py:391 amir/chequereport.py:410 amir/chequereport.py:437
-#: amir/chequereport.py:463 amir/chequereport.py:489 amir/chequereport.py:596
+#: amir/chequereport.py:399 amir/chequereport.py:427 amir/chequereport.py:463
+#: amir/chequereport.py:503 amir/chequereport.py:527 amir/chequereport.py:551
+#: amir/chequereport.py:662
 msgid "The operation was completed successfully."
 msgstr ""
 
-#: amir/chequereport.py:405 amir/chequereport.py:406
+#: amir/chequereport.py:422 amir/chequereport.py:423
 msgid " returned to "
 msgstr ""
 
-#: amir/chequereport.py:424 amir/chequereport.py:425 amir/chequereport.py:428
-#: amir/chequereport.py:429
+#: amir/chequereport.py:433
+msgid "Are you sure to bounce this cheque?"
+msgstr ""
+
+#: amir/chequereport.py:450 amir/chequereport.py:451 amir/chequereport.py:454
+#: amir/chequereport.py:455
 msgid "Bounced cheque"
 msgstr ""
 
-#: amir/chequereport.py:454 amir/chequereport.py:455 amir/chequereport.py:484
-#: amir/chequereport.py:485 amir/chequereport.py:486
+#: amir/chequereport.py:469
+msgid "Are you sure to get this cheque passed?"
+msgstr ""
+
+#: amir/chequereport.py:494 amir/chequereport.py:495 amir/chequereport.py:521
+#: amir/chequereport.py:522 amir/chequereport.py:539
+msgid "Cheque with serial No."
+msgstr ""
+
+#: amir/chequereport.py:494 amir/chequereport.py:495
 msgid "Passed"
 msgstr ""
 
-#: amir/chequereport.py:457 amir/chequereport.py:458
+#: amir/chequereport.py:509
+msgid "Are you sure to float this cheque?"
+msgstr ""
+
+#: amir/chequereport.py:521 amir/chequereport.py:522
+msgid "Floated"
+msgstr ""
+
+#: amir/chequereport.py:539
 msgid "Cashed"
 msgstr ""
 
-#: amir/chequereport.py:576
+#: amir/chequereport.py:642
 msgid "Are you sure to delete the cheque?"
 msgstr ""
 
-#: amir/chequereport.py:643
+#: amir/chequereport.py:709
 msgid "Clear"
 msgstr ""
 
-#: amir/chequereport.py:664
+#: amir/chequereport.py:730
 msgid "Transaction ID"
 msgstr ""
 
-#: amir/chequereport.py:678
+#: amir/chequereport.py:744
 msgid "History Date"
 msgstr ""
 
-#: amir/chequereport.py:707 amir/payments.py:409
+#: amir/chequereport.py:773 amir/payments.py:409
 msgid "You must enter the due date for the non-cash payment.\n"
 msgstr ""
 
-#: amir/chequereport.py:712 amir/payments.py:413
+#: amir/chequereport.py:778 amir/payments.py:413
 msgid "You must enter the Amount for cheque "
 msgstr ""
 
-#: amir/chequereport.py:717 amir/payments.py:417
+#: amir/chequereport.py:783 amir/payments.py:417
 msgid "You must enter a writing date for the cheque.\n"
 msgstr ""
 
-#: amir/chequereport.py:722 amir/payments.py:421
+#: amir/chequereport.py:788 amir/payments.py:421
 msgid "You must enter the serial number for the non-cash payment.\n"
 msgstr ""
 
-#: amir/chequereport.py:727 amir/payments.py:434
+#: amir/chequereport.py:793 amir/payments.py:434
 #, python-format
 msgid ""
 "The payment cannot be saved.\n"
@@ -458,7 +485,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: amir/chequereport.py:730 amir/payments.py:437
+#: amir/chequereport.py:796 amir/payments.py:437
 msgid "Invalid data"
 msgstr ""
 
@@ -533,7 +560,7 @@ msgstr ""
 msgid "Add New Customer"
 msgstr ""
 
-#: amir/customers.py:153 amir/data/ui/customers.glade:1767
+#: amir/customers.py:153 amir/data/ui/customers.glade:1769
 msgid "Add Customer"
 msgstr ""
 
@@ -658,133 +685,133 @@ msgstr ""
 msgid "pre-invoice"
 msgstr ""
 
-#: amir/factors.py:291
+#: amir/factors.py:292
 msgid "Save Changes"
 msgstr ""
 
-#: amir/factors.py:464
+#: amir/factors.py:465
 #, python-format
 msgid "Edit sell:\t%s - %s"
 msgstr ""
 
-#: amir/factors.py:473
+#: amir/factors.py:474
 msgid "Choose sell information"
 msgstr ""
 
-#: amir/factors.py:475
+#: amir/factors.py:476
 msgid "Choose buy information"
 msgstr ""
 
-#: amir/factors.py:477
+#: amir/factors.py:478
 msgid "Add to list"
 msgstr ""
 
-#: amir/factors.py:557
+#: amir/factors.py:558
 #, python-format
 msgid "Are You sure you want to delete the sell row number %s?"
 msgstr ""
 
-#: amir/factors.py:559 amir/payments.py:283
+#: amir/factors.py:560 amir/payments.py:283
 msgid "Confirm Deletion"
 msgstr ""
 
-#: amir/factors.py:621
+#: amir/factors.py:622
 msgid "The \"Product Code\" which you selected is not a valid Code."
 msgstr ""
 
-#: amir/factors.py:624
+#: amir/factors.py:625
 msgid "Invalid Product Code"
 msgstr ""
 
-#: amir/factors.py:636
+#: amir/factors.py:637
 msgid "The \"Quantity\" Must be greater than 0."
 msgstr ""
 
-#: amir/factors.py:639 amir/factors.py:649
+#: amir/factors.py:640 amir/factors.py:650
 msgid "Invalid Quantity"
 msgstr ""
 
-#: amir/factors.py:645
+#: amir/factors.py:646
 msgid "The \"Quantity\" is larger than the storage, and over-sell is off!"
 msgstr ""
 
-#: amir/factors.py:646
+#: amir/factors.py:647
 #, python-format
 msgid ""
 "\n"
 "Quantity can be at most %s."
 msgstr ""
 
-#: amir/factors.py:653
+#: amir/factors.py:654
 msgid "The \"Quantity\" is low!"
 msgstr ""
 
-#: amir/factors.py:656 amir/warehousing.py:123 amir/data/ui/cardex.glade:258
+#: amir/factors.py:657 amir/warehousing.py:123 amir/data/ui/cardex.glade:258
 msgid "Quantity Warning"
 msgstr ""
 
-#: amir/factors.py:662
+#: amir/factors.py:663
 msgid "The \"Unit Price\" Must be greater than 0."
 msgstr ""
 
-#: amir/factors.py:665
+#: amir/factors.py:666
 msgid "Invalid Unit Price"
 msgstr ""
 
-#: amir/factors.py:671
+#: amir/factors.py:672
 msgid ""
 "The Unit Sell Price you entered is less than the product Purchase Price!\""
 msgstr ""
 
-#: amir/factors.py:800
+#: amir/factors.py:801
 msgid "Product code is invalid"
 msgstr ""
 
-#: amir/factors.py:831 amir/factors.py:833
+#: amir/factors.py:832 amir/factors.py:834
 msgid "Quantity must be greater than 0."
 msgstr ""
 
-#: amir/factors.py:837
+#: amir/factors.py:838
 msgid "Quantity is more than the available storage. (Over-Sell is Off)"
 msgstr ""
 
-#: amir/factors.py:885
+#: amir/factors.py:886
 msgid "Unit Price cannot be negative."
 msgstr ""
 
-#: amir/factors.py:893
+#: amir/factors.py:894
 msgid "Unit Price is less than the product purchase price."
 msgstr ""
 
-#: amir/factors.py:926
+#: amir/factors.py:927
 msgid "Invalid discount range. (Discount must be between 0 and 100 percent)"
 msgstr ""
 
-#: amir/factors.py:938
+#: amir/factors.py:939
 msgid "Invalid discount. (Use numbers and percentage sign only)"
 msgstr ""
 
-#: amir/factors.py:942
+#: amir/factors.py:943
 msgid "Invalid discount. (Put percentage sign before or after discount amount)"
 msgstr ""
 
-#: amir/factors.py:952
+#: amir/factors.py:953
 msgid "Applying discount decreases product price below its purchase price!"
 msgstr ""
 
-#: amir/factors.py:1041
+#: amir/factors.py:1042
 msgid "The customer code you entered is not valid."
 msgstr ""
 
-#: amir/factors.py:1049
+#: amir/factors.py:1050
 msgid "There is no product selected for the invoice."
 msgstr ""
 
-#: amir/factors.py:1074
+#: amir/factors.py:1075
 msgid ", "
 msgstr ""
 
-#: amir/factors.py:1079
+#: amir/factors.py:1080
 #, python-format
 msgid ""
 "The available quantity of %s is not enough for the invoice. You can save it "
@@ -1480,8 +1507,8 @@ msgstr ""
 
 #: amir/data/ui/BuyingForm.glade:50 amir/data/ui/BuyingForm.glade:1920
 #: amir/data/ui/SellingForm.glade:49 amir/data/ui/SellingForm.glade:1752
-#: amir/data/ui/cheque.glade:627 amir/data/ui/customers.glade:1658
-#: amir/data/ui/customers.glade:1807 amir/data/ui/notebook.glade:69
+#: amir/data/ui/cheque.glade:627 amir/data/ui/customers.glade:1660
+#: amir/data/ui/customers.glade:1809 amir/data/ui/notebook.glade:69
 #: amir/data/ui/user.glade:1251 amir/data/ui/user.glade:1375
 #: amir/data/ui/warehousing.glade:780 amir/data/ui/warehousing.glade:915
 msgid "Edit"
@@ -1651,7 +1678,7 @@ msgstr ""
 #: amir/data/ui/BuyingForm.glade:1325 amir/data/ui/BuyingForm.glade:1398
 #: amir/data/ui/SellingForm.glade:1153 amir/data/ui/SellingForm.glade:1227
 #: amir/data/ui/cheque.glade:39 amir/data/ui/chequereport.glade:38
-#: amir/data/ui/customers.glade:1577
+#: amir/data/ui/customers.glade:1579
 msgid "Cancel"
 msgstr ""
 
@@ -1661,7 +1688,7 @@ msgstr ""
 
 #: amir/data/ui/BuyingForm.glade:1471 amir/data/ui/SellingForm.glade:1300
 #: amir/data/ui/SellingForm.glade:1862 amir/data/ui/customers.glade:331
-#: amir/data/ui/customers.glade:1118
+#: amir/data/ui/customers.glade:1385
 msgid "..."
 msgstr ""
 
@@ -1707,16 +1734,15 @@ msgid "Buying"
 msgstr ""
 
 #: amir/data/ui/BuyingForm.glade:1935 amir/data/ui/SellingForm.glade:1767
-#: amir/data/ui/chequereport.glade:1228 amir/data/ui/customers.glade:1673
-#: amir/data/ui/customers.glade:1821 amir/data/ui/notebook.glade:86
-#: amir/data/ui/user.glade:689 amir/data/ui/user.glade:1266
-#: amir/data/ui/user.glade:1392 amir/data/ui/warehousing.glade:794
-#: amir/data/ui/warehousing.glade:930
+#: amir/data/ui/customers.glade:1675 amir/data/ui/customers.glade:1823
+#: amir/data/ui/notebook.glade:86 amir/data/ui/user.glade:689
+#: amir/data/ui/user.glade:1266 amir/data/ui/user.glade:1392
+#: amir/data/ui/warehousing.glade:794 amir/data/ui/warehousing.glade:930
 msgid "Delete"
 msgstr ""
 
 #: amir/data/ui/BuyingForm.glade:1989 amir/data/ui/SellingForm.glade:1952
-#: amir/data/ui/customers.glade:1727 amir/data/ui/user.glade:1320
+#: amir/data/ui/customers.glade:1729 amir/data/ui/user.glade:1320
 msgid "Insert: Add group    Ctrl+E: Edit    Del: Delete"
 msgstr ""
 
@@ -1925,7 +1951,7 @@ msgid "Due Date:"
 msgstr ""
 
 #: amir/data/ui/cheque.glade:204 amir/data/ui/chequereport.glade:200
-#: amir/data/ui/customers.glade:1339 amir/data/ui/customers.glade:1461
+#: amir/data/ui/customers.glade:969 amir/data/ui/customers.glade:1091
 msgid "Bank:"
 msgstr ""
 
@@ -2069,7 +2095,7 @@ msgstr ""
 msgid "Return from customer"
 msgstr ""
 
-#: amir/data/ui/chequereport.glade:1282
+#: amir/data/ui/chequereport.glade:1284
 msgid "Total amount: "
 msgstr ""
 
@@ -2078,7 +2104,7 @@ msgid "Group Code:"
 msgstr ""
 
 #: amir/data/ui/customers.glade:103 amir/data/ui/customers.glade:359
-#: amir/data/ui/customers.glade:1311 amir/data/ui/customers.glade:1433
+#: amir/data/ui/customers.glade:941 amir/data/ui/customers.glade:1063
 #: amir/data/ui/user.glade:33 amir/data/ui/user.glade:313
 msgid "Name:"
 msgstr ""
@@ -2165,85 +2191,85 @@ msgstr ""
 msgid "Personal Information"
 msgstr ""
 
-#: amir/data/ui/customers.glade:941
-msgid "Marked Customer"
-msgstr ""
-
-#: amir/data/ui/customers.glade:958
-msgid "Reason:"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1000
-msgid "<b> Marked User </b>"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1041
-msgid "Introducer:"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1053
-msgid "Discount Rate:"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1067
-msgid "Commission Rate:"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1147
-msgid "<b> Introduction Info </b>"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1182
-msgid "Buyer"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1199
-msgid "Seller"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1216
-msgid "Mate"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1232
-msgid "Agent"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1254
-msgid "<b> Customer Types </b>"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1274
-msgid "Customer Type"
-msgstr ""
-
-#: amir/data/ui/customers.glade:1325 amir/data/ui/customers.glade:1447
+#: amir/data/ui/customers.glade:955 amir/data/ui/customers.glade:1077
 msgid "Account Number:"
 msgstr ""
 
-#: amir/data/ui/customers.glade:1397
+#: amir/data/ui/customers.glade:1027
 msgid "<b> Account One </b>"
 msgstr ""
 
-#: amir/data/ui/customers.glade:1519
+#: amir/data/ui/customers.glade:1149
 msgid "<b> Account Two </b>"
 msgstr ""
 
-#: amir/data/ui/customers.glade:1540
+#: amir/data/ui/customers.glade:1170
 msgid "Financial Information"
 msgstr ""
 
-#: amir/data/ui/customers.glade:1615
+#: amir/data/ui/customers.glade:1208
+msgid "Marked Customer"
+msgstr ""
+
+#: amir/data/ui/customers.glade:1225
+msgid "Reason:"
+msgstr ""
+
+#: amir/data/ui/customers.glade:1267
+msgid "<b> Marked User </b>"
+msgstr ""
+
+#: amir/data/ui/customers.glade:1308
+msgid "Introducer:"
+msgstr ""
+
+#: amir/data/ui/customers.glade:1320
+msgid "Discount Rate:"
+msgstr ""
+
+#: amir/data/ui/customers.glade:1334
+msgid "Commission Rate:"
+msgstr ""
+
+#: amir/data/ui/customers.glade:1414
+msgid "<b> Introduction Info </b>"
+msgstr ""
+
+#: amir/data/ui/customers.glade:1449
+msgid "Buyer"
+msgstr ""
+
+#: amir/data/ui/customers.glade:1466
+msgid "Seller"
+msgstr ""
+
+#: amir/data/ui/customers.glade:1483
+msgid "Mate"
+msgstr ""
+
+#: amir/data/ui/customers.glade:1499
+msgid "Agent"
+msgstr ""
+
+#: amir/data/ui/customers.glade:1521
+msgid "<b> Customer Types </b>"
+msgstr ""
+
+#: amir/data/ui/customers.glade:1542
+msgid "Customer Type"
+msgstr ""
+
+#: amir/data/ui/customers.glade:1617
 msgid "Customer Groups"
 msgstr ""
 
-#: amir/data/ui/customers.glade:1633 amir/data/ui/customers.glade:1782
+#: amir/data/ui/customers.glade:1635 amir/data/ui/customers.glade:1784
 #: amir/data/ui/mainwin.glade:752 amir/data/ui/warehousing.glade:755
 #: amir/data/ui/warehousing.glade:890
 msgid "Add Group"
 msgstr ""
 
-#: amir/data/ui/customers.glade:1750 amir/data/ui/mainwin.glade:391
+#: amir/data/ui/customers.glade:1752 amir/data/ui/mainwin.glade:391
 #: amir/data/ui/mainwin.glade:688
 msgid "View Customers"
 msgstr ""

@@ -370,6 +370,14 @@ class ChequeReport(GObject.GObject):
         self.bankaccounts_class.addNewBank(model)        
 
     def odatAzMoshtari(self, sender):
+        msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL,
+                                  _("Are you sure to return this cheque?"))
+        msgbox.set_title(_("Are you sure?"))
+        result = msgbox.run();
+        
+        if result == Gtk.ResponseType.CANCEL :
+            msgbox.destroy()
+            return
         self.getSelection()       
         result = config.db.session.query(Cheque, Customers)
         result = result.filter(Customers.custId == Cheque.chqCust)
@@ -390,8 +398,17 @@ class ChequeReport(GObject.GObject):
         config.db.session.commit()
         share.mainwin.silent_daialog(_("The operation was completed successfully."))
         self.searchFilter()
+        msgbox.destroy()
 
     def odatBeMoshtari(self, sender):
+        msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL,
+                                   _("Are you sure to return this cheque?"))
+        msgbox.set_title(_("Are you sure?"))
+        result = msgbox.run();
+        
+        if result == Gtk.ResponseType.CANCEL :
+            msgbox.destroy()
+            return
         self.getSelection()
         result = config.db.session.query(Cheque, Customers)
         result = result.filter(Customers.custId == Cheque.chqCust)
@@ -409,8 +426,17 @@ class ChequeReport(GObject.GObject):
         config.db.session.commit()
         share.mainwin.silent_daialog(_("The operation was completed successfully."))
         self.searchFilter()
+        msgbox.destroy()
 
     def bargasht(self, sender):
+        msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL,
+                                   _("Are you sure to bounce this cheque?"))
+        msgbox.set_title(_("Are you sure?"))
+        result = msgbox.run();
+        
+        if result == Gtk.ResponseType.CANCEL :
+            msgbox.destroy()
+            return
         self.getSelection()
         result = config.db.session.query(Cheque, Customers)
         result = result.filter(Customers.custId == Cheque.chqCust)
@@ -436,57 +462,89 @@ class ChequeReport(GObject.GObject):
         config.db.session.commit()
         share.mainwin.silent_daialog(_("The operation was completed successfully."))
         self.searchFilter()
+        msgbox.destroy()
 
     def passShode(self, sender):
+        msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL,
+                                   _("Are you sure to get this cheque passed?"))
+        msgbox.set_title(_("Are you sure?"))
+        result = msgbox.run();
+        
+        if result == Gtk.ResponseType.CANCEL :
+            msgbox.destroy()
+            return
         self.getSelection()
+        document = class_document.Document()
+
         result = config.db.session.query(Cheque).filter(Cheque.chqId == self.code).first()          
         status = result.chqStatus
-        if status == 5:
+        if status == 3 or status == 10 :
             sub = subjects.Subjects(parent_id=[1,14])
-            sub.connect('subject-selected', self.on_subject_selected)
-        if status == 1 or status == 3:
-            document = class_document.Document()
-            result.chqStatus = 2 if status == 1 else 4
+            sub.connect('subject-selected', self.casheCheque)
+
+        if status == 1 :
+            result.chqStatus = 2 
             if status == 1 : # pass
                 ba = class_bankaccounts.BankAccountsClass()
                 accName = ba.get_account(result.chqAccount).accName
                 banksub  = config.db.session.query(Subject).filter(Subject.parent_id== (dbconf.get_int('bank')) ).filter(Subject.name==accName).first().id
-                document.add_notebook(banksub, result.chqAmount, _('Passed'))
-                document.add_notebook(dbconf.get_int('our_cheque'), -result.chqAmount, _('Passed'))
-            else: # vosul
-                document.add_notebook(dbconf.get_int('cash'), -result.chqAmount, _('Cashed'))
-                document.add_notebook(dbconf.get_int('other_cheque'), result.chqAmount, _('Cashed'))
-            ch_history = ChequeHistory(result.chqId, result.chqAmount, result.chqWrtDate, result.chqDueDate, result.chqSerial, result.chqStatus, result.chqCust, result.chqAccount, result.chqTransId, result.chqDesc, self.current_time)
-            config.db.session.add(ch_history)                                    
-            document.save()
-            config.db.session.commit()
-            share.mainwin.silent_daialog(_("The operation was completed successfully."))
-            self.searchFilter()
+                document.add_notebook(banksub, result.chqAmount,_("Cheque with serial No.")+result.chqSerial+  _('Passed'))
+                document.add_notebook(dbconf.get_int('our_cheque'),_("Cheque with serial No.")+result.chqSerial+  -result.chqAmount, _('Passed'))
+
+        ch_history = ChequeHistory(result.chqId, result.chqAmount, result.chqWrtDate, result.chqDueDate, result.chqSerial, result.chqStatus, result.chqCust, result.chqAccount, result.chqTransId, result.chqDesc, self.current_time)
+        config.db.session.add(ch_history)                                    
+        document.save()
+        config.db.session.commit()
+        share.mainwin.silent_daialog(_("The operation was completed successfully."))
+        self.searchFilter()
+        msgbox.destroy()
 
     def darJaryanVosul (self , sender):
-        self.getSelection()
-        #result = config.db.session.query(Cheque).filter(Cheque.chqId == self.code).first()      
-        # status = result.chqStatus
-        # result.chqStatus = 10
-        # document = class_document.Document()  
+        msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL,
+                                   _("Are you sure to float this cheque?"))
+        msgbox.set_title(_("Are you sure?"))
+        result = msgbox.run();
         
+        if result == Gtk.ResponseType.CANCEL :
+            msgbox.destroy()
+            return
+        self.getSelection()
+        result = config.db.session.query(Cheque).filter(Cheque.chqId == self.code).first()      
+        status = result.chqStatus
+        result.chqStatus = 10
+        document = class_document.Document()  
+        document.add_notebook(dbconf.get_int('float'), -result.chqAmount,_("Cheque with serial No.")+result.chqSerial+ _('Floated'))
+        document.add_notebook(dbconf.get_int('other_cheque'), result.chqAmount,_("Cheque with serial No.")+result.chqSerial+ _('Floated'))
+        ch_history = ChequeHistory(result.chqId, result.chqAmount, result.chqWrtDate, result.chqDueDate, result.chqSerial, result.chqStatus, result.chqCust, result.chqAccount, result.chqTransId, result.chqDesc, self.current_time)
+        config.db.session.add(ch_history)                                    
+        document.save()
+        config.db.session.commit()
+        share.mainwin.silent_daialog(_("The operation was completed successfully."))
+        self.searchFilter()
+        msgbox.destroy()
 
-    def on_subject_selected(self, subject, id, code, name):
+    def casheCheque(self, subject, id, code, name):
         result = config.db.session.query(Cheque, Customers)
         result = result.filter(Customers.custId == Cheque.chqCust)
         result = result.filter(Cheque.chqId == self.code).first()
-        result.Cheque.chqStatus = 3
+        status  =result.Cheque.chqStatus
+        result.Cheque.chqStatus = 4
+        document = class_document.Document() 
+        chequeValue =  result.Cheque.chqAmount
+        desc = _("Cheque with serial No.")+result.Cheque.chqSerial+ _('Cashed')
+        if status == 10:
+            document.add_notebook(id, -chequeValue,desc)
+            document.add_notebook(dbconf.get_int('float'),chequeValue,desc)
+        elif status == 3:
+            document.add_notebook(id, -chequeValue, desc)
+            document.add_notebook(dbconf.get_int('other_cheque'), chequeValue,desc)   
         ch_history = ChequeHistory(result.Cheque.chqId, result.Cheque.chqAmount, result.Cheque.chqWrtDate, result.Cheque.chqDueDate, result.Cheque.chqSerial, result.Cheque.chqStatus, result.Cheque.chqCust, result.Cheque.chqAccount, result.Cheque.chqTransId, result.Cheque.chqDesc, self.current_time)
-        config.db.session.add(ch_history)
-        config.db.session.commit()
-
-        document = class_document.Document()
-        document.add_notebook(result.Customers.custSubj  , result.Cheque.chqAmount, _('Passed'))
-        document.add_notebook(id, result.Cheque.chqAmount, _('Passed'))
-        document.add_notebook(dbconf.get_int('other_cheque'), -result.Cheque.chqAmount, _('Passed'))
+        config.db.session.add(ch_history) 
         document.save()
+        config.db.session.commit()
         subject.window.destroy()
         share.mainwin.silent_daialog(_("The operation was completed successfully."))
+        self.searchFilter()
 
     def on_dialog_destroy(self, sender,data=None):
         sender.hide()
@@ -542,6 +600,7 @@ class ChequeReport(GObject.GObject):
         self.builder.get_object("passButton").set_sensitive(True)        
         self.builder.get_object("deleteButton").set_sensitive(True)    
         self.builder.get_object("editButton").set_sensitive(True)            
+        self.builder.get_object("JaryanButton").set_sensitive(True)            
         self.getSelection()        
         result = config.db.session.query(Cheque)
         result = result.filter(Cheque.chqId == self.code).first()        
@@ -558,7 +617,9 @@ class ChequeReport(GObject.GObject):
             self.builder.get_object("editButton").set_sensitive(False)            
             self.builder.get_object("deleteButton").set_sensitive(False)   
             self.builder.get_object("passButton").set_sensitive(False) 
-            self.builder.get_object("bargashtButton").set_sensitive(False)           
+            self.builder.get_object("bargashtButton").set_sensitive(False)    
+        if result.chqStatus != 3:
+            self.builder.get_object("JaryanButton").set_sensitive(False)  
         if result.chqDelete == True:
             self.builder.get_object("editButton").set_sensitive(False)            
             self.builder.get_object("deleteButton").set_sensitive(False) 

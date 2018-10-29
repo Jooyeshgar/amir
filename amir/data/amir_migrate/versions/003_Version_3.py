@@ -175,7 +175,8 @@ def upgrade(migrate_engine):
         {'cfgId' :27, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'sell-adds'              , 'cfgValue' : u'36',  'cfgDesc':u'Additions when selling'},
         {'cfgId' :28, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'buy-adds'               , 'cfgValue' : u'32',  'cfgDesc':u'Additions when buying'},
         {'cfgId' :29, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'inventories'            , 'cfgValue' : u'70',  'cfgDesc':u'Initial inventory'},
-        {'cfgId' :30, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'fund'                   , 'cfgValue' : u'21',  'cfgDesc':u'Share capital'}
+        {'cfgId' :30, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'fund'                   , 'cfgValue' : u'21',  'cfgDesc':u'Share capital'},
+        {'cfgId' :31, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'float'                  , 'cfgValue' : u'68',  'cfgDesc':u'اسناد در جریان وصول'}
     )
 
     s.commit()
