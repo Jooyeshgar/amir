@@ -254,6 +254,9 @@ class MainWindow(GObject.GObject):
 		file.close()
 		share.mainwin.silent_daialog(_("Backup restored successfully"))
 
+	def newDB(self, sender:
+		
+		
 	def arrangeDocments(self, sender):
 		notebookutils.arrangeDocuments(self.window)
 
