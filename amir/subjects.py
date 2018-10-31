@@ -35,7 +35,7 @@ class Subjects(GObject.GObject):
         # else:
         #     halign = 0
             
-        self.treestore = Gtk.TreeStore(str, str, str, str)
+        self.treestore = Gtk.TreeStore(str, str, str, str , str)
         column = Gtk.TreeViewColumn(_("Subject Code"), Gtk.CellRendererText(), text=0)
         # column.set_alignment(halign)
         column.set_spacing(5)
@@ -55,6 +55,11 @@ class Subjects(GObject.GObject):
         # column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
+        self.treeview.append_column(column)        
+        column = Gtk.TreeViewColumn(_("Permanent"), Gtk.CellRendererText(), text=4)
+        # column.set_alignment(halign)
+        column.set_spacing(5)
+        column.set_resizable(True)
         self.treeview.append_column(column)
         self.treeview.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
         
@@ -69,7 +74,7 @@ class Subjects(GObject.GObject):
         Subject2 = aliased(Subject, name="s2")
         
         #Find top level ledgers (with parent_id equal to 0)
-        query = config.db.session.query(Subject1.code, Subject1.name, Subject1.type, Subject1.lft, Subject1.rgt, count(Subject2.id))
+        query = config.db.session.query(Subject1.code, Subject1.name, Subject1.type, Subject1.lft, Subject1.rgt, count(Subject2.id),Subject1.permanent)
         query = query.select_from(outerjoin(Subject1, Subject2, Subject1.id == Subject2.parent_id))
         if len(parent_id) == 1:
             result = query.filter(Subject1.parent_id == parent_id[0]).group_by(Subject1.id).all()
@@ -78,6 +83,7 @@ class Subjects(GObject.GObject):
 
         for a in result :
             type = _(self.subjecttypes[a[2]])
+            permanent = _("Permanent") if  a[6] == True else "-"            
             code = LN(a[0], False)
             #--------
             subject_sum = config.db.session.query(sum(Notebook.value)).select_from(outerjoin(Subject, Notebook, Subject.id == Notebook.subject_id))
@@ -92,10 +98,10 @@ class Subjects(GObject.GObject):
                 else :
                     subject_sum = LN(subject_sum)
                 
-            iter = self.treestore.append(None, (code, a[1], type, subject_sum))
+            iter = self.treestore.append(None, (code, a[1], type, subject_sum, permanent))
             if (a[5] != 0 and ledgers_only == False) :
                 #Add empty subledger to show expander for ledgers which have chidren
-                self.treestore.append(iter, ("", "", "", ""))
+                self.treestore.append(iter, ("", "", "", "" ,""))
         
         if ledgers_only == True:
             btn = self.builder.get_object("addsubtoolbutton")
@@ -136,15 +142,15 @@ class Subjects(GObject.GObject):
         
         ttype = 0
         result = dialog.run()
-        if result == 1 :
-            if result == 1 :
-                if self.builder.get_object("debtor").get_active() == True:                    
-                    ttype += 1
-                if  self.builder.get_object("creditor").get_active() == True:
-                    ttype += 10
-                a = [1,10,11]
-                type = a.index(ttype)   
-            self.saveLedger(unicode(entry.get_text()), type, None, False, dialog)
+        if result == 1 :            
+            if self.builder.get_object("debtor").get_active() == True:                    
+                ttype += 1
+            if  self.builder.get_object("creditor").get_active() == True:
+                ttype += 10
+            a = [1,10,11]
+            type = a.index(ttype)   
+            per = self.builder.get_object("permanent").get_active()                
+            self.saveLedger(unicode(entry.get_text()), type, None, False, dialog , per)
         dialog.hide()
         
     def addSubLedger(self, sender):
@@ -189,8 +195,9 @@ class Subjects(GObject.GObject):
                 if  self.builder.get_object("creditor").get_active() == True:
                     ttype += 10
                 a = [1,10,11]
-                type = a.index(ttype)                          
-                self.saveLedger(unicode(entry.get_text()), type, parent, False, dialog)
+                type = a.index(ttype)   
+                per = self.builder.get_object("permanent").get_active()                       
+                self.saveLedger(unicode(entry.get_text()), type, parent, False, dialog , per)
             dialog.hide()
         else :
             msgbox =  Gtk.MessageDialog(parent, Gtk.DialogFlags.MODAL, Gtk.MessageType.INFO, Gtk.ButtonsType.CLOSE,
@@ -245,7 +252,8 @@ class Subjects(GObject.GObject):
                     ttype += 10
                 a = [1,10,11]
                 type = a.index(ttype)                
-                self.saveLedger(unicode(entry.get_text()), type, iter, True, dialog)
+                per = self.builder.get_object("permanent").get_active()                
+                self.saveLedger(unicode(entry.get_text()), type, iter, True, dialog ,per)
             
             dialog.hide()
     
@@ -299,7 +307,7 @@ class Subjects(GObject.GObject):
                     config.db.session.commit()
                     self.treestore.remove(iter)
     
-    def saveLedger(self, name, type, iter, edit, widget):
+    def saveLedger(self, name, type, iter, edit, widget, permanent):
         if name == "" :
             msgbox = Gtk.MessageDialog(widget, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.CLOSE,
                                     _("Subject name should not be empty."))
@@ -394,6 +402,7 @@ class Subjects(GObject.GObject):
                 sub.code = lastcode
                 sub.name = name
                 sub.type = type
+                sub.permanent = permanent
                 
                 #update subledger codes if parent ledger code has changed
                 length = len(lastcode)
@@ -403,7 +412,7 @@ class Subjects(GObject.GObject):
                     result = query.all()
                     for child in result:
                         child.code = lastcode + child.code[length:]
-                        config.db.session.add(child)
+                        #config.db.session.add(child)
                 
                 config.db.session.commit()
                 
@@ -421,8 +430,8 @@ class Subjects(GObject.GObject):
 #                            chcode = utility.convertToPersian(chcode)
 #                        self.treestore.set(chiter, 0, basecode + chcode )
 #                        chiter = self.treestore.iter_next(chiter)
-                        
-                self.treestore.set(iter, 0, basecode, 1, name, 2, _(self.subjecttypes[type]))
+                per = _("Permanent") if permanent  else "-"
+                self.treestore.set(iter, 0, basecode, 1, name, 2, _(self.subjecttypes[type]),4, per)
                 
             else:
 #                    query = self.session.query(Subject.code).select_from(Subject).order_by(Subject.id.desc())
@@ -453,18 +462,18 @@ class Subjects(GObject.GObject):
                 rlist = config.db.session.query(Subject).filter(Subject.rgt > sub_right).all()
                 for r in rlist:
                     r.rgt += 2
-                    config.db.session.add(r)
+                   # config.db.session.add(r)
                     
                 llist = config.db.session.query(Subject).filter(Subject.lft > sub_right).all()
                 for l in llist:
                     l.lft += 2
-                    config.db.session.add(l)
+                #    config.db.session.add(l)
                 
                 sub_left = sub_right + 1
                 sub_right = sub_left + 1
                 
                 #Now create new subject:
-                ledger = Subject(lastcode, name, parent_id, sub_left, sub_right, type)
+                ledger = Subject(lastcode, name, parent_id, sub_left, sub_right, type,permanent )
                 config.db.session.add(ledger)
                 
                 config.db.session.commit()
@@ -490,7 +499,7 @@ class Subjects(GObject.GObject):
                 Sub = aliased(Subject, name="s")
                 Child = aliased(Subject, name="c")
                 
-                query = config.db.session.query(Sub.code, Sub.name, Sub.type, count(Child.id), Sub.lft, Sub.rgt)
+                query = config.db.session.query(Sub.code, Sub.name, Sub.type, count(Child.id), Sub.lft, Sub.rgt,Sub.permanent)
                 query = query.select_from(outerjoin(Sub, Child, Sub.id == Child.parent_id))
                 result = query.filter(Sub.parent_id == parent_id).group_by(Sub.id).all()
                 for row in result :
@@ -509,11 +518,11 @@ class Subjects(GObject.GObject):
                             subject_sum = "(-" + LN(-subject_sum) + ")"
                         else :
                             subject_sum = LN(subject_sum)
-                            
-                    chiter = self.treestore.append(iter, (code, row[1], type, subject_sum))
+                    per = _("Permanent") if row[6] else "-"
+                    chiter = self.treestore.append(iter, (code, row[1], type, subject_sum,per))
                     if row[3] != 0 :
                         #add empty subledger for those children which have subledgers in turn. (to show expander)
-                        self.treestore.append(chiter, ("", "", "", ""))
+                        self.treestore.append(chiter, ("", "", "", "",""))
         return False
  
     def editChildCodes(self, model, path, iter, data):

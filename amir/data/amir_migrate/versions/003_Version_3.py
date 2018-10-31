@@ -115,6 +115,11 @@ def upgrade(migrate_engine):
     notebook.c.value.alter(type=Float)
     assert notebook.c.value.type
 
+    subject = Table('subject' , meta , autoload=True)
+    colPer = Column('permanent', Boolean, default=False)
+    colPer.create(subject,  populate_default=True)
+    assert colPer is subject.c.permanent
+
     factorItems = Table('factorItems', meta, autoload=True)
     factorItems.c.exchngId.alter(name='id')
     factorItems.c.exchngNo.alter(name='number')
