@@ -93,16 +93,16 @@ def upgrade(migrate_engine):
 			   {"id": 70, "code":"1502", "name": u"موجودی مواد و کالا"                , "parent_id": 69 , "lft": 30, "rgt": 31 , "type":2},
 			   
 			   {"id": 71, "code":"16"  , "name": u"پیش پرداخت ها"                , "parent_id": 0 , "lft": 30, "rgt": 31 , "type":2},
-			   {"id": 72, "code":"1601", "name": u"پیش پرداخت مالیات"                , "parent_id": 72 , "lft": 30, "rgt": 31 , "type":2},
-			   {"id": 73, "code":"1602", "name": u"پیش پرداخت اجاره"                , "parent_id": 72 , "lft": 30, "rgt": 31 , "type":2},
-			   {"id": 74, "code":"1603", "name": u"پیش پرداخت هزینه های جاری"                , "parent_id": 72 , "lft": 30, "rgt": 31 , "type":2},
+			   {"id": 72, "code":"1601", "name": u"پیش پرداخت مالیات"                , "parent_id": 71 , "lft": 30, "rgt": 31 , "type":2},
+			   {"id": 73, "code":"1602", "name": u"پیش پرداخت اجاره"                , "parent_id": 71 , "lft": 30, "rgt": 31 , "type":2},
+			   {"id": 74, "code":"1603", "name": u"پیش پرداخت هزینه های جاری"                , "parent_id": 71 , "lft": 30, "rgt": 31 , "type":2},
 			          
 			   {"id": 75, "code":"17", "name": u"دارایی های غیر جاری"                , "parent_id": 0 , "lft": 30, "rgt": 31 , "type":2},
-			   {"id": 76, "code":"1701", "name": u"اموال، ماشین آلات و تجهیزات"       , "parent_id": 76 , "lft": 30, "rgt": 31 , "type":2},
-			   {"id": 77, "code":"1702", "name": u"استهلاک انباشته اموال، ماشین آلات و تجهیزات"                , "parent_id": 76 , "lft": 30, "rgt": 31 , "type":2},
-			   {"id": 78, "code":"1703", "name": u"سرمایه گذاری های بلند مدت"        , "parent_id": 76 , "lft": 30, "rgt": 31 , "type":2},
-			   {"id": 79, "code":"1704", "name": u"سپرده ها و مطالبات بلندمدت"                , "parent_id": 76 , "lft": 30, "rgt": 31 , "type":2},
-			   {"id": 80, "code":"1705", "name": u"سایر دارایی ها"               , "parent_id": 76 , "lft": 30, "rgt": 31 , "type":2},
+			   {"id": 76, "code":"1701", "name": u"اموال، ماشین آلات و تجهیزات"       , "parent_id": 75 , "lft": 30, "rgt": 31 , "type":2},
+			   {"id": 77, "code":"1702", "name": u"استهلاک انباشته اموال، ماشین آلات و تجهیزات"                , "parent_id": 75 , "lft": 30, "rgt": 31 , "type":2},
+			   {"id": 78, "code":"1703", "name": u"سرمایه گذاری های بلند مدت"        , "parent_id": 75 , "lft": 30, "rgt": 31 , "type":2},
+			   {"id": 79, "code":"1704", "name": u"سپرده ها و مطالبات بلندمدت"                , "parent_id": 75 , "lft": 30, "rgt": 31 , "type":2},
+			   {"id": 80, "code":"1705", "name": u"سایر دارایی ها"               , "parent_id": 75 , "lft": 30, "rgt": 31 , "type":2},
 			   
 			   {"id": 38, "code":"18"  , "name": u"سایر حسابهای دریافتنی"       , "parent_id": 0 , "lft": 89, "rgt": 94 , "type":2},
                {"id": 40, "code":"1801", "name": u"مالیات بر ارزش افزوده خرید"     , "parent_id": 38, "lft": 90, "rgt": 91 , "type":2},
@@ -117,8 +117,8 @@ def upgrade(migrate_engine):
 			     
 
 			   {"id": 81, "code":"22", "name": u"پیش دریافت ها"                , "parent_id": 0 , "lft": 30, "rgt": 31 , "type":2},
-			   {"id": 82, "code":"2201", "name": u"پیش دریافت فروش محصولات"                , "parent_id": 82 , "lft": 30, "rgt": 31 , "type":2},
-			   {"id": 83, "code":"2202", "name": u"سایر پیش دریافت ها"                , "parent_id": 82 , "lft": 30, "rgt": 31 , "type":2},
+			   {"id": 82, "code":"2201", "name": u"پیش دریافت فروش محصولات"                , "parent_id": 81 , "lft": 30, "rgt": 31 , "type":2},
+			   {"id": 83, "code":"2202", "name": u"سایر پیش دریافت ها"                , "parent_id": 81 , "lft": 30, "rgt": 31 , "type":2},
 			   			   
 				{"id": 39, "code":"23"  , "name": u"سایر حسابهای پرداختنی"       , "parent_id": 0 , "lft": 95, "rgt": 100, "type":2},
                {"id": 41, "code":"2301", "name": u"مالیات بر ارزش افزوده فروش"     , "parent_id": 39, "lft": 96, "rgt": 97 , "type":2},
@@ -126,10 +126,10 @@ def upgrade(migrate_engine):
                {"id": 66, "code":"2303"  , "name": u"عیدی و پاداش پرداختنی"       , "parent_id": 39 , "lft": 95, "rgt": 100, "type":2},    
 		   
 			   {"id": 84, "code":"30", "name": u"حقوق صاحبان سهام"                , "parent_id": 0 , "lft": 30, "rgt": 31 , "type":2},
-			   {"id": 21, "code":"3001", "name": u"سرمایه"                , "parent_id": 85 , "lft": 30, "rgt": 31 , "type":2},
-			   {"id": 85, "code":"3002", "name": u"اندوخته قانونی"                , "parent_id": 85 , "lft": 30, "rgt": 31 , "type":2},
-			   {"id": 86, "code":"3003", "name": u"سود (زیان) انباشته"                , "parent_id": 85 , "lft": 30, "rgt": 31 , "type":2},
-			   {"id": 87, "code":"3004", "name": u"تقسیم سود"                , "parent_id": 85 , "lft": 30, "rgt": 31 , "type":2},
+			   {"id": 21, "code":"3001", "name": u"سرمایه"                , "parent_id": 84 , "lft": 30, "rgt": 31 , "type":2},
+			   {"id": 85, "code":"3002", "name": u"اندوخته قانونی"                , "parent_id": 84 , "lft": 30, "rgt": 31 , "type":2},
+			   {"id": 86, "code":"3003", "name": u"سود (زیان) انباشته"                , "parent_id": 84 , "lft": 30, "rgt": 31 , "type":2},
+			   {"id": 87, "code":"3004", "name": u"تقسیم سود"                , "parent_id": 84 , "lft": 30, "rgt": 31 , "type":2},
 			   
 			   {"id": 2 , "code":"40"  , "name": u"هزینه ها"                    , "parent_id": 0 , "lft": 3 , "rgt": 28 , "type":0},
                {"id": 10, "code":"4001", "name": u"حقوق پرسنل"                  , "parent_id": 2 , "lft": 4 , "rgt": 5  , "type":0},
@@ -147,7 +147,7 @@ def upgrade(migrate_engine):
 			   {"id": 32, "code":"4012", "name": u"هزینه های متفرقه"            , "parent_id": 2 , "lft": 26, "rgt": 27 , "type":0},
 	
 			   {"id": 88, "code":"41", "name": u"قیمت تمام شده کالای فروش رفته"  , "parent_id": 0 , "lft": 30, "rgt": 31 , "type":2},
-			   {"id": 89, "code":"4101", "name": u"قیمت تمام شده کالای فروش رفته"  , "parent_id": 89 , "lft": 30, "rgt": 31 , "type":2},
+			   {"id": 89, "code":"4101", "name": u"قیمت تمام شده کالای فروش رفته"  , "parent_id": 88 , "lft": 30, "rgt": 31 , "type":2},
 			    	
                {"id": 23, "code":"50"  , "name": u"درآمدها"             , "parent_id": 0 , "lft": 69, "rgt": 76 , "type":1},
 			   {"id": 36, "code":"5001", "name": u"درآمد متفرقه"                      , "parent_id": 23, "lft": 74, "rgt": 75 , "type":1},
@@ -167,12 +167,12 @@ def upgrade(migrate_engine):
 			   {"id": 53, "code":"6302", "name": u"تخفیفات خرید"                , "parent_id": 24, "lft": 80, "rgt": 81 , "type":2},
 			   
 			   {"id": 90, "code":"64", "name": u"حسابهای انتظامی"                , "parent_id": 0, "lft": 80, "rgt": 81 , "type":2},
-			   {"id": 91, "code":"6401", "name": u"حسابهای انتظامی به نفع شرکت"   , "parent_id": 91, "lft": 80, "rgt": 81 , "type":2},
-			   {"id": 92, "code":"6402", "name": u"حسابهای انتظامی به عهده شرکت"  , "parent_id": 91, "lft": 80, "rgt": 81 , "type":2},
+			   {"id": 91, "code":"6401", "name": u"حسابهای انتظامی به نفع شرکت"   , "parent_id": 90, "lft": 80, "rgt": 81 , "type":2},
+			   {"id": 92, "code":"6402", "name": u"حسابهای انتظامی به عهده شرکت"  , "parent_id": 90, "lft": 80, "rgt": 81 , "type":2},
 			   
 			   {"id": 93, "code":"65", "name": u"طرف حسابهای انتظامی"  , "parent_id": 0, "lft": 80, "rgt": 81 , "type":2},
-			   {"id": 94, "code":"6502", "name": u"طرف حساب انتظامی به نفع شرکت"  , "parent_id": 94, "lft": 80, "rgt": 81 , "type":2},
-			   {"id": 95, "code":"6502", "name": u"طرف حساب انتظامی به عهده شرکت"  , "parent_id": 94, "lft": 80, "rgt": 81 , "type":2},
+			   {"id": 94, "code":"6502", "name": u"طرف حساب انتظامی به نفع شرکت"  , "parent_id": 93, "lft": 80, "rgt": 81 , "type":2},
+			   {"id": 95, "code":"6502", "name": u"طرف حساب انتظامی به عهده شرکت"  , "parent_id": 93, "lft": 80, "rgt": 81 , "type":2},
 			   			   
 			   {"id": 5 , "code":"66"  , "name": u"تراز افتتاحیه"               , "parent_id": 0 , "lft": 35, "rgt": 38 , "type":2}, 
 			   {"id": 15, "code":"6601", "name": u"تراز افتتاحیه"               , "parent_id": 5 , "lft": 36, "rgt": 37 , "type":2},

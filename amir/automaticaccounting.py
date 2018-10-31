@@ -37,7 +37,7 @@ class AutomaticAccounting:
 
     type_configs = {
         #    0:non cash   2:spend_cheque 4:to is subject?   6:to key
-        #           1:discount    3:from subj?  5:from key
+        #    1:discount   3:from subj?   5:from key
         #    0    , 1    , 2    , 3    , 4    , 5          , 6
         0:  (True , True , False, False, True , None       , 'cash'),
         1:  (True , False, True , True , False, 'cash'     , None  ),
@@ -49,7 +49,7 @@ class AutomaticAccounting:
         7:  (True , False, True , True , True , 'partners' , 'cash,bank'),
         8:  (True , False, True , True , True , 'cash'     , 'cost'),
         9:  (False, True , False, True , False,  'income'  , None),
-        10: (True , False, True , True , True , 'cash,bank', 'partner'),
+        10: (True , False, True , True , True , 'cash,bank', 'partners'),
     }
     def __init__(self):
         #self.mode = None
@@ -163,7 +163,7 @@ class AutomaticAccounting:
             self.to_entry.set_text(query.name)
             self.to_code = query.code
             self.to_name = query.name            
-        elif self.type_index == 0:
+        elif self.type_index in [0,4] :
             self.builder.get_object('to-button').set_sensitive(False)
             query = share.config.db.session.query(Subject).select_from(Subject)
             query = query.filter(Subject.id == dbconf.get_int('cash'))

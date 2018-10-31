@@ -166,7 +166,7 @@ def upgrade(migrate_engine):
         {'cfgId' :18, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'bank-wage'     , 'cfgValue' : u'31', 'cfgDesc':u'کارمزد بانک'},
         {'cfgId' :19, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'our_cheque'    , 'cfgValue' : u'46', 'cfgDesc':u'اسناد پرداختنی'},
         {'cfgId' :20, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'other_cheque'  , 'cfgValue' : u'44',  'cfgDesc':u'اسناد دریافتنی'},
-        {'cfgId' :21, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'income'        , 'cfgValue' : u'83', 'cfgDesc':u'پیش دریافت ها'},
+        {'cfgId' :21, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'income'        , 'cfgValue' : u'81', 'cfgDesc':u'پیش دریافت ها'},
         {'cfgId' :22, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-address'    , 'cfgValue' : u'نشانی شرکت (قابل تنظیم در تنظیمات->پیکربندی',  'cfgDesc':u'نشانی شرکت شما'},
         {'cfgId' :23, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-economical-code'     , 'cfgValue' : u'کد اقتصادی',  'cfgDesc':u'کد اقتصادی شما'},
         {'cfgId' :24, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-national-code'       , 'cfgValue' : u'کد ملی',  'cfgDesc':u'کد ملی شما'},
