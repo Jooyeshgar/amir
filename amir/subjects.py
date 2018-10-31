@@ -18,7 +18,7 @@ from amir.share import Share
 config = share.config
 
 class Subjects(GObject.GObject):
-    subjecttypes = ["Debtor", "Creditor", "Both"]
+    subjecttypes = [_("Debtor"), _("Creditor"), _("Both")]
     
     def __init__ (self, ledgers_only=False, parent_id=[0,], multiselect=False):
         GObject.GObject.__init__(self)
@@ -121,8 +121,9 @@ class Subjects(GObject.GObject):
         hbox.hide()
         entry = self.builder.get_object("ledgername")
         entry.set_text("")
-        
-        query = config.db.session.query(Subject.code).select_from(Subject).order_by(Subject.id.desc())
+        self.builder.get_object("debtor").set_active(False)
+        self.builder.get_object("creditor").set_active(False)         
+        query = config.db.session.query(Subject.code).select_from(Subject).order_by(Subject.code.desc())
         code = query.filter(Subject.parent_id == 0).first()
         if code == None :
             lastcode = "001"
@@ -133,17 +134,16 @@ class Subjects(GObject.GObject):
         self.code.set_text(lastcode)
         self.builder.get_object("parentcode").set_text("")
         
-#        dialog.show_all()
+        ttype = 0
         result = dialog.run()
         if result == 1 :
-            if self.builder.get_object("debtor").get_active() == True:
-                type = 0
-            else:
-                if self.builder.get_object("creditor").get_active() == True:
-                    type = 1
-                else:
-                    type = 2
-             
+            if result == 1 :
+                if self.builder.get_object("debtor").get_active() == True:                    
+                    ttype += 1
+                if  self.builder.get_object("creditor").get_active() == True:
+                    ttype += 10
+                a = [1,10,11]
+                type = a.index(ttype)   
             self.saveLedger(unicode(entry.get_text()), type, None, False, dialog)
         dialog.hide()
         
@@ -154,7 +154,8 @@ class Subjects(GObject.GObject):
         hbox.show()
         selection = self.treeview.get_selection()
         parent = selection.get_selected()[1]
-        
+        self.builder.get_object("debtor").set_active(False)
+        self.builder.get_object("creditor").set_active(False)        
         if parent != None :
             pcode = self.treestore.get(parent, 0)[0]
             self.builder.get_object("parentcode").set_text(pcode)
@@ -180,16 +181,15 @@ class Subjects(GObject.GObject):
             lastcode = LN(lastcode, False) 
             self.code.set_text(lastcode)
             
+            ttype = 0
             result = dialog.run()
             if result == 1 :
-                if self.builder.get_object("debtor").get_active() == True:
-                    type = 0
-                else:
-                    if self.builder.get_object("creditor").get_active() == True:
-                        type = 1
-                    else:
-                        type = 2
-                    
+                if self.builder.get_object("debtor").get_active() == True:                    
+                    ttype += 1
+                if  self.builder.get_object("creditor").get_active() == True:
+                    ttype += 10
+                a = [1,10,11]
+                type = a.index(ttype)                          
                 self.saveLedger(unicode(entry.get_text()), type, parent, False, dialog)
             dialog.hide()
         else :
@@ -216,17 +216,18 @@ class Subjects(GObject.GObject):
             
             name = self.treestore.get(iter, 1)[0]
             type = self.treestore.get(iter, 2)[0]
-            debtor = False
-            creditor = False
-            both = False
+
             
             if type == self.subjecttypes[0]:
                 self.builder.get_object("debtor").set_active(True)
+                self.builder.get_object("creditor").set_active(False)
+            elif type == self.subjecttypes[1]:
+                self.builder.get_object("creditor").set_active(True)
+                self.builder.get_object("debtor").set_active(False)
             else:
-                if type == self.subjecttypes[1]:
-                    self.builder.get_object("creditor").set_active(True)
-                else :
-                    self.builder.get_object("both").set_active(True) 
+                self.builder.get_object("debtor").set_active(True)
+                self.builder.get_object("creditor").set_active(True)
+
             #label = self.builder.get_object("label3")
             #label.set_text(name)
             entry = self.builder.get_object("ledgername")
@@ -236,15 +237,16 @@ class Subjects(GObject.GObject):
             hbox.hide()
             result = dialog.run()
             
+            ttype = 0
             if result == 1 :
-                if self.builder.get_object("debtor").get_active() == True:
-                    type = 0
-                else:
-                    if  self.builder.get_object("creditor").get_active() == True:
-                        type = 1
-                    else:
-                        type = 2
+                if self.builder.get_object("debtor").get_active() == True:                    
+                    ttype += 1
+                if  self.builder.get_object("creditor").get_active() == True:
+                    ttype += 10
+                a = [1,10,11]
+                type = a.index(ttype)                
                 self.saveLedger(unicode(entry.get_text()), type, iter, True, dialog)
+            
             dialog.hide()
     
     def deleteLedger(self, sender):
@@ -351,7 +353,7 @@ class Subjects(GObject.GObject):
                 msgbox.run()
                 msgbox.destroy()
                 return
-            
+            result =None
             lastcode = iter_code + lastcode[0:3]
             query = config.db.session.query(count(Subject.id)).select_from(Subject)
             query = query.filter(and_(Subject.parent_id == parent_id, Subject.code == lastcode))
@@ -359,7 +361,7 @@ class Subjects(GObject.GObject):
                 query = query.filter(Subject.id != iter_id)
                 result = query.first()
             
-            if result[0] != 0 :
+            if result and  result[0] != 0 :
                 msgbox = Gtk.MessageDialog(widget, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.CLOSE,
                                         _("A subject with this code already exists."))
                 msgbox.set_title(_("Duplicate subject code"))

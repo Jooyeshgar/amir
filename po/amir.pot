@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-29 16:36+0330\n"
+"POT-Creation-Date: 2018-10-31 11:53+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -119,7 +119,7 @@ msgstr ""
 msgid "Debt sum and Credit sum should be equal"
 msgstr ""
 
-#: amir/addeditdoc.py:391 amir/factors.py:1660
+#: amir/addeditdoc.py:391 amir/factors.py:1670
 #, python-format
 msgid "Document saved with number %s."
 msgstr ""
@@ -894,23 +894,23 @@ msgstr ""
 msgid "Discount on items for invoice number %s"
 msgstr ""
 
-#: amir/factors.py:1655
-msgid "Selling"
-msgstr ""
-
-#: amir/factors.py:1655 amir/data/ui/BuyingForm.glade:1901
+#: amir/factors.py:1650 amir/data/ui/BuyingForm.glade:1901
 msgid "Buying"
 msgstr ""
 
-#: amir/factors.py:1655
-msgid "Returning sales"
+#: amir/factors.py:1650
+msgid "Selling"
 msgstr ""
 
-#: amir/factors.py:1655
+#: amir/factors.py:1650
 msgid "Returning purchases"
 msgstr ""
 
-#: amir/factors.py:1656
+#: amir/factors.py:1650
+msgid "Returning sales"
+msgstr ""
+
+#: amir/factors.py:1658 amir/factors.py:1666
 #, python-format
 msgid " %(units)s units, invoice number %(factor)s"
 msgstr ""
@@ -1239,6 +1239,18 @@ msgid ""
 "Are you sure to continue?"
 msgstr ""
 
+#: amir/subjects.py:21 amir/data/ui/notebook.glade:463
+msgid "Debtor"
+msgstr ""
+
+#: amir/subjects.py:21 amir/data/ui/notebook.glade:478
+msgid "Creditor"
+msgstr ""
+
+#: amir/subjects.py:21
+msgid "Both"
+msgstr ""
+
 #: amir/subjects.py:49
 msgid "Debtor or Creditor"
 msgstr ""
@@ -1263,67 +1275,67 @@ msgstr ""
 msgid "Edit Ledger"
 msgstr ""
 
-#: amir/subjects.py:266
+#: amir/subjects.py:268
 msgid "Subject can not be deleted, because it has some child subjects."
 msgstr ""
 
-#: amir/subjects.py:267 amir/subjects.py:278
+#: amir/subjects.py:269 amir/subjects.py:280
 msgid "Error deleting subject"
 msgstr ""
 
-#: amir/subjects.py:277
+#: amir/subjects.py:279
 msgid ""
 "Subject can not be deleted, because there are some documents registered for "
 "it."
 msgstr ""
 
-#: amir/subjects.py:303
+#: amir/subjects.py:305
 msgid "Subject name should not be empty."
 msgstr ""
 
-#: amir/subjects.py:304
+#: amir/subjects.py:306
 msgid "Empty subject name"
 msgstr ""
 
-#: amir/subjects.py:339
+#: amir/subjects.py:341
 msgid "A subject with this name already exists in the current level."
 msgstr ""
 
-#: amir/subjects.py:340
+#: amir/subjects.py:342
 msgid "Duplicate subject name"
 msgstr ""
 
-#: amir/subjects.py:349
+#: amir/subjects.py:351
 msgid "Ledger Code field is empty"
 msgstr ""
 
-#: amir/subjects.py:350
+#: amir/subjects.py:352
 msgid "Invalid subject code"
 msgstr ""
 
-#: amir/subjects.py:364
+#: amir/subjects.py:366
 msgid "A subject with this code already exists."
 msgstr ""
 
-#: amir/subjects.py:365
+#: amir/subjects.py:367
 msgid "Duplicate subject code"
 msgstr ""
 
-#: amir/subjects.py:378
+#: amir/subjects.py:380
 #, python-format
 msgid ""
 "The type of this subject can not be changed to 'creditor', Because there "
 "are                             %d documents that use it as debtor."
 msgstr ""
 
-#: amir/subjects.py:383
+#: amir/subjects.py:385
 #, python-format
 msgid ""
 "The type of this subject can not be changed to 'debtor', Because there "
 "are                             %d documents that use it as creditor."
 msgstr ""
 
-#: amir/subjects.py:387
+#: amir/subjects.py:389
 msgid "Can not change subject type"
 msgstr ""
 
@@ -2104,7 +2116,7 @@ msgstr ""
 msgid "<b> Customer Group </b>"
 msgstr ""
 
-#: amir/data/ui/customers.glade:204 amir/data/ui/notebook.glade:548
+#: amir/data/ui/customers.glade:204 amir/data/ui/notebook.glade:531
 #: amir/data/ui/user.glade:266 amir/data/ui/user.glade:551
 #: amir/data/ui/warehousing.glade:715
 msgid "Enter, Ctrl+S: OK    Escape: Cancel"
@@ -2517,7 +2529,7 @@ msgstr ""
 msgid "Password: "
 msgstr ""
 
-#: amir/data/ui/notebook.glade:31 amir/data/ui/notebook.glade:255
+#: amir/data/ui/notebook.glade:31 amir/data/ui/notebook.glade:256
 msgid "Add ledger"
 msgstr ""
 
@@ -2539,13 +2551,13 @@ msgstr ""
 msgid "Use left/right arrow keys to expand/collapse subjects"
 msgstr ""
 
-#: amir/data/ui/notebook.glade:205 amir/data/ui/user.glade:1446
-msgid ""
-"Ctrl+L: Add ledger    Insert: Add sub-ledger    Ctrl+E: Edit    Del: Delete"
+#: amir/data/ui/notebook.glade:202 amir/data/ui/user.glade:1469
+msgid "_Select"
 msgstr ""
 
-#: amir/data/ui/notebook.glade:228 amir/data/ui/user.glade:1469
-msgid "_Select"
+#: amir/data/ui/notebook.glade:234 amir/data/ui/user.glade:1446
+msgid ""
+"Ctrl+L: Add ledger    Insert: Add sub-ledger    Ctrl+E: Edit    Del: Delete"
 msgstr ""
 
 #: amir/data/ui/notebook.glade:322
@@ -2560,19 +2572,7 @@ msgstr ""
 msgid "Ledger name:"
 msgstr ""
 
-#: amir/data/ui/notebook.glade:463
-msgid "Debtor"
-msgstr ""
-
-#: amir/data/ui/notebook.glade:479
-msgid "Creditor"
-msgstr ""
-
-#: amir/data/ui/notebook.glade:496
-msgid "Both"
-msgstr ""
-
-#: amir/data/ui/notebook.glade:519
+#: amir/data/ui/notebook.glade:502
 msgid "Ledger type"
 msgstr ""
 
