@@ -349,11 +349,11 @@ class AutomaticAccounting:
         save_button.set_sensitive(True)
 
     def on_non_cash_payment_button_clicked(self, button):
-        self.addChequeui. showPayments()
+        self.addChequeui. showPayments(self.win)
 
     def on_spend_cheque_buttun_clicked(self,button):
         cl_cheque = class_cheque.ClassCheque()                
-        self.spendChequeui. showPayments()              
+        self.spendChequeui. showPayments(self.win)              
         
     def on_save_button_clicked(self, button):
         share.config.db.session.rollback() 

@@ -5,6 +5,7 @@
   <object class="GtkWindow" id="general">
     <property name="can_focus">False</property>
     <property name="border_width">10</property>
+    <property name="title" translatable="yes">Amir - Automatic accounting</property>
     <property name="resizable">False</property>
     <property name="window_position">center-on-parent</property>
     <child>

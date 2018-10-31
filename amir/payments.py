@@ -181,8 +181,10 @@ class Payments(GObject.GObject):
 		if cheque != None :			
 			self. lastChqID = cheque.chqId		
 	
-	def showPayments(self):
-		self.window.show_all()
+	def showPayments(self , parent = None):
+		if parent:
+			self.window.set_transient_for(parent)					
+		self.window.show_all()		
 	
 	def hidePayments(self, sender=0, ev=0):
 		self.window.hide()
@@ -575,7 +577,6 @@ class Payments(GObject.GObject):
 		self.addToTotalAmount(utility.getFloat(chequeAmnt) ) 
 		#self.cheqListStore .append(cheque)
 		self.closeSltChqWnd()
-
 
 GObject.type_register(Payments)
 GObject.signal_new("payments-changed", Payments, GObject.SignalFlags.RUN_LAST,

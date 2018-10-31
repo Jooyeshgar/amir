@@ -290,7 +290,8 @@ class Factor(Payments):
 		self.paymentManager.connect("payments-changed", self.setNonCashPayments)
 		self.paymentManager.fillPaymentTables()
 		self.paymentManager.customerNameLbl.set_text(self.customerNameEntry.get_text())		
-		self.paymentManager.payerEntry.set_text(self.customerEntry.get_text())		
+		self.paymentManager.payerEntry.set_text(self.customerEntry.get_text())	
+
 
 		self.sellListStore.clear()
 		if transId:
@@ -1034,7 +1035,7 @@ class Factor(Payments):
 
 		
 	def showPayments(self,sender):				
-		self.paymentManager.showPayments()
+		self.paymentManager.showPayments(self.mainDlg)
 		self.ttlNonCashEntry = self.builder.get_object("ttlNonCashEntry")
 
 	def submitFactorPressed(self,sender):		

@@ -2,10 +2,98 @@
 <!-- Generated with glade 3.18.3 -->
 <interface>
   <requires lib="gtk+" version="3.0"/>
+  <object class="GtkWindow" id="general_window">
+    <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Bank Accounts</property>
+    <signal name="destroy" handler="on_general_window_destroy" swapped="no"/>
+    <child>
+      <object class="GtkVBox" id="vbox1">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <child>
+          <object class="GtkToolbar" id="toolbar1">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="toolbar_style">both</property>
+            <child>
+              <object class="GtkToolButton" id="add_account">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">_Add</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-add</property>
+                <signal name="clicked" handler="on_add_account_clicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="delete_account">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">_Delete</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-delete</property>
+                <signal name="clicked" handler="on_delete_account_clicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="edit_account">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">_Edit</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-edit</property>
+                <signal name="clicked" handler="on_edit_account_clicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow" id="scrolledwindow1">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <child>
+              <object class="GtkTreeView" id="treeview">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <signal name="row-activated" handler="on_treeview_row_activated" swapped="no"/>
+                <child internal-child="selection">
+                  <object class="GtkTreeSelection" id="treeview-selection1"/>
+                </child>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
   <object class="GtkWindow" id="add_window">
     <property name="can_focus">False</property>
     <property name="modal">True</property>
     <property name="destroy_with_parent">True</property>
+    <property name="focus_on_map">False</property>
+    <property name="transient_for">general_window</property>
     <signal name="delete-event" handler="on_add_window_delete_event" swapped="no"/>
     <child>
       <object class="GtkVBox" id="vbox4">
@@ -488,92 +576,6 @@
             <property name="expand">True</property>
             <property name="fill">True</property>
             <property name="position">2</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-  </object>
-  <object class="GtkWindow" id="general_window">
-    <property name="can_focus">False</property>
-    <property name="title" translatable="yes">Bank Accounts</property>
-    <signal name="destroy" handler="on_general_window_destroy" swapped="no"/>
-    <child>
-      <object class="GtkVBox" id="vbox1">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <child>
-          <object class="GtkToolbar" id="toolbar1">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="toolbar_style">both</property>
-            <child>
-              <object class="GtkToolButton" id="add_account">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">_Add</property>
-                <property name="use_underline">True</property>
-                <property name="stock_id">gtk-add</property>
-                <signal name="clicked" handler="on_add_account_clicked" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToolButton" id="delete_account">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">_Delete</property>
-                <property name="use_underline">True</property>
-                <property name="stock_id">gtk-delete</property>
-                <signal name="clicked" handler="on_delete_account_clicked" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToolButton" id="edit_account">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">_Edit</property>
-                <property name="use_underline">True</property>
-                <property name="stock_id">gtk-edit</property>
-                <signal name="clicked" handler="on_edit_account_clicked" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkScrolledWindow" id="scrolledwindow1">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <child>
-              <object class="GtkTreeView" id="treeview">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <signal name="row-activated" handler="on_treeview_row_activated" swapped="no"/>
-                <child internal-child="selection">
-                  <object class="GtkTreeSelection" id="treeview-selection1"/>
-                </child>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">True</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
           </packing>
         </child>
       </object>
