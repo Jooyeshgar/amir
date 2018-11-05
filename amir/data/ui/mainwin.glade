@@ -9,6 +9,7 @@
   </object>
   <object class="GtkDialog" id="createDbDialog">
     <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Amir - Create new database</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox10">
@@ -33,15 +34,19 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="btnCreate">
-                <property name="label" translatable="yes">Create</property>
+              <object class="GtkButton" id="button12">
+                <property name="label">gtk-open</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="can_default">True</property>
+                <property name="has_default">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
               </object>
               <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
                 <property name="position">1</property>
               </packing>
             </child>
@@ -178,7 +183,7 @@
                         <property name="can_focus">False</property>
                         <property name="column_spacing">40</property>
                         <child>
-                          <object class="GtkCheckButton" id="checkbutton1">
+                          <object class="GtkCheckButton" id="chkDoc">
                             <property name="label" translatable="yes">Documents</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -192,7 +197,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkCheckButton" id="checkbutton2">
+                          <object class="GtkCheckButton" id="chkBank">
                             <property name="label" translatable="yes">Bank accounts</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -206,7 +211,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkCheckButton" id="checkbutton3">
+                          <object class="GtkCheckButton" id="chkUser">
                             <property name="label" translatable="yes">Users</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -220,7 +225,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkCheckButton" id="checkbutton4">
+                          <object class="GtkCheckButton" id="chkConf">
                             <property name="label" translatable="yes">Config</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -234,7 +239,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkCheckButton" id="checkbutton5">
+                          <object class="GtkCheckButton" id="chkNote">
                             <property name="label" translatable="yes">Notebook subjects</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -248,7 +253,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkCheckButton" id="checkbutton6">
+                          <object class="GtkCheckButton" id="chkProductG">
                             <property name="label" translatable="yes">Product groups</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -262,7 +267,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkCheckButton" id="checkbutton7">
+                          <object class="GtkCheckButton" id="chkProduct">
                             <property name="label" translatable="yes">Products</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -276,7 +281,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkCheckButton" id="checkbutton8">
+                          <object class="GtkCheckButton" id="chkCust">
                             <property name="label" translatable="yes">Customers</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -290,7 +295,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkCheckButton" id="checkbutton9">
+                          <object class="GtkCheckButton" id="chkFact">
                             <property name="label" translatable="yes">Factors</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -304,7 +309,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkCheckButton" id="checkbutton10">
+                          <object class="GtkCheckButton" id="chkCheq">
                             <property name="label" translatable="yes">Cheques</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -343,6 +348,10 @@
         </child>
       </object>
     </child>
+    <action-widgets>
+      <action-widget response="-6">btnCancel</action-widget>
+      <action-widget response="-5">button12</action-widget>
+    </action-widgets>
   </object>
   <object class="GtkDialog" id="dialog1">
     <property name="can_focus">False</property>

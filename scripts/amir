@@ -258,9 +258,25 @@ class MainWindow(GObject.GObject):
 		self.dialog = self.builder.get_object("createDbDialog")
 		res = self.dialog.run()
 		self.dialog.hide()
+		if res == Gtk.ResponseType.OK:
+			e = {
+				"chkDoc" : 	(Bill , Notebook),
+				"chkBank": 	(BankNames , BankAccounts),
+				"chkConf": 	(Config),
+				"chkNote":	(Subject),
+				"chkFact":	(Factors,FactorItems),
+				"chkUser":	(User),
+				"chkProductG":(ProductGroups),
+				"chkProduct": (Products),
+				"chkCust":	(Customers),
+				"chkCheq":	(Cheque)
+			}
+			checkboxes = self.builder.get_object("grid5").get_children()
+			for checkbox in checkboxes:
+				#print checkbox.get_label()
+				#print Gtk.Buildable.get_name(checkbox) # widget ID
+				break
 
-	def createDb(self , sender):
-		self.dialog.hide()
 
 	def arrangeDocments(self, sender):
 		notebookutils.arrangeDocuments(self.window)
