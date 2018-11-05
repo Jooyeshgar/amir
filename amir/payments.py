@@ -183,7 +183,8 @@ class Payments(GObject.GObject):
 	
 	def showPayments(self , parent = None):
 		if parent:
-			self.window.set_transient_for(parent)					
+			self.window.set_transient_for(parent)	
+			self.window.set_destroy_with_parent(True)				
 		self.window.show_all()		
 	
 	def hidePayments(self, sender=0, ev=0):

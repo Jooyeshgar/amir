@@ -6,9 +6,9 @@ import subjects
 import utility
 import automaticaccounting
 from share import share
-from database import Subject
+from database import Subject , Notebook
 from helpers import get_builder
-from sqlalchemy import or_ , and_
+from sqlalchemy import or_ , and_ , func
 
 config = share.config
 
@@ -183,9 +183,8 @@ class AddEditDoc:
         self.code.set_text("")
         
         desc = self.builder.get_object("desc")
-        desc.set_text("")
-        zero = 0 if config.digittype == 1 else utility.convertToPersian('0')
-        self.amount.set_text(zero)
+        desc.set_text("")        
+        self.amount.set_text(utility.readNumber(0))
         
         result = dialog.run()
         if result == 1:
@@ -453,6 +452,19 @@ class AddEditDoc:
         if config.digittype == 1:
             code = utility.convertToPersian(code)
         self.code.set_text(code)
+        self.builder.get_object("nameLbl").set_text(name)
+        q = config.db.session.query(func.sum(Notebook.value)).filter(Notebook.subject_id == id)        
+        if q.first()[0]:
+            val = q.first()[0]
+        else:
+            val = 0 
+        self.builder.get_object("remainLbl").set_text(utility.readNumber(abs(val)))
+        subType = ""
+        if val <0:
+            subType = _("Debtor")
+        elif val>0:
+            subType = _("Creditor")
+        self.builder.get_object("subTypeLbl").set_text(subType)
         sender.window.destroy()      
     
     ##Call when Databese changed from main window      

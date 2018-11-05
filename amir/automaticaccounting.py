@@ -393,6 +393,7 @@ class AutomaticAccounting:
                 custSubj = self.to_id                
             else: # from is customer
                 custSubj = self.from_id
+            print custSubj
             customer_id = share.config.db.session.query(Customers).filter(Customers.custSubj==custSubj).first().custId
 
             for cheque in self.addChequeui.chequesList:

@@ -473,6 +473,7 @@
   <object class="GtkDialog" id="dialog1">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
+    <property name="resizable">False</property>
     <property name="window_position">center</property>
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">dialog</property>
@@ -533,7 +534,7 @@
           <object class="GtkVBox" id="vbox2">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="spacing">4</property>
+            <property name="spacing">5</property>
             <child>
               <object class="GtkHBox" id="hbox2">
                 <property name="visible">True</property>
@@ -603,6 +604,43 @@
               </packing>
             </child>
             <child>
+              <object class="GtkBox" id="box2">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="homogeneous">True</property>
+                <child>
+                  <object class="GtkLabel" id="label13">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Subject :</property>
+                    <property name="xalign">0.10000000149011612</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="nameLbl">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes"> </property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkHBox" id="hbox4">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -612,6 +650,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">Amount: </property>
+                    <property name="ellipsize">middle</property>
                     <property name="xalign">0.10000000149011612</property>
                   </object>
                   <packing>
@@ -639,7 +678,70 @@
                 <property name="expand">True</property>
                 <property name="fill">True</property>
                 <property name="padding">5</property>
-                <property name="position">1</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox" id="box1">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="homogeneous">True</property>
+                <child>
+                  <object class="GtkLabel" id="label12">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Remained: </property>
+                    <property name="width_chars">22</property>
+                    <property name="xalign">0.10000000149011612</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox" id="box3">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkLabel" id="remainLbl">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="xpad">10</property>
+                        <property name="label" translatable="yes"> </property>
+                        <property name="ellipsize">end</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="subTypeLbl">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes"> </property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <child>
@@ -711,7 +813,7 @@
                 <property name="expand">True</property>
                 <property name="fill">True</property>
                 <property name="padding">4</property>
-                <property name="position">2</property>
+                <property name="position">4</property>
               </packing>
             </child>
             <child>
@@ -752,7 +854,7 @@
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="padding">5</property>
-                <property name="position">3</property>
+                <property name="position">5</property>
               </packing>
             </child>
           </object>

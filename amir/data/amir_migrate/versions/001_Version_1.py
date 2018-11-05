@@ -129,7 +129,8 @@ def upgrade(migrate_engine):
 			   {"id": 21, "code":"3001", "name": u"سرمایه"                , "parent_id": 84 , "lft": 30, "rgt": 31 , "type":2},
 			   {"id": 85, "code":"3002", "name": u"اندوخته قانونی"                , "parent_id": 84 , "lft": 30, "rgt": 31 , "type":2},
 			   {"id": 86, "code":"3003", "name": u"سود (زیان) انباشته"                , "parent_id": 84 , "lft": 30, "rgt": 31 , "type":2},
-			   {"id": 87, "code":"3004", "name": u"تقسیم سود"                , "parent_id": 84 , "lft": 30, "rgt": 31 , "type":2},
+			   {"id": 96, "code":"3004", "name": u"سود (زیان) جاری"                , "parent_id": 84 , "lft": 30, "rgt": 31 , "type":2},
+			   {"id": 87, "code":"3005", "name": u"تقسیم سود"                , "parent_id": 84 , "lft": 30, "rgt": 31 , "type":2},
 			   
 			   {"id": 2 , "code":"40"  , "name": u"هزینه ها"                    , "parent_id": 0 , "lft": 3 , "rgt": 28 , "type":0},
                {"id": 10, "code":"4001", "name": u"حقوق پرسنل"                  , "parent_id": 2 , "lft": 4 , "rgt": 5  , "type":0},
@@ -170,15 +171,18 @@ def upgrade(migrate_engine):
 			   {"id": 91, "code":"6401", "name": u"حسابهای انتظامی به نفع شرکت"   , "parent_id": 90, "lft": 80, "rgt": 81 , "type":2},
 			   {"id": 92, "code":"6402", "name": u"حسابهای انتظامی به عهده شرکت"  , "parent_id": 90, "lft": 80, "rgt": 81 , "type":2},
 			   
-			   {"id": 93, "code":"65", "name": u"طرف حسابهای انتظامی"  , "parent_id": 0, "lft": 80, "rgt": 81 , "type":2},
+			   {"id": 93, "code":"65", "name": u"طرف حسابهای انتظامی"            , "parent_id": 0, "lft": 80, "rgt": 81 , "type":2},
 			   {"id": 94, "code":"6502", "name": u"طرف حساب انتظامی به نفع شرکت"  , "parent_id": 93, "lft": 80, "rgt": 81 , "type":2},
 			   {"id": 95, "code":"6502", "name": u"طرف حساب انتظامی به عهده شرکت"  , "parent_id": 93, "lft": 80, "rgt": 81 , "type":2},
 			   			   
-			   {"id": 5 , "code":"66"  , "name": u"تراز افتتاحیه"               , "parent_id": 0 , "lft": 35, "rgt": 38 , "type":2}, 
-			   {"id": 15, "code":"6601", "name": u"تراز افتتاحیه"               , "parent_id": 5 , "lft": 36, "rgt": 37 , "type":2},
+			   {"id": 97, "code":"66", "name": u"تخفیفات نقدی"                  , "parent_id": 0, "lft": 80, "rgt": 81 , "type":2},
+			   {"id": 98, "code":"6601", "name": u"تخفیفات نقدی"                , "parent_id": 97, "lft": 80, "rgt": 81 , "type":2},
+
+			   {"id": 5 , "code":"67"  , "name": u"تراز افتتاحیه"               , "parent_id": 0 , "lft": 35, "rgt": 38 , "type":2}, 
+			   {"id": 15, "code":"6701", "name": u"تراز افتتاحیه"               , "parent_id": 5 , "lft": 36, "rgt": 37 , "type":2},
 			   
-			   {"id": 8 , "code":"67"  , "name": u"جاری شرکا"                   , "parent_id": 0 , "lft": 47, "rgt": 50 , "type":2},
-			   {"id": 37, "code":"6701", "name": u"جاری شرکا"                   , "parent_id": 8 , "lft": 48, "rgt": 49 , "type":1},
+			   {"id": 8 , "code":"68"  , "name": u"جاری شرکا"                   , "parent_id": 0 , "lft": 47, "rgt": 50 , "type":2},
+			   {"id": 37, "code":"6801", "name": u"جاری شرکا"                   , "parent_id": 8 , "lft": 48, "rgt": 49 , "type":1},
 			   ) 
 
    # bill = Table('bill' , meta , autoload = True)

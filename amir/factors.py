@@ -73,7 +73,7 @@ class Factor(Payments):
 			if returning:
 				self.builder.get_object("FormWindow").set_title(_("Amir - Purchase return form"))			
 				self.builder.get_object("BuyerLbl").set_text(_("Return buy to:"))
-				self.builder.get_object("fullFactorBuyBtn").set_label(_("Buy"))			
+				self.builder.get_object("fullFactorBuyBtn").set_label(_("Return Purchase"))			
 			else:
 				self.builder.get_object("FormWindow").set_title(_("Amir - Buy form"))			
 				self.builder.get_object("BuyerLbl").set_text(_("Buy from:"))
