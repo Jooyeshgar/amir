@@ -94,10 +94,10 @@ else:
 sys.path.insert(0, os.path.dirname(fullPath))
 
 from amir.share import share
-from amir.amirconfig import AmirConfig
+from amir import amirconfig# import AmirConfig
 
 
-config = AmirConfig()
+config = amirconfig.AmirConfig()
 share.config = config
 
 logging.debug('LANG=%s' % (config.locale))
@@ -259,24 +259,68 @@ class MainWindow(GObject.GObject):
 		res = self.dialog.run()
 		self.dialog.hide()
 		if res == Gtk.ResponseType.OK:
-			e = {
-				"chkDoc" : 	(Bill , Notebook),
-				"chkBank": 	(BankNames , BankAccounts),
-				"chkConf": 	(Config),
-				"chkNote":	(Subject),
-				"chkFact":	(Factors,FactorItems),
-				"chkUser":	(User),
-				"chkProductG":(ProductGroups),
-				"chkProduct": (Products),
-				"chkCust":	(Customers),
-				"chkCheq":	(Cheque)
-			}
-			checkboxes = self.builder.get_object("grid5").get_children()
-			for checkbox in checkboxes:
-				#print checkbox.get_label()
-				#print Gtk.Buildable.get_name(checkbox) # widget ID
-				break
+			#creating new empty db
+			dbName = self.builder.get_object("dbNameEntry").get_text()					
+			pathname = os.path.join(os.path.dirname(amirconfig.__file__) , amirconfig.__amir_data_directory__)			
+			abs_data_path = os.path.abspath(pathname)
+			db_repository = os.path.join(abs_data_path, 'amir_migrate')			
+			import platform
+			if platform.system() == 'Windows':
+				confdir = os.path.join(os.path.expanduser('~'), 'amir')
+			else:
+				confdir = os.path.join(os.path.expanduser('~'), '.amir')
+			dbFile = 'sqlite:///'+os.path.join(confdir, dbName+".sqlite")	
+			try:		
+				newdb = database.Database(dbFile, db_repository,False)
+			except error:
+				msg = _("There was a problem in creating new database. Maybe trying with another name will help..."+error)
+				self.msgbox = Gtk.MessageDialog(self.window,Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK , msg)
+				self.msgbox.set_title(_("Error creating new database"))
+				self.msgbox.run()	
+				self.msgbox.destroy()
+				return
 
+			if self.builder.get_object("radiobutton2").get_active():
+				################# filling db with importing ###########
+				e = {
+					"chkDoc" : 	(Bill , Notebook),
+					"chkBank": 	(BankNames , BankAccounts),
+					"chkConf": 	(Config,),
+					"chkNote":	(Subject,),
+					"chkFact":	(Factors,FactorItems),
+					"chkUser":	(),
+					"chkProductG":(ProductGroups,),
+					"chkProduct": (Products,),
+					"chkCust":	(Customers,),
+					"chkCheq":	(Cheque,)
+				}
+				checkboxes = self.builder.get_object("grid5").get_children()	
+				dbClasses = [] # permissions ...
+				for checkbox in checkboxes:			
+					if checkbox.get_active():
+						a = Gtk.Buildable.get_name(checkbox) # widget ID	
+						for clas in e[str(a)]:
+							dbClasses .append(clas)	
+				for clas in dbClasses:
+					newdb.session.query(clas).delete()		
+					movingData = config.db.session.query(clas).all()
+					clas2 = clas.__table__							
+					columns = clas2.columns.keys()							
+					for d in movingData:
+						data = dict(
+      					  [(str(column), getattr(d, column)) for column in columns]
+  						  )								
+						instant = clas(**data)
+						newdb.session.add(instant)
+						newdb.session.commit()
+					
+							# moved = (clas2.delete())
+							# newdb.session.execute(moved)		
+							# print [c.name for c in clas2.columns]								
+							# insert  = clas2.insert().from_select( [c.name for c in clas2.columns],clas2.select()) #select([c.name for c in config.db.session.clas]) )
+							#newdb.session.execute(insert)
+				newdb.session.commit()
+			####################### add this new db to config.databases
 
 	def arrangeDocments(self, sender):
 		notebookutils.arrangeDocuments(self.window)
@@ -466,6 +510,7 @@ class MainWindow(GObject.GObject):
 
 		
 		# self.loggedIn()
+		self.window = self.builder.get_object("login")
 		self.window = self.builder.get_object("login")
 		self.window.show()
 		self.builder.connect_signals(self)		

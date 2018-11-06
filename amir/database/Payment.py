@@ -29,7 +29,7 @@ class Payment(Base):
 
     def __init__( self, paymntDueDate, paymntBank, paymntSerial, paymntAmount,
                   paymntNamePayer, paymntWrtDate, paymntDesc, paymntTransId, paymntBillId, 
-                  paymntTrckCode, paymntOrder):
+                  paymntTrckCode, paymntOrder,paymntId=1):
 
         #self.paymntNo        = paymntNo
         self.paymntDueDate   = paymntDueDate

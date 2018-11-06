@@ -179,7 +179,7 @@ class AmirConfig:
             dbfile = 'sqlite:///'+os.path.join(confdir, 'amir.sqlite')
             self.dblist.append(dbfile)
             self.dbnames.append('amir.sqlite')
-            logging.error("No database path found. the default database %s will be opened for use." % dbfile)
+            logging.info("No database path found. The default database %s will be opened for use." % dbfile)
 
         logging.info('database path: ' + dbfile)
         #try:

@@ -54,7 +54,7 @@ class Customers(Base):
                   custGroup, custPostalCode="", custPersonalCode="", custDesc="", 
                   custRepViaEmail=False, custAccName1="", custAccNo1="", custAccBank1="", custAccName2="", custAccNo2="", 
                   custAccBank2="", custTypeBuyer=True, custTypeSeller=True, custTypeMate=False, custTypeAgent=False, 
-                  custIntroducer="", custCommission="", custMarked=False, custReason="", custDiscRate="" , custBalance=float(0), custCredit=float(0)):
+                  custIntroducer="", custCommission="", custMarked=False, custReason="", custDiscRate="" , custBalance=float(0), custCredit=float(0),custId=1):
 
         self.custCode        = custCode
         self.custName        = custName    

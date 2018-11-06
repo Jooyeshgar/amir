@@ -140,7 +140,7 @@ class Document:
                 self.id = query.first().id                                    
 
             for notebook in self.notebooks:
-                share.config.db.session.add(Notebook(notebook[0], self.id, notebook[1], notebook[2],factId=notebook[3]))                            
+                share.config.db.session.add(Notebook(notebook[0], self.id, notebook[1], notebook[2],factorId=notebook[3]))                            
 
                     # triggers in automatic accounting 
             for cheque in self.cheques:            

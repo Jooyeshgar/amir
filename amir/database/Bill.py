@@ -21,7 +21,7 @@ class Bill(Base):
     permanent       = Column(Boolean, ColumnDefault(False), nullable = False)
     
     
-    def __init__(self, number, creation_date, lastedit_date, date , permanent ):
+    def __init__(self, number, creation_date, lastedit_date, date , permanent , id=1 ):
         self.number = number
         self.creation_date = creation_date
         self.lastedit_date = lastedit_date

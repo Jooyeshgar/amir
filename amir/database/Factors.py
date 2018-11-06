@@ -34,24 +34,24 @@ class Factors (Base):
     LastEdit = Column(Date, nullable=True)
     Activated = Column(Boolean, ColumnDefault(0), nullable=False)
 
-    def __init__(self, Code, Date, Bill, Cust, Add, Sub, VAT, Fee, 
-                 PayableAmnt, Cash, ShpDate, Delivery, ShipVia, Prmnt,
-                 Desc, Sell, LastEdit, Activated):
+    def __init__(self, Code, tDate, Bill, Cust, Addition, Subtraction, VAT, Fee, 
+                 PayableAmnt, CashPayment, ShipDate, Delivery, ShipVia, Permanent,
+                 Desc, Sell, LastEdit, Activated , Id=1):
 
         self.Code = Code
-        self.tDate = Date
+        self.tDate = tDate
         self.Bill = Bill
         self.Cust = Cust
-        self.Addition = Add
-        self.Subtraction = Sub
+        self.Addition = Addition
+        self.Subtraction = Subtraction
         self.VAT = VAT
         self.Fee = Fee
         self.PayableAmnt = PayableAmnt
-        self.CashPayment = Cash
-        self.ShipDate = ShpDate
+        self.CashPayment = CashPayment
+        self.ShipDate = ShipDate
         self.Delivery = Delivery
         self.ShipVia = ShipVia
-        self.Permanent = Prmnt
+        self.Permanent = Permanent
         self.Desc = Desc
         self.Sell = Sell
         self.LastEdit = LastEdit

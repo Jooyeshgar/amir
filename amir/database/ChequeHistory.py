@@ -28,7 +28,7 @@ class ChequeHistory(Base):
     # Delete   = Column(Boolean)
 
     def __init__( self, ChequeId, Amount, WrtDate, DueDate, Serial,
-                  Status, Cust, Account, TransId, Desc, Date, Delete = False):
+                  Status, Cust, Account, TransId, Desc, Date, Delete = False,Id =1):
         self.ChequeId = ChequeId
         self.Amount   = Amount
         self.WrtDate  = WrtDate

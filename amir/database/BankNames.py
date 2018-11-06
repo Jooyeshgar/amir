@@ -15,7 +15,7 @@ class BankNames(Base):
     Id   = Column(Integer    , primary_key=True)
     Name = Column(Unicode(50), nullable=False)
 
-    def __init__(self, name):
-        self.Name = name
+    def __init__(self, Name,Id=1):
+        self.Name = Name
 
 ## @}

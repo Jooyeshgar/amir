@@ -26,19 +26,19 @@ class Products(Base):
     productDesc     = Column(   Unicode(200),                       nullable    = True      )
     uMeasurement    = Column(   Unicode(30),                        nullable    = True)
 
-    def __init__(   self,   code,   name,   warn,   over,   pLoc,
-                    qnty,   purc,   sell,   accg,   desc,   disc,   meas    ):
+    def __init__(   self,   code,   name,   qntyWarning,   oversell,   location,
+                    quantity,   purchacePrice,   sellingPrice,   accGroup,   productDesc,   discountFormula,   uMeasurement  ,id=1  ):
         self.code       = code
         self.name       = name
-        self.oversell   = over
-        self.location   = pLoc
-        self.quantity   = qnty
-        self.accGroup   = accg
-        self.productDesc    = desc
-        self.qntyWarning    = warn
-        self.sellingPrice       = sell
-        self.purchacePrice      = purc
-        self.discountFormula    = disc
-        self.uMeasurement       = meas
+        self.oversell   = oversell
+        self.location   = location
+        self.quantity   = quantity
+        self.accGroup   = accGroup
+        self.productDesc    = productDesc
+        self.qntyWarning    = qntyWarning
+        self.sellingPrice       = sellingPrice
+        self.purchacePrice      = purchacePrice
+        self.discountFormula    = discountFormula
+        self.uMeasurement       = uMeasurement
 
 ## @}

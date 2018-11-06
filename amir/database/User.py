@@ -18,7 +18,7 @@ class Users(Base):
     password = Column(String(300), nullable=False)
     permission = Column(Integer, nullable=False)
 
-    def __init__(self, name, username, password, permission):
+    def __init__(self, name, username, password, permission,id=1):
     	self.name = name
         self.username = username
         self.password = bcrypt.encrypt(password)

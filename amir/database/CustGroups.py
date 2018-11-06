@@ -17,7 +17,7 @@ class CustGroups(Base):
     custGrpName = Column( Unicode(50),  nullable = False    )
     custGrpDesc = Column( Unicode(200), nullable = True     )
 
-    def __init__( self, custGrpCode, custGrpName, custGrpDesc    ):
+    def __init__( self, custGrpCode, custGrpName, custGrpDesc  ,custGrpId=1  ):
 
         self.custGrpCode    = custGrpCode
         self.custGrpName    = custGrpName

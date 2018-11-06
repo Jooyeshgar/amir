@@ -21,12 +21,12 @@ class Subject(Base):
     type = Column(Integer)      # 0 for Debtor, 1 for Creditor, 2 for both
     permanent = Column(Boolean, ColumnDefault(False))
     
-    def __init__(self, code=0, name='', parent_id=0, left=0, right=0, type=0 , permanent=0):
+    def __init__(self, code=0, name='', parent_id=0, lft=0, rgt=0, type=0 , permanent=0,id=1):
         self.code = code
         self.name = name
         self.parent_id = parent_id
-        self.lft = left
-        self.rgt = right
+        self.lft = lft
+        self.rgt = rgt
         self.type = type
         self.permanent = permanent
 ## @}

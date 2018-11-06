@@ -19,7 +19,7 @@ class Config(Base):
     cfgType        = Column(Integer     , nullable = True)
     cfgCat         = Column(Integer     , nullable = True)
     
-    def __init__(self, cfgKey, cfgValue, cfgDesc, cfgType, cfgCat):
+    def __init__(self, cfgKey, cfgValue, cfgDesc, cfgType, cfgCat,cfgId=1):
         self.cfgKey   = cfgKey
         self.cfgValue = cfgValue
         self.cfgDesc  = cfgDesc

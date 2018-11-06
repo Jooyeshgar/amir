@@ -18,7 +18,7 @@ class ProductGroups(   Base    ):
     buyId   = Column(   Integer,        ForeignKey('subject.id')    )
     sellId  = Column(   Integer,        ForeignKey('subject.id')    )
 
-    def __init__(   self,   code,   name,   buyId,  sellId  ):
+    def __init__(   self,   code,   name,   buyId,  sellId ,id=1 ):
         self.code   = code
         self.name   = name
         self.buyId  = buyId

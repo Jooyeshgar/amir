@@ -15,7 +15,7 @@ class Permissions(Base):
     name = Column(Unicode(60), nullable=False)
     value = Column(String(20), nullable=False)
 
-    def __init__(self, name, value):
+    def __init__(self, name, value,id=1):
         self.name = name
         self.value = value
 

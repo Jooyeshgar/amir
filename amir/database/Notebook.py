@@ -20,12 +20,12 @@ class Notebook(Base):
     factorId      = Column(Integer, ColumnDefault(0), nullable = False)
     chqId         = Column(Integer, ForeignKey('Cheque.chqId'))
     
-    def __init__(self, subject_id, bill_id, value, desc , factId=0 ,chqId=0):
+    def __init__(self, subject_id, bill_id, value, desc , factorId=0 ,chqId=0,id=1):
         self.subject_id = subject_id
         self.bill_id = bill_id
         self.value = value
         self.desc = desc
-        self.factorId = factId
+        self.factorId = factorId
         self.chqId = chqId
 
 ## @}

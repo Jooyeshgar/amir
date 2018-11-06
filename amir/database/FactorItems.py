@@ -22,7 +22,7 @@ class FactorItems(Base):
     desc        = Column(   Unicode(200),   nullable = True                         )
 
     def __init__( self, number, productId, qnty,
-                  untPrc, untDisc, factorId, desc):
+                  untPrc, untDisc, factorId, desc , id=1):
 
         self.number     = number
         self.productId  = productId

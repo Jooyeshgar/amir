@@ -25,7 +25,7 @@ class BankAccounts(Base):
     accDesc         = Column( Unicode(200), nullable = True     ) 
     
     def __init__( self, accName, accNumber, accType, accOwner, accBank, accBankBranch, 
-                  accBankAddress, accBankPhone, accBankWebPage, accDesc ):
+                  accBankAddress, accBankPhone, accBankWebPage, accDesc , accId=1 ):
 
         self.accName        = accName
         self.accNumber      = accNumber
