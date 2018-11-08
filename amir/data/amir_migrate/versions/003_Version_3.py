@@ -4,8 +4,52 @@
 from sqlalchemy import *
 from migrate import *
 import logging
-from migrate.changeset.constraint import ForeignKeyConstraint
+# from migrate.changeset.constraint import ForeignKeyConstraint
 
+
+meta = MetaData()
+
+permissions = Table('permissions', meta,
+    Column('id', Integer, primary_key = True ),
+    Column('name', Unicode(50), nullable = False),
+    Column('value', Unicode(20), nullable = True),
+    mysql_charset='utf8'
+)
+
+factors = Table('factors', meta,
+    Column('Id', Integer, primary_key=True),
+    Column('Code', Integer, nullable=False),
+    Column('tDate', Date, nullable=False),
+    Column('Bill', Integer, ColumnDefault(0)),
+    Column('Cust', Integer, ForeignKey('customers.custId')),
+    Column('Addition', Float, ColumnDefault(0), nullable=False),
+    Column('Subtraction', Float, ColumnDefault(0), nullable=False),
+    Column('VAT', Float, ColumnDefault(0), nullable=False),
+    Column('Fee', Float, ColumnDefault(0), nullable=False),
+    Column('PayableAmnt', Float, ColumnDefault(0), nullable=False),
+    Column('CashPayment', Float, ColumnDefault(0), nullable=False),
+    Column('ShipDate', Date, nullable=True),
+    Column('Delivery', Unicode(50), nullable=True),
+    Column('ShipVia', Unicode(100), nullable=True),
+    Column('Permanent', Boolean, ColumnDefault(0)),
+    Column('Desc', Unicode(200), nullable=True),
+    Column('Sell', Integer,  nullable=False),
+    Column('LastEdit', Date, nullable=True),
+    Column('Activated', Boolean, ColumnDefault(0), nullable=False),
+    mysql_charset='utf8'
+)
+
+factorItems = Table('factorItems', meta,
+    Column('id', Integer, primary_key = True),
+    Column('number', Integer, nullable = False),
+    Column('productId', Integer, ForeignKey('products.id')),
+    Column('qnty', Float, ColumnDefault(0),   nullable = False),
+    Column('untPrc', Float, ColumnDefault(0),   nullable = False),
+    Column('untDisc', Unicode(30), ColumnDefault("0"), nullable = False),
+    Column('factorId', Integer),
+    Column('desc', Unicode(200), nullable = True),
+    mysql_charset='utf8'
+)
 
 def _2to3digits(num):
     _3digit = ""
@@ -15,25 +59,27 @@ def _2to3digits(num):
         i += 2
     return _3digit
 
-meta = MetaData()
-permissions = Table('permissions', meta,
-    Column('id',            Integer,      primary_key = True                      ),
-    Column('name',          Unicode(50),       nullable = False                   ),
-    Column('value',           Unicode(20),  nullable = True                       ),
-    mysql_charset='utf8'
-)
-
 def upgrade(migrate_engine):
-    # meta = MetaData(bind=migrate_engine)
-    meta.bind = migrate_engine
     from sqlalchemy.orm import sessionmaker, scoped_session
+    meta.bind = migrate_engine
+
+    customers = Table('customers' , meta , autoload =True)
+    products  = Table('products' , meta , autoload =True)
+    subject   = Table('subject', meta, autoload=True)    
+    
+    factors.create(checkfirst=True)
+    factorItems.create(checkfirst=True)
+
     Session = scoped_session(sessionmaker(bind=migrate_engine))
     s = Session()
 
-    payments = Table('payment', meta, autoload=True)
-    payments.drop()
+    try:
+        Table('payment', meta, autoload=True).drop()
+        Table('exchanges', meta, autoload=True).drop()
+        Table('transactions', meta, autoload=True).drop()
+    except:
+        pass
 
-    subject = Table('subject', meta, autoload=True)    
    # s.query(subject).update({subject.c.code: _2to3digits(subject.c.code)})      #TODO try this instead of raw sql command
     query = s.query(subject)
     al = query.all()
@@ -42,60 +88,15 @@ def upgrade(migrate_engine):
         s.execute("UPDATE subject set code = '"+ str(_2to3digits(subj.code))+"' where id ="+str(subj.id) + ";")
     
 
-    customers = Table('customers' , meta , autoload =True)
     al = s.query(customers).all()
     for cust in al:
         s.execute("UPDATE customers set custCode='"+str(_2to3digits(cust.custCode)+"' WHERE custId  = "+str(cust.custId) ) )
-
-    s.execute('CREATE TABLE IF NOT EXISTS factors (\
-                "Id" INTEGER NOT NULL, \
-                "Code" VARCHAR(50) NOT NULL, \
-                "tDate" DATE NOT NULL, \
-                "Bill" INTEGER, \
-                "Cust" INTEGER, \
-                "Addition" FLOAT NOT NULL, \
-                "Subtraction" FLOAT NOT NULL, \
-                "VAT" FLOAT NOT NULL, \
-                "CashPayment" FLOAT NOT NULL, \
-                "ShipDate" DATE, \
-                "Delivery" VARCHAR(50), \
-                "ShipVia" VARCHAR(100), \
-                "Permanent" BOOLEAN, \
-                "Desc" VARCHAR(200), \
-                "Sell" INTEGER NOT NULL, \
-                "Activated" BOOLEAN DEFAULT 0, \
-                "Fee" FLOAT DEFAULT 0, \
-                "PayableAmnt" FLOAT DEFAULT 0, \
-                "LastEdit" DATE, \
-                PRIMARY KEY ("Id"), \
-                CHECK ("Permanent" IN (0, 1)), \
-                CHECK ("Sell" IN (0, 1,2,3)), \
-                CHECK ("Activated" IN (0, 1)), \
-                FOREIGN KEY("Cust") REFERENCES customers ("custId") \
-            );')
   
-    s.execute('INSERT INTO factors (Id, Code, tDate, Bill, Cust, Addition, Subtraction, VAT, CashPayment, ShipDate, Permanent, `Desc`, Sell, Activated, Fee, PayableAmnt, LastEdit)\
-               SELECT transId, transCode, transDate, transBill, transCust, transAddition, transSubtraction, transTax, transCashPayment, transShipDate, transPermanent,  transDesc, transSell, 0, 0, 0, 0 FROM transactions;')
-    s.execute('DROP TABLE transactions;')
-    
-
-    s.execute('CREATE TABLE IF NOT EXISTS factorItems ( \
-                "exchngId" INTEGER NOT NULL, \
-                "exchngNo" INTEGER NOT NULL, \
-                "exchngProduct" INTEGER, \
-                "exchngQnty" FLOAT NOT NULL, \
-                "exchngUntPrc" FLOAT NOT NULL, \
-                "exchngUntDisc" VARCHAR(30) NOT NULL, \
-                "exchngTransId" INTEGER, \
-                "exchngDesc" VARCHAR(200), \
-                PRIMARY KEY ("exchngId"), \
-                FOREIGN KEY("exchngProduct") REFERENCES products (id), \
-                FOREIGN KEY("exchngTransId") REFERENCES factors ("Id")\
-            );')
-    
-    s.execute('INSERT INTO factorItems (exchngId, exchngNo, exchngProduct, exchngQnty, exchngUntPrc, exchngUntDisc, exchngTransId, exchngDesc)\
-               SELECT exchngId, exchngNo, exchngProduct, exchngQnty, exchngUntPrc, exchngUntDisc, exchngTransId, exchngDesc FROM exchanges;')
-    s.execute('DROP TABLE exchanges;')    
+    # s.execute('INSERT INTO factors (Id, Code, tDate, Bill, Cust, Addition, Subtraction, VAT, CashPayment, ShipDate, Permanent, `Desc`, Sell, Activated, Fee, PayableAmnt, LastEdit)\
+    #            SELECT transId, transCode, transDate, transBill, transCust, transAddition, transSubtraction, transTax, transCashPayment, transShipDate, transPermanent,  transDesc, transSell, 0, 0, 0, 0 FROM transactions;')
+    # s.execute('INSERT INTO factorItems (exchngId, exchngNo, exchngProduct, exchngQnty, exchngUntPrc, exchngUntDisc, exchngTransId, exchngDesc)\
+    #            SELECT exchngId, exchngNo, exchngProduct, exchngQnty, exchngUntPrc, exchngUntDisc, exchngTransId, exchngDesc FROM exchanges;')
+    # s.execute('DROP TABLE exchanges;')    
 
     s.execute('ALTER TABLE `Cheque` ADD COLUMN `chqDelete` Boolean;')    
 
@@ -120,21 +121,21 @@ def upgrade(migrate_engine):
     colPer.create(subject,  populate_default=True)
     assert colPer is subject.c.permanent
 
-    factorItems = Table('factorItems', meta, autoload=True)
-    factorItems.c.exchngId.alter(name='id')
-    factorItems.c.exchngNo.alter(name='number')
-    factorItems.c.exchngProduct.alter(name='productId')
-    factorItems.c.exchngQnty.alter(name='qnty')
-    factorItems.c.exchngUntPrc.alter(name='untPrc')
-    factorItems.c.exchngUntDisc.alter(name='untDisc')
-    factorItems.c.exchngTransId.alter(name='factorId')
-    factorItems.c.exchngDesc.alter(name='desc')
+    # factorItems = Table('factorItems', meta, autoload=True)
+    # factorItems.c.exchngId.alter(name='id')
+    # factorItems.c.exchngNo.alter(name='number')
+    # factorItems.c.exchngProduct.alter(name='productId')
+    # factorItems.c.exchngQnty.alter(name='qnty')
+    # factorItems.c.exchngUntPrc.alter(name='untPrc')
+    # factorItems.c.exchngUntDisc.alter(name='untDisc')
+    # factorItems.c.exchngTransId.alter(name='factorId')
+    # factorItems.c.exchngDesc.alter(name='desc')
 
     permissions.create(checkfirst=True)
 
-    cheque = Table('cheque', meta, autoload=True)
-    factors = Table('factors', meta, autoload=True)    
-    cons = ForeignKeyConstraint ([cheque.c.chqTransId] , [factors.c.Id])
+    cheque = Table('Cheque', meta, autoload=True)
+    # factors = Table('factors', meta, autoload=True)    
+    # cons = ForeignKeyConstraint ([cheque.c.chqTransId] , [factors.c.Id])
     notebook = Table('notebook', meta , autoload=True)
     cons = ForeignKeyConstraint ([notebook.c.chqId] , [cheque.c.chqId])
 

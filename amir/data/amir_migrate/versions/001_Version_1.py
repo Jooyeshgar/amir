@@ -25,7 +25,7 @@ subject = Table('subject', meta,
     Column('id', Integer, primary_key=True),
     Column('code', String(20), nullable=False),
     Column('name', Unicode(60), nullable=False),
-    Column('parent_id', Integer, ColumnDefault(0), ForeignKey('subject.id'), nullable=False),
+    Column('parent_id', Integer, ColumnDefault(0), ForeignKey('subject.id')),
     Column('lft', Integer, nullable=False),
     Column('rgt', Integer, nullable=False),
     Column('type', Integer),
@@ -52,16 +52,25 @@ notebook = Table('notebook', meta,
 )
 
 def upgrade(migrate_engine):
-    # Upgrade operations go here. Don't create your own engine; bind migrate_engine
-    # to your metadata
+    from sqlalchemy.orm import sessionmaker, scoped_session
     meta.bind = migrate_engine
-    
+    Session = scoped_session(sessionmaker(bind=migrate_engine))
+    session = Session()
+
     subject.create(checkfirst=True)
     bill.create(checkfirst=True)
     notebook.create(checkfirst=True)
 
     #Insert test data
     op = subject.insert()
+    op.execute({"id": 1 , "code":"0"  , "name": "", "parent_id": None , "lft": 0 , "rgt": 1000  , "type":2})
+
+    u = subject.update()
+    u = u.values({"id": 0})
+    u = u.where(subject.c.id == 1)
+    session.execute(u)
+    session.commit()
+    
     op.execute(
 				   # --------------------              
          #      {"id": 7 , "code":"07"  , "name": u"موجودی اول دوره"             , "parent_id": 0 , "lft": 43, "rgt": 46 , "type":2},                             			                                
@@ -77,12 +86,26 @@ def upgrade(migrate_engine):
               # {"id": 35, "code":"0502", "name": u"حق‌العمل"                     , "parent_id": 23, "lft": 72, "rgt": 73 , "type":1},                             
 			  
 			   {"id": 1 , "code":"10"  , "name": u"بانکها"                      , "parent_id": 0 , "lft": 1 , "rgt": 2  , "type":2},
-               {"id": 14, "code":"1101"  , "name": u"صندوق"                     , "parent_id": 3 , "lft": 30, "rgt": 31 , "type":2},			   
+			   {"id": 2 , "code":"40"  , "name": u"هزینه ها"                    , "parent_id": 0 , "lft": 3 , "rgt": 28 , "type":0},
 			   {"id": 3 , "code":"11"  , "name": u"موجودیهای نقدی"              , "parent_id": 0 , "lft": 29, "rgt": 32 , "type":2},
-			   {"id": 59, "code":"1102", "name": u"تنخواه گردانها"              , "parent_id": 3 , "lft": 30, "rgt": 31 , "type":2},
 			   {"id": 4 , "code":"12"  , "name": u"بدهکاران/بستانکاران"      				, "parent_id": 0 , "lft": 33, "rgt": 34 , "type":2},  
-			   {"id": 58 , "code":"1201"  , "name": u"اشخاص متفرقه"      		, "parent_id": 4 , "lft": 33, "rgt": 34 , "type":2},  
 			   {"id": 6 , "code":"13"  , "name": u"اسناد دریافتنی"              , "parent_id": 0 , "lft": 39, "rgt": 42 , "type":2},
+               {"id": 10, "code":"4001", "name": u"حقوق پرسنل"                  , "parent_id": 2 , "lft": 4 , "rgt": 5  , "type":0},
+               {"id": 11, "code":"4002", "name": u"آب"                          , "parent_id": 2 , "lft": 6 , "rgt": 7  , "type":0},
+               {"id": 12, "code":"4003", "name": u"برق"                         , "parent_id": 2 , "lft": 8 , "rgt": 9  , "type":0},
+               {"id": 13, "code":"4004", "name": u"تلفن"                        , "parent_id": 2 , "lft": 10, "rgt": 11 , "type":0},
+			   {"id": 26, "code":"4005", "name": u"گاز"                         , "parent_id": 2 , "lft": 12, "rgt": 13 , "type":0},
+			   {"id": 27, "code":"4006", "name": u"پست"                         , "parent_id": 2 , "lft": 16, "rgt": 17 , "type":0},
+			   {"id": 28, "code":"4007", "name": u"هزینه حمل"                         , "parent_id": 2 , "lft": 16, "rgt": 17 , "type":0},
+			   {"id": 29, "code":"4008", "name": u"ضایعات کالا"                  , "parent_id": 2 , "lft": 18, "rgt": 19 , "type":0},
+               {"id": 30, "code":"4009", "name": u"عوارض شهرداری"               , "parent_id": 2 , "lft": 20, "rgt": 21 , "type":0},
+               {"id": 31, "code":"4010", "name": u"کارمزد بانک"                 , "parent_id": 2 , "lft": 22, "rgt": 23 , "type":0},
+			   {"id": 33, "code":"4011", "name": u"مالیات"                      , "parent_id": 2 , "lft": 26, "rgt": 27 , "type":0},
+			   {"id": 34, "code":"4011", "name": u"هزینه اجاره محل"                      , "parent_id": 2 , "lft": 26, "rgt": 27 , "type":0},
+			   {"id": 32, "code":"4012", "name": u"هزینه های متفرقه"            , "parent_id": 2 , "lft": 26, "rgt": 27 , "type":0},
+               {"id": 14, "code":"1101"  , "name": u"صندوق"                     , "parent_id": 3 , "lft": 30, "rgt": 31 , "type":2},			   
+			   {"id": 59, "code":"1102", "name": u"تنخواه گردانها"              , "parent_id": 3 , "lft": 30, "rgt": 31 , "type":2},
+			   {"id": 58 , "code":"1201"  , "name": u"اشخاص متفرقه"      		, "parent_id": 4 , "lft": 33, "rgt": 34 , "type":2},  
 			   {"id": 44, "code":"1301", "name": u"اسناد دریافتنی"              , "parent_id": 6 , "lft": 40, "rgt": 41 , "type":2},			   			              			                                                                           
                
 			   {"id": 67, "code":"14"  , "name": u"اسناد در جریان وصول"                , "parent_id": 0 , "lft": 30, "rgt": 31 , "type":2},
@@ -132,20 +155,6 @@ def upgrade(migrate_engine):
 			   {"id": 96, "code":"3004", "name": u"سود (زیان) جاری"                , "parent_id": 84 , "lft": 30, "rgt": 31 , "type":2},
 			   {"id": 87, "code":"3005", "name": u"تقسیم سود"                , "parent_id": 84 , "lft": 30, "rgt": 31 , "type":2},
 			   
-			   {"id": 2 , "code":"40"  , "name": u"هزینه ها"                    , "parent_id": 0 , "lft": 3 , "rgt": 28 , "type":0},
-               {"id": 10, "code":"4001", "name": u"حقوق پرسنل"                  , "parent_id": 2 , "lft": 4 , "rgt": 5  , "type":0},
-               {"id": 11, "code":"4002", "name": u"آب"                          , "parent_id": 2 , "lft": 6 , "rgt": 7  , "type":0},
-               {"id": 12, "code":"4003", "name": u"برق"                         , "parent_id": 2 , "lft": 8 , "rgt": 9  , "type":0},
-               {"id": 13, "code":"4004", "name": u"تلفن"                        , "parent_id": 2 , "lft": 10, "rgt": 11 , "type":0},
-			   {"id": 26, "code":"4005", "name": u"گاز"                         , "parent_id": 2 , "lft": 12, "rgt": 13 , "type":0},
-			   {"id": 27, "code":"4006", "name": u"پست"                         , "parent_id": 2 , "lft": 16, "rgt": 17 , "type":0},
-			   {"id": 28, "code":"4007", "name": u"هزینه حمل"                         , "parent_id": 2 , "lft": 16, "rgt": 17 , "type":0},
-			   {"id": 29, "code":"4008", "name": u"ضایعات کالا"                  , "parent_id": 2 , "lft": 18, "rgt": 19 , "type":0},
-               {"id": 30, "code":"4009", "name": u"عوارض شهرداری"               , "parent_id": 2 , "lft": 20, "rgt": 21 , "type":0},
-               {"id": 31, "code":"4010", "name": u"کارمزد بانک"                 , "parent_id": 2 , "lft": 22, "rgt": 23 , "type":0},
-			   {"id": 33, "code":"4011", "name": u"مالیات"                      , "parent_id": 2 , "lft": 26, "rgt": 27 , "type":0},
-			   {"id": 34, "code":"4011", "name": u"هزینه اجاره محل"                      , "parent_id": 2 , "lft": 26, "rgt": 27 , "type":0},
-			   {"id": 32, "code":"4012", "name": u"هزینه های متفرقه"            , "parent_id": 2 , "lft": 26, "rgt": 27 , "type":0},
 	
 			   {"id": 88, "code":"41", "name": u"قیمت تمام شده کالای فروش رفته"  , "parent_id": 0 , "lft": 30, "rgt": 31 , "type":2},
 			   {"id": 89, "code":"4101", "name": u"قیمت تمام شده کالای فروش رفته"  , "parent_id": 88 , "lft": 30, "rgt": 31 , "type":2},
@@ -184,6 +193,7 @@ def upgrade(migrate_engine):
 			   {"id": 8 , "code":"68"  , "name": u"جاری شرکا"                   , "parent_id": 0 , "lft": 47, "rgt": 50 , "type":2},
 			   {"id": 37, "code":"6801", "name": u"جاری شرکا"                   , "parent_id": 8 , "lft": 48, "rgt": 49 , "type":1},
 			   ) 
+
 
    # bill = Table('bill' , meta , autoload = True)
     op = bill.insert()
