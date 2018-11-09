@@ -11,11 +11,11 @@ from share import share
 ## Check the active locale and choose number characters from that locale
 def LN (num, comma=True):
     
-    if type(num) == int:
+    if type(num) == int or type(num) == long:
         num = str(num)
     elif type(num) == float:
         num = str(num)
-        if num[-2:]==".0":
+    if num[-2:]==".0":
             num = num[:-2]   
     if not len (num):
         return ""

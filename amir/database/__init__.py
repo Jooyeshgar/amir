@@ -64,6 +64,7 @@ class Database:
             versioningDone = True
                      
         engine = create_engine(file , echo=False)#edit by hassan : echoresults to True
+        self.engine = engine
         
         metadata = Base.metadata
         metadata.create_all(engine)
