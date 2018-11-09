@@ -9,7 +9,8 @@
     <property name="destroy_with_parent">True</property>
     <signal name="delete-event" handler="close" swapped="no"/>
     <child>
-      <object class="GtkVBox" id="vbox1">
+      <object class="GtkBox" id="vbox1">
+        <property name="orientation">vertical</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="spacing">4</property>
@@ -267,7 +268,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkHBox" id="hbox10">
+                          <object class="GtkBox" id="hbox10">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child>
@@ -310,7 +311,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkHBox" id="cashbox">
+                          <object class="GtkBox" id="cashbox">
                             <property name="width_request">200</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
@@ -437,7 +438,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkHBox" id="hbox7">
+                          <object class="GtkBox" id="hbox7">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child>
@@ -478,7 +479,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkHBox" id="hbox3">
+                          <object class="GtkBox" id="hbox3">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child>
@@ -516,7 +517,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkHBox" id="shippedDateBox">
+                          <object class="GtkBox" id="shippedDateBox">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child>
@@ -554,7 +555,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkHBox" id="hbox2">
+              <object class="GtkBox" id="hbox2">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="spacing">8</property>
@@ -642,7 +643,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkHBox" id="subsbox">
+                              <object class="GtkBox" id="subsbox">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <child>
@@ -661,7 +662,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkHBox" id="additionsbox">
+                              <object class="GtkBox" id="additionsbox">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <child>
@@ -1008,7 +1009,7 @@
                         <property name="can_focus">False</property>
                         <property name="n_columns">6</property>
                         <child>
-                          <object class="GtkHBox" id="hbox4">
+                          <object class="GtkBox" id="hbox4">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child>
@@ -1027,7 +1028,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkHBox" id="hbox1">
+                              <object class="GtkBox" id="hbox1">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="spacing">3</property>
@@ -1104,7 +1105,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkHBox" id="hbox12">
+                          <object class="GtkBox" id="hbox12">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child>
@@ -1157,7 +1158,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkHBox" id="hbox5">
+                          <object class="GtkBox" id="hbox5">
                             <property name="can_focus">False</property>
                             <property name="spacing">3</property>
                             <child>
@@ -1197,7 +1198,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkHBox" id="hbox6">
+                          <object class="GtkBox" id="hbox6">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="spacing">3</property>
@@ -1216,7 +1217,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkHBox" id="datebox">
+                              <object class="GtkBox" id="datebox">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <child>
@@ -1465,7 +1466,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkHBox" id="hbox13">
+              <object class="GtkBox" id="hbox13">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="spacing">4</property>
@@ -1554,7 +1555,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkHBox" id="qntyBox">
+              <object class="GtkBox" id="qntyBox">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
@@ -1580,7 +1581,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkHBox" id="unitPriceBox">
+              <object class="GtkBox" id="unitPriceBox">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
@@ -1750,7 +1751,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkHBox" id="hbox14">
+          <object class="GtkBox" id="hbox14">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
@@ -1908,7 +1909,8 @@
     <property name="window_position">center-always</property>
     <property name="destroy_with_parent">True</property>
     <child>
-      <object class="GtkVBox" id="vbox4">
+      <object class="GtkBox" id="vbox4">
+        <property name="orientation">vertical</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>

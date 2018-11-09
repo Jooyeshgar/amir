@@ -10,7 +10,8 @@
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">dialog</property>
     <child>
-      <object class="GtkVBox" id="vbox29">
+      <object class="GtkBox" id="vbox29">
+        <property name="orientation">vertical</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
@@ -193,7 +194,7 @@ subject name:</property>
           </packing>
         </child>
         <child>
-          <object class="GtkHBox" id="hbox5">
+          <object class="GtkBox" id="hbox5">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="border_width">10</property>
@@ -307,12 +308,13 @@ subject name:</property>
           </packing>
         </child>
         <child>
-          <object class="GtkVBox" id="vbox1">
+          <object class="GtkBox" id="vbox1">
+        <property name="orientation">vertical</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="spacing">5</property>
             <child>
-              <object class="GtkHBox" id="hbox3">
+              <object class="GtkBox" id="hbox3">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
@@ -351,7 +353,7 @@ subject name:</property>
               </packing>
             </child>
             <child>
-              <object class="GtkHBox" id="hbox4">
+              <object class="GtkBox" id="hbox4">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
@@ -380,7 +382,7 @@ subject name:</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkHBox" id="codebox">
+                  <object class="GtkBox" id="codebox">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
@@ -402,7 +404,7 @@ subject name:</property>
               </packing>
             </child>
             <child>
-              <object class="GtkHBox" id="hbox2">
+              <object class="GtkBox" id="hbox2">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
@@ -455,7 +457,7 @@ subject name:</property>
                     <property name="left_padding">12</property>
                     <property name="right_padding">12</property>
                     <child>
-                      <object class="GtkHBox" id="hbox1">
+                      <object class="GtkBox" id="hbox1">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <child>

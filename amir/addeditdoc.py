@@ -28,7 +28,7 @@ class AddEditDoc:
         self.builder = get_builder("document")
         
         self.window = self.builder.get_object("window1")
-        self.window.set_title(_("Register new document"))
+        # self.window.set_title(_("Register new document"))
         
         self.date = dateentry.DateEntry()
         box = self.builder.get_object("datebox")

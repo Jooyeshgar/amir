@@ -496,9 +496,10 @@
     <property name="window_position">center</property>
     <signal name="size-allocate" handler="on_win_resize" swapped="no"/>
     <child>
-      <object class="GtkVBox" id="vbox2">
+      <object class="GtkBox" id="vbox2">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
         <child>
           <object class="GtkMenuBar" id="menubar1">
             <property name="visible">True</property>
@@ -1176,7 +1177,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkHBox" id="hbox2">
+          <object class="GtkBox" id="hbox2">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="spacing">5</property>
@@ -1607,7 +1608,7 @@ Nazanin Sharifzadeh &lt;jouanii@gmail.com&gt;</property>
           </packing>
         </child>
         <child>
-          <object class="GtkHBox" id="hbox1">
+          <object class="GtkBox" id="hbox1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="spacing">5</property>
@@ -1624,7 +1625,7 @@ Nazanin Sharifzadeh &lt;jouanii@gmail.com&gt;</property>
               </packing>
             </child>
             <child>
-              <object class="GtkHBox" id="numbox">
+              <object class="GtkBox" id="numbox">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>

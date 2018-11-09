@@ -160,7 +160,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkHBox" id="grpCodeBox">
+                      <object class="GtkBox" id="grpCodeBox">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <child>
@@ -231,7 +231,8 @@
     <property name="window_position">center-always</property>
     <signal name="delete-event" handler="customerFormCanceled" swapped="no"/>
     <child>
-      <object class="GtkVBox" id="vbox1">
+      <object class="GtkBox" id="vbox1">
+        <property name="orientation">vertical</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="spacing">5</property>
@@ -318,7 +319,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkHBox" id="custGrpBox">
+                              <object class="GtkBox" id="custGrpBox">
                                 <property name="width_request">192</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
@@ -422,7 +423,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkHBox" id="personalcodebox">
+                              <object class="GtkBox" id="personalcodebox">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <child>
@@ -1341,7 +1342,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkHBox" id="boxCommissionRateEntry">
+                              <object class="GtkBox" id="boxCommissionRateEntry">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <child>
@@ -1357,7 +1358,8 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkVBox" id="boxDiscRateEntry">
+                              <object class="GtkBox" id="boxDiscRateEntry">
+        <property name="orientation">vertical</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <child>
@@ -1373,7 +1375,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkHBox" id="custIntroducerBox">
+                              <object class="GtkBox" id="custIntroducerBox">
                                 <property name="width_request">200</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
@@ -1440,7 +1442,8 @@
                         <property name="left_padding">12</property>
                         <property name="right_padding">5</property>
                         <child>
-                          <object class="GtkVBox" id="vbox2">
+                          <object class="GtkBox" id="vbox2">
+        <property name="orientation">vertical</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="spacing">5</property>
@@ -1618,7 +1621,8 @@
     <property name="window_position">center-always</property>
     <property name="type_hint">dialog</property>
     <child>
-      <object class="GtkVBox" id="vbox4">
+      <object class="GtkBox" id="vbox4">
+        <property name="orientation">vertical</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
@@ -1752,7 +1756,8 @@
     <property name="title" translatable="yes">View Customers</property>
     <property name="window_position">center-always</property>
     <child>
-      <object class="GtkVBox" id="vbox3">
+      <object class="GtkBox" id="vbox3">
+        <property name="orientation">vertical</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>

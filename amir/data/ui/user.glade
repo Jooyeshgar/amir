@@ -15,7 +15,8 @@
         <property name="can_focus">False</property>
         <property name="spacing">5</property>
         <child>
-          <object class="GtkVBox" id="vbox1">
+          <object class="GtkBox" id="vbox1">
+        <property name="orientation">vertical</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="spacing">5</property>
@@ -23,7 +24,7 @@
               <placeholder/>
             </child>
             <child>
-              <object class="GtkHBox" id="hbox3">
+              <object class="GtkBox" id="hbox3">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
@@ -51,7 +52,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkHBox" id="codebox2">
+                  <object class="GtkBox" id="codebox2">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
@@ -81,7 +82,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkHBox" id="hbox4">
+              <object class="GtkBox" id="hbox4">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
@@ -295,7 +296,8 @@
         <property name="margin_bottom">15</property>
         <property name="spacing">5</property>
         <child>
-          <object class="GtkVBox" id="vbox2">
+          <object class="GtkBox" id="vbox2">
+        <property name="orientation">vertical</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="spacing">5</property>
@@ -303,7 +305,7 @@
               <placeholder/>
             </child>
             <child>
-              <object class="GtkHBox" id="hbox6">
+              <object class="GtkBox" id="hbox6">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
@@ -333,7 +335,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkHBox" id="codebox1">
+                  <object class="GtkBox" id="codebox1">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
@@ -363,7 +365,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkHBox" id="hbox7">
+              <object class="GtkBox" id="hbox7">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
@@ -1208,7 +1210,8 @@
     <property name="window_position">center-always</property>
     <property name="destroy_with_parent">True</property>
     <child>
-      <object class="GtkVBox" id="vbox4">
+      <object class="GtkBox" id="vbox4">
+        <property name="orientation">vertical</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="baseline_position">top</property>
@@ -1344,7 +1347,8 @@
     <property name="default_height">349</property>
     <property name="destroy_with_parent">True</property>
     <child>
-      <object class="GtkVBox" id="vbox29">
+      <object class="GtkBox" id="vbox29">
+        <property name="orientation">vertical</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
@@ -1460,7 +1464,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkHBox" id="hbox5">
+          <object class="GtkBox" id="hbox5">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="border_width">10</property>
