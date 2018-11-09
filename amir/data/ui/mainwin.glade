@@ -1221,7 +1221,18 @@
           </packing>
         </child>
         <child>
-          <placeholder/>
+          <object class="GtkEventBox" id="eventbox1">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
         </child>
       </object>
     </child>

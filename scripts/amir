@@ -61,7 +61,7 @@ if sys.platform == 'win32':
 import logging
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk , GdkPixbuf , GObject
+from gi.repository import Gtk, Gdk, GdkPixbuf, GObject
 import gettext
 import locale
 from amir.database import *
@@ -442,9 +442,10 @@ class MainWindow(GObject.GObject):
 		helpers.comboInsertItems(self.dblist, config.dbnames)
 		self.dblist.set_active(config.currentdb - 1)
 
-		main_box = self.builder.get_object('vbox2')
+		eventbox = self.builder.get_object('eventbox1')
+		eventbox.override_background_color(Gtk.StateType.NORMAL,Gdk.RGBA(0.9765,0.9765,0.9765,1))
 		self.background = Gtk.Fixed()
-		main_box.add(self.background)
+		eventbox.add(self.background)
 		#infobar.set_size_request(self.background.get_allocated_width(), -1)
 		self.image = Gtk.Image.new_from_file(os.path.join(config.data_path, "media", "background.png"))
 		self.background.put(self.image, 0, 0)
