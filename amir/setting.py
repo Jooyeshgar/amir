@@ -3,7 +3,7 @@ import os
 from gi.repository import GObject
 
 import class_subject
-import upgrade
+import handle_database
 import database
 import dbconfig
 import subjects
@@ -154,7 +154,7 @@ class Setting(GObject.GObject):
             dbfile = self.filename.get_text()
             if dbfile != "":
                 msg = ""
-                result = upgrade.checkInputDb(dbfile)
+                result = handle_database.checkInputDb(dbfile)
                 if result == -2:
                     msg = _("Can not connect to the database. The selected database file may not be a sqlite database or be corrupt.")
                 elif result == 0:

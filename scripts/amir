@@ -129,10 +129,52 @@ gettext.install('amir', config.locale_path, unicode=1)
 
 from amir import subjects, addeditdoc, database, numberentry, notebookreport, docreport, tbalancereport, notebookutils, \
 setting, helpers, customers, customergroup, product, productgroup, factors, cardexreport, user, utility, chequereport
-from amir import automaticaccounting
-from amir import bankaccountsui, backup
+from amir import automaticaccounting , bankaccountsui
+from amir import  backup
+from amir import handle_database
 
 class MainWindow(GObject.GObject):
+
+	def __init__(self):
+		GObject.GObject.__init__(self)
+
+		if config.directionlist[config.localelist.index(config.locale)] == "rtl" :
+			Gtk.Widget.set_default_direction(Gtk.TextDirection.RTL)
+		else:
+			Gtk.Widget.set_default_direction(Gtk.TextDirection.LTR)
+
+		self.builder = helpers.get_builder("mainwin")
+		mainWin = self.builder.get_object("window1")
+		icondir = os.path.join(config.data_path, "media", "icon")
+		#self.window. set_default_icon_name(icondir+".icon")
+		try:
+			icon16 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "16.png"))
+			icon22 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "22.png"))
+			icon32 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "32.png"))
+			icon48 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "48.png"))
+			icon64 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "64.png"))
+			icon128 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "128.png"))
+			mainWin.set_default_icon_list([icon16, icon22, icon32, icon48, icon64, icon128])
+		except GObject.GError:
+			pass
+
+		
+		# self.loggedIn()
+		self.window = self.builder.get_object("login")
+		self.window = self.builder.get_object("login")
+		self.window.show()
+		self.builder.connect_signals(self)		
+
+		if config.repair_atstart == True:
+			msg = _("Repairing database, Please wait...")
+			self.msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.INFO, Gtk.ButtonsType.NONE, msg)
+			self.msgbox.set_title(_("Repairing database"))
+			self.msgbox.show_all()
+
+			while Gtk.events_pending():
+				Gtk.main_iteration_do(False)
+
+			GObject.timeout_add(1000, self.repairDbFunc)
 
 	def manualDocument(self, sender):
 		dialog = addeditdoc.AddEditDoc(0,self.background)
@@ -210,20 +252,7 @@ class MainWindow(GObject.GObject):
 	def doBackup(self, sender):
 		self.dialog.hide()
 		location = self.builder.get_object("backupfilechooserbutton")
-		# from sqlalchemy.ext.serializer import loads, dumps
-		# q = config.db.session.query(BankNames)
-		# serialized_data = dumps(q.all())
-		# file = open(location.get_filename() + "/backup.amir","w")
-		# file.write(serialized_data)
-		# file.close()
-
-		dbFile = config.dbfile.split('///')
-		file = open(dbFile[1], "r") 
-		data = file.read()
-		file = open(location.get_filename() + "/backup.amir","w")
-		file.write(data)
-		file.close()
-		share.mainwin.silent_daialog(_("Backup saved successfully"))
+		handle_database.backup(location)
 
 	def restore(self, sender):
 		self.dialog.hide()
@@ -239,99 +268,23 @@ class MainWindow(GObject.GObject):
 	def doRestore(self, sernder):
 		self.dialog.hide()
 		location = self.builder.get_object("resotrefilechooserbutton")
-
-		# from sqlalchemy.ext.serializer import loads, dumps
-		# file = open(location.get_filename(), "r") 
-		# serialized_data = file.read()
-
-		# restore_q = loads(serialized_data, config.db, config.db.session)
-		# print restore_q
-		# for x in restore_q:
-		# 	config.db.session.merge(x)
-		# config.db.session.commit()
-
-		file = open(location.get_filename(), "r") 
-		data = file.read()
-		dbFile = config.dbfile.split('///')
-		file = open(dbFile[1],"w")
-		file.write(data)
-		file.close()
-		share.mainwin.silent_daialog(_("Backup restored successfully"))
+		handle_database.restore(location)
 
 	def newDB(self, sender):
 		self.dialog = self.builder.get_object("createDbDialog")
 		res = self.dialog.run()
 		self.dialog.hide()
-		if res == Gtk.ResponseType.OK:
-			#creating new empty db
+		if res == Gtk.ResponseType.OK:			
 			dbName = self.builder.get_object("dbNameEntry").get_text()					
-			pathname = os.path.join(os.path.dirname(amirconfig.__file__) , amirconfig.__amir_data_directory__)			
-			abs_data_path = os.path.abspath(pathname)
-			db_repository = os.path.join(abs_data_path, 'amir_migrate')
-			dbformat = "sqlite"
-			dbType = "sqlite:///"
-			from platform import system
-			if system() == 'Windows':
-				confdir = os.path.join(os.path.expanduser('~'), 'amir')
-			else:
-				confdir = os.path.join(os.path.expanduser('~'), '.amir')
-			dbFile =dbType+os.path.join(confdir, dbName+"." + dbformat)				
-			try:		
-				newdb = database.Database(dbFile, db_repository,False)
-			except Exception as e:
-				msg = _("There was a problem in creating new database. Maybe trying with another name will help...\n"+str(e))
-				self.msgbox = Gtk.MessageDialog(self.window,Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK , msg)
-				self.msgbox.set_title(_("Error creating new database"))
-				self.msgbox.run()	
-				self.msgbox.destroy()
-				return
-
-			if self.builder.get_object("radiobutton2").get_active():
-				################# filling db with importing ###########
-				e = {
-					"chkDoc" : 	(Bill , Notebook),
-					"chkBank": 	(BankNames , BankAccounts),
-					"chkConf": 	(Config,),
-					"chkNote":	(Subject,),
-					"chkFact":	(Factors,FactorItems),
-					"chkUser":	(),
-					"chkProductG":(ProductGroups,),
-					"chkProduct": (Products,),
-					"chkCust":	(Customers,),
-					"chkCheq":	(Cheque,)
-				}
-				checkboxes = self.builder.get_object("grid5").get_children()	
-				dbClasses = [] # permissions ...
-				for checkbox in checkboxes:			
-					if checkbox.get_active():
-						a = Gtk.Buildable.get_name(checkbox) # widget ID	
-						for clas in e[str(a)]:
-							dbClasses .append(clas)	
-				for clas in dbClasses:
-					newdb.session.query(clas).delete()		
-					movingData = config.db.session.query(clas).all()
-					clas2 = clas.__table__							
-					columns = clas2.columns.keys()							
-					for d in movingData:
-						data = dict(
-      					  [(str(column), getattr(d, column)) for column in columns]
-  						  )								
-						instant = clas(**data)
-						newdb.session.add(instant)						
-					
-							# moved = (clas2.delete())
-							# newdb.session.execute(moved)		
-							# print [c.name for c in clas2.columns]								
-							# insert  = clas2.insert().from_select( [c.name for c in clas2.columns],clas2.select()) #select([c.name for c in config.db.session.clas]) )
-							#newdb.session.execute(insert)
-			newdb.session.commit()
+			handle_database.createDb(dbName , self.builder)	
 			####################### add this new db to config.databases : ########
-			s = setting.Setting()			
+			s = setting.Setting()		
+			dbformat = "sqlite"	
 			dbName = dbName+ "." + dbformat			
 			iter = s.liststore.append((True, dbName, dbFile))					
 			s.changeCurrentDb(None , s.liststore.get_string_from_iter(iter) , 0)			
 			s.applyDatabaseSetting(False)			
-			self.reloadDatabases(None,dbFile )			
+			self.reloadDatabases(None,dbFile )		
 
 	def arrangeDocments(self, sender):
 		notebookutils.arrangeDocuments(self.window)
@@ -495,49 +448,6 @@ class MainWindow(GObject.GObject):
 			if result.days < 7:
 				self.alert_dialog(_("Check the due date of cheques"))
 				break
-
-
-
-	def __init__(self):
-		GObject.GObject.__init__(self)
-
-		if config.directionlist[config.localelist.index(config.locale)] == "rtl" :
-			Gtk.Widget.set_default_direction(Gtk.TextDirection.RTL)
-		else:
-			Gtk.Widget.set_default_direction(Gtk.TextDirection.LTR)
-
-		self.builder = helpers.get_builder("mainwin")
-		mainWin = self.builder.get_object("window1")
-		icondir = os.path.join(config.data_path, "media", "icon")
-		#self.window. set_default_icon_name(icondir+".icon")
-		try:
-			icon16 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "16.png"))
-			icon22 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "22.png"))
-			icon32 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "32.png"))
-			icon48 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "48.png"))
-			icon64 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "64.png"))
-			icon128 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "128.png"))
-			mainWin.set_default_icon_list([icon16, icon22, icon32, icon48, icon64, icon128])
-		except GObject.GError:
-			pass
-
-		
-		# self.loggedIn()
-		self.window = self.builder.get_object("login")
-		self.window = self.builder.get_object("login")
-		self.window.show()
-		self.builder.connect_signals(self)		
-
-		if config.repair_atstart == True:
-			msg = _("Repairing database, Please wait...")
-			self.msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.INFO, Gtk.ButtonsType.NONE, msg)
-			self.msgbox.set_title(_("Repairing database"))
-			self.msgbox.show_all()
-
-			while Gtk.events_pending():
-				Gtk.main_iteration_do(False)
-
-			GObject.timeout_add(1000, self.repairDbFunc)
 
 	def loginProcess(self,sender=0):
 		username = self.builder.get_object("username")
