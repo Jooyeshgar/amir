@@ -63,7 +63,7 @@ class Database:
             api.downgrade(file, self.repository, self.version)
             versioningDone = True
                      
-        engine = create_engine(file , echo=False)#edit by hassan : echoresults to True
+        engine = create_engine(file , echo=echoresults)#edit by hassan : echoresults to True
         self.engine = engine
         
         metadata = Base.metadata

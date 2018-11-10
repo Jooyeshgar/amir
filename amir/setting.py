@@ -112,9 +112,7 @@ class Setting(GObject.GObject):
         self.page_setup.set_orientation(config.paper_orientation)
         self.builder.get_object("papersize").set_text(config.paper_name)
 
-        self.setup_config_tab()
-        
-        self.window.show_all()
+        self.setup_config_tab()    
         self.builder.connect_signals(self)
         
     def changeCurrentDb(self, cell, path, column):
@@ -216,8 +214,8 @@ class Setting(GObject.GObject):
         self.msgbox.run()
         self.msgbox.destroy()
         return False
-        
-    def applyDatabaseSetting(self):
+
+    def applyDatabaseSetting(self, checkV=True):
         active_path = self.liststore.get(self.active_iter, 2)[0]
         dbchanged_flag = False
         if active_path != config.dblist[config.currentdb - 1]:
@@ -228,7 +226,7 @@ class Setting(GObject.GObject):
             msgbox.destroy()
             if result == Gtk.ResponseType.CANCEL :
                 return
-            else:
+            elif checkV:
                 config.db.session.close()
                 config.db = database.Database(active_path, config.db_repository, config.echodbresult)
                 dbchanged_flag = True
@@ -238,15 +236,14 @@ class Setting(GObject.GObject):
         config.dblist = []
         config.dbnames = []
         i = 1
-        while iter != None :
+        while iter != None :            
             config.dbnames.append(self.liststore.get(iter, 1)[0])
             path = self.liststore.get(iter, 2)[0]
             config.dblist.append(self.liststore.get(iter, 2)[0])
             if path == active_path:
-                config.currentdb = i
+                config.currentdb = i                
             iter = self.liststore.iter_next(iter)
             i += 1
-            
         if dbchanged_flag == True:
             self.emit("database-changed", active_path)
             

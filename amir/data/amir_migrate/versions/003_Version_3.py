@@ -80,6 +80,11 @@ def upgrade(migrate_engine):
     except:
         pass
 
+    subject = Table('subject' , meta , autoload=True)
+    colPer = Column('permanent', Boolean, default=False)
+    colPer.create(subject,  populate_default=True)
+    assert colPer is subject.c.permanent
+
    # s.query(subject).update({subject.c.code: _2to3digits(subject.c.code)})      #TODO try this instead of raw sql command
     query = s.query(subject)
     al = query.all()
@@ -116,10 +121,6 @@ def upgrade(migrate_engine):
     notebook.c.value.alter(type=Float)
     assert notebook.c.value.type
 
-    subject = Table('subject' , meta , autoload=True)
-    colPer = Column('permanent', Boolean, default=False)
-    colPer.create(subject,  populate_default=True)
-    assert colPer is subject.c.permanent
 
     # factorItems = Table('factorItems', meta, autoload=True)
     # factorItems.c.exchngId.alter(name='id')
@@ -135,8 +136,7 @@ def upgrade(migrate_engine):
 
     cheque = Table('Cheque', meta, autoload=True)
     # factors = Table('factors', meta, autoload=True)    
-    # cons = ForeignKeyConstraint ([cheque.c.chqTransId] , [factors.c.Id])
-    notebook = Table('notebook', meta , autoload=True)
+    # cons = ForeignKeyConstraint ([cheque.c.chqTransId] , [factors.c.Id])    
     cons = ForeignKeyConstraint ([notebook.c.chqId] , [cheque.c.chqId])
 
     config = Table('config', meta, autoload=True)

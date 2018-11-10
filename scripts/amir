@@ -267,17 +267,19 @@ class MainWindow(GObject.GObject):
 			dbName = self.builder.get_object("dbNameEntry").get_text()					
 			pathname = os.path.join(os.path.dirname(amirconfig.__file__) , amirconfig.__amir_data_directory__)			
 			abs_data_path = os.path.abspath(pathname)
-			db_repository = os.path.join(abs_data_path, 'amir_migrate')			
-			import platform
-			if platform.system() == 'Windows':
+			db_repository = os.path.join(abs_data_path, 'amir_migrate')
+			dbformat = "sqlite"
+			dbType = "sqlite:///"
+			from platform import system
+			if system() == 'Windows':
 				confdir = os.path.join(os.path.expanduser('~'), 'amir')
 			else:
 				confdir = os.path.join(os.path.expanduser('~'), '.amir')
-			dbFile = 'sqlite:///'+os.path.join(confdir, dbName+".sqlite")	
+			dbFile =dbType+os.path.join(confdir, dbName+"." + dbformat)				
 			try:		
 				newdb = database.Database(dbFile, db_repository,False)
-			except error:
-				msg = _("There was a problem in creating new database. Maybe trying with another name will help..."+error)
+			except Exception as e:
+				msg = _("There was a problem in creating new database. Maybe trying with another name will help...\n"+str(e))
 				self.msgbox = Gtk.MessageDialog(self.window,Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK , msg)
 				self.msgbox.set_title(_("Error creating new database"))
 				self.msgbox.run()	
@@ -315,22 +317,28 @@ class MainWindow(GObject.GObject):
       					  [(str(column), getattr(d, column)) for column in columns]
   						  )								
 						instant = clas(**data)
-						newdb.session.add(instant)
-						newdb.session.commit()
+						newdb.session.add(instant)						
 					
 							# moved = (clas2.delete())
 							# newdb.session.execute(moved)		
 							# print [c.name for c in clas2.columns]								
 							# insert  = clas2.insert().from_select( [c.name for c in clas2.columns],clas2.select()) #select([c.name for c in config.db.session.clas]) )
 							#newdb.session.execute(insert)
-				newdb.session.commit()
-			####################### add this new db to config.databases
+			newdb.session.commit()
+			####################### add this new db to config.databases : ########
+			s = setting.Setting()			
+			dbName = dbName+ "." + dbformat			
+			iter = s.liststore.append((True, dbName, dbFile))					
+			s.changeCurrentDb(None , s.liststore.get_string_from_iter(iter) , 0)			
+			s.applyDatabaseSetting(False)			
+			self.reloadDatabases(None,dbFile )			
 
 	def arrangeDocments(self, sender):
 		notebookutils.arrangeDocuments(self.window)
 
 	def settingsDialog(self, sender):
 		window = setting.Setting()
+		window.window.show_all()
 		window.connect("dblist-changed", self.reloadDatabases)
 		window.connect("database-changed", self.databaseChanged)
 		window.connect("locale-changed", self.localeChanged)
@@ -584,7 +592,7 @@ class MainWindow(GObject.GObject):
 			else:
 				combo.set_active(config.currentdb - 1)
 
-	def reloadDatabases(self, sender, active_dbpath):
+	def reloadDatabases(self, sender, active_dbpath):		
 		helpers.comboInsertItems(self.dblist, config.dbnames)
 		active_index = config.dblist.index(active_dbpath)
 		self.dblist.set_active(active_index)
