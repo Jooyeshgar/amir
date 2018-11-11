@@ -130,7 +130,6 @@ gettext.install('amir', config.locale_path, unicode=1)
 from amir import subjects, addeditdoc, database, numberentry, notebookreport, docreport, tbalancereport, notebookutils, \
 setting, helpers, customers, customergroup, product, productgroup, factors, cardexreport, user, utility, chequereport
 from amir import automaticaccounting , bankaccountsui
-from amir import  backup
 from amir import handle_database
 
 class MainWindow(GObject.GObject):
@@ -234,8 +233,7 @@ class MainWindow(GObject.GObject):
 				self.connect("database-changed", self.dialog.dbChanged)
 
 	def clean_db(self, sender):
-		db_backup = backup.Backup(share.config.db)
-		db_backup.clear_current_db()
+		 handle_database.clear_current_db(share.config)		
 
 	def backup(self, sender):
 		self.dialog.hide()

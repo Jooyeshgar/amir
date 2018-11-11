@@ -5,14 +5,17 @@ from amir.share import share
 from amir.database import *
 
 def checkInputDb(inputfile):
+	return 0
 	import sys
 	import logging	
 	from sqlalchemy import create_engine
 	from sqlalchemy import MetaData, Table, Column, ForeignKey, ColumnDefault
 	from sqlalchemy import exc		
 
-
-	filetype = inputfile.split(".")[1]
+	splitByDot = inputfile.split(".")
+	l = len(splitByDot)
+	if l>1:
+		filetype = splitByDot[ l-1 ]
 	if filetype == "sql":
 		type = "mysql://"		
 	elif filetype == "sqlite":
@@ -124,4 +127,7 @@ def createDb(dbName, builder):
 	newdb.session.commit()	
 
 def detectDbType (filename):
+	pass
+
+def clean(self):
 	pass

@@ -24,7 +24,7 @@ class Setting(GObject.GObject):
         self.window = self.builder.get_object("window1")
         
         self.filechooser = self.builder.get_object("filechooser")
-        self.dbname = self.builder.get_object("dbname")
+        self.dbname = self.builder.get_object("dbname")        
         
         self.treeview = self.builder.get_object("databases-table")
         self.treeview.set_direction(Gtk.TextDirection.LTR)
@@ -143,7 +143,8 @@ class Setting(GObject.GObject):
 #        if result == Gtk.ResponseType.OK:
 #            self.newdb.set_text(self.filechooser.get_filename())
 #        self.filechooser.hide()
-    
+
+
     def addDatabase(self, sender):
         dialog = self.builder.get_object("dialog1")
         dialog.set_title(_("Add Database"))
@@ -163,8 +164,11 @@ class Setting(GObject.GObject):
                     msgbox.run()
                     msgbox.destroy()
                 else :
+                    return
                     dbType = result
-                    if dbType == "mysql://":
+                    if self.builder.get_object("notebook2").get_current_page() == 1:
+
+                   # if dbType == "mysql://":
                         charset = "charset=utf8"
                         fullFile = dbType + os.path.join("jooyesh:Freejooyesh@localhost" , self.builder.get_object("filename").get_text()) + dbname.split(".")[0]+"?%s" %charset
                     else:
