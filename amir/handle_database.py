@@ -2,6 +2,7 @@
 
 from  amir import amirconfig , database
 from amir.share import share
+from amir.database import *
 
 def checkInputDb(inputfile):
 	import sys
@@ -10,24 +11,23 @@ def checkInputDb(inputfile):
 	from sqlalchemy import MetaData, Table, Column, ForeignKey, ColumnDefault
 	from sqlalchemy import exc		
 
+
+	filetype = inputfile.split(".")[1]
+	if filetype == "sql":
+		type = "mysql://"		
+	elif filetype == "sqlite":
+		type= "sqlite:///"
+	else :
+		return -2
+
+
 	try:
-		engine = create_engine('sqlite:///%s' % inputfile, echo=True)
+		engine = create_engine(type+inputfile, echo=True)
 	except exc.DatabaseError:
 		logging.error(sys.exc_info()[0])
 		return -2
-	metadata = MetaData(bind=engine)
 
-	try:
-		table = Table('ledger', metadata, autoload=True)
-		table = Table('sub_ledger', metadata, autoload=True)
-		table = Table('moin', metadata, autoload=True)
-
-	except exc.DatabaseError:
-		logging.error(sys.exc_info()[0])
-		return -2
-	except exc.NoSuchTableError:
-		return -1
-	return 0
+	return type
 
 def backup(location):
 	# from sqlalchemy.ext.serializer import loads, dumps
@@ -73,13 +73,10 @@ def createDb(dbName, builder):
 	dbformat = "sqlite"
 	dbType = "sqlite:///"
 	from platform import system
-	if system() == 'Windows':
-		confdir = os.path.join(os.path.expanduser('~'), 'amir')
-	else:
-		confdir = os.path.join(os.path.expanduser('~'), '.amir')
-	dbFile =dbType+os.path.join(confdir, dbName+"." + dbformat)				
+
+	dbFile =dbType+os.path.join(share.config.confdir, dbName+"." + dbformat)
 	try:		
-		newdb = database.Database(dbFile, db_repository,False)
+		newdb = database.Database(dbFile, db_repository,share.config.echodbresult)
 	except Exception as e:
 		msg = _("There was a problem in creating new database. Maybe trying with another name will help...\n"+str(e))
 		msgbox = Gtk.MessageDialog(builder.get_object("window1"),Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK , msg)
@@ -111,7 +108,7 @@ def createDb(dbName, builder):
 					dbClasses .append(clas)	
 		for clas in dbClasses:
 			newdb.session.query(clas).delete()		
-			movingData = config.db.session.query(clas).all()
+			movingData = share.config.db.session.query(clas).all()
 			clas2 = clas.__table__							
 			columns = clas2.columns.keys()							
 			for d in movingData:
@@ -125,4 +122,6 @@ def createDb(dbName, builder):
 				# insert  = clas2.insert().from_select( [c.name for c in clas2.columns],clas2.select()) #select([c.name for c in config.db.session.clas]) )
 				# newdb.session.execute(insert)
 	newdb.session.commit()	
-		
+
+def detectDbType (filename):
+	pass

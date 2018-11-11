@@ -128,7 +128,7 @@ class AmirConfig:
 
         if not os.path.exists(confdir):
             os.makedirs(confdir, 0755)
-
+        self.confdir = confdir
         confpath = os.path.join(confdir, 'amir.conf')
 
         dbfile = ''

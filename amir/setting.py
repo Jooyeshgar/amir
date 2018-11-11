@@ -24,7 +24,7 @@ class Setting(GObject.GObject):
         self.window = self.builder.get_object("window1")
         
         self.filechooser = self.builder.get_object("filechooser")
-        self.filename = self.builder.get_object("filename")
+        self.dbname = self.builder.get_object("dbname")
         
         self.treeview = self.builder.get_object("databases-table")
         self.treeview.set_direction(Gtk.TextDirection.LTR)
@@ -123,12 +123,11 @@ class Setting(GObject.GObject):
             self.liststore.set(iter, column, True)
             self.active_iter = iter
         
-    def selectDbFile(self, sender):
-        self.filechooser.set_action(Gtk.FileChooserAction.OPEN)
+    def selectDbFile(self, sender):       
         self.filechooser.set_current_folder (os.path.dirname (config.db.dbfile))
         result = self.filechooser.run()
         if result == Gtk.ResponseType.OK:
-            self.filename.set_text(self.filechooser.get_filename())
+            self.builder.get_object("filename").set_text(self.filechooser.get_filename())
         self.filechooser.hide()
         
 #    def selectOldDatabase(self, sender):
@@ -148,25 +147,29 @@ class Setting(GObject.GObject):
     def addDatabase(self, sender):
         dialog = self.builder.get_object("dialog1")
         dialog.set_title(_("Add Database"))
-        self.filename.set_text("")
+        self.dbname.set_text("")
         result = dialog.run()
         if result == 1 :
-            dbfile = self.filename.get_text()
-            if dbfile != "":
+            dbname = self.dbname.get_text()
+            if dbname != "":
                 msg = ""
-                result = handle_database.checkInputDb(dbfile)
+                result = handle_database.checkInputDb(dbname)
                 if result == -2:
                     msg = _("Can not connect to the database. The selected database file may not be a sqlite database or be corrupt.")
-                elif result == 0:
-                    msg = _("The selected file is compatible with older versions of Amir. First convert it to the new version.")
-            
-                if msg != "":  
+                # elif result == 0:
+                #     msg = _("The selected file is compatible with older versions of Amir. First convert it to the new version.")
                     msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK, msg)
                     msgbox.set_title(_("Error opening new database"))
                     msgbox.run()
                     msgbox.destroy()
                 else :
-                    self.liststore.append((False, self.builder.get_object("dbname").get_text(), dbfile))
+                    dbType = result
+                    if dbType == "mysql://":
+                        charset = "charset=utf8"
+                        fullFile = dbType + os.path.join("jooyesh:Freejooyesh@localhost" , self.builder.get_object("filename").get_text()) + dbname.split(".")[0]+"?%s" %charset
+                    else:
+                        fullFile = dbType + os.path.join(self.builder.get_object("filename").get_text(), dbname)
+                    self.liststore.append((False, self.dbname.get_text(), fullFile))
         dialog.hide()
     
     def removeDatabase(self, sender):
@@ -228,7 +231,11 @@ class Setting(GObject.GObject):
                 return
             elif checkV:
                 config.db.session.close()
+                # try:
                 config.db = database.Database(active_path, config.db_repository, config.echodbresult)
+                # except:
+                #     print "error creating db"
+                #     exit(0)
                 dbchanged_flag = True
             
         config.repair_atstart = self.repair_atstart.get_active()

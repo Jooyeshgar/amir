@@ -110,7 +110,7 @@ if sys.platform == 'win32':
 	result = kernel32.SetEnvironmentVariableW('LANG', config.locale)
 	del kernel32
 	if result == 0:
-		raise
+		raise Exception
 
 	from ctypes import cdll
 	msvcrt = cdll.msvcrt
@@ -160,7 +160,6 @@ class MainWindow(GObject.GObject):
 
 		
 		# self.loggedIn()
-		self.window = self.builder.get_object("login")
 		self.window = self.builder.get_object("login")
 		self.window.show()
 		self.builder.connect_signals(self)		
@@ -278,9 +277,11 @@ class MainWindow(GObject.GObject):
 			dbName = self.builder.get_object("dbNameEntry").get_text()					
 			handle_database.createDb(dbName , self.builder)	
 			####################### add this new db to config.databases : ########
-			s = setting.Setting()		
-			dbformat = "sqlite"	
-			dbName = dbName+ "." + dbformat			
+			s = setting.Setting()
+			#
+			dbformat = "sqlite"
+			dbFile = "sqlite:///"+dbName + "." + dbformat
+			#
 			iter = s.liststore.append((True, dbName, dbFile))					
 			s.changeCurrentDb(None , s.liststore.get_string_from_iter(iter) , 0)			
 			s.applyDatabaseSetting(False)			
