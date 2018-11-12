@@ -28,7 +28,7 @@ class Setting(GObject.GObject):
         
         self.treeview = self.builder.get_object("databases-table")
         self.treeview.set_direction(Gtk.TextDirection.LTR)
-        self.liststore = Gtk.ListStore(GObject.TYPE_BOOLEAN, str, str)
+        self.liststore = Gtk.ListStore(GObject.TYPE_BOOLEAN, str, str, str , str )      # (isActive , name , type , location ,   full location)
         # if Gtk.widget_get_default_direction() == Gtk.TextDirection.RTL :
         #     halign = 1
         # else:
@@ -48,7 +48,12 @@ class Setting(GObject.GObject):
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
-        column = Gtk.TreeViewColumn(_("Path"), Gtk.CellRendererText(), text=2)
+        column = Gtk.TreeViewColumn(_("Type"), Gtk.CellRendererText(), text=2)
+        # column.set_alignment(halign)
+        column.set_spacing(5)
+        column.set_resizable(True)
+        self.treeview.append_column(column)
+        column = Gtk.TreeViewColumn(_("Path"), Gtk.CellRendererText(), text=3)
         # column.set_alignment(halign)
         column.set_spacing(5)
         column.set_resizable(True)
@@ -58,9 +63,9 @@ class Setting(GObject.GObject):
         i = 0
         for dbpath in config.dblist:
             if i == config.currentdb - 1:
-                self.active_iter = self.liststore.append((True, config.dbnames[i], dbpath))
+                self.active_iter = self.liststore.append((True, config.dbnames[i],handle_database.detectDbType(dbpath) ,handle_database.showDBdetails(dbpath),dbpath))
             else:
-                self.liststore.append((False, config.dbnames[i], dbpath))
+                self.liststore.append((False, config.dbnames[i],handle_database.detectDbType(dbpath),handle_database.showDBdetails(dbpath) ,dbpath) )
             i += 1
         
 #        self.olddb = self.builder.get_object("olddb")
@@ -151,34 +156,40 @@ class Setting(GObject.GObject):
         self.dbname.set_text("")
         result = dialog.run()
         if result == 1 :
-            dbname = self.dbname.get_text()
-            if dbname != "":                    
-                dbType = self.builder.get_object("notebook2").get_current_page()
-                if dbType == 1: #mysql               
+            dbType = self.builder.get_object("notebook2").get_current_page()
+            dbnameEntry = ["dbname" , "dbname1"]
+            dbname = self.builder.get_object(dbnameEntry[dbType]).get_text()
+            if dbname != "":
+                msg = ""
+                if dbType == 1: #mysql
+                    #dbname = self.builder.get_object("dbname1").get_text()
+                    username = self.builder.get_object("username").get_text()
+                    password = self.builder.get_object("password").get_text()
+                    host = self.builder.get_object("host").get_text()
+
                     charset = "charset=utf8"
-                    fullFile = dbType + os.path.join("jooyesh:Freejooyesh@localhost" , self.builder.get_object("filepath").get_text()) + dbname.split(".")[0]+"?%s" %charset
+                    fullFile = "mysql://" + username+":"+password+"@"+host +"/"+dbname+"?" + charset
+                    if  handle_database.checkInputDb(fullFile, dbType) == -2 :
+                        msg = _("Can not connect to mysql database with given information. ")
                 
                 elif dbType == 0:   #sqlite
                     filepath = self.builder.get_object("filepath").get_text()
                     file = os.path.join(filepath, dbname)
-                    msg = ""
                     result = handle_database.checkInputDb(file,dbType)
                     if result == -2:
                         msg = _("Can not connect to the database. The selected database file may not be a sqlite database or be corrupt.")
-                        # elif result == 0:
-                        #     msg = _("The selected file is compatible with older versions of Amir. First convert it to the new version.")
                     elif result == -1 :
                         msg = _("Wrong file format!")
-                    if msg != "" :
-                        msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK, msg)
-                        msgbox.set_title(_("Error opening new database"))
-                        msgbox.run()
-                        msgbox.destroy()
-                        dialog.hide()
-                        return
                     dbname = result
                     fullFile = "sqlite:///" + os.path.join(filepath,dbname)
-                self.liststore.append((False, dbname, fullFile))
+                if msg != "" :
+                    msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK, msg)
+                    msgbox.set_title(_("Error opening new database"))
+                    msgbox.run()
+                    msgbox.destroy()
+                    dialog.hide()
+                    return
+                self.liststore.append((False, dbname,handle_database.detectDbType(fullFile),handle_database.showDBdetails(fullFile), fullFile))
         dialog.hide()
     
     def removeDatabase(self, sender):
@@ -201,7 +212,7 @@ class Setting(GObject.GObject):
                     msgbox.set_title(_("All databases removed"))
                     msgbox.run()
                     msgbox.destroy()
-                    self.active_iter = self.liststore.append((True, dbname, dbfile))
+                    self.active_iter = self.liststore.append((True,handle_database.detectDbType(dbfile), handle_database.showDBdetails(dbfile), dbfile))
                 else:
                     self.active_iter = iter
                     self.liststore.set(iter, 0, True)
@@ -228,7 +239,7 @@ class Setting(GObject.GObject):
         return False
 
     def applyDatabaseSetting(self, checkV=True):
-        active_path = self.liststore.get(self.active_iter, 2)[0]
+        active_path = self.liststore.get(self.active_iter, 4)[0]
         dbchanged_flag = False
         if active_path != config.dblist[config.currentdb - 1]:
             msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL, 
@@ -255,7 +266,7 @@ class Setting(GObject.GObject):
         while iter != None :            
             config.dbnames.append(self.liststore.get(iter, 1)[0])
             path = self.liststore.get(iter, 2)[0]
-            config.dblist.append(self.liststore.get(iter, 2)[0])
+            config.dblist.append(self.liststore.get(iter, 4)[0])
             if path == active_path:
                 config.currentdb = i                
             iter = self.liststore.iter_next(iter)

@@ -14,24 +14,27 @@ def checkInputDb(inputfile, selectedFormat):
 
     dbtypes = (("sqlite", "sqlite:///"),
                ("sql", "mysql://"))  # mysql won't be used in this function. It is just for filling dbTypes !
-    filename = os.path.split(inputfile)  # filename = ( 'directory' , 'file.format')
-    splitByDot = filename[1].split(".")
-    l = len(splitByDot)
-    if l > 1:  # if file name is with format (e.g .sqlite)
-        filetype = splitByDot[l - 1]
-        if filetype == dbtypes[selectedFormat][0]:
-            type = dbtypes[selectedFormat][1]
-            filename = filename[1]
-        else:
-            return -1
-    else:  # if filename is without any format
-        filetype = dbtypes[selectedFormat][0]
-        type = dbtypes[selectedFormat][1]
-        inputfile += "." + filetype
-        filename = filename[1] + "." + filetype
+    filename = ""
+    if selectedFormat != 1:
 
-    if not os.path.isfile(inputfile):
-        return filename
+        filename = os.path.split(inputfile)  # filename = ( 'directory' , 'file.format')
+        splitByDot = filename[1].split(".")
+        l = len(splitByDot)
+        if l > 1:  # if file name is with format (e.g .sqlite)
+            filetype = splitByDot[l - 1]
+            if filetype == dbtypes[selectedFormat][0]:
+                type = dbtypes[selectedFormat][1]
+                filename = filename[1]
+            else:
+                return -1
+        else:  # if filename is without any format
+            filetype = dbtypes[selectedFormat][0]
+            type = dbtypes[selectedFormat][1]
+            inputfile += "." + filetype
+            filename = filename[1] + "." + filetype
+
+        if not os.path.isfile(inputfile):
+            return filename
     try:
         #engine = create_engine(type + inputfile, echo=True)
         database.Database(inputfile, share.config.db_repository, share.config.echodbresult)
@@ -140,6 +143,22 @@ def createDb(dbName, builder):
             # newdb.session.execute(insert)
     newdb.session.commit()
 
+def detectDbType( fullname):
+    format = fullname.split("/")[0]
+    format = format.split(":")[0]
+    return format
 
-def clean(self):
+def showDBdetails(fullname):
+    pieces =  fullname.split("/")
+    format =pieces[0]
+    if format == "mysql:":
+        lastPart = pieces[len(pieces)-1]
+        lastPart = lastPart.split("?")[0]
+        print lastPart
+        return lastPart
+    if format == "sqlite:":
+        print fullname[10:]
+        return fullname[10:]
+
+def clean():
     pass
