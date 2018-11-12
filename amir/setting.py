@@ -127,7 +127,7 @@ class Setting(GObject.GObject):
         self.filechooser.set_current_folder (os.path.dirname (config.db.dbfile))
         result = self.filechooser.run()
         if result == Gtk.ResponseType.OK:
-            self.builder.get_object("filename").set_text(self.filechooser.get_filename())
+            self.builder.get_object("filepath").set_text(self.filechooser.get_filename())
         self.filechooser.hide()
         
 #    def selectOldDatabase(self, sender):
@@ -147,33 +147,38 @@ class Setting(GObject.GObject):
 
     def addDatabase(self, sender):
         dialog = self.builder.get_object("dialog1")
-        dialog.set_title(_("Add Database"))
+        dialog.set_title(_("Add Database"))        
         self.dbname.set_text("")
         result = dialog.run()
         if result == 1 :
             dbname = self.dbname.get_text()
-            if dbname != "":
-                msg = ""
-                result = handle_database.checkInputDb(dbname)
-                if result == -2:
-                    msg = _("Can not connect to the database. The selected database file may not be a sqlite database or be corrupt.")
-                # elif result == 0:
-                #     msg = _("The selected file is compatible with older versions of Amir. First convert it to the new version.")
-                    msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK, msg)
-                    msgbox.set_title(_("Error opening new database"))
-                    msgbox.run()
-                    msgbox.destroy()
-                else :
-                    return
-                    dbType = result
-                    if self.builder.get_object("notebook2").get_current_page() == 1:
-
-                   # if dbType == "mysql://":
-                        charset = "charset=utf8"
-                        fullFile = dbType + os.path.join("jooyesh:Freejooyesh@localhost" , self.builder.get_object("filename").get_text()) + dbname.split(".")[0]+"?%s" %charset
-                    else:
-                        fullFile = dbType + os.path.join(self.builder.get_object("filename").get_text(), dbname)
-                    self.liststore.append((False, self.dbname.get_text(), fullFile))
+            if dbname != "":                    
+                dbType = self.builder.get_object("notebook2").get_current_page()
+                if dbType == 1: #mysql               
+                    charset = "charset=utf8"
+                    fullFile = dbType + os.path.join("jooyesh:Freejooyesh@localhost" , self.builder.get_object("filepath").get_text()) + dbname.split(".")[0]+"?%s" %charset
+                
+                elif dbType == 0:   #sqlite
+                    filepath = self.builder.get_object("filepath").get_text()
+                    file = os.path.join(filepath, dbname)
+                    msg = ""
+                    result = handle_database.checkInputDb(file,dbType)
+                    if result == -2:
+                        msg = _("Can not connect to the database. The selected database file may not be a sqlite database or be corrupt.")
+                        # elif result == 0:
+                        #     msg = _("The selected file is compatible with older versions of Amir. First convert it to the new version.")
+                    elif result == -1 :
+                        msg = _("Wrong file format!")
+                    if msg != "" :
+                        msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK, msg)
+                        msgbox.set_title(_("Error opening new database"))
+                        msgbox.run()
+                        msgbox.destroy()
+                        dialog.hide()
+                        return
+                    dbname = result
+                    fullFile = "sqlite:///" + os.path.join(filepath,dbname)
+                self.liststore.append((False, dbname, fullFile))
         dialog.hide()
     
     def removeDatabase(self, sender):
