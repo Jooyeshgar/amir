@@ -77,12 +77,16 @@ def checkInputDb(inputfile, selectedFormat):
 #     share.mainwin.silent_daialog(_("Backup saved successfully"))
 #     return
 
-def backup(location):
+def backup(location,backupName):
     additionaldata = {"basic": {"Your company":"Jooyeshgar" },"info":{"user":"root","time":"17:38"}}
-    year = date.today().year
-    currentDbName = (share.config.dbnames[share.config.currentdb - 1]).split(".")
-    currentDbName = ''.join(str(e) for e in currentDbName[:len(currentDbName) - 1])
-    newName = currentDbName + str(year)
+    if backupName=="":
+        from datetime import date
+        year = date.today().year
+        currentDbName = (share.config.dbnames[share.config.currentdb - 1]).split(".")
+        currentDbName = ''.join(str(e) for e in currentDbName[:len(currentDbName) - 1])
+        newName = currentDbName + str(year)
+    else:
+        newName = backupName
     dir = os.path.join(location.get_filename(), newName )
     os.mkdir(dir)
     tables = (Bill, Config, Notebook, BankNames, BankAccounts, ProductGroups, Products, Users, Permissions, Subject, Factors,

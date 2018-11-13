@@ -239,17 +239,23 @@ class MainWindow(GObject.GObject):
 		self.dialog.hide()
 		self.dialog = self.builder.get_object("backupWindow")
 		self.numentry.set_activates_default(True)
+		from datetime import date
+		year = date.today().year
+		currentDbName = (share.config.dbnames[share.config.currentdb - 1]).split(".")
+		currentDbName = ''.join(str(e) for e in currentDbName[:len(currentDbName) - 1])
+		newName = currentDbName + str(year)
+		self.builder.get_object("backupName").set_text(newName)
 		res = self.dialog.run()
-		self.dialog.hide()
-		if res == Gtk.ResponseType.OK:
-			if self.numentry.get_text() != "":
-				self.dialog = addeditdoc.AddEditDoc(self.numentry.get_int())
-				self.connect("database-changed", self.dialog.dbChanged)
+		#self.dialog.hide()
+		# if res == Gtk.ResponseType.OK:
+		# 	if self.numentry.get_text() != "":
+		# 		self.dialog = addeditdoc.AddEditDoc(self.numentry.get_int())
+		# 		self.connect("database-changed", self.dialog.dbChanged)
 
 	def doBackup(self, sender):
 		self.dialog.hide()
 		location = self.builder.get_object("backupfilechooserbutton")
-		handle_database.backup(location)
+		handle_database.backup(location, self.builder.get_object("backupName").get_text())
 
 	def restore(self, sender):
 		self.dialog.hide()
