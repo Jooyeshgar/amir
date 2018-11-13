@@ -6,6 +6,9 @@ from sqlalchemy import *
 from amir.database import *
 import database
 import os
+from shutil import make_archive , rmtree
+from sqlalchemy.ext.serializer import dumps,loads
+from datetime import date
 
 def checkInputDb(inputfile, selectedFormat):
     import os, sys
@@ -47,37 +50,35 @@ def checkInputDb(inputfile, selectedFormat):
     return filename
 
 
-def backup1(location):
-    from datetime import date
-    import json
-    a = (Bill,Config, Notebook,BankNames, BankAccounts,ProductGroups, Products,Users, Permissions, Subject, Factors, FactorItems,CustGroups, Customers, Cheque, ChequeHistory)
-    currentDbName = (share.config.dbnames[share.config.currentdb - 1]).split(".")
-    currentDbName = ''.join(str(e) for e in currentDbName[:len(currentDbName)-1] )
-    year = date.today().year
-    newName = currentDbName+str(year)
-    data = {"basic": {"Your company":"Jooyeshgar" },"info":{"user":"root","time":"17:38"}, "table":[]}
+# def backup1(location):
+#     from datetime import date
+#     import json
+#     a = (Bill,Config, Notebook,BankNames, BankAccounts,ProductGroups, Products,Users, Permissions, Subject, Factors, FactorItems,CustGroups, Customers, Cheque, ChequeHistory)
+#     currentDbName = (share.config.dbnames[share.config.currentdb - 1]).split(".")
+#     currentDbName = ''.join(str(e) for e in currentDbName[:len(currentDbName)-1] )
+#     year = date.today().year
+#     newName = currentDbName+str(year)
+#     data = {"basic": {"Your company":"Jooyeshgar" },"info":{"user":"root","time":"17:38"}, "table":[]}
+#
+#     for aa in a :
+#         arrayData = []
+#         q = share.config.db.session.query(aa)
+#         all = q.all()
+#
+#         for row in all :
+#             jsonn = row2dict(row)
+#             arrayData.append(jsonn)
+#
+#         data['table'].append({"name":str(aa.__name__), "rows": arrayData } )
+#     file = open(os.path.join(location.get_filename() ,newName+".amirbkp"),"w")
+#     dump = json.dumps(data )
+#     file.write(dump)
+#     file.close()
+#     share.mainwin.silent_daialog(_("Backup saved successfully"))
+#     return
 
-    for aa in a :
-        arrayData = []
-        q = share.config.db.session.query(aa)
-        all = q.all()
-
-        for row in all :
-            jsonn = row2dict(row)
-            arrayData.append(jsonn)
-
-        data['table'].append({"name":str(aa.__name__), "rows": arrayData } )
-    file = open(os.path.join(location.get_filename() ,newName+".amirbkp"),"w")
-    dump = json.dumps(data )
-    file.write(dump)
-    file.close()
-    share.mainwin.silent_daialog(_("Backup saved successfully"))
-    return
-
-import zipfile
 def backup(location):
-    from sqlalchemy.ext.serializer import  dumps
-    from datetime import date
+    additionaldata = {"basic": {"Your company":"Jooyeshgar" },"info":{"user":"root","time":"17:38"}}
     year = date.today().year
     currentDbName = (share.config.dbnames[share.config.currentdb - 1]).split(".")
     currentDbName = ''.join(str(e) for e in currentDbName[:len(currentDbName) - 1])
@@ -92,12 +93,10 @@ def backup(location):
         q = share.config.db.session.query(table)
         all = q.all()
         serialized_data = dumps(all)
-        file = open(dir +"/" + str(table.__name__),"w")
+        file = open(os.path.join(dir ,str(table.__name__) ),"w")
         file.write(serialized_data)
         file.close()
 
-    print location.get_filename()
-    from shutil import make_archive
     make_archive(
         dir,
         'zip',  # the archive format - or tar, bztar, gztar
@@ -110,51 +109,39 @@ def backup(location):
 
     share.mainwin.silent_daialog(_("Backup saved successfully"))
 
-def zipdir(path, ziph):
-    # ziph is zipfile handle
-    for root, dirs, files in os.walk(path):
-        for file in files:
-            ziph.write(os.path.join(root, file))
-
-def row2dict(row):
-    d = {}
-    for column in row.__table__.columns:
-        d[column.name] = unicode(getattr(row, column.name))
-
-    return d
+# def row2dict(row):
+#     d = {}
+#     for column in row.__table__.columns:
+#         d[column.name] = unicode(getattr(row, column.name))
+#
+#     return d
 
 def restore(location):
-    # import json
-    # file = open(location.get_filename(), "r")
-    # data = json.load(file)
-    # tables = data['table']
-    # for t in tables:
-    #     #     name  = t['name']
-    #     #     rows = t['rows']
-    #     #     for row in rows:
-
     import zipfile
 
     zip_ref = zipfile.ZipFile(location.get_filename(), 'r')
     zip_ref.extractall(location.get_filename().split(".zip")[0])
     zip_ref.close()
-    return
-    from sqlalchemy.ext.serializer import loads
 
+    backupfolder = location.get_filename().split(".zip")[0]
+    dbname = os.path.split(backupfolder)
+    dbname = dbname[len(dbname)-1]
     metadata = MetaData(share.config.db.engine)
-    folder =  os.path.dirname(location.get_filename())
+    folder = os.path.join(backupfolder,dbname)
     a = ( Bill, Config, Notebook, BankNames, BankAccounts, ProductGroups, Products, Users, Permissions, Subject, Factors,
           CustGroups, Customers, Cheque, ChequeHistory )
     for table in a :
-        file = open(location.get_filename().split(".zip")[0]+ "/"+ str(table.__name__), "r")
+        file = open(os.path.join(folder, str(table.__name__)), "r")
         serialized_data = file.read()
         restore_q = loads(serialized_data,  metadata, share.config.db.session)
-     #   share.config.db.session.query(table).delete()
+        share.config.db.session.query(table).delete()
         for row in restore_q:
             share.config.db.session.merge(row)
 
         share.config.db.session.commit()
         file.close()
+    rmtree(backupfolder, ignore_errors=True)
+
     share.mainwin.silent_daialog(_("Backup restored successfully"))
 
 
