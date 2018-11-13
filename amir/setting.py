@@ -238,7 +238,7 @@ class Setting(GObject.GObject):
         self.msgbox.destroy()
         return False
 
-    def applyDatabaseSetting(self, checkV=True):
+    def applyDatabaseSetting(self):
         active_path = self.liststore.get(self.active_iter, 4)[0]
         dbchanged_flag = False
         if active_path != config.dblist[config.currentdb - 1]:
@@ -249,13 +249,9 @@ class Setting(GObject.GObject):
             msgbox.destroy()
             if result == Gtk.ResponseType.CANCEL :
                 return
-            elif checkV:
+            else:
                 config.db.session.close()
-                # try:
                 config.db = database.Database(active_path, config.db_repository, config.echodbresult)
-                # except:
-                #     print "error creating db"
-                #     exit(0)
                 dbchanged_flag = True
             
         config.repair_atstart = self.repair_atstart.get_active()
