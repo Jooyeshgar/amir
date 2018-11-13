@@ -939,22 +939,54 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkMenuItem" id="backupRestore">
+                      <object class="GtkMenuItem" id="database">
                         <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Backup and Restore</property>
-                        <signal name="activate" handler="backupRestore" swapped="no"/>
+                        <property name="label" translatable="yes">Database</property>
+                        <child type="submenu">
+                          <object class="GtkMenu" id="menu12">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <child>
+                              <object class="GtkMenuItem" id="newdb">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">New database</property>
+                                <property name="use_underline">True</property>
+                                <signal name="activate" handler="newDB" swapped="no"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkMenuItem" id="cleandb">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Clean current database</property>
+                                <property name="use_underline">True</property>
+                                <signal name="activate" handler="clean_db" swapped="no"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkMenuItem" id="backup">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Backup database</property>
+                                <property name="use_underline">True</property>
+                                <signal name="activate" handler="backup" swapped="no"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkMenuItem" id="restore">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Restore database</property>
+                                <property name="use_underline">True</property>
+                                <signal name="activate" handler="restore" swapped="no"/>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
                         <accelerator key="F7" signal="activate"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkMenuItem" id="createDb">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Create New Database</property>
-                        <property name="use_underline">True</property>
-                        <signal name="activate" handler="newDB" swapped="no"/>
                       </object>
                     </child>
                   </object>
