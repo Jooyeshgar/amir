@@ -38,11 +38,12 @@ def checkInputDb(inputfile, selectedFormat):
             inputfile += "." + filetype
             filename = filename[1] + "." + filetype
 
-        if not os.path.isfile(inputfile):
-            return filename
+        # if not os.path.isfile(inputfile):
+        #     return filename
     try:
         #engine = create_engine(type + inputfile, echo=True)
         database.Database(inputfile, share.config.db_repository, share.config.echodbresult)
+        print " yesss"
     except exc.DatabaseError:
         logging.debug(sys.exc_info()[0])
         return -2

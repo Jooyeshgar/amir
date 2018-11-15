@@ -150,7 +150,7 @@ class Setting(GObject.GObject):
 #        self.filechooser.hide()
 
 
-    def addDatabase(self, sender):
+    def addDatabase(self, sender=None):
         dialog = self.builder.get_object("dialog1")
         dialog.set_title(_("Add Database"))        
         self.dbname.set_text("")
@@ -182,6 +182,7 @@ class Setting(GObject.GObject):
                         msg = _("Wrong file format!")
                     dbname = result
                     fullFile = "sqlite:///" + os.path.join(filepath,dbname)
+                    print " yes "
                 if msg != "" :
                     msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK, msg)
                     msgbox.set_title(_("Error opening new database"))
@@ -240,8 +241,22 @@ class Setting(GObject.GObject):
 
     def applyDatabaseSetting(self):
         active_path = self.liststore.get(self.active_iter, 4)[0]
+        iter = self.liststore.get_iter_first()
+        now_current = config.currentdb - 1
+        config.dblist = []
+        config.dbnames = []
+        i = 1
+        while iter != None :
+            config.dbnames.append(self.liststore.get(iter, 1)[0])
+            path = self.liststore.get(iter, 2)[0]
+            config.dblist.append(self.liststore.get(iter, 4)[0])
+            if path == active_path:
+                config.currentdb = i
+            database.Database(active_path, config.db_repository, config.echodbresult)
+            iter = self.liststore.iter_next(iter)
+            i += 1
         dbchanged_flag = False
-        if active_path != config.dblist[config.currentdb - 1]:
+        if active_path != config.dblist[now_current]:
             msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL, 
                        _("You have changed the current database, any unsaved data will be lost.\nAre you sure to continue?"))
             msgbox.set_title(_("Are you sure?"))
@@ -255,18 +270,7 @@ class Setting(GObject.GObject):
                 dbchanged_flag = True
             
         config.repair_atstart = self.repair_atstart.get_active()
-        iter = self.liststore.get_iter_first()
-        config.dblist = []
-        config.dbnames = []
-        i = 1
-        while iter != None :            
-            config.dbnames.append(self.liststore.get(iter, 1)[0])
-            path = self.liststore.get(iter, 2)[0]
-            config.dblist.append(self.liststore.get(iter, 4)[0])
-            if path == active_path:
-                config.currentdb = i                
-            iter = self.liststore.iter_next(iter)
-            i += 1
+
         if dbchanged_flag == True:
             self.emit("database-changed", active_path)
             
