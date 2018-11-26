@@ -226,5 +226,25 @@ def showDBdetails(fullname):
     if format == "sqlite:":
         return fullname[10:]
 
-def clean():
-    pass
+def importData(rdb , inputfile):
+    sTables = [Config, Subject, ProductGroups, Products, BankNames, BankAccounts]
+    cTables = [CustGroups, Customers]
+    dTables = [Bill, Notebook, Factors, FactorItems, Cheque , ChequeHistory]
+    if rdb == "rdbClean":
+        return
+    if rdb == 'rdbS':   # structure
+        tables = sTables
+    elif rdb == 'rdbSC':
+        tables = sTables + cTables
+    elif  rdb == 'rdbAll':
+        tables = sTables + cTables + dTables
+    newdb = database.Database(inputfile, share.config.db_repository, share.config.echodbresult)
+    for clas in tables:
+        newdb.session.query(clas).delete()
+        movingData = share.config.db.session.query(clas).all()
+        clas2 = clas.__table__
+        columns = clas2.columns.keys()
+        for d in movingData:
+            data = dict([(str(column), getattr(d, column)) for column in columns])
+            instant = clas(**data)
+            newdb.session.add(instant)

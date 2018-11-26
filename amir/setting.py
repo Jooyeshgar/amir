@@ -162,7 +162,6 @@ class Setting(GObject.GObject):
             if dbname != "":
                 msg = ""
                 if dbType == 1: #mysql
-                    #dbname = self.builder.get_object("dbname1").get_text()
                     username = self.builder.get_object("username").get_text()
                     password = self.builder.get_object("password").get_text()
                     host = self.builder.get_object("host").get_text()
@@ -182,7 +181,6 @@ class Setting(GObject.GObject):
                         msg = _("Wrong file format!")
                     dbname = result
                     fullFile = "sqlite:///" + os.path.join(filepath,dbname)
-                    print " yes "
                 if msg != "" :
                     msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK, msg)
                     msgbox.set_title(_("Error opening new database"))
@@ -191,6 +189,13 @@ class Setting(GObject.GObject):
                     dialog.hide()
                     return
                 self.liststore.append((False, dbname,handle_database.detectDbType(fullFile),handle_database.showDBdetails(fullFile), fullFile))
+                radio = ("rdbClean","rdbS","rdbCS","rdbAll")
+                for rdb in radio:
+                    if self.builder.get_object(rdb).get_active():
+                        chooseData =  radio.index(rdb)
+                handle_database.importData(chooseData,fullFile)
+
+
         dialog.hide()
     
     def removeDatabase(self, sender):

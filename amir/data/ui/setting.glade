@@ -1321,6 +1321,42 @@
                                     <child>
                                       <placeholder/>
                                     </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -1501,6 +1537,42 @@
                                     <child>
                                       <placeholder/>
                                     </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -1537,6 +1609,42 @@
                                     <property name="can_focus">False</property>
                                     <property name="n_rows">3</property>
                                     <property name="n_columns">4</property>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
                                     <child>
                                       <placeholder/>
                                     </child>
@@ -2395,7 +2503,7 @@
             <property name="orientation">vertical</property>
             <property name="spacing">4</property>
             <child>
-              <object class="GtkRadioButton" id="radiobutton4">
+              <object class="GtkRadioButton" id="rdbClean">
                 <property name="label" translatable="yes">Clean Database</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -2411,7 +2519,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkRadioButton" id="radiobutton1">
+              <object class="GtkRadioButton" id="rdbS">
                 <property name="label" translatable="yes">Copy Structure from current database</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -2419,7 +2527,7 @@
                 <property name="xalign">0</property>
                 <property name="active">True</property>
                 <property name="draw_indicator">True</property>
-                <property name="group">radiobutton4</property>
+                <property name="group">rdbClean</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -2428,7 +2536,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkRadioButton" id="radiobutton2">
+              <object class="GtkRadioButton" id="rdbSC">
                 <property name="label" translatable="yes">Copy Structure and Customers</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -2436,7 +2544,7 @@
                 <property name="xalign">0</property>
                 <property name="active">True</property>
                 <property name="draw_indicator">True</property>
-                <property name="group">radiobutton4</property>
+                <property name="group">rdbClean</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -2445,7 +2553,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkRadioButton" id="radiobutton3">
+              <object class="GtkRadioButton" id="rdbAll">
                 <property name="label" translatable="yes">Copy All Data (Backup)</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -2453,7 +2561,7 @@
                 <property name="xalign">0</property>
                 <property name="active">True</property>
                 <property name="draw_indicator">True</property>
-                <property name="group">radiobutton4</property>
+                <property name="group">rdbClean</property>
               </object>
               <packing>
                 <property name="expand">False</property>
