@@ -1,13 +1,17 @@
-from share import share
-from database import Cheque
-from database import ChequeHistory
-from database import BankAccounts
-import dbconfig
-import class_subject
-import dateentry
+from .share import share
+from .database import Cheque
+from .database import ChequeHistory
+from .database import BankAccounts
+from . import dbconfig
+from . import class_subject
+from . import dateentry
 from sqlalchemy.orm.util import outerjoin
 
 config = share.config
+
+import sys
+if sys.version_info > (3,):
+    unicode = str
 
 ## \defgroup Controller
 ## @{

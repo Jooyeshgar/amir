@@ -1,10 +1,10 @@
-from share import share
-from database import Bill
-from database import Notebook
-from database import Subject
-from database import Cheque
-from database import ChequeHistory
-from database import Factors
+from .share import share
+from .database import Bill
+from .database import Notebook
+from .database import Subject
+from .database import Cheque
+from .database import ChequeHistory
+from .database import Factors
 
 import logging
 from datetime import date

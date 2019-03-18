@@ -6,21 +6,26 @@ from sqlalchemy.orm.util import outerjoin , join
 from sqlalchemy.sql import between, and_
 from sqlalchemy.sql.functions import sum , count
 
-from database import *
-from dateentry import *
-from share import share
-from helpers import get_builder
+from .database import *
+from .dateentry import *
+from .share import share
+from .helpers import get_builder
 from gi.repository import Gdk
-from converter import *
+from .converter import *
 from datetime import datetime, timedelta
-import dateentry
-import class_document
-import dbconfig
-import subjects ,customers
-import class_bankaccounts
-import decimalentry , utility
+from . import dateentry
+from . import class_document
+from . import dbconfig
+from . import subjects ,customers
+from . import class_bankaccounts
+from . import decimalentry , utility
 
 import logging
+
+import sys
+if sys.version_info > (3,):
+    unicode = str
+
 dbconf = dbconfig.dbConfig()
 config = share.config
 

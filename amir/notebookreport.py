@@ -10,17 +10,21 @@ from sqlalchemy.sql import between
 from sqlalchemy.sql.functions import sum
 
 
-import numberentry
-import subjects
-import utility
-import printreport
-import previewreport
-from database import *
-from dateentry import *
-from share import share
-from helpers import get_builder
-from previewreport import PreviewReport
-from weasyprintreport import *
+from . import numberentry
+from . import subjects
+from . import utility
+from . import printreport
+from . import previewreport
+from .database import *
+from .dateentry import *
+from .share import share
+from .helpers import get_builder
+from .previewreport import PreviewReport
+from .weasyprintreport import *
+
+import sys
+if sys.version_info > (3,):
+    unicode = str
 
 config = share.config
 

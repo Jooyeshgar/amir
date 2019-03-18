@@ -1,8 +1,8 @@
 #import  warehousing
-import  numberentry
-import  dateentry
-import  subjects
-import  utility
+from . import numberentry
+from . import dateentry
+from . import subjects
+from . import utility
 
 # import  gobject
 # 
@@ -14,10 +14,10 @@ from    sqlalchemy.orm.util         import  outerjoin
 from    sqlalchemy.sql              import  and_, or_
 from    sqlalchemy.sql.functions    import  *
 
-from    helpers                     import  get_builder
-from    share                       import  share
+from    .helpers                    import  get_builder
+from    .share                      import  share
 from    datetime                    import  date
-from    database                    import  *
+from    .database                   import  *
 import gi
 from gi.repository import GObject
 from gi.repository import Gtk

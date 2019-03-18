@@ -9,14 +9,18 @@ from sqlalchemy.orm.util import outerjoin
 from sqlalchemy.sql import between 
 from sqlalchemy.sql.functions import sum
 
-import numberentry
-import utility
-import previewreport
-from database import *
-from dateentry import *
-from share import share
-from helpers import get_builder
-from weasyprintreport import *
+from . import numberentry
+from . import utility
+from . import previewreport
+from .database import *
+from .dateentry import *
+from .share import share
+from .helpers import get_builder
+from .weasyprintreport import *
+
+import sys
+if sys.version_info > (3,):
+    unicode = str
 
 config = share.config
 
@@ -44,7 +48,7 @@ class DocumentReport:
             self.docnumbers=[int(number)]
         elif re.match('^(\d+)-(\d+)$', number) != None:
             m = re.match('^(\d+)-(\d+)$', number)
-            self.docnumbers=range(int(m.group(1)),int(m.group(2))+1)
+            self.docnumbers=list(range(int(m.group(1)),int(m.group(2))+1))
         else:
             self.builder.get_object("message").set_text( _("Please enter number in correct format \nTrue Formats: '2-11' or '2'  ") )
             return

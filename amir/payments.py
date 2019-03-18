@@ -10,20 +10,23 @@ from gi.repository import Gdk
 from sqlalchemy.sql import and_ , or_ , desc
 from sqlalchemy.orm.util import outerjoin
 
-import numberentry
-import decimalentry
-import dateentry
-import subjects
-import utility
-import bankaccountsui
-import customers
-import class_bankaccounts
+from . import numberentry
+from . import decimalentry
+from . import dateentry
+from . import subjects
+from . import utility
+from . import bankaccountsui
+from . import customers
+from . import class_bankaccounts
 
-from database import *
-from share import share
-from helpers import get_builder, comboInsertItems
+from .database import *
+from .share import share
+from .helpers import get_builder, comboInsertItems
 
 import logging
+
+if sys.version_info > (3,):
+    unicode = str
 
 config = share.config
 
@@ -87,7 +90,7 @@ class Payments(GObject.GObject):
 		# add for bankcombo 23/11/92
 		
 		self.bankaccounts_class = class_bankaccounts.BankAccountsClass()
-	 	self.bankCombo = self.builder.get_object('bank_names_combo')
+		self.bankCombo = self.builder.get_object('bank_names_combo')
 		model = Gtk.ListStore(str)
 		self.bankCombo.set_model(model)
 

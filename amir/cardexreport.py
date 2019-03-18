@@ -4,15 +4,19 @@ from datetime import date , timedelta
 import os
 import platform
 
-import utility
-from database import *
-from dateentry import *
-from share import share
-from helpers import get_builder
-import  customers
-import  product
+from . import utility
+from .database import *
+from .dateentry import *
+from .share import share
+from .helpers import get_builder
+from . import  customers
+from . import  product
 from gi.repository import Gdk
-from converter import *
+from .converter import *
+
+import sys
+if sys.version_info > (3,):
+    unicode = str
 
 config = share.config
 

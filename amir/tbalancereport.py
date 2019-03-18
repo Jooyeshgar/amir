@@ -9,14 +9,14 @@ from sqlalchemy.orm.util import outerjoin
 from sqlalchemy.sql import between, and_
 from sqlalchemy.sql.functions import sum
 
-import utility
-import printreport
-import previewreport
-from database import *
-from dateentry import *
-from share import share
-from helpers import get_builder
-from weasyprintreport import *
+from . import utility
+from . import printreport
+from . import previewreport
+from .database import *
+from .dateentry import *
+from .share import share
+from .helpers import get_builder
+from .weasyprintreport import *
 
 config = share.config
 

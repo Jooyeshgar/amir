@@ -1,7 +1,11 @@
 #-*- encoding: utf-8 -*-
 
-from share import share
+from .share import share
 
+import sys
+if sys.version_info > (3,):
+    unicode = str
+    long = int
 
 ## \defgroup Utility
 ## @{

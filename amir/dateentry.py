@@ -4,9 +4,9 @@ from gi.repository import GObject
 import string
 from datetime import date
 
-from utility import LN,getInt,convertToLatin
-from share import share
-from calverter import calverter
+from .utility import LN,getInt,convertToLatin
+from .share import share
+from .calverter import calverter
 
 ## \defgroup Utility
 ## @{

@@ -1,7 +1,7 @@
-import  numberentry
-import  dateentry
-import  subjects
-import  utility
+from . import numberentry
+from . import dateentry
+from . import subjects
+from . import utility
 
 import  gobject
 
@@ -12,15 +12,18 @@ from    sqlalchemy.orm.query        import  aliased
 from    sqlalchemy.sql              import  and_, or_
 from    sqlalchemy.sql.functions    import  *
 
-from    helpers                     import  get_builder
-from    share                       import  share
+from    .helpers                    import  get_builder
+from    .share                      import  share
 from    datetime                    import  date
-from    database                    import  *
+from    .database                   import  *
 import gi
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import GObject
 
+import sys
+if sys.version_info > (3,):
+    unicode = str
 
 config = share.config
 
@@ -97,9 +100,9 @@ class ProductGroup(GObject.GObject):
         result = query.all()
         
         for group in result:
-	    code = group.code
-	    buyId = group.buyId
-	    sellId = group.sellId
+            code = group.code
+            buyId = group.buyId
+            sellId = group.sellId
             if config.digittype == 1:
                 #code = utility.convertToPersian(code)
                 buyId = utility.convertToPersian(buyId)
@@ -119,15 +122,15 @@ class ProductGroup(GObject.GObject):
         
         success = False
         while not success :
-	    result = dialog.run()
-	    if result == 1:
-		grpcode = self.builder.get_object("groupCodeEntry").get_text()
-		grpname = self.builder.get_object("groupNameEntry").get_text()
-		grpbuycode = self.buyCodeEntry.get_text()
-		grpsellcode = self.sellCodeEntry.get_text()
-		success = self.saveProductGroup(unicode(grpcode), unicode(grpname), grpbuycode, grpsellcode, None)
-	    else:
-		break
+            result = dialog.run()
+            if result == 1:
+                grpcode = self.builder.get_object("groupCodeEntry").get_text()
+                grpname = self.builder.get_object("groupNameEntry").get_text()
+                grpbuycode = self.buyCodeEntry.get_text()
+                grpsellcode = self.sellCodeEntry.get_text()
+                success = self.saveProductGroup(unicode(grpcode), unicode(grpname), grpbuycode, grpsellcode, None)
+            else:
+                break
                 
         dialog.hide()
     
@@ -138,7 +141,7 @@ class ProductGroup(GObject.GObject):
         iter = selection.get_selected()[1]
         
         if iter != None :
-	    grpcode = unicode(self.treestore.get(iter, 0)[0])
+            grpcode = unicode(self.treestore.get(iter, 0)[0])
             #if config.digittype == 1:
                 #code = utility.convertToLatin(grpcode)
             #else:
@@ -153,8 +156,8 @@ class ProductGroup(GObject.GObject):
             (group, buy_code, sell_code) = query.filter(ProductGroups.code == grpcode).first()
             name = group.name
             if config.digittype == 1:
-		buy_code = utility.convertToPersian(buy_code)
-		sell_code = utility.convertToPersian(sell_code)
+                buy_code = utility.convertToPersian(buy_code)
+                sell_code = utility.convertToPersian(sell_code)
             
             self.builder.get_object("groupCodeEntry").set_text(grpcode)
             self.builder.get_object("groupNameEntry").set_text(name)
@@ -162,16 +165,16 @@ class ProductGroup(GObject.GObject):
             self.sellCodeEntry.set_text(sell_code)
             
             success = False
-	    while not success :
-		result = dialog.run()
-		if result == 1:
-		    grpcode = self.builder.get_object("groupCodeEntry").get_text()
-		    grpname = self.builder.get_object("groupNameEntry").get_text()
-		    grpbuycode = self.buyCodeEntry.get_text()
-		    grpsellcode = self.sellCodeEntry.get_text()
-		    success = self.saveProductGroup(unicode(grpcode), unicode(grpname), grpbuycode, grpsellcode, iter)
-		else:
-		    break
+            while not success :
+                result = dialog.run()
+                if result == 1:
+                    grpcode = self.builder.get_object("groupCodeEntry").get_text()
+                    grpname = self.builder.get_object("groupNameEntry").get_text()
+                    grpbuycode = self.buyCodeEntry.get_text()
+                    grpsellcode = self.sellCodeEntry.get_text()
+                    success = self.saveProductGroup(unicode(grpcode), unicode(grpname), grpbuycode, grpsellcode, iter)
+                else:
+                    break
                 
             dialog.hide()
                 
@@ -246,13 +249,13 @@ class ProductGroup(GObject.GObject):
         query = config.db.session.query(Subject).select_from(Subject)
         buy_sub = query.filter(Subject.code == buy_code).first()
         if buy_sub == None:
-	    msg += _("Buying code is not valid.\n")
+            msg += _("Buying code is not valid.\n")
         
         query = config.db.session.query(Subject).select_from(Subject)
         sell_sub = query.filter(Subject.code == sell_code).first()
         if sell_sub == None:
-	    msg += _("Selling code is not valid.\n")
-	    
+            msg += _("Selling code is not valid.\n")
+
         if msg != "":
             msgbox =  Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.CLOSE, msg)
             msgbox.set_title(_("Invalid group properties"))
@@ -377,7 +380,7 @@ class ProductGroup(GObject.GObject):
         subject_win.connect("subject-selected", self.buyingSubjectSelected)
         
     def buyingSubjectSelected(self, sender, id, code, name):
-	if config.digittype == 1:
+        if config.digittype == 1:
             code = utility.convertToPersian(code)
         self.buyCodeEntry.set_text(code)
         sender.window.destroy()
@@ -389,7 +392,7 @@ class ProductGroup(GObject.GObject):
         subject_win.connect("subject-selected", self.sellingingSubjectSelected)
         
     def sellingingSubjectSelected(self, sender, id, code, name):
-	if config.digittype == 1:
+        if config.digittype == 1:
             code = utility.convertToPersian(code)
         self.sellCodeEntry.set_text(code)
         sender.window.destroy()

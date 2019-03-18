@@ -1,27 +1,31 @@
 import  gobject
 
 #import  warehousing
-import  class_subject
-import  decimalentry
-import  numberentry
-import  dateentry
-import  subjects
-import  customergroup
-import    utility                     
-from    dbconfig                    import dbconf
+from    .                           import class_subject
+from    .                           import decimalentry
+from    .                           import numberentry
+from    .                           import dateentry
+from    .                           import subjects
+from    .                           import customergroup
+from    .                           import utility
+from    .dbconfig                   import dbconf
 
 from    sqlalchemy.orm              import  sessionmaker, join
 from    sqlalchemy.orm.util         import  outerjoin
 from    sqlalchemy.sql              import  and_, or_
 from    sqlalchemy.sql.functions    import  *
 
-from    helpers                     import  get_builder
-from    share                       import  share
+from    .helpers                    import  get_builder
+from    .share                      import  share
 from    datetime                    import  date
-from    database                    import  *
+from    .database                   import  *
 import gi
 from gi.repository import Gtk
 from gi.repository import GObject
+
+import sys
+if sys.version_info > (3,):
+    unicode = str
 
 gi.require_version('Gtk', '3.0')
 config = share.config
