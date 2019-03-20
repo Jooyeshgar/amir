@@ -24,12 +24,13 @@ class ClassCheque:
     #
     # @return the cheque information by specefic id /masoud
     def get_cheque_info(self,id):
-	##id = unicode(id)
-	##return config.db.session.query(Cheque).select_from(Cheque).filter(Cheque.chqSerial == id).first()
-    ##
-    #
-    # @return list of spendable cheques or None
+        ##id = unicode(id)
+        ##return config.db.session.query(Cheque).select_from(Cheque).filter(Cheque.chqSerial == id).first()
+        ##
+        #
+        # @return list of spendable cheques or None
         pass
+        
     def get_spendable_cheques(self):
         li = config.db.session.query(Cheque,BankAccounts).select_from(outerjoin(Cheque,BankAccounts,Cheque.chqAccount == BankAccounts.accId)).filter(Cheque.chqStatus == 4).all()
         return li

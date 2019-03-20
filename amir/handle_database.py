@@ -203,7 +203,7 @@ def createDb(dbName, builder):
                 data = dict([(str(column), getattr(d, column)) for column in columns])
                 instant = clas(**data)
                 newdb.session.add(instant)
-            # # 	or :
+            # #     or :
             # moved = (clas2.delete())
             # newdb.session.execute(moved)
             # print [c.name for c in clas2.columns]

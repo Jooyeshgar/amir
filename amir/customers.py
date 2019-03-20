@@ -219,9 +219,9 @@ class Customer(customergroup.Group):
     ## save customer to database
     #@return: -1 on error, 0 for success
     def saveCustomer(self):
-        custCode			= utility.convertToLatin(self.builder.get_object("custCodeEntry").get_text())
-        custGrp 			= self.custgrpentry.get_int()
-        custName 			= unicode(self.builder.get_object("custNameEntry").get_text())
+        custCode            = utility.convertToLatin(self.builder.get_object("custCodeEntry").get_text())
+        custGrp             = self.custgrpentry.get_int()
+        custName            = unicode(self.builder.get_object("custNameEntry").get_text())
         custEcnmcsCode      = unicode(self.builder.get_object("custEcnmcsCodeEntry").get_text())
         custPersonalCode    = unicode(self.builder.get_object("custPrsnalCodeEntry").get_text())
 
@@ -538,12 +538,12 @@ class Customer(customergroup.Group):
             self.treeview.set_cursor(path, None, False)
             self.treeview.grab_focus()'''
             
-	#Called when a row of customer table get activated by mouse double-click or Enter key
+    # Called when a row of customer table get activated by mouse double-click or Enter key
     def selectCustomerFromList(self, treeview, path, view_column):
         iter = self.treestore.get_iter(path)
         if self.treestore.iter_parent(iter) != None:
             code = utility.convertToLatin(self.treestore.get_value(iter, 0))
-			
+
             query = config.db.session.query(Customers).select_from(Customers)
             query = query.filter(Customers.custCode == code)
             customer_id = query.first().custId

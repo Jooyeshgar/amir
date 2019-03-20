@@ -106,7 +106,7 @@ class AmirConfig:
             if self.options.verbose == 2:
                 self.echodbresult = True
 
-	    # get pathname absolute or relative
+        # get pathname absolute or relative
         if self.options.pathname == None:
             pathname = os.path.join(os.path.dirname(__file__) , __amir_data_directory__)
             logging.debug('Project data directory. "%s"' % pathname)

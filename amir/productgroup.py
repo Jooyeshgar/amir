@@ -329,12 +329,12 @@ class ProductGroup(GObject.GObject):
         self.emit("group-selected", group_id, code)
         
     def on_button_press_event(self, sender, event):
-    	if event.type == Gdk.EventType._2BUTTON_PRESS:
-    	    selection = self.treeview.get_selection()
-    	    iter = selection.get_selected()[1]
-    	    if iter != None :
+        if event.type == Gdk.EventType._2BUTTON_PRESS:
+            selection = self.treeview.get_selection()
+            iter = selection.get_selected()[1]
+            if iter != None :
                 self.emit("item-activated")
-    	    else:
+            else:
                 self.emit("blank-activated")
 
     def on_key_release_event(self, sender, event):
