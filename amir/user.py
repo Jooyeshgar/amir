@@ -28,31 +28,31 @@ config = share.config
 #       read:   4
 #       update: 8
 #       delete: 16
-#       
+#
 # Warehouse:
 #       create: 32
 #       read:   64
 #       update: 128
 #       delete: 256
-#       
+#
 # Accounting:
 #       create: 512
 #       read:   1024
 #       update: 2048
 #       delete: 4096
-#       
+#
 # Reports:
 #       create: 8192
 #       read:   16384
 #       update: 32768
 #       delete: 65536
-#       
+#
 # Checque:
 #       create: 131072
 #       read:   262144
 #       update: 524288
 #       delete: 1048576
-#       
+#
 # Config:
 #       create: 2097152
 #       read:   4194304
@@ -63,15 +63,15 @@ config = share.config
 
 class User(GObject.GObject):
     subjecttypes = ["Debtor", "Creditor", "Both"]
-    
+
     def __init__ (self, ledgers_only=False, parent_id=[0,], multiselect=False):
         GObject.GObject.__init__(self)
 
         self.builder = get_builder("user")
         self.window = self.builder.get_object("viewUsers")
-        
+
         self.userTreeview = self.builder.get_object("usersTreeview")
-            
+
         self.userTreestore = Gtk.TreeStore(int, str, str, str)
         column = Gtk.TreeViewColumn(_("ID"), Gtk.CellRendererText(), text=0)
 
@@ -93,19 +93,19 @@ class User(GObject.GObject):
         column.set_spacing(5)
         column.set_resizable(True)
         self.userTreeview.append_column(column)
-        
+
         #Find top level ledgers (with parent_id equal to 0)
         result = config.db.session.query(Users.id, Users.name, Users.username, Users.permission).all()
 
-        for a in result :   
-            permissionName = config.db.session.query(Permissions.name).filter(Permissions.id == a.permission).first()   
+        for a in result :
+            permissionName = config.db.session.query(Permissions.name).filter(Permissions.id == a.permission).first()
             if permissionName:
                 iter = self.userTreestore.append(None, (a.id, a.name, a.username, permissionName[0]))
-        
+
         if ledgers_only == True:
             btn = self.builder.get_object("addsubtoolbutton")
             btn.hide()
-        
+
         self.userTreeview.set_model(self.userTreestore)
         self.userTreestore.set_sort_column_id(0, Gtk.SortType.ASCENDING)
         self.window.show_all()
@@ -129,7 +129,7 @@ class User(GObject.GObject):
 
     def on_cancel_clicked(self, sender):
         self.window.hide()
-        
+
     def addUser(self, sender):
         self.window = self.builder.get_object("newUserWindow")
         self.builder.connect_signals(self)
@@ -147,11 +147,11 @@ class User(GObject.GObject):
         self.saveNewUser(unicode(name),unicode(username), unicode(password), type, None)
 
     def selectGroup(self,sender=0,edit=None):
-        self.session = config.db.session    
+        self.session = config.db.session
         # self.Document = class_document.Document()
-        
+
         query   = self.session.query(Factors.Id).select_from(Factors)
-        lastId  = query.order_by(Factors.Id.desc()).first()         
+        lastId  = query.order_by(Factors.Id.desc()).first()
         if not lastId:
             lastId  = 0
         else:
@@ -169,7 +169,7 @@ class User(GObject.GObject):
         column.set_spacing(5)
         column.set_resizable(True)
         self.groupTreeview.append_column(column)
-        
+
         result = config.db.session.query(Permissions.id, Permissions.name).all()
         for a in result :
             iter = self.groupTreestore.append(None, (int(a.id), str(a.name)))
@@ -207,7 +207,7 @@ class User(GObject.GObject):
         permission = self.userTreestore.get(iter, 3)[0]
 
         entry = self.builder.get_object("nameEdit")
-        entry.set_text(name)        
+        entry.set_text(name)
         entry = self.builder.get_object("usernameEdit")
         entry.set_text(username)
         entry = self.builder.get_object("permissionEdit")
@@ -223,14 +223,14 @@ class User(GObject.GObject):
         self.groupId = permissionId[0]
         self.saveEditUser(userId, unicode(name.get_text()),unicode(username.get_text()), unicode(password.get_text()), type, None)
         self.window.hide()
-    
+
     def deleteUser(self, sender):
         selection = self.userTreeview.get_selection()
         iter = selection.get_selected()[1]
         if iter != None :
             Subject1 = aliased(Subject, name="s1")
             Subject2 = aliased(Subject, name="s2")
-            
+
             code = convertToLatin(self.userTreestore.get(iter, 0)[0])
             row = config.db.session.query(Users).filter(Users.id == code).first()
             config.db.session.delete(row)
@@ -240,21 +240,21 @@ class User(GObject.GObject):
     def deleteGroup(self, sender):
         selection = self.groupTreeview.get_selection()
         iter = selection.get_selected()[1]
-        if iter != None :           
+        if iter != None :
             code = convertToLatin(self.groupTreestore.get(iter, 0)[0])
             row = config.db.session.query(Permissions).filter(Permissions.id == code).first()
             config.db.session.delete(row)
             config.db.session.commit()
             self.groupTreestore.remove(iter)
-    
+
     def saveNewUser(self, name, username, password, type, iter):
         user = Users(name, username, password, self.groupId)
         config.db.session.add(user)
-        
+
         config.db.session.commit()
-        
+
         child = self.userTreestore.append(iter, (user.id, name, username, self.groupName))
-        
+
         self.temppath = self.userTreestore.get_path(child)
         self.userTreeview.scroll_to_cell(self.temppath, None, False, 0, 0)
         self.userTreeview.set_cursor(self.temppath, None, False)
@@ -290,12 +290,12 @@ class User(GObject.GObject):
         name = self.builder.get_object("nameEntry")
         permission = Permissions(unicode(name.get_text()), str(permissionResult))
         config.db.session.add(permission)
-        
+
         config.db.session.commit()
 
         child = self.groupTreestore.append(None, (int(permission.id), str(permission.name)))
         self.window.hide()
-        
+
         self.temppath = self.userTreestore.get_path(child)
         self.window.hide()
 
@@ -310,7 +310,7 @@ class User(GObject.GObject):
         self.groupId = permissionId[0]
         self.setPermission(id)
         self.window = self.builder.get_object("permissionWindow")
-        self.builder.connect_signals(self)  
+        self.builder.connect_signals(self)
         entry = self.builder.get_object("nameEntry")
         entry.set_text(permissionName)
         okButton = self.builder.get_object("okButton")
@@ -343,7 +343,7 @@ class User(GObject.GObject):
         part = code[0:i]
         iter = self.treestore.get_iter_first()
         parent = iter
-        
+
         while iter:
             res = self.match_func(iter, (0, part))
             if res < 0:
@@ -365,14 +365,14 @@ class User(GObject.GObject):
 
         if not iter:
             iter = parent
-            
+
         if iter:
             path = self.treestore.get_path(iter)
             self.treeview.expand_to_path(path)
             self.treeview.scroll_to_cell(path, None, False, 0, 0)
             self.treeview.set_cursor(path, None, False)
             self.treeview.grab_focus()
-     
+
     def on_key_release_event(self, sender, event):
         expand = 0
         selection = self.treeview.get_selection()
@@ -386,13 +386,13 @@ class User(GObject.GObject):
                     expand = 1
                 else:
                     expand = -1
-                    
+
             if Gdk.keyval_name(event.keyval) == "Right":
                 if self.treeview.get_direction() != Gtk.TextDirection.RTL:
                     expand = 1
                 else:
                     expand = -1
-             
+
             if expand == 1:
                 if self.treestore.iter_has_child(iter):
                     path = self.treestore.get_path(iter)
@@ -402,7 +402,7 @@ class User(GObject.GObject):
                 path = self.treestore.get_path(iter)
                 if self.treeview.row_expanded(path):
                     self.treeview.collapse_row(path)
-                else: 
+                else:
                     parent = self.treestore.iter_parent(iter)
                     if parent != None:
                         path = self.treestore.get_path(parent)
@@ -410,7 +410,7 @@ class User(GObject.GObject):
                         self.treeview.set_cursor(path, None, False)
                         self.treeview.grab_focus()
                 return
-            
+
     def selectGroupFromList(self, treeview, path, view_column):
         selection = self.groupTreeview.get_selection()
         if selection.get_mode() == Gtk.SelectionMode.MULTIPLE:
@@ -449,4 +449,4 @@ GObject.signal_new("group-selected", User, GObject.SignalFlags.RUN_LAST,
                    None, (GObject.TYPE_INT, GObject.TYPE_STRING, GObject.TYPE_STRING))
 GObject.signal_new("subject-multi-selected", User, GObject.SignalFlags.RUN_LAST,
                    None, (GObject.TYPE_PYOBJECT,))
-   
+

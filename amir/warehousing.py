@@ -21,40 +21,40 @@ if sys.version_info > (3,):
 
 ###################################################################################
 ##
-## Class Warehousing:    Displays all the warehousing registered products. 
+## Class Warehousing:    Displays all the warehousing registered products.
 ##
 ###################################################################################
 class Warehousing(GObject.GObject):
-    
+
     #--------------------------------------------------------------------
     #    initializing method
     #--------------------------------------------------------------------
     def __init__(self):
         """
-        This class is created in order to have all the forms and view of 
+        This class is created in order to have all the forms and view of
         products and groups together.
-        Groups are viewed through the "viewGroup" method and added by "addNewGroup" 
-        method. 
+        Groups are viewed through the "viewGroup" method and added by "addNewGroup"
+        method.
         Products are viewed by the "ViewProducts" method and added by "addNewProduct"
         method.
         """
         GObject.GObject.__init__(self)
         self.builder    = get_builder("warehousing")
         self.session    = config.db.session
-        
+
         self.proListStore   = Gtk.TreeStore(str, str, str, str, str)
         self.grpListStore   = Gtk.TreeStore(str, str, str, str)
 #        self.grpListStore   = Gtk.ListStore(str, str, str, str)
-        
+
         self.groupsList     = []
         self.productsList   = []
-        
+
         self.grpIterDict    = {}
         self.proGrpDict     = {}
         self.proProDict     = {}
-        
+
         self.builder.connect_signals(self)
-        
+
     #--------------------------------------------------------------------
     #    viewProducts():
     #--------------------------------------------------------------------
@@ -63,43 +63,43 @@ class Warehousing(GObject.GObject):
         This class will show the products and groups in a tree view, letting the user
         to view the current entries and edit or delete them.
         """
-        
+
         #----- Getting the ui from the file "addProduct.glade" in the data/ui folder.
         self.viewProsWin    = self.builder.get_object("viewProductsWindow")
-        
+
         # ------------- OBJECTS OF THE FORM:
         self.productTreeView    = self.builder.get_object("productsTreeView")
         self.proListStore.clear()
 
-        column      = Gtk.TreeViewColumn(_("Code"), 
+        column      = Gtk.TreeViewColumn(_("Code"),
                                             Gtk.CellRendererText(),
                                             text = 0)
         column.set_spacing(5)
         column.set_resizable(True)
         self.productTreeView.append_column(column)
-        
-        column      = Gtk.TreeViewColumn(_("Name"), 
+
+        column      = Gtk.TreeViewColumn(_("Name"),
                                             Gtk.CellRendererText(),
                                             text = 1)
         column.set_spacing(5)
         column.set_resizable(True)
         self.productTreeView.append_column(column)
-        
-        column      = Gtk.TreeViewColumn(_("Quantity"), 
+
+        column      = Gtk.TreeViewColumn(_("Quantity"),
                                             Gtk.CellRendererText(),
                                             text = 2)
         column.set_spacing(5)
         column.set_resizable(True)
         self.productTreeView.append_column(column)
-        
-        column      = Gtk.TreeViewColumn(_("Purchase Price"), 
+
+        column      = Gtk.TreeViewColumn(_("Purchase Price"),
                                             Gtk.CellRendererText(),
                                             text = 3)
         column.set_spacing(5)
         column.set_resizable(True)
         self.productTreeView.append_column(column)
 
-        column      = Gtk.TreeViewColumn(_("Selling Price"), 
+        column      = Gtk.TreeViewColumn(_("Selling Price"),
                                             Gtk.CellRendererText(),
                                             text = 4)
         column.set_spacing(5)
@@ -108,44 +108,44 @@ class Warehousing(GObject.GObject):
 
         columnsInSetting    = 0
         # Later we can read this from the setting, which helps us show the needed values of the user
-        
-        if columnsInSetting: 
-            column  = Gtk.TreeViewColumn(_("Accounting Group"), 
-                                            Gtk.CellRendererText(), 
+
+        if columnsInSetting:
+            column  = Gtk.TreeViewColumn(_("Accounting Group"),
+                                            Gtk.CellRendererText(),
                                             text = 5)
             column.set_spacing(5)
             column.set_resizable(True)
             self.productTreeView.append_column(column)
-    
-            column  = Gtk.TreeViewColumn(_("Product Location"), 
+
+            column  = Gtk.TreeViewColumn(_("Product Location"),
                                             Gtk.CellRendererText(),
                                             text = 6)
             column.set_spacing(5)
             column.set_resizable(True)
             self.productTreeView.append_column(column)
-            
+
             column  = Gtk.TreeViewColumn(_("Quantity Warning"),
                                             Gtk.CellRendererText(),
                                             text = 7)
             column.set_spacing(5)
             column.set_resizable(True)
             self.productTreeView.append_column(column)
-    
-            column  = Gtk.TreeViewColumn(_("Over-Sell"), 
+
+            column  = Gtk.TreeViewColumn(_("Over-Sell"),
                                             Gtk.CellRendererText(),
                                             text = 8)
             column.set_spacing(5)
             column.set_resizable(True)
             self.productTreeView.append_column(column)
-    
-            column  = Gtk.TreeViewColumn(_("Discount Formula"), 
+
+            column  = Gtk.TreeViewColumn(_("Discount Formula"),
                                             Gtk.CellRendererText(),
                                             text = 9)
             column.set_spacing(5)
             column.set_resizable(True)
             self.productTreeView.append_column(column)
-    
-            column  = Gtk.TreeViewColumn(_("Description"), 
+
+            column  = Gtk.TreeViewColumn(_("Description"),
                                             Gtk.CellRendererText(),
                                             text = 10)
             column.set_spacing(5)
@@ -155,9 +155,9 @@ class Warehousing(GObject.GObject):
         self.productTreeView.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
         self.productTreeView.set_model(self.proListStore)
         self.populateProList()
-        
+
         self.viewProsWin.show_all()
-        
+
     #--------------------------------------------------------------------
     # populateProList():    Method to populate the Product View List
     #--------------------------------------------------------------------
@@ -200,7 +200,7 @@ class Warehousing(GObject.GObject):
                 self.oldGrpCd   = code
                 self.editIter   = iter
                 self.addGroup(code = code)
-        
+
     #--------------------------------------------------------------------
     # delProGrp():    Method to delete group/product from the database
     #--------------------------------------------------------------------
@@ -227,7 +227,7 @@ class Warehousing(GObject.GObject):
                     self.session.commit()
                     self.proListStore.remove(iter)
                     del self.proProDict[ code ]
-                
+
             else:       #selected iter is a group
                 if self.proListStore.iter_has_child(iter):
                     msg     = _("Selected Group has some related products and cannot be deleted.")
@@ -267,7 +267,7 @@ class Warehousing(GObject.GObject):
         This method is creating a user interface for the client to add products
         to the warehousing system. User needs to fill the data into the form and
         the dialog will check the data and save them into database if it is OK.
-        
+
         """
         #----- Getting the ui from the file "addProduct.glade" in the data/ui folder.
         self.addProWin  = self.builder.get_object("addProductWindow")
@@ -279,42 +279,42 @@ class Warehousing(GObject.GObject):
         else:
             title       = "Add New Product"
             self.proEditFlg = False
-            
+
         self.addProWin.set_title(title)
 
         # ------------- OBJECTS OF THE FORM:
         self.proLoc     = self.builder.get_object("proLoc")
-        
+
         self.proCode    = Gtk.Entry()
         box             = self.builder.get_object("proCodeHBox")
         box.add(self.proCode)
         self.proCode.show()
-        
+
         self.proName    = self.builder.get_object("proName")
         self.proDesc    = self.builder.get_object("proDesc")
-        
-        self.proQnty    = numberentry.NumberEntry() 
+
+        self.proQnty    = numberentry.NumberEntry()
         box             = self.builder.get_object("qntyHBox")
         box.add(self.proQnty)
         self.proQnty.show()
-        
+
         self.accGroup   = Gtk.Entry()
         box             = self.builder.get_object("accGrpHBox")
         box.add(self.accGroup)
         self.accGroup.show()
-        
+
         self.oversell   = self.builder.get_object("oversell")
         self.discFormula    = self.builder.get_object("discFormula")
         self.qntyWarning    = numberentry.NumberEntry()
         box                 = self.builder.get_object("qntyWrnHBox")
         box.add(self.qntyWarning)
         self.qntyWarning.show()
-        
+
         self.sellingPrice   = numberentry.NumberEntry()
         box                 = self.builder.get_object("sellPriceHBox")
         box.add(self.sellingPrice)
         self.sellingPrice.show()
-        
+
         self.purchasePrice  = numberentry.NumberEntry()
         box                 = self.builder.get_object("purchPriceHBox")
         box.add(self.purchasePrice)
@@ -337,11 +337,11 @@ class Warehousing(GObject.GObject):
             if group.oversell:
                 self.oversell.set_active(True)
             else:
-                self.oversell.set_active(False)                
+                self.oversell.set_active(False)
             self.purchasePrice.set_text(str(group.purchacePrice))
             self.sellingPrice.set_text(str(group.sellingPrice))
             self.discFormula.set_text(group.discountFormula)
-            
+
         else:
             self.proLoc.set_text("")
             self.proCode.set_text("")
@@ -354,7 +354,7 @@ class Warehousing(GObject.GObject):
             self.sellingPrice.set_text("")
             self.purchasePrice.set_text("")
             self.oversell.set_active(False)
-            
+
     #--------------------------------------------------------------------
     # save():    method to invoke when Save Button is pressed.
     #--------------------------------------------------------------------
@@ -373,9 +373,9 @@ class Warehousing(GObject.GObject):
         if not pCode:
             errorstr = _("There must be a \"Code\" for each product.")
             msgbox = Gtk.MessageDialog(self.addProWin,
-                                                Gtk.DialogFlags.MODAL, 
-                                                Gtk.MessageType.WARNING, 
-                                                Gtk.ButtonsType.OK, 
+                                                Gtk.DialogFlags.MODAL,
+                                                Gtk.MessageType.WARNING,
+                                                Gtk.ButtonsType.OK,
                                                 errorstr)
             msgbox.set_title(_("Missing Data"))
             msgbox.run()
@@ -396,34 +396,34 @@ class Warehousing(GObject.GObject):
             errorstr = _("No \"Accounting Group\" is selected for this product.")
             msgbox = Gtk.MessageDialog(self.addProWin,
                                                 Gtk.DialogFlags.MODAL,
-                                                Gtk.MessageType.WARNING, 
-                                                Gtk.ButtonsType.OK, 
+                                                Gtk.MessageType.WARNING,
+                                                Gtk.ButtonsType.OK,
                                                 errorstr)
             msgbox.set_title(_("Missing Data"))
             msgbox.run()
             msgbox.destroy()
-            return            
+            return
         else:
             query   = self.session.query(Products).select_from(Products)
             cde     = query.filter(Products.code == pCode).first()
             nam     = query.filter(Products.name == pName).first()
-            
+
             acgQ    = self.session.query(Groups).select_from(Groups)
             acgQ    = acgQ.filter(Groups.code == pAccc).first()
             if not acgQ:
                 errorstr = _("\"Accounting Group\" which you selected does not exist.")
                 msgbox = Gtk.MessageDialog(self.addProWin,
                                             Gtk.DialogFlags.MODAL,
-                                            Gtk.MessageType.WARNING, 
-                                            Gtk.ButtonsType.OK, 
+                                            Gtk.MessageType.WARNING,
+                                            Gtk.ButtonsType.OK,
                                             errorstr)
                 msgbox.set_title(_("Wrong Accounting Group ID"))
                 msgbox.run()
                 msgbox.destroy()
-                return            
+                return
             else:
                 pAccg    = acgQ.id
-            
+
             if self.proEditFlg:
                 query   = self.session.query(Products).select_from(Products)
                 codeChk = query.filter(Products.code == pCode).first()
@@ -440,7 +440,7 @@ class Warehousing(GObject.GObject):
                         prnm    = False
                     else:
                         prnm    = True
-                        
+
                 dup     = False
                 err     = ""
                 if prcd and prnm:
@@ -452,7 +452,7 @@ class Warehousing(GObject.GObject):
                 elif prnm:
                     err = _("The product \"Name\" is used for another product before.")
                     dup = True
-                    
+
                 if dup:
                     msgbox  = Gtk.MessageDialog(self.addProWin,
                                                     Gtk.DialogFlags.MODAL,
@@ -462,8 +462,8 @@ class Warehousing(GObject.GObject):
                     msgbox.run()
                     msgbox.destroy()
                     return
-                
-                self.editProduct(pCode, pName, pWarn, pOver, pPLoc, pQnty, 
+
+                self.editProduct(pCode, pName, pWarn, pOver, pPLoc, pQnty,
                                     pPurc, pSell, pAccg, pDesc, pDisc)
 
             else:
@@ -478,7 +478,7 @@ class Warehousing(GObject.GObject):
                 elif nam:
                     err = _("The product \"Name\" is used for another product before.")
                     dup = True
-                
+
                 if dup:
                     msgbox  = Gtk.MessageDialog(self.addProWin, Gtk.DialogFlags.MODAL,
                                                     Gtk.MessageType.WARNING,
@@ -488,7 +488,7 @@ class Warehousing(GObject.GObject):
                     msgbox.destroy()
                     return
                 else:
-                    self.saveProduct(pCode, pName, pWarn, pOver, pPLoc, pQnty, 
+                    self.saveProduct(pCode, pName, pWarn, pOver, pPLoc, pQnty,
                                         pPurc, pSell, pAccg, pDesc, pDisc)
 
     #--------------------------------------------------------------------
@@ -496,8 +496,8 @@ class Warehousing(GObject.GObject):
     #--------------------------------------------------------------------
     def saveProduct(self, code, name, warn, over, pLoc,
                         qnty, purc, sell, accg, desc, disc):
-        """ 
-        This method is to be used for saving the new products into the database. 
+        """
+        This method is to be used for saving the new products into the database.
         There is a need for the error and warning messages if the values are having any problem.
         Arguments:
             code    = Code which is entered for the product
@@ -512,41 +512,41 @@ class Warehousing(GObject.GObject):
             desc    = Product Description
             disc    = Discount Formula
         Output:
-            message to show if the product is saved correctly, under which number, 
+            message to show if the product is saved correctly, under which number,
         """
         warning     = False
         saveFlg     = True
         warnMsg     = ""
-        
+
         if not over:
             if not qnty:
                 warnMsg = _("* \"Quantity\" is not entered or is set to 0. (Over-Sell is off)")
                 qnty    = 0
                 warning = True
-            
+
         if not purc:
             if warnMsg:
                 warnMsg += "\n"
             warnMsg += _("* \"Purchase Price\" is not entered or is set to 0.")
             purc    = 0
             warning = True
-            
+
         if not sell:
             if warnMsg:
                 warnMsg += "\n"
             warnMsg += _("* \"Selling Price\" is not entered or is set to 0.")
             sell    = 0
             warning = True
-        
+
         if warning:
             if warnMsg:
                 warnMsg += "\n\n The above value(s) will be set to 0."
                 warnMsg += " Press \"Ok\" if you want to edit them later"
                 warnMsg += " or \"Cancel\" to edit them now."
-            msgbox  = Gtk.MessageDialog(self.addProWin, 
-                                            Gtk.DialogFlags.MODAL, 
-                                            Gtk.MessageType.INFO, 
-                                            Gtk.ButtonsType.OK_CANCEL, 
+            msgbox  = Gtk.MessageDialog(self.addProWin,
+                                            Gtk.DialogFlags.MODAL,
+                                            Gtk.MessageType.INFO,
+                                            Gtk.ButtonsType.OK_CANCEL,
                                             warnMsg)
             msgbox.set_title(_("Warning: Missing Data"))
             answer  = msgbox.run()
@@ -555,30 +555,30 @@ class Warehousing(GObject.GObject):
                 saveFlg = True
             elif answer == Gtk.ResponseType.CANCEL:
                 saveFlg = False
-        
+
         if saveFlg:
-            pro     = Products(code, name, warn, over, pLoc, qnty, 
+            pro     = Products(code, name, warn, over, pLoc, qnty,
                                 purc, sell, accg, desc, disc)
             self.session.add(pro)
             self.session.commit()
-            
+
             parGrpCd    = self.session.query(Groups).select_from(Groups)
             parGrpCd    = parGrpCd.filter(Groups.id == accg).first().code
             if parGrpCd in self.proGrpDict:
                 parIter = self.proGrpDict[ parGrpCd ]
-                proIter = self.proListStore.append(parIter, 
+                proIter = self.proListStore.append(parIter,
                                             (code,name,qnty,purc,sell))
                 self.proProDict[ code ] = proIter
 
             self.cancelAddProduct()
-            
+
     #--------------------------------------------------------------------
     # editProduct():    method to save values in the database.
     #--------------------------------------------------------------------
     def editProduct(self, code, name, warn, over, pLoc,
                         qnty, purc, sell, accg, desc, disc):
-        """ 
-        This method is to be used for saving the edited products into the database. 
+        """
+        This method is to be used for saving the edited products into the database.
         There is a need for the error and warning messages if the values are having any problem.
         Arguments:
             code    = Code which is entered for the product
@@ -593,41 +593,41 @@ class Warehousing(GObject.GObject):
             desc    = Product Description
             disc    = Discount Formula
         Output:
-            message to show if the product is saved correctly, under which number, 
+            message to show if the product is saved correctly, under which number,
         """
         warning     = False
         saveFlg     = True
         warnMsg     = ""
-        
+
         if not over:
             if not qnty:
                 warnMsg = _("* \"Quantity\" is not entered or is set to 0. (Over-Sell is off)")
                 qnty    = 0
                 warning = True
-            
+
         if not purc:
             if warnMsg:
                 warnMsg += "\n"
             warnMsg += _("* \"Purchase Price\" is not entered or is set to 0.")
             purc    = 0
             warning = True
-            
+
         if not sell:
             if warnMsg:
                 warnMsg += "\n"
             warnMsg += _("* \"Selling Price\" is not entered or is set to 0.")
             sell    = 0
             warning = True
-        
+
         if warning:
             if warnMsg:
                 warnMsg += "\n\n The above value(s) will be set to 0."
                 warnMsg += " Press \"Ok\" if you want to edit them later"
                 warnMsg += " or \"Cancel\" to edit them now."
-            msgbox  = Gtk.MessageDialog(self.addProWin, 
-                                            Gtk.DialogFlags.MODAL, 
-                                            Gtk.MessageType.INFO, 
-                                            Gtk.ButtonsType.OK_CANCEL, 
+            msgbox  = Gtk.MessageDialog(self.addProWin,
+                                            Gtk.DialogFlags.MODAL,
+                                            Gtk.MessageType.INFO,
+                                            Gtk.ButtonsType.OK_CANCEL,
                                             warnMsg)
             msgbox.set_title(_("Warning: Missing Data"))
             answer  = msgbox.run()
@@ -636,23 +636,23 @@ class Warehousing(GObject.GObject):
                 saveFlg = True
             elif answer == Gtk.ResponseType.CANCEL:
                 saveFlg = False
-        
+
         if saveFlg:
             iter    = self.proEditIter
             id      = self.proOldId
             query   = self.session.query(Products).select_from(Products).filter(Products.id==id)
             oldAcId = query.first().accGroup
             newAcId = accg
-            updateVals  = {     Products.code : code, 
+            updateVals  = {     Products.code : code,
                                 Products.name : name,
-                                Products.qntyWarning : warn, 
-                                Products.oversell : over, 
-                                Products.location : pLoc, 
-                                Products.quantity : qnty, 
-                                Products.purchacePrice : purc, 
-                                Products.sellingPrice : sell, 
-                                Products.accGroup : accg, 
-                                Products.productDesc : desc, 
+                                Products.qntyWarning : warn,
+                                Products.oversell : over,
+                                Products.location : pLoc,
+                                Products.quantity : qnty,
+                                Products.purchacePrice : purc,
+                                Products.sellingPrice : sell,
+                                Products.accGroup : accg,
+                                Products.productDesc : desc,
                                 Products.discountFormula : disc         }
 
             edit    = query.update(updateVals)
@@ -662,25 +662,25 @@ class Warehousing(GObject.GObject):
                 newParCd    = newParCd.filter(Groups.id == newAcId).first().code
                 newParIter  = self.proGrpDict[newParCd]
                 self.proListStore.remove(iter)
-                newIter = self.proListStore.append(newParIter, 
+                newIter = self.proListStore.append(newParIter,
                                                 (code,name,qnty,purc,sell))
                 del self.proProDict[self.oldProCd]
                 self.proProDict[ code ] = newIter
-                
+
             else:
                 self.proListStore.set(iter, 0,code, 1,name, 2,qnty, 3,purc, 4,sell)
                 del self.proProDict[self.oldProCd]
                 self.proProDict[ code ] = iter
 
             self.cancelAddProduct()
-            
+
     #--------------------------------------------------------------------
     # slctAccGrp():    method to call "select accounting group" dialog.
     #--------------------------------------------------------------------
     def slctAccGrp(self, sender  = 0):
         grps_win    = self.viewGroups()
         self.handid = self.connect("group-selected", self.setSelectedID)
-        
+
     #--------------------------------------------------------------------
     # setSelectedID():    method to put the selected accounting group into place
     #--------------------------------------------------------------------
@@ -690,7 +690,7 @@ class Warehousing(GObject.GObject):
         self.accGroupID     = id
         sender.viewGrpWin.destroy()
         self.disconnect(self.handid)
-    
+
     #--------------------------------------------------------------------
     # cancelAddProduct():    method to cancel the product entry.
     #--------------------------------------------------------------------
@@ -710,10 +710,10 @@ class Warehousing(GObject.GObject):
     def viewGroups(self):
         """
         This method will show the groups (only) in a tree view, letting the user
-        to view the current entries and edit or delete them, and also select 
+        to view the current entries and edit or delete them, and also select
         group for the product.
         """
-        
+
         #----- Getting the ui from the file "addProduct.glade" in the data/ui folder.
         self.builder    = get_builder("warehousing")
         self.viewGrpWin = self.builder.get_object("viewGroupsWindow")
@@ -721,30 +721,30 @@ class Warehousing(GObject.GObject):
         # ------------- OBJECTS OF THE FORM:
         self.groupsTreeView = self.builder.get_object("GroupsTreeView")
         self.grpListStore.clear()
-        self.groupsTreeView.set_model(self.grpListStore)          
-        
-        column      = Gtk.TreeViewColumn(_("Code"), 
+        self.groupsTreeView.set_model(self.grpListStore)
+
+        column      = Gtk.TreeViewColumn(_("Code"),
                                             Gtk.CellRendererText(),
                                             text = 0)
         column.set_spacing(5)
         column.set_resizable(True)
         self.groupsTreeView.append_column(column)
-        
-        column      = Gtk.TreeViewColumn(_("Name"), 
+
+        column      = Gtk.TreeViewColumn(_("Name"),
                                             Gtk.CellRendererText(),
                                             text = 1)
         column.set_spacing(5)
         column.set_resizable(True)
         self.groupsTreeView.append_column(column)
-        
-        column      = Gtk.TreeViewColumn(_("Buy ID"), 
+
+        column      = Gtk.TreeViewColumn(_("Buy ID"),
                                             Gtk.CellRendererText(),
                                             text = 2)
         column.set_spacing(5)
         column.set_resizable(True)
         self.groupsTreeView.append_column(column)
-        
-        column      = Gtk.TreeViewColumn(_("Sell ID"), 
+
+        column      = Gtk.TreeViewColumn(_("Sell ID"),
                                             Gtk.CellRendererText(),
                                             text = 3)
         column.set_spacing(5)
@@ -753,10 +753,10 @@ class Warehousing(GObject.GObject):
 
 
         self.groupsTreeView.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
-        
+
         self.populateGrpList()
         self.viewGrpWin.show_all()
-        
+
         self.builder.connect_signals(self)
 
     #--------------------------------------------------------------------
@@ -765,7 +765,7 @@ class Warehousing(GObject.GObject):
     def chkEdit(self, sender = 0):
         selection = self.groupsTreeView.get_selection()
         iter = selection.get_selected()[1]
-        
+
         if iter:
             code = self.grpListStore.get(iter, 0)[0]
             self.editIter       = iter
@@ -779,7 +779,7 @@ class Warehousing(GObject.GObject):
     def delGroup(self, sender = 0):
         selection = self.groupsTreeView.get_selection()
         iter = selection.get_selected()[1]
-        
+
         if iter:
             code        = self.grpListStore.get(iter, 0)[0]
             query       = self.session.query(Groups).select_from(Groups)
@@ -839,18 +839,18 @@ class Warehousing(GObject.GObject):
         else:
             title       = _("Add New Group")
             self.editFlg    = False
-        
+
         self.addGrpWindow   = None
-        
+
         self.addGrpWindow   = self.builder.get_object("addGroup")
         self.addGrpWindow.set_title(title)
-        
+
         self.groupCodeEntry     = Gtk.Entry()#numberentry.NumberEntry()
         box     = self.builder.get_object("grpCodeHBox")
         box.add(self.groupCodeEntry)
-      
+
         self.groupNameEntry     = self.builder.get_object("groupName")
-        
+
         self.groupSellIDEntry   = Gtk.Entry()
         box     = self.builder.get_object("sellIdHBox")
         box.add(self.groupSellIDEntry)
@@ -858,7 +858,7 @@ class Warehousing(GObject.GObject):
         self.groupBuyIDEntry    = Gtk.Entry()
         box     = self.builder.get_object("buyIdHBox")
         box.add(self.groupBuyIDEntry)
-        
+
         self.addGrpWindow.show_all()
         self.builder.connect_signals(self)
 
@@ -872,7 +872,7 @@ class Warehousing(GObject.GObject):
             self.groupNameEntry.set_text(str(group.name))
             self.groupSellIDEntry.set_text(str(gscd))
             self.groupBuyIDEntry.set_text(str(gbcd))
-            
+
         else:
             self.groupCodeEntry.set_text("")
             self.groupNameEntry.set_text("")
@@ -908,32 +908,32 @@ class Warehousing(GObject.GObject):
                 errMsg  += "\n"
             errMsg  += "* Group Buy Id is empty."
             empErr  = True
-            
+
         if empErr:
             errMsg  += "\n\nThere should be a valid value for above field(s)."
-            msgbox  = Gtk.MessageDialog(self.addGrpWindow, 
-                                            Gtk.DialogFlags.MODAL, 
-                                            Gtk.MessageType.WARNING, 
-                                            Gtk.ButtonsType.OK, 
+            msgbox  = Gtk.MessageDialog(self.addGrpWindow,
+                                            Gtk.DialogFlags.MODAL,
+                                            Gtk.MessageType.WARNING,
+                                            Gtk.ButtonsType.OK,
                                             errMsg)
             msgbox.set_title(_("Data Missing!"))
             msgbox.run()
             msgbox.destroy()
             return
-         
+
         grpSelId    = self.session.query(Subject).select_from(Subject)
         grpSelId    = grpSelId.filter(Subject.code == groupSellId).first()
         if not grpSelId:
             errorstr = _("\"Selling Group ID\" which you selected is not a valid ID.")
             msgbox = Gtk.MessageDialog(self.addGrpWindow,
                                             Gtk.DialogFlags.MODAL,
-                                            Gtk.MessageType.WARNING, 
-                                            Gtk.ButtonsType.OK, 
+                                            Gtk.MessageType.WARNING,
+                                            Gtk.ButtonsType.OK,
                                             errorstr)
             msgbox.set_title(_("Invalid Selling ID"))
             msgbox.run()
             msgbox.destroy()
-            return            
+            return
         else:
             groupSellId    = grpSelId.id
 
@@ -943,13 +943,13 @@ class Warehousing(GObject.GObject):
             errorstr = _("\"Buying Group ID\" which you selected is not a valid ID.")
             msgbox = Gtk.MessageDialog(self.addGrpWindow,
                                             Gtk.DialogFlags.MODAL,
-                                            Gtk.MessageType.WARNING, 
-                                            Gtk.ButtonsType.OK, 
+                                            Gtk.MessageType.WARNING,
+                                            Gtk.ButtonsType.OK,
                                             errorstr)
             msgbox.set_title(_("Invalid Buying ID"))
             msgbox.run()
             msgbox.destroy()
-            return            
+            return
         else:
             groupBuyId  = grpBuyId.id
 
@@ -969,7 +969,7 @@ class Warehousing(GObject.GObject):
                     name    = False
                 else:
                     name    = True
-                    
+
             dup     = False
             err     = ""
             if code and name:
@@ -981,7 +981,7 @@ class Warehousing(GObject.GObject):
             elif name:
                 err = _("The group \"Name\" is used for another group before.")
                 dup = True
-                
+
             if dup:
                 msgbox  = Gtk.MessageDialog(self.addGrpWindow,
                                                 Gtk.DialogFlags.MODAL,
@@ -991,14 +991,14 @@ class Warehousing(GObject.GObject):
                 msgbox.run()
                 msgbox.destroy()
                 return
-            
+
             self.editGroup(groupCode, groupName, groupSellId, groupBuyId)
 
         else:
             query   = self.session.query(Groups).select_from(Groups)
             code    = query.filter(Groups.code == groupCode).first()
             name    = query.filter(Groups.name == groupName).first()
-                
+
             dup     = False
             err     = ""
             if code and name:
@@ -1010,7 +1010,7 @@ class Warehousing(GObject.GObject):
             elif name:
                 err = _("The group \"Name\" is used for another group before.")
                 dup = True
-                
+
             if dup:
                 msgbox  = Gtk.MessageDialog(self.addGrpWindow,
                                                 Gtk.DialogFlags.MODAL,
@@ -1020,9 +1020,9 @@ class Warehousing(GObject.GObject):
                 msgbox.run()
                 msgbox.destroy()
                 return
-            
+
             self.saveGroup(groupCode, groupName, groupSellId, groupBuyId)
-            
+
 #        if not self.editFlg:
 #            self.saveGroup(groupCode, groupName, groupSellId, groupBuyId)
 #        else:
@@ -1032,14 +1032,14 @@ class Warehousing(GObject.GObject):
     # saveGroup():    Method to save the group information in the database
     #--------------------------------------------------------------------
     def saveGroup(self, code, name, sellId  = 1, buyId   = 2):
-        """ 
-        This method is to be used for saving the new group into the database. 
-        
+        """
+        This method is to be used for saving the new group into the database.
+
         Arguments:
             code    = Code which is entered for the group
             name    = The group's name
             sellID  = The selling ID
-            buyID   = The buying ID 
+            buyID   = The buying ID
         """
 
         grp     = Groups(code, name, buyId, sellId)
@@ -1049,19 +1049,19 @@ class Warehousing(GObject.GObject):
         sell    = self.session.query(Subject).select_from(Subject).filter(Subject.id==sellId).first().code
         grpLS   = (code, name, buy, sell)
         giter   = self.grpListStore.append(None, grpLS)
-        piter   = self.proListStore.append(None, 
+        piter   = self.proListStore.append(None,
                                             (code, name, "", "", ""))
         self.grpIterDict[ code ]    = giter
         self.proGrpDict[ code ]     = piter
         self.cancel()
-   
+
     #--------------------------------------------------------------------
     # editGroup():    Method to edit the group in TreeView and database
     #--------------------------------------------------------------------
     def editGroup(self, code, name, sellId  = 1, buyId   = 2):
-        """ 
-        This method is to be used for saving the edited group into the database. 
-        
+        """
+        This method is to be used for saving the edited group into the database.
+
         Arguments:
             code    = Code which is entered for the group
             name    = The group's name
@@ -1086,14 +1086,14 @@ class Warehousing(GObject.GObject):
             del self.proGrpDict[ str(query.first().code) ]
             self.proGrpDict[ code ]    = proIter
 
-        updateVals  = {         Groups.code : code, 
+        updateVals  = {         Groups.code : code,
                                 Groups.name : name,
                                 Groups.sellId : sellId,
                                 Groups.buyId : buyId        }
         edit    = query.update(updateVals)
         self.session.commit()
 
-        
+
 #        glst    = [ code, name, bid, sid ]
 #        plst    = [ code, name, "", "", "" ]
 #        for i in range(len(glst)):
@@ -1104,7 +1104,7 @@ class Warehousing(GObject.GObject):
 #            print "Products Row:\t",i,"\tValue:\t",plst[i]
 #            self.proListStore.set_value(iter, i, plst[i])
         self.cancel()
-        
+
     #--------------------------------------------------------------------
     # cancel():    Method to cancel the adding group
     #--------------------------------------------------------------------
@@ -1114,7 +1114,7 @@ class Warehousing(GObject.GObject):
         self.groupBuyIDEntry.destroy()
         self.addGrpWindow.hide()
         return True
-     
+
     #--------------------------------------------------------------------
     # sellectSellId():    Method to invoke when sellect sell id button is pressed
     #--------------------------------------------------------------------
@@ -1124,14 +1124,14 @@ class Warehousing(GObject.GObject):
         if code != '':
             subject_win.highlightSubject(code)
         subject_win.connect("subject-selected", self.sellIdSelected)
-        
+
     #--------------------------------------------------------------------
     # sellIdSelected():    Method to set the sell ID in the entry
     #--------------------------------------------------------------------
     def sellIdSelected(self, sender, id, code, name):
         self.groupSellIDEntry.set_text(code)
-        sender.window.destroy()        
-    
+        sender.window.destroy()
+
     #--------------------------------------------------------------------
     # sellectSellId():    Method to invoke when sellect buy id button is pressed
     #--------------------------------------------------------------------
@@ -1141,13 +1141,13 @@ class Warehousing(GObject.GObject):
         if code != '':
             subject_win.highlightSubject(code)
         subject_win.connect("subject-selected", self.buyIdSelected)
-        
+
     #--------------------------------------------------------------------
     # buyIdSelected():    Method to set the buy ID in the entry
     #--------------------------------------------------------------------
     def buyIdSelected(self, sender, id, code, name):
         self.groupBuyIDEntry.set_text(code)
-        sender.window.destroy()        
+        sender.window.destroy()
 
     #--------------------------------------------------------------------
     # selectGroupFromList()
@@ -1156,7 +1156,7 @@ class Warehousing(GObject.GObject):
         iter = self.grpListStore.get_iter(path)
         code = self.grpListStore.get(iter, 0)[0]
         name = self.grpListStore.get(iter, 1)[0]
-        
+
         query = self.session.query(Groups).select_from(Groups)
         query = query.filter(Groups.code == code)
         grp_id = query.first().id
@@ -1176,19 +1176,19 @@ class Warehousing(GObject.GObject):
             query = self.session.query(Products).select_from(Products)
             query = query.filter(Products.code == code)
             pro_id = query.first().id
-    
+
             self.emit("product-selected", pro_id, code)
         else:
-            pass        
+            pass
 
 #----------------------------------------------------------------------
 # Creating New Signal to return the selected group when double clicked!
 #----------------------------------------------------------------------
 GObject.type_register(Warehousing)
-GObject.signal_new("group-selected", Warehousing, 
-                    GObject.SignalFlags.RUN_LAST, None, 
+GObject.signal_new("group-selected", Warehousing,
+                    GObject.SignalFlags.RUN_LAST, None,
                     (GObject.TYPE_INT, GObject.TYPE_STRING))
 
-GObject.signal_new("product-selected", Warehousing, 
-                    GObject.SignalFlags.RUN_LAST, None, 
+GObject.signal_new("product-selected", Warehousing,
+                    GObject.SignalFlags.RUN_LAST, None,
                     (GObject.TYPE_INT, GObject.TYPE_STRING))

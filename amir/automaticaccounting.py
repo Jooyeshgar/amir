@@ -58,21 +58,21 @@ class AutomaticAccounting:
     def __init__(self):
         #self.mode = None
         self.liststore = None
-        
+
         # Chosen Type
         self.type_index = None
         self.from_id = self.to_id = -1
         self.from_code = self.to_code = ""
         self.from_name = self.to_name = ""
-        
+
         self.builder = helpers.get_builder('automaticaccounting')
         self.builder.connect_signals(self)
 
         #self.chequeui = chequeui.ChequeUI(self.builder.get_object('non-cash-payment-label'),self.builder.get_object('spend-cheque-label'))
-        self.addChequeui = None 
-        self.spendChequeui = payments.Payments(0 , 0 , True) 
+        self.addChequeui = None
+        self.spendChequeui = payments.Payments(0 , 0 , True)
         self.spendChequeui.fillChequeTable()
-        self.spendChequeui.connect("payments-changed", self.update_spend_cheque_label ) 
+        self.spendChequeui.connect("payments-changed", self.update_spend_cheque_label )
         # Date entry
         date_box = self.builder.get_object('date-box')
         self.date_entry = dateentry.DateEntry()
@@ -128,20 +128,20 @@ class AutomaticAccounting:
 
         if iter == None:
             return
-        
+
         # self.chequeui.new_cheques = []
         # self.chequeui.spend_cheques = []
         model = combo.get_model()
         index = model.get(iter, 0)[0]
         self.type_index = int(index)
-        
+
         save_button = self.builder.get_object('save-button')
-        
+
         non_cash, discount, spend_cheque = self.type_configs[self.type_index][:3]
 
         self.builder.get_object('discount-button').set_sensitive(discount)
         self.discount_entry.set_sensitive(discount)
-        
+
         self.builder.get_object('list-cheque-button').set_sensitive(spend_cheque)
         self.builder.get_object('spend-cheque-label').set_sensitive(spend_cheque)
 
@@ -166,7 +166,7 @@ class AutomaticAccounting:
             self.to_id =  query.id
             self.to_entry.set_text(query.name)
             self.to_code = query.code
-            self.to_name = query.name            
+            self.to_name = query.name
         elif self.type_index in [0,4] :
             self.builder.get_object('to-button').set_sensitive(False)
             query = share.config.db.session.query(Subject).select_from(Subject)
@@ -187,7 +187,7 @@ class AutomaticAccounting:
             customerEntry = self.to_entry
         else:
             #mode = 'other'
-            sellMode = 1    # daryafti 
+            sellMode = 1    # daryafti
             customerEntry = self.from_entry
         self.addChequeui = payments.Payments(0 , sellMode , False)
         self.addChequeui.fillChequeTable()
@@ -197,7 +197,7 @@ class AutomaticAccounting:
     def on_from_clicked(self, button):
         entry  = self.from_entry
         dbconf = dbconfig.dbConfig()
-        
+
         #3:from subj?    5:from key
         if self.type_index is not None and self.type_configs[self.type_index][3]:
             if self.type_configs[self.type_index][5] == None:
@@ -209,7 +209,7 @@ class AutomaticAccounting:
                     if key == 'cash':
                         val = dbconf.get_value(key)
                         sub = share.config.db.session.query(Subject).filter(Subject.id == val).first()
-                        pID = sub.parent_id 
+                        pID = sub.parent_id
                         if pID !=0:
                             parent_id.append(pID)
                         else:
@@ -299,9 +299,9 @@ class AutomaticAccounting:
 
         self.builder.get_object('non-cash-payment-label').set_text(str(total_value))
         self.on_cash_payment_entry_change()
-        
-    
-    def update_spend_cheque_label(self, sender , total_value):        
+
+
+    def update_spend_cheque_label(self, sender , total_value):
         self.builder.get_object("spend-cheque-label").set_text(str(total_value))
         self.on_cash_payment_entry_change()
 
@@ -356,11 +356,11 @@ class AutomaticAccounting:
         self.addChequeui. showPayments(self.win)
 
     def on_spend_cheque_buttun_clicked(self,button):
-        cl_cheque = class_cheque.ClassCheque()                
-        self.spendChequeui. showPayments(self.win)              
-        
+        cl_cheque = class_cheque.ClassCheque()
+        self.spendChequeui. showPayments(self.win)
+
     def on_save_button_clicked(self, button):
-        share.config.db.session.rollback() 
+        share.config.db.session.rollback()
         result = {}
         result['type']                  = self.type_index
         result['total_value']           = self.total_credit_entry.get_float()
@@ -380,21 +380,21 @@ class AutomaticAccounting:
         if self.liststore == None:
             type(result['from'])
             if self.type_index is not None and self.type_configs[self.type_index][3]:
-                mode = 'our'                
+                mode = 'our'
             else:
-                mode = 'other'            
+                mode = 'other'
             desc = result['desc']
             if desc =="":
-                desc = self.type_names[self.type_index][1]            
+                desc = self.type_names[self.type_index][1]
             document = class_document.Document()
             if result['cash_payment']  :
                 document.add_notebook(result['from'], result['cash_payment'], unicode(desc))
                 document.add_notebook(result['to']  ,  -result['cash_payment'], unicode(desc ))
             if result['discount'] :
-                document.add_notebook(dbconf.get_int('sell-discount'), -result['discount'], desc)            
+                document.add_notebook(dbconf.get_int('sell-discount'), -result['discount'], desc)
 
             if self.type_configs[self.type_index][3] == True: # from is subject
-                custSubj = self.to_id                
+                custSubj = self.to_id
             else: # from is customer
                 custSubj = self.from_id
             print(custSubj)
@@ -404,7 +404,7 @@ class AutomaticAccounting:
                 if mode == 'our':
                     document.add_cheque(dbconf.get_int('our_cheque'),custSubj,(cheque.chqAmount), cheque.chqDesc, cheque.chqId)
                 else:
-                    document.add_cheque(dbconf.get_int('other_cheque'),custSubj, -cheque.chqAmount, cheque.chqDesc, cheque.chqId)            
+                    document.add_cheque(dbconf.get_int('other_cheque'),custSubj, -cheque.chqAmount, cheque.chqDesc, cheque.chqId)
 
             cl_cheque = class_cheque.ClassCheque()
 
@@ -412,7 +412,7 @@ class AutomaticAccounting:
             for sp_cheque in self.spendChequeui.chequesList:
                 cl_cheque.update_status(sp_cheque.chqId,5 , customer_id)
                 document.add_cheque(custSubj, dbconf.get_int('other_cheque'), -sp_cheque.chqAmount , unicode(_('Cheque No. %s spended') % sp_cheque.chqSerial) , sp_cheque.chqId)
-                    
+
             result = document.save()
 
             if result < 0:
@@ -422,7 +422,7 @@ class AutomaticAccounting:
                 return
 
 
-            for cheque in self.addChequeui.chequesList:                
+            for cheque in self.addChequeui.chequesList:
                 cl_cheque.add_cheque(cheque.chqAmount, cheque.chqWrtDate, cheque.chqDueDate,
                                      cheque.chqSerial, cheque.chqStatus,
                                      customer_id, cheque.chqAccount,
@@ -430,7 +430,7 @@ class AutomaticAccounting:
             cl_cheque.save()
             cl_cheque.save_cheque_history(self.current_time)
             self.on_destroy(self.builder.get_object('general'))
-            
+
             share.mainwin.silent_daialog(_('successfully added. Document number : %d') % document.number)
 
 
@@ -467,7 +467,7 @@ class AutomaticAccounting:
         #win.set_position(Gtk.WindowPosition.CENTER)
         self.win.set_destroy_with_parent(True)
         self.win.show_all()
-        
+
 
 
 ## @}

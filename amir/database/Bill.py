@@ -19,14 +19,14 @@ class Bill(Base):
     date            = Column(Date, nullable = False)   #date of transactions in the bill
    # TotalCost       = Column(Float,nullable=False);
     permanent       = Column(Boolean, ColumnDefault(False), nullable = False)
-    
-    
+
+
     def __init__(self, number, creation_date, lastedit_date, date , permanent , id=1 ):
         self.number = number
         self.creation_date = creation_date
         self.lastedit_date = lastedit_date
         self.date = date
-        self.permanent = permanent  
+        self.permanent = permanent
       #  self.TotalCost = TotalCost
 
 ## @}

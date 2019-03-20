@@ -22,9 +22,9 @@ class BankAccounts(Base):
     accBankAddress  = Column( Unicode(100), nullable = True     )
     accBankPhone    = Column( Unicode(40),  nullable = True     )
     accBankWebPage  = Column( Unicode(100),       nullable = True     )
-    accDesc         = Column( Unicode(200), nullable = True     ) 
-    
-    def __init__( self, accName, accNumber, accType, accOwner, accBank, accBankBranch, 
+    accDesc         = Column( Unicode(200), nullable = True     )
+
+    def __init__( self, accName, accNumber, accType, accOwner, accBank, accBankBranch,
                   accBankAddress, accBankPhone, accBankWebPage, accDesc , accId=1 ):
 
         self.accName        = accName

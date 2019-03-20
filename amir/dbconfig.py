@@ -17,16 +17,16 @@ class dbConfig:
         'custSubject'   : '4',
         'bank'          : '1',
         'cash'          :'14',
-        'buy'           :'17', 
-        'sell'          :'18', 
+        'buy'           :'17',
+        'sell'          :'18',
         'sell-discount' :'25',
-        'tax'           :'33', 
+        'tax'           :'33',
         'partners'      : '8',
         'cost'          : '2',
         'bank-wage'     : '31',
         'sell-adds'     : '7',
-        #"fund": '9', 
-        #"acc-receivable": '10', 
+        #"fund": '9',
+        #"acc-receivable": '10',
         #"commission": '11',
     }
 
@@ -51,7 +51,7 @@ class dbConfig:
         if query.first():
             return True
         return False
-    
+
     def set_value(self, key, val, commit=True):
         val = unicode(val)
         query = config.db.session.query(database.Config)
@@ -63,7 +63,7 @@ class dbConfig:
     def add(self, key, mode, desc):
         if self.exists(key):
             raise Exception('Key already exists')
-        
+
         row = database.Config(unicode(key), u'', unicode(desc), mode, 2)
         config.db.session.add(row)
         config.db.session.commit()
@@ -72,7 +72,7 @@ class dbConfig:
         query = config.db.session.query(database.Config).filter(database.Config.cfgId == id).first()
         config.db.session.delete(query)
         config.db.session.commit()
-        
+
     def get_int(self ,key):
         try:
             return int(self.get_value(key))
@@ -93,5 +93,5 @@ try:
     dbconf
 except NameError:
     dbconf = dbConfig()
-    
+
 ## @}

@@ -38,7 +38,7 @@ class Customer(customergroup.Group):
 
     def __init__(self):
         customergroup.Group.__init__(self)
-    
+
         self.custgrpentry = numberentry.NumberEntry(10)
         self.builder.get_object("custGrpBox").add(self.custgrpentry)
         self.custgrpentry.show()
@@ -50,19 +50,19 @@ class Customer(customergroup.Group):
         self.boxCommissionRateEntry = decimalentry.DecimalEntry(10)
         self.builder.get_object("boxCommissionRateEntry").add(self.boxCommissionRateEntry)
         self.boxCommissionRateEntry.show()
-        
+
         self.boxDiscRateEntry = decimalentry.DecimalEntry(10)
         self.builder.get_object("boxDiscRateEntry").add(self.boxDiscRateEntry)
         self.boxDiscRateEntry.show()
-                
-    
-    ## show list of customer            
+
+
+    ## show list of customer
     def viewCustomers(self, readonly=False):
         self.window = self.builder.get_object("viewCustomersWindow")
         if readonly :
             self.costmenu = self.builder.get_object("customersToolbar")
             self.costmenu.hide()
-            
+
         self.treeview = self.builder.get_object("customersTreeView")
         self.treestore = Gtk.TreeStore(str, str, str, str, str)
         self.treestore.clear()
@@ -74,14 +74,14 @@ class Customer(customergroup.Group):
         column.set_sort_column_id(0)
         column.set_sort_indicator(True)
         self.treeview.append_column(column)
-        
+
         column = Gtk.TreeViewColumn(_("Name"), Gtk.CellRendererText(), text = 1)
         column.set_spacing(5)
         column.set_resizable(True)
         column.set_sort_column_id(1)
         column.set_sort_indicator(True)
         self.treeview.append_column(column)
-        
+
         column = Gtk.TreeViewColumn(_("Debt"), Gtk.CellRendererText(), text = 2)
         column.set_spacing(5)
         column.set_resizable(True)
@@ -96,11 +96,11 @@ class Customer(customergroup.Group):
         column.set_spacing(5)
         column.set_resizable(True)
         self.treeview.append_column(column)
-        
+
         self.treeview.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
         #self.treestore.set_sort_func(0, self.sortGroupIds)
         self.treestore.set_sort_column_id(0, Gtk.SortType.ASCENDING)
-        
+
         #Fill groups treeview
         query = config.db.session.query(CustGroups, Customers)
         query = query.select_from(outerjoin(CustGroups, Customers, CustGroups.custGrpId == Customers.custGroup))
@@ -145,13 +145,13 @@ class Customer(customergroup.Group):
                 else:
                     showBalance = utility.LN(balance)
                 self.treestore.append(grouprow, (utility.readNumber(c.custCode), unicode(c.custName), utility.LN(debt), utility.LN(credit), showBalance))
-        
-        self.window.show_all()    
+
+        self.window.show_all()
 
     ## Show add customers window
     def addNewCustomer(self, sender, pcode = ""):
         self.editCustomer = False
-        
+
         self.customerForm = self.builder.get_object("customersWindow")
         self.customerForm.set_title(_("Add New Customer"))
         self.builder.get_object("addCustSubmitBtn").set_label(_("Add Customer"))
@@ -176,7 +176,7 @@ class Customer(customergroup.Group):
         self.builder.get_object("custRepViaEmailChk").get_active()
         self.builder.get_object("custAddressEntry").set_text("")
         self.builder.get_object("cusPostalCodeEntry").set_text("")
-        
+
         self.builder.get_object("callResponsibleEntry").set_text("")
         self.builder.get_object("custConnectorEntry").set_text("")
 
@@ -198,24 +198,24 @@ class Customer(customergroup.Group):
         self.builder.get_object("custAccName2Entry").set_text("")
         self.builder.get_object("custAccNo2Entry").set_text("")
         self.builder.get_object("custAccBank2Entry").set_text("")
-        
+
         self.customerForm.show_all()
-        
+
     def customerFormCanceled(self,sender=0,ev=0):
         self.customerForm.hide()
         return True
-        
+
     def customerFormOkPressed(self,sender=0,ev=0):
         result = self.saveCustomer()
         if result == 0:
             self.customerForm.hide()
-            
+
     def on_markedChk_toggled(self,sender=0,ev=0):
         self.builder.get_object("markedReasonEntry").set_sensitive(self.builder.get_object("markedChk").get_active())
 #
 #    def submitEditCust(self):
 #        print "SUBMIT  EDIT"
-#    
+#
     ## save customer to database
     #@return: -1 on error, 0 for success
     def saveCustomer(self):
@@ -233,7 +233,7 @@ class Customer(customergroup.Group):
         custRepViaEmail     = self.builder.get_object("custRepViaEmailChk").get_active()
         custAddress         = unicode(self.builder.get_object("custAddressEntry").get_text())
         custPostalCode      = unicode(self.builder.get_object("cusPostalCodeEntry").get_text())
-        
+
         callResponsible     = unicode(self.builder.get_object("callResponsibleEntry").get_text())
         custConnector       = unicode(self.builder.get_object("custConnectorEntry").get_text())
 
@@ -257,7 +257,7 @@ class Customer(customergroup.Group):
         custAccName2        = unicode(self.builder.get_object("custAccName2Entry").get_text())
         custAccNo2          = unicode(self.builder.get_object("custAccNo2Entry").get_text())
         custAccBank2        = unicode(self.builder.get_object("custAccBank2Entry").get_text())
-        
+
         msg = ""
         if custCode == "":
             msg += _("Customer code should not be empty.\n")
@@ -266,11 +266,11 @@ class Customer(customergroup.Group):
             codeQuery = codeQuery.filter( Customers.custCode == custCode )
             if self.editCustomer:
                 codeQuery = codeQuery.filter( Customers.custId != self.customerId )
-            
+
             codeQuery = codeQuery.first()
             if codeQuery:
                 msg += _("Customer code has been used before.\n")
-                
+
         #--------------------
         groupid = 0
         if custGrp == "":
@@ -282,11 +282,11 @@ class Customer(customergroup.Group):
                 msg += _("No customer group registered with code %s.\n") % utility.readNumber(custGrp)
             else:
                 groupid = groupid[0]
-        
+
         #--------------------
         if custName == "":
             msg += _("Customer name should not be empty.\n")
-            
+
         #--------------------
         if msg != "":
             msgbox = Gtk.MessageDialog(self.customerForm, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.CLOSE, msg)
@@ -302,8 +302,8 @@ class Customer(customergroup.Group):
             customer = Customers(custCode, custName, custSubj, custPhone, custCell, custFax, custAddress,
                                 custEmail, custEcnmcsCode, custWebPage, callResponsible, custConnector,
                                 groupid, custPostalCode, custPersonalCode, custDesc,
-                                custRepViaEmail, custAccName1, custAccNo1, custAccBank1, custAccName2, custAccNo2, 
-                                custAccBank2, custTypeBuyer, custTypeSeller, custTypeMate, custTypeAgent, 
+                                custRepViaEmail, custAccName1, custAccNo1, custAccBank1, custAccName2, custAccNo2,
+                                custAccBank2, custTypeBuyer, custTypeSeller, custTypeMate, custTypeAgent,
                                 custIntroducer, custCommission, custMarked, custReason, custDiscRate )
             config.db.session.add(customer)
         else:
@@ -342,54 +342,54 @@ class Customer(customergroup.Group):
             customer.custAccName2 = custAccName2
             customer.custAccNo2 = custAccNo2
             customer.custAccBank2 = custAccBank2
-            
-        
+
+
         config.db.session.commit()
-        
+
         #Show new customer in table
         if self.treestore != None:
-            parent_iter = self.treestore.get_iter_first()            
-            while parent_iter:                
+            parent_iter = self.treestore.get_iter_first()
+            while parent_iter:
                 itercode = self.treestore.get_value(parent_iter, 0)
                 if itercode == utility.readNumber(custGrp):
                     break
-                parent_iter = self.treestore.iter_next(parent_iter)            
+                parent_iter = self.treestore.iter_next(parent_iter)
             custCode = utility.LN(custCode)
-            
+
             if not self.editCustomer:
                 self.treestore.append(parent_iter, (custCode, custName, utility.readNumber("0"), utility.readNumber("0"), utility.readNumber("0") ) )
             else:
                 self.treestore.set(self.editIter, 0, custCode, 1, custName)
-                
+
         return 0
 
     def editCustAndGrps(self, sender):
         selection = self.treeview.get_selection()
         iter = selection.get_selected()[1]
-        
+
         if self.treestore.iter_parent(iter) == None:
             #Iter points to a customer group
             self.editCustomerGroup(sender)
-        else:            
+        else:
             code = self.treestore.get_value(iter, 0)
-            code = utility.convertToLatin(code)            
+            code = utility.convertToLatin(code)
             query = config.db.session.query(Customers, CustGroups.custGrpCode)
             query = query.select_from(outerjoin(CustGroups, Customers, CustGroups.custGrpId == Customers.custGroup))
             result = query.filter(Customers.custCode == code).first()
             customer = result[0]
             groupcode = result[1]
-            
+
             custCode =utility. LN(customer.custCode, False)
             custGrp = utility. LN(groupcode, False)
             custPhone = utility. LN(customer.custPhone, False)
             custCell = utility. LN(customer.custCell, False)
             custFax = utility.LN(customer.custFax, False)
             custPostalCode = utility. LN(customer.custPostalCode, False)
-            
+
             self.customerForm = self.builder.get_object("customersWindow")
             self.customerForm.set_title(_("Edit Customer"))
             self.builder.get_object("addCustSubmitBtn").set_label(_("Save Customer"))
-            
+
             self.builder.get_object("custCodeEntry").set_text(custCode)
             self.builder.get_object("custNameEntry").set_text(customer.custName)
             self.custgrpentry.set_text(groupcode)
@@ -422,16 +422,16 @@ class Customer(customergroup.Group):
             self.builder.get_object("custAccName2Entry").set_text(customer.custAccName2)
             self.builder.get_object("custAccNo2Entry").set_text(customer.custAccNo2)
             self.builder.get_object("custAccBank2Entry").set_text(customer.custAccBank2)
-            
+
             self.builder.get_object("cusPostalCodeEntry").set_text(utility.LN(customer.custPostalCode, False))
             self.builder.get_object("markedReasonEntry").set_sensitive(self.builder.get_object("markedChk").get_active())
-            
+
             self.customerForm.show_all()
-            
+
             self.editCustomer = True
             self.customerId = customer.custId
             self.editIter = iter
-        
+
     def deleteCustAndGrps(self, sender):
         selection = self.treeview.get_selection()
         iter = selection.get_selected()[1]
@@ -439,9 +439,9 @@ class Customer(customergroup.Group):
             msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL, _("Are you sure to remove this row?"))
             msgbox.set_title(_("Are you sure?"))
             result = msgbox.run();
-            msgbox.destroy() 
-            if result != Gtk.ResponseType.OK : 
-                return          
+            msgbox.destroy()
+            if result != Gtk.ResponseType.OK :
+                return
         if self.treestore.iter_parent(iter) == None:
             #Iter points to a customer group
             self.deleteCustomerGroup(sender)
@@ -462,16 +462,16 @@ class Customer(customergroup.Group):
                 msgbox.run()
                 msgbox.destroy()
             else:
-                subjectCode = config.db.session.query(Subject).filter(Subject.id ==  dbconf.get_int('custSubject')).first().code     
+                subjectCode = config.db.session.query(Subject).filter(Subject.id ==  dbconf.get_int('custSubject')).first().code
                 subjectCode = unicode(subjectCode)  + unicode (code)
                 #TODO check if this customer is used somewhere else
-                
+
                 config.db.session.delete(customer)
                 config.db.session.delete(config.db.session.query(Subject).filter(Subject.code== subjectCode).first())
                 config.db.session.commit()
                 self.treestore.remove(iter)
-                
-    
+
+
     #@param treeiter: the TreeIter which data should be saved in
     #@param data: a tuple containing data to be saved
     def saveRow(self, treeiter, data):
@@ -489,35 +489,35 @@ class Customer(customergroup.Group):
         if (iter != None and self.treestore.iter_parent(iter) == None):
                 pcode = self.treestore.get_value(iter, 0)
         self.addNewCustomer(sender, pcode)
-        
+
     def selectGroup(self, sender):
         obj = customergroup.Group()
         obj.connect("group-selected", self.groupSelected)
         obj.viewCustomerGroups()
-        
+
         code = self.custgrpentry.get_text()
         obj.highlightGroup(code)
-    
+
     def groupSelected(self, sender, id, code):
         self.custgrpentry.set_text(code)
-        sender.window.destroy()  
+        sender.window.destroy()
 
     def selectcustomer(self, sender):
         obj = Customer()
         obj.connect("customer-selected", self.customerSelected)
         obj.viewCustomers(True)
-        
+
         code = self.custIntroducerEntry.get_int()
         obj.highlightCust(code)
-    
+
     def customerSelected(self, sender, id, code):
         self.custIntroducerEntry.set_text(code)
         sender.window.destroy()
-        
+
     def highlightCust(self, code):
         '''        iter = self.treestore.get_iter_first()
         pre = iter
-        
+
         while iter:
             itercode = self.treestore.get_value(iter, 0)
             if  itercode < code:
@@ -531,13 +531,13 @@ class Customer(customergroup.Group):
 
         if not iter:
             iter = pre
-            
+
         if iter:
             path = self.treestore.get_path(iter)
             self.treeview.scroll_to_cell(path, None, False, 0, 0)
             self.treeview.set_cursor(path, None, False)
             self.treeview.grab_focus()'''
-            
+
     # Called when a row of customer table get activated by mouse double-click or Enter key
     def selectCustomerFromList(self, treeview, path, view_column):
         iter = self.treestore.get_iter(path)
@@ -548,7 +548,7 @@ class Customer(customergroup.Group):
             query = query.filter(Customers.custCode == code)
             customer_id = query.first().custId
             self.emit("customer-selected", customer_id, code)
-             
+
 GObject.type_register(Customer)
 GObject.signal_new("customer-selected", Customer, GObject.SignalFlags.RUN_LAST,
                    None, (GObject.TYPE_INT, GObject.TYPE_STRING))

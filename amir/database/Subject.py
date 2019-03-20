@@ -20,7 +20,7 @@ class Subject(Base):
     rgt = Column(Integer, nullable=False)
     type = Column(Integer)      # 0 for Debtor, 1 for Creditor, 2 for both
     permanent = Column(Boolean, ColumnDefault(False))
-    
+
     def __init__(self, code=0, name='', parent_id=0, lft=0, rgt=0, type=0 , permanent=0,id=1):
         self.code = code
         self.name = name

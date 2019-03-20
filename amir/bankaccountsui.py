@@ -12,7 +12,7 @@ from gi.repository import Gtk
 import sys
 if sys.version_info > (3,):
     unicode = str
-    
+
 config = share.config
 
 ## \defgroup UserInterface
@@ -20,7 +20,7 @@ config = share.config
 
 ## User Interface for create/edit/select a bank account.
 class BankAccountsUI:
-    ## initialize 
+    ## initialize
     #
     # @param background GtkFixed
     def __init__(self, background):
@@ -33,7 +33,7 @@ class BankAccountsUI:
         self.builder.connect_signals(self)
 
         self.bankaccounts_class = class_bankaccounts.BankAccountsClass()
-        
+
         combo = self.builder.get_object('bank_names_combo')
         model = Gtk.ListStore(str)
         combo.set_model(model)
@@ -91,7 +91,7 @@ class BankAccountsUI:
             if account.accType == 0:
                 accType = _("Current Account")
             else:
-                accType = _("Savings Account")          
+                accType = _("Savings Account")
             accBank = self.bankaccounts_class.get_bank_name(account.accBank)
             model.set(iter, 0, unicode(account.accId), 1, account.accName, 2, unicode(account.accNumber), 3, account.accOwner, 4, accType, 5, accBank)
         window.show_all()
@@ -109,7 +109,7 @@ class BankAccountsUI:
         self.builder.get_object('bank_phone').set_text(account.accBankPhone)
         self.builder.get_object('bank_webpage').set_text(account.accBankWebPage)
         self.builder.get_object('desc').set_text(account.accDesc)
-        self.builder.get_object('account_types_combo').set_active(account.accType)        
+        self.builder.get_object('account_types_combo').set_active(account.accType)
         self.builder.get_object('bank_names_combo').set_active(account.accBank-1)
         # else:
         #     c = 0
@@ -208,9 +208,9 @@ class BankAccountsUI:
                 account_owner,
                 bank_id,
                 self.builder.get_object('bank_branch').get_text(),
-                self.builder.get_object('bank_address').get_text(), 
+                self.builder.get_object('bank_address').get_text(),
                 self.builder.get_object('bank_phone').get_text(),
-                self.builder.get_object('bank_webpage').get_text(), 
+                self.builder.get_object('bank_webpage').get_text(),
                 self.builder.get_object('desc').get_text())
         if result > 0:
             config.db.session.commit()
@@ -239,7 +239,7 @@ class BankAccountsUI:
             else:
                 accType = 'حساب پس انداز'
             bank_name= self.bankaccounts_class.get_bank_name(bank_id)
-            model.set(iter, 0, unicode(result), 1, account_name, 2, account_number, 3, account_owner, 4, accType, 5, bank_name)            
+            model.set(iter, 0, unicode(result), 1, account_name, 2, account_number, 3, account_owner, 4, accType, 5, bank_name)
            # glib.timeout_add_seconds(3, lambda w: w.destroy(), infobar)
         else:
             config.db.session.rollback()

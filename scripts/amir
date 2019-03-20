@@ -53,7 +53,7 @@ if sys.version_info > (3,):
 if sys.platform == 'win32':
 	#set path env to current directory to avoid GTK errors
 	if getattr(sys, 'frozen', False):
-		# we are running in a bundle        
+		# we are running in a bundle
 		bundle_dir = sys._MEIPASS
 	else:
 		# we are running in a normal Python environment
@@ -61,7 +61,7 @@ if sys.platform == 'win32':
 	os.environ["PATH"] += ";"+ bundle_dir
 	file = open('stdout.log', 'w')
 	file.write(bundle_dir + "\r\n" + os.environ["PATH"] )
-	
+
 import logging
 import gi
 gi.require_version('Gtk', '3.0')
@@ -79,7 +79,7 @@ if sys.platform == 'win32':
 	sys.stderr = fsock
 	fsock = open('stdout.log', 'w')
 	sys.stdout = fsock
-	
+
 	# set windows theme
 	gtkrc = r'.\\gtkrc'
 	Gtk.rc_set_default_files([gtkrc])
@@ -164,11 +164,11 @@ class MainWindow(GObject.GObject):
 		except GObject.GError:
 			pass
 
-		
+
 		# self.loggedIn()
 		self.window = self.builder.get_object("login")
 		self.window.show()
-		self.builder.connect_signals(self)		
+		self.builder.connect_signals(self)
 
 		if config.repair_atstart == True:
 			msg = _("Repairing database, Please wait...")
@@ -183,7 +183,7 @@ class MainWindow(GObject.GObject):
 
 	def manualDocument(self, sender):
 		dialog = addeditdoc.AddEditDoc(0,self.background)
-		self.connect("database-changed", dialog.dbChanged)		
+		self.connect("database-changed", dialog.dbChanged)
 #def quitMainWindow(self, sender):
 	#	pass
 
@@ -325,7 +325,7 @@ class MainWindow(GObject.GObject):
 
 	def addSaleReturn(self , sender):
 		obj = factors.Factor(returning=True)
-		obj.addNew()	
+		obj.addNew()
 
 	def addBuyReturn(self , sender):
 		obj = factors.Factor(sell=False,returning=True)
@@ -341,11 +341,11 @@ class MainWindow(GObject.GObject):
 
 	def viewBuyReturns(self , sender):
 		obj = factors.Factor(sell = False , returning=True)
-		obj.viewSells()	
+		obj.viewSells()
 
 	def viewSellReturns(self , sender):
 		obj = factors.Factor(sell = True , returning=True)
-		obj.viewSells()		
+		obj.viewSells()
 
 	def delete_event(self, widget, event, data=None):
 #         msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL, _("Are you sure to close the app?"))
@@ -418,13 +418,13 @@ class MainWindow(GObject.GObject):
 
 		self.window.connect("delete_event", self.delete_event)
 		self.window.connect("destroy", self.destroy)
-		
+
 		#self.window.set_border_width(10)
 		self.builder.connect_signals(self)
 		self.window.show()
 
 		# Alerts
-		import amir.dbconfig 				
+		import amir.dbconfig
 		dbconf = amir.dbconfig .dbConfig()
 		cashSum = config.db.session.query(func.sum(Notebook.value)).filter(Notebook.subject_id == dbconf.get_int('cash')).first()
 		if cashSum[0] != None and cashSum[0] < 0:
@@ -490,7 +490,7 @@ class MainWindow(GObject.GObject):
 			else:
 				combo.set_active(config.currentdb - 1)
 
-	def reloadDatabases(self, sender, active_dbpath):		
+	def reloadDatabases(self, sender, active_dbpath):
 		helpers.comboInsertItems(self.dblist, config.dbnames)
 		active_index = config.dblist.index(active_dbpath)
 		self.dblist.set_active(active_index)
@@ -512,7 +512,7 @@ class MainWindow(GObject.GObject):
 		msg = _("Please close Amir and start it again in order to apply changes")
 		self.msgbox = Gtk.MessageDialog(self.window,Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK , msg)
 		self.msgbox.set_title(_("Please restart Amir"))
-		self.msgbox.run()	
+		self.msgbox.run()
 		self.msgbox.destroy()
 
 
@@ -541,9 +541,9 @@ class MainWindow(GObject.GObject):
 	def alert_dialog(self, text):
 		yPos = 0
 		#self.h = 30
-		alertBarCnt = len(self.infobar)	
-		if alertBarCnt:			
-			yPos = float(self.infobar[0].get_size_request().height) * float(alertBarCnt) 				
+		alertBarCnt = len(self.infobar)
+		if alertBarCnt:
+			yPos = float(self.infobar[0].get_size_request().height) * float(alertBarCnt)
 		infobar = Gtk.InfoBar()
 		infobar.get_content_area().add(Gtk.Label(label=text))
 		infobar.set_size_request(self.background.get_allocated_width(), self.h)
@@ -553,11 +553,11 @@ class MainWindow(GObject.GObject):
 
 	def on_win_resize(self , sender , a):
 		pb = self.image.get_pixbuf()
-		imageWidth = pb.get_width()	
-		imageHeight = pb.get_height()	
-		wDiff = self.background.get_allocated_width() - imageWidth		
+		imageWidth = pb.get_width()
+		imageHeight = pb.get_height()
+		wDiff = self.background.get_allocated_width() - imageWidth
 		hDiff = self.background.get_allocated_height() - imageHeight
-		self.background.move(self.image , wDiff/2 ,hDiff/2)		
+		self.background.move(self.image , wDiff/2 ,hDiff/2)
 		if len(self.infobar):
 			for ib in self.infobar:
 				ib.set_size_request(self.background.get_allocated_width() , self.h)

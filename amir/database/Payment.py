@@ -28,7 +28,7 @@ class Payment(Base):
 #    paymntChq       = Column( Integer,      ForeignKey('cheques.chqId')             )
 
     def __init__( self, paymntDueDate, paymntBank, paymntSerial, paymntAmount,
-                  paymntNamePayer, paymntWrtDate, paymntDesc, paymntTransId, paymntBillId, 
+                  paymntNamePayer, paymntWrtDate, paymntDesc, paymntTransId, paymntBillId,
                   paymntTrckCode, paymntOrder,paymntId=1):
 
         #self.paymntNo        = paymntNo

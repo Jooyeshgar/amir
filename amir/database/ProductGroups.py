@@ -10,7 +10,7 @@ Base = get_declarative_base()
 ## @{
 
 #Version 0.2 tables
-class ProductGroups(   Base    ):
+class ProductGroups(Base):
     __tablename__ = "productGroups"
     id      = Column(   Integer,        primary_key = True          )
     code    = Column(   Unicode(20),    nullable    = False         )
