@@ -46,7 +46,7 @@ if platform.system() != 'Windows':
         ('/usr/share/locale/tr/LC_MESSAGES', ['locale/tr/LC_MESSAGES/amir.mo'])]
 else:
     data = []
-data = [('scripts' , ['/home/mint/Desktop/factors.py/'])]
+# data = [('scripts' , ['/home/mint/Desktop/factors.py/'])]
 setuptools.setup(
         name = 'amir',
         version = '0.3.0',
@@ -55,14 +55,14 @@ setuptools.setup(
         author_email = 'info@jooyeshgar.com',
         maintainer = 'Jooyeshgar',
         url = 'https://github.com/jooyeshgar/amir',
-        install_requires=['sqlalchemy-migrate>=0.9.0', 'sqlalchemy>=1.0.0'],
+        install_requires=['sqlalchemy-migrate>=0.9.0', 'sqlalchemy>=1.0.0', 'passlib>=1.7.1', 'cairocffi', 'bcrypt>=3.1.6'],
         classifiers = [
             'Intended Audience :: End Users/Desktop',
             'License :: GNU General Public License v3.0 (GPL-3)',
             'Programming Language :: Python',
             ],
         packages = setuptools.find_packages(),
-        package_data = {'amir': ['data/ui/*.glade', 'data/ui/*.glade.h', 'data/media/*.png', 'data/media/icon/*.png', 'data/amir_migrate/*', 'data/amir_migrate/versions/*', 'data/weasyprint/*', 'data/weasyprint/*/*', 'data/weasyprint/*/*/*', 'data/cssselect2/*', 'data/cssselect2/*/*', 'data/pyphen/*', 'data/pyphen/*/*', 'data/tinycss2/*', 'data/tinycss2/*/*', 'data/webencodings/*']},
+        package_data = {'amir': ['data/ui/*.glade', 'data/ui/*.glade.h', 'data/media/*.png', 'data/media/icon/*.png', 'data/amir_migrate/*.py', 'data/amir_migrate/*.cfg', 'data/amir_migrate/versions/*', 'data/weasyprint/*.py', 'data/weasyprint/*/*.py', 'data/weasyprint/*/*.css', 'data/weasyprint/*/*/*.css', 'data/cssselect2/*.py', 'data/cssselect2/*/*', 'data/pyphen/*.py', 'data/pyphen/*/*', 'data/tinycss2/*.py', 'data/tinycss2/*/*', 'data/webencodings/*']},
         keywords = 'amir accounting',
         scripts = ['scripts/amir'],
         data_files = data
