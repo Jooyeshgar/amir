@@ -47,20 +47,20 @@ import sys
 import os
 
 if sys.version_info > (3,):
-	long = int
-	unicode = str
+    long = int
+    unicode = str
 
 if sys.platform == 'win32':
-	#set path env to current directory to avoid GTK errors
-	if getattr(sys, 'frozen', False):
-		# we are running in a bundle
-		bundle_dir = sys._MEIPASS
-	else:
-		# we are running in a normal Python environment
-		bundle_dir = os.path.dirname(os.path.abspath(__file__))
-	os.environ["PATH"] += ";"+ bundle_dir
-	file = open('stdout.log', 'w')
-	file.write(bundle_dir + "\r\n" + os.environ["PATH"] )
+    #set path env to current directory to avoid GTK errors
+    if getattr(sys, 'frozen', False):
+        # we are running in a bundle
+        bundle_dir = sys._MEIPASS
+    else:
+        # we are running in a normal Python environment
+        bundle_dir = os.path.dirname(os.path.abspath(__file__))
+    os.environ["PATH"] += ";"+ bundle_dir
+    file = open('stdout.log', 'w')
+    file.write(bundle_dir + "\r\n" + os.environ["PATH"] )
 
 import logging
 import gi
@@ -75,26 +75,26 @@ import datetime
 # import glib
 
 if sys.platform == 'win32':
-	fsock = open('error.log', 'w')
-	sys.stderr = fsock
-	fsock = open('stdout.log', 'w')
-	sys.stdout = fsock
+    fsock = open('error.log', 'w')
+    sys.stderr = fsock
+    fsock = open('stdout.log', 'w')
+    sys.stdout = fsock
 
-	# set windows theme
-	gtkrc = r'.\\gtkrc'
-	Gtk.rc_set_default_files([gtkrc])
-	Gtk.rc_reparse_all_for_settings(Gtk.Settings.get_default(), True)
+    # set windows theme
+    gtkrc = r'.\\gtkrc'
+    Gtk.rc_set_default_files([gtkrc])
+    Gtk.rc_reparse_all_for_settings(Gtk.Settings.get_default(), True)
 
 
 # Check if we are working in the source tree or from the installed
 # package and mangle the python path accordingly
 if os.path.dirname(sys.argv[0]) != ".":
-	if sys.argv[0][0] == "/":
-		fullPath = os.path.dirname(sys.argv[0])
-	else:
-		fullPath = os.getcwd() + "/" + os.path.dirname(sys.argv[0])
+    if sys.argv[0][0] == "/":
+        fullPath = os.path.dirname(sys.argv[0])
+    else:
+        fullPath = os.getcwd() + "/" + os.path.dirname(sys.argv[0])
 else:
-	fullPath = os.getcwd()
+    fullPath = os.getcwd()
 sys.path.insert(0, os.path.dirname(fullPath))
 
 from amir.share import share
@@ -108,31 +108,31 @@ logging.debug('LANG=%s' % (config.locale))
 os.environ['LANGUAGE'] = config.locale
 os.environ['LANG'] = config.locale
 if sys.platform == 'win32':
-	lang = config.locale
-	from ctypes import windll
-	kernel32 = windll.kernel32
-	result = kernel32.SetEnvironmentVariableW('LANG', config.locale)
-	del kernel32
-	if result == 0:
-		raise Exception
+    lang = config.locale
+    from ctypes import windll
+    kernel32 = windll.kernel32
+    result = kernel32.SetEnvironmentVariableW('LANG', config.locale)
+    del kernel32
+    if result == 0:
+        raise Exception
 
-	from ctypes import cdll
-	msvcrt = cdll.msvcrt
-	result = msvcrt._putenv('LANG=%s' % (config.locale))
-	del msvcrt
+    from ctypes import cdll
+    msvcrt = cdll.msvcrt
+    result = msvcrt._putenv('LANG=%s' % (config.locale))
+    del msvcrt
 
 try:
-	locale.setlocale(locale.LC_ALL, '')
+    locale.setlocale(locale.LC_ALL, '')
 except:
-	logging.error("Unable to set locale.")
+    logging.error("Unable to set locale.")
 
 logging.debug('Locale Path=%s' % (config.locale_path))
 gettext.bindtextdomain('amir', config.locale_path)
 gettext.textdomain('amir')
 try:
-	gettext.install('amir', config.locale_path, unicode=1)
+    gettext.install('amir', config.locale_path, unicode=1)
 except: # py3
-	gettext.install('amir', config.locale_path)
+    gettext.install('amir', config.locale_path)
 
 from amir import subjects, addeditdoc, database, numberentry, notebookreport, docreport, tbalancereport, notebookutils, \
 setting, helpers, customers, customergroup, product, productgroup, factors, cardexreport, user, utility, chequereport
@@ -141,213 +141,213 @@ from amir import handle_database
 
 class MainWindow(GObject.GObject):
 
-	def __init__(self):
-		GObject.GObject.__init__(self)
+    def __init__(self):
+        GObject.GObject.__init__(self)
 
-		if config.directionlist[config.localelist.index(config.locale)] == "rtl" :
-			Gtk.Widget.set_default_direction(Gtk.TextDirection.RTL)
-		else:
-			Gtk.Widget.set_default_direction(Gtk.TextDirection.LTR)
+        if config.directionlist[config.localelist.index(config.locale)] == "rtl" :
+            Gtk.Widget.set_default_direction(Gtk.TextDirection.RTL)
+        else:
+            Gtk.Widget.set_default_direction(Gtk.TextDirection.LTR)
 
-		self.builder = helpers.get_builder("mainwin")
-		mainWin = self.builder.get_object("window1")
-		icondir = os.path.join(config.data_path, "media", "icon")
-		#self.window. set_default_icon_name(icondir+".icon")
-		try:
-			icon16 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "16.png"))
-			icon22 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "22.png"))
-			icon32 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "32.png"))
-			icon48 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "48.png"))
-			icon64 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "64.png"))
-			icon128 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "128.png"))
-			mainWin.set_default_icon_list([icon16, icon22, icon32, icon48, icon64, icon128])
-		except GObject.GError:
-			pass
+        self.builder = helpers.get_builder("mainwin")
+        mainWin = self.builder.get_object("window1")
+        icondir = os.path.join(config.data_path, "media", "icon")
+        #self.window. set_default_icon_name(icondir+".icon")
+        try:
+            icon16 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "16.png"))
+            icon22 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "22.png"))
+            icon32 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "32.png"))
+            icon48 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "48.png"))
+            icon64 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "64.png"))
+            icon128 = GdkPixbuf.Pixbuf.new_from_file(os.path.join(icondir, "128.png"))
+            mainWin.set_default_icon_list([icon16, icon22, icon32, icon48, icon64, icon128])
+        except GObject.GError:
+            pass
 
 
-		# self.loggedIn()
-		self.window = self.builder.get_object("login")
-		self.window.show()
-		self.builder.connect_signals(self)
+        # self.loggedIn()
+        self.window = self.builder.get_object("login")
+        self.window.show()
+        self.builder.connect_signals(self)
 
-		if config.repair_atstart == True:
-			msg = _("Repairing database, Please wait...")
-			self.msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.INFO, Gtk.ButtonsType.NONE, msg)
-			self.msgbox.set_title(_("Repairing database"))
-			self.msgbox.show_all()
+        if config.repair_atstart == True:
+            msg = _("Repairing database, Please wait...")
+            self.msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.INFO, Gtk.ButtonsType.NONE, msg)
+            self.msgbox.set_title(_("Repairing database"))
+            self.msgbox.show_all()
 
-			while Gtk.events_pending():
-				Gtk.main_iteration_do(False)
+            while Gtk.events_pending():
+                Gtk.main_iteration_do(False)
 
-			GObject.timeout_add(1000, self.repairDbFunc)
+            GObject.timeout_add(1000, self.repairDbFunc)
 
-	def manualDocument(self, sender):
-		dialog = addeditdoc.AddEditDoc(0,self.background)
-		self.connect("database-changed", dialog.dbChanged)
+    def manualDocument(self, sender):
+        dialog = addeditdoc.AddEditDoc(0,self.background)
+        self.connect("database-changed", dialog.dbChanged)
 #def quitMainWindow(self, sender):
-	#	pass
+    #    pass
 
-	def dailyNotebookReport(self, sender):
-		reportwin = notebookreport.NotebookReport()
+    def dailyNotebookReport(self, sender):
+        reportwin = notebookreport.NotebookReport()
 
-	def ledgerNotebookReport(self, sender):
-		reportwin = notebookreport.NotebookReport(notebookreport.NotebookReport.LEDGER)
+    def ledgerNotebookReport(self, sender):
+        reportwin = notebookreport.NotebookReport(notebookreport.NotebookReport.LEDGER)
 
-	def subledgerNotebookReport(self, sender):
-		reportwin = notebookreport.NotebookReport(notebookreport.NotebookReport.SUBLEDGER)
+    def subledgerNotebookReport(self, sender):
+        reportwin = notebookreport.NotebookReport(notebookreport.NotebookReport.SUBLEDGER)
 
-	def documentReport(self, sender):
-		reportwin = docreport.DocumentReport()
+    def documentReport(self, sender):
+        reportwin = docreport.DocumentReport()
 
-	def trialReport(self, sender):
-		reportwin = tbalancereport.TBalanceReport()
+    def trialReport(self, sender):
+        reportwin = tbalancereport.TBalanceReport()
 
-	def cardexReport(self, sender):
-		reportwin = cardexreport.CardexReport()
+    def cardexReport(self, sender):
+        reportwin = cardexreport.CardexReport()
 
-	def chequeReport(self, sender):
-		reportwin = chequereport.ChequeReport()
-		reportwin.showResult()
+    def chequeReport(self, sender):
+        reportwin = chequereport.ChequeReport()
+        reportwin.showResult()
 
-	def aboutAmir(self, sender):
-		aboutwin = self.builder.get_object("aboutdialog")
-		aboutwin.run()
-		aboutwin.hide()
+    def aboutAmir(self, sender):
+        aboutwin = self.builder.get_object("aboutdialog")
+        aboutwin.run()
+        aboutwin.hide()
 
-	def manageSubjects(self, sender):
-		dialog = subjects.Subjects()
-		self.connect("database-changed", dialog.dbChanged)
+    def manageSubjects(self, sender):
+        dialog = subjects.Subjects()
+        self.connect("database-changed", dialog.dbChanged)
 
-	def editDocument(self, sender):
-		dialog = self.builder.get_object("selectdoc")
-		self.numentry.set_activates_default(True)
-		res = dialog.run()
-		dialog.hide()
-		if res == Gtk.ResponseType.OK:
-			if self.numentry.get_text() != "":
-				dialog = addeditdoc.AddEditDoc(self.numentry.get_int())
-				self.connect("database-changed", dialog.dbChanged)
+    def editDocument(self, sender):
+        dialog = self.builder.get_object("selectdoc")
+        self.numentry.set_activates_default(True)
+        res = dialog.run()
+        dialog.hide()
+        if res == Gtk.ResponseType.OK:
+            if self.numentry.get_text() != "":
+                dialog = addeditdoc.AddEditDoc(self.numentry.get_int())
+                self.connect("database-changed", dialog.dbChanged)
 
-	def clean_db(self, sender):
-		handle_database.clean()
+    def clean_db(self, sender):
+        handle_database.clean()
 
-	def backup(self, sender):
-#		self.dialog.hide()
-		self.dialog = self.builder.get_object("backupWindow")
-		#self.numentry.set_activates_default(True)
-		from datetime import date
-		year = date.today().year
-		currentDbName = (share.config.dbnames[share.config.currentdb - 1]).split(".")
-		currentDbName = ''.join(str(e) for e in currentDbName[:len(currentDbName) - 1])
-		newName = currentDbName + str(year)
-		self.builder.get_object("backupName").set_text(newName)
-		res = self.dialog.run()
-		self.dialog.hide()
-		# if res == Gtk.ResponseType.OK:
-		# 	if self.numentry.get_text() != "":
-		# 		self.dialog = addeditdoc.AddEditDoc(self.numentry.get_int())
-		# 		self.connect("database-changed", self.dialog.dbChanged)
+    def backup(self, sender):
+#        self.dialog.hide()
+        self.dialog = self.builder.get_object("backupWindow")
+        #self.numentry.set_activates_default(True)
+        from datetime import date
+        year = date.today().year
+        currentDbName = (share.config.dbnames[share.config.currentdb - 1]).split(".")
+        currentDbName = ''.join(str(e) for e in currentDbName[:len(currentDbName) - 1])
+        newName = currentDbName + str(year)
+        self.builder.get_object("backupName").set_text(newName)
+        res = self.dialog.run()
+        self.dialog.hide()
+        # if res == Gtk.ResponseType.OK:
+        #     if self.numentry.get_text() != "":
+        #         self.dialog = addeditdoc.AddEditDoc(self.numentry.get_int())
+        #         self.connect("database-changed", self.dialog.dbChanged)
 
-	def doBackup(self, sender):
-		self.dialog.hide()
-		location = self.builder.get_object("backupfilechooserbutton")
-		handle_database.backup(location, self.builder.get_object("backupName").get_text())
+    def doBackup(self, sender):
+        self.dialog.hide()
+        location = self.builder.get_object("backupfilechooserbutton")
+        handle_database.backup(location, self.builder.get_object("backupName").get_text())
 
-	def restore(self, sender):
-		self.dialog = self.builder.get_object("restoreWindow")
-		#self.numentry.set_activates_default(True)
-		res = self.dialog.run()
-		self.dialog.hide()
-		# if res == Gtk.ResponseType.OK:
-		# 	if self.numentry.get_text() != "":
-		# 		self.dialog = addeditdoc.AddEditDoc(self.numentry.get_int())
-		# 		self.connect("database-changed", self.dialog.dbChanged)
+    def restore(self, sender):
+        self.dialog = self.builder.get_object("restoreWindow")
+        #self.numentry.set_activates_default(True)
+        res = self.dialog.run()
+        self.dialog.hide()
+        # if res == Gtk.ResponseType.OK:
+        #     if self.numentry.get_text() != "":
+        #         self.dialog = addeditdoc.AddEditDoc(self.numentry.get_int())
+        #         self.connect("database-changed", self.dialog.dbChanged)
 
-	def doRestore(self, sernder):
-		self.dialog.hide()
-		location = self.builder.get_object("resotrefilechooserbutton")
-		handle_database.restore(location)
+    def doRestore(self, sernder):
+        self.dialog.hide()
+        location = self.builder.get_object("resotrefilechooserbutton")
+        handle_database.restore(location)
 
-	def newDB(self, sender):
-		s = setting.Setting()
-		s.connect("dblist-changed", self.reloadDatabases)
-		s.addDatabase()
-		s.applyDatabaseSetting()
+    def newDB(self, sender):
+        s = setting.Setting()
+        s.connect("dblist-changed", self.reloadDatabases)
+        s.addDatabase()
+        s.applyDatabaseSetting()
 
-	def arrangeDocments(self, sender):
-		notebookutils.arrangeDocuments(self.window)
+    def arrangeDocments(self, sender):
+        notebookutils.arrangeDocuments(self.window)
 
-	def settingsDialog(self, sender):
-		window = setting.Setting()
-		window.window.show_all()
-		window.connect("dblist-changed", self.reloadDatabases)
-		window.connect("database-changed", self.databaseChanged)
-		window.connect("locale-changed", self.localeChanged)
+    def settingsDialog(self, sender):
+        window = setting.Setting()
+        window.window.show_all()
+        window.connect("dblist-changed", self.reloadDatabases)
+        window.connect("database-changed", self.databaseChanged)
+        window.connect("locale-changed", self.localeChanged)
 
-	def usersDialog(self, sender):
-		window = user.User()
+    def usersDialog(self, sender):
+        window = user.User()
 
-	def quitMainWindow(self, sender):
-		msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL, _("Are you sure to close the app?") )
-		msgbox.set_title(_("Are you sure?") )
-		result = msgbox.run();
-		if result == Gtk.ResponseType.OK:
-			self.window.destroy()
-		else:
-			msgbox.destroy()
+    def quitMainWindow(self, sender):
+        msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL, _("Are you sure to close the app?") )
+        msgbox.set_title(_("Are you sure?") )
+        result = msgbox.run();
+        if result == Gtk.ResponseType.OK:
+            self.window.destroy()
+        else:
+            msgbox.destroy()
 
-	def addNewProduct(   self,   sender  ):
-		obj = product.Product()
-		obj.addProduct(sender)
+    def addNewProduct(   self,   sender  ):
+        obj = product.Product()
+        obj.addProduct(sender)
 
-	def viewProducts(    self,   sender  ):
-		obj = product.Product()
-		obj.viewProducts()
-		obj.connect("item-activated", obj.editProductsAndGrps)
-		obj.connect("blank-activated", obj.addProduct)
+    def viewProducts(    self,   sender  ):
+        obj = product.Product()
+        obj.viewProducts()
+        obj.connect("item-activated", obj.editProductsAndGrps)
+        obj.connect("blank-activated", obj.addProduct)
 
-	def viewCustomers(   self,   sender  ):
-		obj = customers.Customer()
-		obj.viewCustomers()
+    def viewCustomers(   self,   sender  ):
+        obj = customers.Customer()
+        obj.viewCustomers()
 
-	def addNewCustomer(  self,   sender  ):
-		obj = customers.Customer()
-		obj.addNewCustomer(sender)
+    def addNewCustomer(  self,   sender  ):
+        obj = customers.Customer()
+        obj.addNewCustomer(sender)
 
 
-	def addNewSell(self, sender):
-		obj = factors.Factor()
-		obj.addNew()
+    def addNewSell(self, sender):
+        obj = factors.Factor()
+        obj.addNew()
 
-	def addNewBuy(self, sender):
-		obj = factors.Factor(sell=False)
-		obj.addNew()
+    def addNewBuy(self, sender):
+        obj = factors.Factor(sell=False)
+        obj.addNew()
 
-	def addSaleReturn(self , sender):
-		obj = factors.Factor(returning=True)
-		obj.addNew()
+    def addSaleReturn(self , sender):
+        obj = factors.Factor(returning=True)
+        obj.addNew()
 
-	def addBuyReturn(self , sender):
-		obj = factors.Factor(sell=False,returning=True)
-		obj.addNew()
+    def addBuyReturn(self , sender):
+        obj = factors.Factor(sell=False,returning=True)
+        obj.addNew()
 
-	def ViewSelling(self , sender   ):
-		obj = factors.Factor()
-		obj.viewSells()
+    def ViewSelling(self , sender   ):
+        obj = factors.Factor()
+        obj.viewSells()
 
-	def ViewBuying(self , sender   ):
-		obj = factors.Factor(False)
-		obj.viewSells()
+    def ViewBuying(self , sender   ):
+        obj = factors.Factor(False)
+        obj.viewSells()
 
-	def viewBuyReturns(self , sender):
-		obj = factors.Factor(sell = False , returning=True)
-		obj.viewSells()
+    def viewBuyReturns(self , sender):
+        obj = factors.Factor(sell = False , returning=True)
+        obj.viewSells()
 
-	def viewSellReturns(self , sender):
-		obj = factors.Factor(sell = True , returning=True)
-		obj.viewSells()
+    def viewSellReturns(self , sender):
+        obj = factors.Factor(sell = True , returning=True)
+        obj.viewSells()
 
-	def delete_event(self, widget, event, data=None):
+    def delete_event(self, widget, event, data=None):
 #         msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL, _("Are you sure to close the app?"))
 #         msgbox.set_title(_("Are you sure?"))
 #         result = msgbox.run();
@@ -355,220 +355,220 @@ class MainWindow(GObject.GObject):
 #        msgbox.destroy()
 #         return True
 #         else :
-		return False
-		# Change FALSE to TRUE and the main window will not be destroyed
-		# with a "delete_event".
+        return False
+        # Change FALSE to TRUE and the main window will not be destroyed
+        # with a "delete_event".
 
-	def destroy(self, widget, data=None):
-		config.updateConfigFile()
-		Gtk.main_quit()
+    def destroy(self, widget, data=None):
+        config.updateConfigFile()
+        Gtk.main_quit()
 
-	def loggedIn(self):
-		self.builder = helpers.get_builder("mainwin")
+    def loggedIn(self):
+        self.builder = helpers.get_builder("mainwin")
 
-		# Hide inaccessible menues
-		if utility.checkPermission(4):
-			self.builder.get_object("usermenuitem").hide()
-		if utility.checkPermission(32):
-			self.builder.get_object("addProductMenuItem").hide()
-			self.builder.get_object("addAPurchaseMenuItem").hide()
-			self.builder.get_object("addABuyMenuItem").hide()
-		if utility.checkPermission(64):
-			self.builder.get_object("warehousingMenuItem").hide()
-		if utility.checkPermission(1024):
-			self.builder.get_object("Automatic Accounting").hide()
-			self.builder.get_object("manualmenuitem").hide()
-		if utility.checkPermission(16384):
-			self.builder.get_object("reportsMenuItem").hide()
-		if utility.checkPermission(4194304):
-			self.builder.get_object("settingmenuitem").hide()
-		if utility.checkPermission(4194304):
-			self.builder.get_object("backupRestore").hide()
+        # Hide inaccessible menues
+        if utility.checkPermission(4):
+            self.builder.get_object("usermenuitem").hide()
+        if utility.checkPermission(32):
+            self.builder.get_object("addProductMenuItem").hide()
+            self.builder.get_object("addAPurchaseMenuItem").hide()
+            self.builder.get_object("addABuyMenuItem").hide()
+        if utility.checkPermission(64):
+            self.builder.get_object("warehousingMenuItem").hide()
+        if utility.checkPermission(1024):
+            self.builder.get_object("Automatic Accounting").hide()
+            self.builder.get_object("manualmenuitem").hide()
+        if utility.checkPermission(16384):
+            self.builder.get_object("reportsMenuItem").hide()
+        if utility.checkPermission(4194304):
+            self.builder.get_object("settingmenuitem").hide()
+        if utility.checkPermission(4194304):
+            self.builder.get_object("backupRestore").hide()
 
-		self.window = self.builder.get_object("window1")
-		self.numentry = numberentry.NumberEntry()
-		box = self.builder.get_object("numbox")
-		box.add(self.numentry)
-		self.numentry.show()
+        self.window = self.builder.get_object("window1")
+        self.numentry = numberentry.NumberEntry()
+        box = self.builder.get_object("numbox")
+        box.add(self.numentry)
+        self.numentry.show()
 
-		self.dblist = self.builder.get_object("dblist")
-		helpers.comboInsertItems(self.dblist, config.dbnames)
-		self.dblist.set_active(config.currentdb - 1)
+        self.dblist = self.builder.get_object("dblist")
+        helpers.comboInsertItems(self.dblist, config.dbnames)
+        self.dblist.set_active(config.currentdb - 1)
 
-		eventbox = self.builder.get_object('eventbox1')
-		eventbox.override_background_color(Gtk.StateType.NORMAL,Gdk.RGBA(0.9765,0.9765,0.9765,1))
-		self.background = Gtk.Fixed()
-		eventbox.add(self.background)
-		#infobar.set_size_request(self.background.get_allocated_width(), -1)
-		self.image = Gtk.Image.new_from_file(os.path.join(config.data_path, "media", "background.png"))
-		self.background.put(self.image, 0, 0)
-		self.background.show_all()
+        eventbox = self.builder.get_object('eventbox1')
+        eventbox.override_background_color(Gtk.StateType.NORMAL,Gdk.RGBA(0.9765,0.9765,0.9765,1))
+        self.background = Gtk.Fixed()
+        eventbox.add(self.background)
+        #infobar.set_size_request(self.background.get_allocated_width(), -1)
+        self.image = Gtk.Image.new_from_file(os.path.join(config.data_path, "media", "background.png"))
+        self.background.put(self.image, 0, 0)
+        self.background.show_all()
 
-		#NOTE: Bad idea, because until initial menu is shown, user can not register any bill;
-		#so the below query always returns zero.
+        #NOTE: Bad idea, because until initial menu is shown, user can not register any bill;
+        #so the below query always returns zero.
 
-		#if config.db.session.query(Bill.id).count()==0 :
-			#initial = self.builder.get_object("menubar1")
-			#initial.hide()
-		#else:
-			#initial = self.builder.get_object("menubar2")
-			#initial.hide()
-		initial = self.builder.get_object("menubar2")
-		initial.hide()
+        #if config.db.session.query(Bill.id).count()==0 :
+            #initial = self.builder.get_object("menubar1")
+            #initial.hide()
+        #else:
+            #initial = self.builder.get_object("menubar2")
+            #initial.hide()
+        initial = self.builder.get_object("menubar2")
+        initial.hide()
 
-		self.window.connect("delete_event", self.delete_event)
-		self.window.connect("destroy", self.destroy)
+        self.window.connect("delete_event", self.delete_event)
+        self.window.connect("destroy", self.destroy)
 
-		#self.window.set_border_width(10)
-		self.builder.connect_signals(self)
-		self.window.show()
+        #self.window.set_border_width(10)
+        self.builder.connect_signals(self)
+        self.window.show()
 
-		# Alerts
-		import amir.dbconfig
-		dbconf = amir.dbconfig .dbConfig()
-		cashSum = config.db.session.query(func.sum(Notebook.value)).filter(Notebook.subject_id == dbconf.get_int('cash')).first()
-		if cashSum[0] != None and cashSum[0] < 0:
-			self.alert_dialog(_("Cash is negative"))
+        # Alerts
+        import amir.dbconfig
+        dbconf = amir.dbconfig .dbConfig()
+        cashSum = config.db.session.query(func.sum(Notebook.value)).filter(Notebook.subject_id == dbconf.get_int('cash')).first()
+        if cashSum[0] != None and cashSum[0] < 0:
+            self.alert_dialog(_("Cash is negative"))
 
-		chqDueDate = config.db.session.query(Cheque.chqDueDate).filter( or_(Cheque.chqStatus == 1, Cheque.chqStatus == 3)).filter(Cheque.chqDelete !=1)
-		for dueDate in chqDueDate:
-			result = datetime.datetime.now().date() - dueDate[0]
-			if result.days < 7:
-				self.alert_dialog(_("Check the due date of cheques"))
-				break
+        chqDueDate = config.db.session.query(Cheque.chqDueDate).filter( or_(Cheque.chqStatus == 1, Cheque.chqStatus == 3)).filter(Cheque.chqDelete !=1)
+        for dueDate in chqDueDate:
+            result = datetime.datetime.now().date() - dueDate[0]
+            if result.days < 7:
+                self.alert_dialog(_("Check the due date of cheques"))
+                break
 
-	def loginProcess(self,sender=0):
-		username = self.builder.get_object("username")
-		password = self.builder.get_object("password")
+    def loginProcess(self,sender=0):
+        username = self.builder.get_object("username")
+        password = self.builder.get_object("password")
 
-		if config.db.session.query(Users).count() == 0:
-			user = Users('root', 'root', '', 1)
-			config.db.session.add(user)
-			config.db.session.commit()
-			user = Permissions('root', '33554430')
-			config.db.session.add(user)
-			config.db.session.commit()
-		self.loginUser = config.db.session.query(Users).filter(Users.username == unicode(username.get_text())).first()
-		if self.loginUser:
-			permission = config.db.session.query(Permissions).filter(Permissions.id == self.loginUser.id).first()
-			# self.permissionValue = long(permission.value)
-			utility.setPermissionValue(long(permission.value))
-		if self.loginUser and self.loginUser.validate_password(password.get_text()):
-			self.window.hide()
-			self.infobar = []
-			self.h = 30
-			self.loggedIn()
-		else:
-			statusbar = self.builder.get_object('statusbar1')
-			context_id = statusbar.get_context_id('statusbar')
-			statusbar.push(context_id,_('Username or password is incorrect'))
+        if config.db.session.query(Users).count() == 0:
+            user = Users('root', 'root', '', 1)
+            config.db.session.add(user)
+            config.db.session.commit()
+            user = Permissions('root', '33554430')
+            config.db.session.add(user)
+            config.db.session.commit()
+        self.loginUser = config.db.session.query(Users).filter(Users.username == unicode(username.get_text())).first()
+        if self.loginUser:
+            permission = config.db.session.query(Permissions).filter(Permissions.id == self.loginUser.id).first()
+            # self.permissionValue = long(permission.value)
+            utility.setPermissionValue(long(permission.value))
+        if self.loginUser and self.loginUser.validate_password(password.get_text()):
+            self.window.hide()
+            self.infobar = []
+            self.h = 30
+            self.loggedIn()
+        else:
+            statusbar = self.builder.get_object('statusbar1')
+            context_id = statusbar.get_context_id('statusbar')
+            statusbar.push(context_id,_('Username or password is incorrect'))
 
-	def repairDbFunc(self):
-		config.db.rebuild_nested_set(0, 0)
+    def repairDbFunc(self):
+        config.db.rebuild_nested_set(0, 0)
 
-		self.msgbox.set_markup(_("Repair Operation Completed!"))
-		self.msgbox.add_button(Gtk.STOCK_OK, -5)
-		self.msgbox.run()
-		self.msgbox.destroy()
-		return False
+        self.msgbox.set_markup(_("Repair Operation Completed!"))
+        self.msgbox.add_button(Gtk.STOCK_OK, -5)
+        self.msgbox.run()
+        self.msgbox.destroy()
+        return False
 
-	def dbSelected(self, combo):
-		active_index = combo.get_active()
-		if active_index != config.currentdb - 1:
-			msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL,
-									   _("You have changed the current database, any unsaved data will be lost.\nAre you sure to continue?"))
-			msgbox.set_title(_("Are you sure?"))
-			result = msgbox.run()
-			msgbox.destroy()
-			if result == Gtk.ResponseType.OK :
-				config.db.session.close()
-				config.db = database.Database(config.dblist[active_index], config.db_repository, config.echodbresult)
-				config.currentdb = active_index + 1
+    def dbSelected(self, combo):
+        active_index = combo.get_active()
+        if active_index != config.currentdb - 1:
+            msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL,
+                                       _("You have changed the current database, any unsaved data will be lost.\nAre you sure to continue?"))
+            msgbox.set_title(_("Are you sure?"))
+            result = msgbox.run()
+            msgbox.destroy()
+            if result == Gtk.ResponseType.OK :
+                config.db.session.close()
+                config.db = database.Database(config.dblist[active_index], config.db_repository, config.echodbresult)
+                config.currentdb = active_index + 1
 
-				self.emit("database-changed", config.dblist[active_index])
-				self.silent_daialog(_("Database changed successfully."))
-			else:
-				combo.set_active(config.currentdb - 1)
+                self.emit("database-changed", config.dblist[active_index])
+                self.silent_daialog(_("Database changed successfully."))
+            else:
+                combo.set_active(config.currentdb - 1)
 
-	def reloadDatabases(self, sender, active_dbpath):
-		helpers.comboInsertItems(self.dblist, config.dbnames)
-		active_index = config.dblist.index(active_dbpath)
-		self.dblist.set_active(active_index)
+    def reloadDatabases(self, sender, active_dbpath):
+        helpers.comboInsertItems(self.dblist, config.dbnames)
+        active_index = config.dblist.index(active_dbpath)
+        self.dblist.set_active(active_index)
 
-	def databaseChanged(self, sender, active_path):
-		self.emit("database-changed", active_path)
+    def databaseChanged(self, sender, active_path):
+        self.emit("database-changed", active_path)
 
-	def localeChanged(self, sender, new_locale):
-		os.environ['LANG'] = new_locale
-		locale.setlocale(locale.LC_ALL, '')
-		gettext.bindtextdomain('amir', config.locale_path)
-		gettext.textdomain('amir')
-		try:
-			gettext.install('amir', config.locale_path, unicode=1)
-		except: # py3
-			gettext.install('amir', config.locale_path)
-		logging.info('New locale: ' + new_locale)
+    def localeChanged(self, sender, new_locale):
+        os.environ['LANG'] = new_locale
+        locale.setlocale(locale.LC_ALL, '')
+        gettext.bindtextdomain('amir', config.locale_path)
+        gettext.textdomain('amir')
+        try:
+            gettext.install('amir', config.locale_path, unicode=1)
+        except: # py3
+            gettext.install('amir', config.locale_path)
+        logging.info('New locale: ' + new_locale)
 
-		msg = _("Please close Amir and start it again in order to apply changes")
-		self.msgbox = Gtk.MessageDialog(self.window,Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK , msg)
-		self.msgbox.set_title(_("Please restart Amir"))
-		self.msgbox.run()
-		self.msgbox.destroy()
+        msg = _("Please close Amir and start it again in order to apply changes")
+        self.msgbox = Gtk.MessageDialog(self.window,Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK , msg)
+        self.msgbox.set_title(_("Please restart Amir"))
+        self.msgbox.run()
+        self.msgbox.destroy()
 
 
-	def automaticAccounting(self, sender):
-		obj = automaticaccounting.AutomaticAccounting()
-		obj.run()
+    def automaticAccounting(self, sender):
+        obj = automaticaccounting.AutomaticAccounting()
+        obj.run()
 
-	def showBankAccounts(self, sender):
-		obj = bankaccountsui.BankAccountsUI(self.background)
-		obj.show_accounts()
+    def showBankAccounts(self, sender):
+        obj = bankaccountsui.BankAccountsUI(self.background)
+        obj.show_accounts()
 
-	def addBankAccount(self, sender):
-		obj = bankaccountsui.BankAccountsUI(self.background)
-		obj.add_account()
+    def addBankAccount(self, sender):
+        obj = bankaccountsui.BankAccountsUI(self.background)
+        obj.add_account()
 
-	def silent_daialog(self, text):
-		infobar = Gtk.InfoBar()
-		infobar.get_content_area().add(Gtk.Label(label=text))
-		# width , height = self.background.window.get_size()
-		infobar.set_size_request(self.background.get_allocated_width(), -1)
-		self.background.put(infobar ,0 , 0)
-		infobar.show_all()
+    def silent_daialog(self, text):
+        infobar = Gtk.InfoBar()
+        infobar.get_content_area().add(Gtk.Label(label=text))
+        # width , height = self.background.window.get_size()
+        infobar.set_size_request(self.background.get_allocated_width(), -1)
+        self.background.put(infobar ,0 , 0)
+        infobar.show_all()
 
-		GObject.timeout_add(9000, lambda w: w.destroy(), infobar)
+        GObject.timeout_add(9000, lambda w: w.destroy(), infobar)
 
-	def alert_dialog(self, text):
-		yPos = 0
-		#self.h = 30
-		alertBarCnt = len(self.infobar)
-		if alertBarCnt:
-			yPos = float(self.infobar[0].get_size_request().height) * float(alertBarCnt)
-		infobar = Gtk.InfoBar()
-		infobar.get_content_area().add(Gtk.Label(label=text))
-		infobar.set_size_request(self.background.get_allocated_width(), self.h)
-		self.background.put(infobar ,0 , yPos)
-		infobar.show_all()
-		self.infobar.append(infobar)
+    def alert_dialog(self, text):
+        yPos = 0
+        #self.h = 30
+        alertBarCnt = len(self.infobar)
+        if alertBarCnt:
+            yPos = float(self.infobar[0].get_size_request().height) * float(alertBarCnt)
+        infobar = Gtk.InfoBar()
+        infobar.get_content_area().add(Gtk.Label(label=text))
+        infobar.set_size_request(self.background.get_allocated_width(), self.h)
+        self.background.put(infobar ,0 , yPos)
+        infobar.show_all()
+        self.infobar.append(infobar)
 
-	def on_win_resize(self , sender , a):
-		pb = self.image.get_pixbuf()
-		imageWidth = pb.get_width()
-		imageHeight = pb.get_height()
-		wDiff = self.background.get_allocated_width() - imageWidth
-		hDiff = self.background.get_allocated_height() - imageHeight
-		self.background.move(self.image , wDiff/2 ,hDiff/2)
-		if len(self.infobar):
-			for ib in self.infobar:
-				ib.set_size_request(self.background.get_allocated_width() , self.h)
+    def on_win_resize(self , sender , a):
+        pb = self.image.get_pixbuf()
+        imageWidth = pb.get_width()
+        imageHeight = pb.get_height()
+        wDiff = self.background.get_allocated_width() - imageWidth
+        hDiff = self.background.get_allocated_height() - imageHeight
+        self.background.move(self.image , wDiff/2 ,hDiff/2)
+        if len(self.infobar):
+            for ib in self.infobar:
+                ib.set_size_request(self.background.get_allocated_width() , self.h)
 
-	def main(self):
-		Gtk.main()
+    def main(self):
+        Gtk.main()
 
 if __name__ == "__main__":
-	GObject.type_register(MainWindow)
-	GObject.signal_new("database-changed", MainWindow, GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_STRING,))
+    GObject.type_register(MainWindow)
+    GObject.signal_new("database-changed", MainWindow, GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_STRING,))
 
-	mainwin = MainWindow()
-	share.mainwin = mainwin
-	mainwin.main()
+    mainwin = MainWindow()
+    share.mainwin = mainwin
+    mainwin.main()
