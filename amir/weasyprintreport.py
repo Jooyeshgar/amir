@@ -4,7 +4,7 @@ from gi.repository import GLib, Gtk
 import subprocess
 import sys
 import time
-from share import share
+from .share import share
 config = share.config
 import cairocffi
 dir_path = os.path.dirname(os.path.realpath(__file__))

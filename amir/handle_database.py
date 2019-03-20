@@ -4,7 +4,7 @@ from amir import amirconfig, database
 from amir.share import share
 from sqlalchemy import *
 from amir.database import *
-import database
+from . import database
 import os
 from shutil import make_archive , rmtree
 from sqlalchemy.ext.serializer import dumps,loads
@@ -43,7 +43,7 @@ def checkInputDb(inputfile, selectedFormat):
     try:
         #engine = create_engine(type + inputfile, echo=True)
         database.Database(inputfile, share.config.db_repository, share.config.echodbresult)
-        print " yesss"
+        print(" yesss")
     except exc.DatabaseError:
         logging.debug(sys.exc_info()[0])
         return -2
@@ -198,7 +198,7 @@ def createDb(dbName, builder):
             newdb.session.query(clas).delete()
             movingData = share.config.db.session.query(clas).all()
             clas2 = clas.__table__
-            columns = clas2.columns.keys()
+            columns = list(clas2.columns.keys())
             for d in movingData:
                 data = dict([(str(column), getattr(d, column)) for column in columns])
                 instant = clas(**data)
@@ -243,7 +243,7 @@ def importData(rdb , inputfile):
         newdb.session.query(clas).delete()
         movingData = share.config.db.session.query(clas).all()
         clas2 = clas.__table__
-        columns = clas2.columns.keys()
+        columns = list(clas2.columns.keys())
         for d in movingData:
             data = dict([(str(column), getattr(d, column)) for column in columns])
             instant = clas(**data)

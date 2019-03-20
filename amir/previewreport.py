@@ -2,9 +2,9 @@ import gi
 from gi.repository import Gtk
 import math
 
-import utility
-from share import share
-from helpers import get_builder
+from . import utility
+from .share import share
+from .helpers import get_builder
 
 config = share.config
 
@@ -50,7 +50,7 @@ class PreviewReport:
         self.drawfunction = func
     
     def doPreviewJob(self):
-        print "doPreviewJob"
+        print("doPreviewJob")
         getattr(self, self.drawfunction)()
         self.pagecount.set_text(str(self.pages))
         self.drawPage(1)

@@ -1,18 +1,22 @@
 #import chequeui
-import payments
-import class_cheque
-import class_document
-import customers
-import dateentry
-import dbconfig
-import decimalentry
-import helpers
-import subjects
-from share import share
-from database import Subject
-from database import Customers
-from class_subject import Subjects
-from utility import LN ,convertToLatin ,getFloat
+from . import payments
+from . import class_cheque
+from . import class_document
+from . import customers
+from . import dateentry
+from . import dbconfig
+from . import decimalentry
+from . import helpers
+from . import subjects
+from .share import share
+from .database import Subject
+from .database import Customers
+from .class_subject import Subjects
+from .utility import LN ,convertToLatin ,getFloat
+
+import sys
+if sys.version_info > (3,):
+    unicode = str
 
 from gi.repository import Gtk
 
@@ -393,7 +397,7 @@ class AutomaticAccounting:
                 custSubj = self.to_id                
             else: # from is customer
                 custSubj = self.from_id
-            print custSubj
+            print(custSubj)
             customer_id = share.config.db.session.query(Customers).filter(Customers.custSubj==custSubj).first().custId
 
             for cheque in self.addChequeui.chequesList:

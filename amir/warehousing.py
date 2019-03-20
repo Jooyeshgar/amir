@@ -1,19 +1,23 @@
-import  numberentry
-import  subjects
+from . import numberentry
+from . import subjects
 
 
 from    sqlalchemy.orm              import  sessionmaker, join
-from    helpers                     import  get_builder
+from    .helpers                    import  get_builder
 from    sqlalchemy.orm.util         import  outerjoin
-from    amirconfig                  import  config
+from    .amirconfig                 import  config
 from    datetime                    import  date
 from    sqlalchemy.sql              import  and_
 from    sqlalchemy.sql.functions    import  *
-from    database                    import  *
+from    .database                   import  *
 
 import gi
 from gi.repository import Gtk
 from gi.repository import GObject
+
+import sys
+if sys.version_info > (3,):
+    unicode = str
 
 ###################################################################################
 ##
@@ -251,7 +255,7 @@ class Warehousing(GObject.GObject):
                         self.session.delete(query)
                         self.session.commit()
                         self.proListStore.remove(iter)
-                        if self.grpIterDict.has_key(code):
+                        if code in self.grpIterDict:
                             self.grpListStore.remove(self.grpIterDict[ code ])
                             del self.grpIterDict[ code ]
 
@@ -560,7 +564,7 @@ class Warehousing(GObject.GObject):
             
             parGrpCd    = self.session.query(Groups).select_from(Groups)
             parGrpCd    = parGrpCd.filter(Groups.id == accg).first().code
-            if self.proGrpDict.has_key(parGrpCd):
+            if parGrpCd in self.proGrpDict:
                 parIter = self.proGrpDict[ parGrpCd ]
                 proIter = self.proListStore.append(parIter, 
                                             (code,name,qnty,purc,sell))
@@ -1070,13 +1074,13 @@ class Warehousing(GObject.GObject):
         sid     = self.groupSellIDEntry.get_text()
         bid     = self.groupBuyIDEntry.get_text()
 
-        if self.grpIterDict.has_key(str(query.first().code)):
+        if str(query.first().code) in self.grpIterDict:
             iter    = self.grpIterDict[ str(query.first().code) ]
             self.grpListStore.set(iter, 0,code, 1,name, 2,bid, 3,sid)
             del self.grpIterDict[ str(query.first().code) ]
             self.grpIterDict[ code ]    = iter
 
-        if self.proGrpDict.has_key(str(query.first().code)):
+        if str(query.first().code) in self.proGrpDict:
             proIter = self.proGrpDict[ str(query.first().code) ]
             self.proListStore.set(proIter, 0,code, 1,name)
             del self.proGrpDict[ str(query.first().code) ]

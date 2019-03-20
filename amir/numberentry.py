@@ -4,9 +4,16 @@ import gi
 from gi.repository import Gtk
 from gi.repository import GObject
 
-import utility
+from . import utility
 
-from string import replace
+try:
+    from string import replace
+except:
+    replace = str.replace
+
+import sys
+if sys.version_info > (3,):
+    unicode = str
 
 ## \defgroup Widgets
 ## @{

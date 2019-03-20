@@ -4,27 +4,29 @@ import  gobject
 
 import  re
 
-import  numberentry
-import  decimalentry
-import  dateentry
-import  subjects
-import  productgroup
-import  utility
-import	dbconfig
+from . import numberentry
+from . import decimalentry
+from . import dateentry
+from . import subjects
+from . import productgroup
+from . import utility
+from . import dbconfig
 
 from    sqlalchemy.orm              import  sessionmaker, join
 from    sqlalchemy.orm.util         import  outerjoin
 from    sqlalchemy.sql              import  and_, or_
 from    sqlalchemy.sql.functions    import  *
 
-from    helpers                     import  get_builder
-from    share                       import  share
+from    .helpers                    import  get_builder
+from    .share                      import  share
 from    datetime                    import  date
-from    database                    import  *
+from    .database                   import  *
 import gi
 from gi.repository import Gtk
 from gi.repository import GObject
 
+if sys.version_info > (3,):
+    unicode = str
 
 config = share.config
 

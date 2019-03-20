@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
-import class_bankaccounts
-import customers
-import helpers
-from share import share
-from database import BankAccounts
-from database import Customers
+from . import class_bankaccounts
+from . import customers
+from . import helpers
+from .share import share
+from .database import BankAccounts
+from .database import Customers
 
 import glib
 from gi.repository import Gtk
 
+import sys
+if sys.version_info > (3,):
+    unicode = str
+    
 config = share.config
 
 ## \defgroup UserInterface

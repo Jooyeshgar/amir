@@ -7,8 +7,8 @@ from gi.repository import PangoCairo
 import logging
 import math
 
-import utility
-from share import share
+from . import utility
+from .share import share
 from amir.dateentry import dateToString
 
 config = share.config

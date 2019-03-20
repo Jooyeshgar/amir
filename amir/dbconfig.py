@@ -1,7 +1,11 @@
-import database
-from share import share
+from . import database
+from .share import share
 
 config = share.config
+
+import sys
+if sys.version_info > (3,):
+    unicode = str
 
 ## \defgroup Controller
 ## @{

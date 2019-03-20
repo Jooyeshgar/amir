@@ -27,14 +27,17 @@ __license__ = 'GPL-3'
 
 import os, optparse, logging, sys
 from optparse import IndentedHelpFormatter
-from share import share
+from .share import share
 import textwrap
 import tempfile
 import shutil
-import ConfigParser
+try:
+    import ConfigParser as configparser
+except:
+    import configparser
 import platform
 
-import database
+from . import database
 
 ## \defgroup Utility
 ## @{
@@ -127,7 +130,7 @@ class AmirConfig:
             confdir = os.path.join(os.path.expanduser('~'), '.amir')
 
         if not os.path.exists(confdir):
-            os.makedirs(confdir, 0755)
+            os.makedirs(confdir, 0o755)
         self.confdir = confdir
         confpath = os.path.join(confdir, 'amir.conf')
 
@@ -141,7 +144,7 @@ class AmirConfig:
                               "content_font": "9", "footer_font": "8", "paper_ppd_name": "A4", "paper_display_name": "A4",
                               "paper_width_points": "595", "paper_height_points": "841", "paper_orientation": "0",
                               "top_margin": "18", "bottom_margin": "18", "right_margin": "18", "left_margin": "18"}
-        self.sconfig = ConfigParser.SafeConfigParser(self.defaultConfig)
+        self.sconfig = configparser.SafeConfigParser(self.defaultConfig)
 
         if not os.path.exists(confpath):
             open(confpath, 'w').close()
@@ -168,7 +171,7 @@ class AmirConfig:
             self.currentdb = self.sconfig.getint('General', 'current_database')
             dbfile = self.dblist[self.currentdb - 1]
             self.dbfile = dbfile
-        except ConfigParser.NoOptionError:
+        except configparser.NoOptionError:
             dbfile = ''
         if self.options.database != None:
             dbfile = self.options.database
@@ -301,7 +304,7 @@ class AmirConfig:
             confdir = os.path.join(os.path.expanduser('~'), '.amir')
         confpath = os.path.join(confdir, 'amir.conf')
         logging.debug('Writing configuration "%s"' % confpath)
-        self.sconfig.write(open(confpath, 'wb'))
+        self.sconfig.write(open(confpath, 'w'))
 #        self.configfile.update(keys, values)
 
     def restoreDefaultFonts(self):

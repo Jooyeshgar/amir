@@ -2,16 +2,23 @@ from gi.repository import Gtk
 import os
 from gi.repository import GObject
 
-import class_subject
-import handle_database
-import database
-import dbconfig
-import subjects
-from share import share
-from helpers import get_builder, comboInsertItems
+from . import class_subject
+from . import handle_database
+from . import database
+from . import dbconfig
+from . import subjects
+from .share import share
+from .helpers import get_builder, comboInsertItems
 import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
+import importlib
+try:
+    importlib.reload(sys)
+    sys.setdefaultencoding('utf-8')
+except: # py3 most likely
+    pass # nvm
+
+if sys.version_info > (3,):
+    unicode = str
 
 config = share.config
 

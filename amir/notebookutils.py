@@ -5,8 +5,8 @@ from datetime import date
 from sqlalchemy import or_, and_
 from sqlalchemy.orm.util import outerjoin
 
-from database import *
-from share import share
+from .database import *
+from .share import share
 
 config = share.config
 

@@ -1,15 +1,19 @@
 # -*- coding: utf-8 -*-
-import class_subject
-import dbconfig
-from share import share
-from database import BankAccounts
-from database import BankNames
-from database import Subject
+from . import class_subject
+from . import dbconfig
+from .share import share
+from .database import BankAccounts
+from .database import BankNames
+from .database import Subject
 
 from sqlalchemy.orm.util import outerjoin
 from sqlalchemy.orm.query import aliased
 from sqlalchemy.sql.functions import *
 from gi.repository import Gtk
+
+import sys
+if sys.version_info > (3,):
+    unicode = str
 
 config = share.config
 ## \defgroup Controller

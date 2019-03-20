@@ -46,6 +46,10 @@
 import sys
 import os
 
+if sys.version_info > (3,):
+	long = int
+	unicode = str
+
 if sys.platform == 'win32':
 	#set path env to current directory to avoid GTK errors
 	if getattr(sys, 'frozen', False):
@@ -125,7 +129,10 @@ except:
 logging.debug('Locale Path=%s' % (config.locale_path))
 gettext.bindtextdomain('amir', config.locale_path)
 gettext.textdomain('amir')
-gettext.install('amir', config.locale_path, unicode=1)
+try:
+	gettext.install('amir', config.locale_path, unicode=1)
+except: # py3
+	gettext.install('amir', config.locale_path)
 
 from amir import subjects, addeditdoc, database, numberentry, notebookreport, docreport, tbalancereport, notebookutils, \
 setting, helpers, customers, customergroup, product, productgroup, factors, cardexreport, user, utility, chequereport
@@ -420,7 +427,7 @@ class MainWindow(GObject.GObject):
 		import amir.dbconfig 				
 		dbconf = amir.dbconfig .dbConfig()
 		cashSum = config.db.session.query(func.sum(Notebook.value)).filter(Notebook.subject_id == dbconf.get_int('cash')).first()
-		if cashSum[0] < 0 and cashSum[0] != None:
+		if cashSum[0] != None and cashSum[0] < 0:
 			self.alert_dialog(_("Cash is negative"))
 
 		chqDueDate = config.db.session.query(Cheque.chqDueDate).filter( or_(Cheque.chqStatus == 1, Cheque.chqStatus == 3)).filter(Cheque.chqDelete !=1)
@@ -496,7 +503,10 @@ class MainWindow(GObject.GObject):
 		locale.setlocale(locale.LC_ALL, '')
 		gettext.bindtextdomain('amir', config.locale_path)
 		gettext.textdomain('amir')
-		gettext.install('amir', config.locale_path, unicode=1)
+		try:
+			gettext.install('amir', config.locale_path, unicode=1)
+		except: # py3
+			gettext.install('amir', config.locale_path)
 		logging.info('New locale: ' + new_locale)
 
 		msg = _("Please close Amir and start it again in order to apply changes")

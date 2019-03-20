@@ -15,7 +15,7 @@ from sqlalchemy.sql import select
 from sqlalchemy.orm import outerjoin, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-import calverter
+from . import calverter
 
 Base = declarative_base()
  

@@ -1,14 +1,18 @@
 from gi.repository import Gtk
-import class_document
-import numberentry , decimalentry
-import dateentry
-import subjects
-import utility
-import automaticaccounting
-from share import share
-from database import Subject , Notebook
-from helpers import get_builder
-from sqlalchemy import or_ , and_ , func
+from . import class_document
+from . import numberentry, decimalentry
+from . import dateentry
+from . import subjects
+from . import utility
+from . import automaticaccounting
+from .share import share
+from .database import Subject, Notebook
+from .helpers import get_builder
+from sqlalchemy import or_, and_, func
+
+import sys
+if sys.version_info > (3,):
+    unicode = str
 
 config = share.config
 

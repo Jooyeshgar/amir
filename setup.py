@@ -24,7 +24,7 @@ def removeall(path):
 def rmgeneric(path, __func__):
     try:
         __func__(path)
-    except OSError, (errno, strerror):
+    except OSError:
         pass
 
 # Create mo files:
@@ -35,7 +35,7 @@ for lang in ('fa', 'fr', 'he', 'tr'):
     locale_path = "locale/" + lang + "/LC_MESSAGES/amir.mo"
     if not os.path.exists("locale/" + lang + "/LC_MESSAGES/"):
         os.makedirs("locale/" + lang + "/LC_MESSAGES/")
-    print "generating", locale_path
+    print("generating", locale_path)
     os.system("msgfmt %s -o %s" % (pofile, locale_path))
 
 if platform.system() != 'Windows':
@@ -70,7 +70,7 @@ setuptools.setup(
 
 
 # Cleanup (remove /build, /locale, and *.pyc files:
-print "Cleaning up..."
+print("Cleaning up...")
 try:    # is not needed
     pass
     removeall("build/")

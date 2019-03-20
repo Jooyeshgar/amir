@@ -22,7 +22,7 @@ __all__ = [
 
 import os
 import logging
-from share import share
+from .share import share
 import gi
 from gi.repository import Gtk
 
@@ -41,7 +41,7 @@ def get_builder(builder_file_name):
     ui_filename = os.path.join(share.config.data_path, 'ui', '%s.glade' % (builder_file_name,))
 
     if not os.path.exists(ui_filename):
-		logging.error("UI file \"%s\" not found." % ui_filename)
+	    logging.error("UI file \"%s\" not found." % ui_filename)
         #ui_filename = None
 
     builder = Gtk.Builder()

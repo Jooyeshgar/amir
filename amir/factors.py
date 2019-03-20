@@ -1,31 +1,35 @@
 # -*- coding: utf-8 -*-
 import os
 
-import  product
-import  numberentry
-import  decimalentry
-from    dateentry       import  *
-import  subjects
-import  utility
-import  payments
-import  dbconfig
-import  customers
+from . import product
+from . import numberentry
+from . import decimalentry
+from .dateentry import *
+from . import subjects
+from . import utility
+from . import payments
+from . import dbconfig
+from . import customers
 
 from    sqlalchemy.orm              import  sessionmaker, join
-from    helpers                     import  get_builder
+from    .helpers                    import  get_builder
 from    sqlalchemy.orm.util         import  outerjoin
-from    share                       import  share
+from    .share                      import  share
 from    datetime                    import  date
 from    sqlalchemy.sql              import  and_
 from    sqlalchemy.sql.functions    import  *
-from    database                    import  *
-import	class_document
-import  class_cheque
+from    .database                   import  *
+from . import	class_document
+from . import  class_cheque
 from gi.repository import Gtk
 from gi.repository import Gdk
-from payments import Payments
-from weasyprintreport import *
+from .payments import Payments
+from .weasyprintreport import *
 #import logging
+
+import sys
+if sys.version_info > (3,):
+    unicode = str
 
 config = share.config
 
@@ -1155,11 +1159,11 @@ class Factor(Payments):
 					query   = self.session.query(Products).filter(Products.id == oldProduct.productId ) 
 					pro = query.first()
 					if factorType in (1,2):
-						print "if not found flag + return from buy"
+						print("if not found flag + return from buy")
 						pro.quantity += oldProduct.qnty
 					elif factorType in (0,3):
 						pro.quantity -= oldProduct.qnty
-						print "if not found flag + return from sell"
+						print("if not found flag + return from sell")
 					self.session.query(FactorItems).filter(FactorItems.productId == oldProduct.productId).delete()					
 		
 		for exch in self.sellListStore: # The new sell list store

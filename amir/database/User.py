@@ -19,7 +19,7 @@ class Users(Base):
     permission = Column(Integer, nullable=False)
 
     def __init__(self, name, username, password, permission,id=1):
-    	self.name = name
+        self.name = name
         self.username = username
         self.password = bcrypt.encrypt(password)
         self.permission = permission

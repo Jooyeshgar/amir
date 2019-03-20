@@ -1,4 +1,4 @@
-from share                      import share
+from .share                     import share
 from amir.database              import *
 from sqlalchemy.sql.functions   import *
 

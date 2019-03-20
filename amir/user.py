@@ -7,16 +7,20 @@ from sqlalchemy.orm.query import aliased
 from sqlalchemy.sql.functions import *
 from sqlalchemy.sql import and_
 from sqlalchemy.orm import sessionmaker, join
-from    dateentry       import  *
-import  decimalentry
+from .dateentry     import *
+from .              import decimalentry
 
-import numberentry
-from utility import LN,convertToLatin,checkPermission
-from database import *
-from share import share
-from helpers import get_builder
+from . import numberentry
+from .utility import LN,convertToLatin,checkPermission
+from .database import *
+from .share import share
+from .helpers import get_builder
 from amir.share import Share
 from passlib.hash import bcrypt
+
+import sys
+if sys.version_info > (3,):
+    unicode = str
 
 config = share.config
 # Users and permissions:
