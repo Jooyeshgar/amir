@@ -37,7 +37,7 @@ class ChequeReport(GObject.GObject):
         self.builder = get_builder("chequereport")
         self.window = self.builder.get_object("windowChequeReport")
         self.window.set_title(_("Cheques Report"))
-        
+
         self.treeviewIncoming = self.builder.get_object("treeviewIncoming")
         self.treeviewOutgoing = self.builder.get_object("treeviewOutgoing")
         self.treeviewNotPassed = self.builder.get_object("treeviewNotPassed")
@@ -78,19 +78,19 @@ class ChequeReport(GObject.GObject):
         self.treeviewReturnedF.set_model(self.treestoreReturnedF)
         self.treeviewFloat.set_model(self.treestoreFloat)
 
-        
-        headers = (_("ID"), _("Amount"),_("Write Date"),_("Due Date") ,_("Serial"),_("Customer Name"),_("Account"), _("Description"),_("Bill ID"),_("Status") )            
+
+        headers = (_("ID"), _("Amount"),_("Write Date"),_("Due Date") ,_("Serial"),_("Customer Name"),_("Account"), _("Description"),_("Bill ID"),_("Status") )
         for treeview in self.treeviews :
             i=0
-            for header in headers:  
+            for header in headers:
                 column = Gtk.TreeViewColumn(str(header), Gtk.CellRendererText(), text = i)
                 column.set_spacing(5)
                 column.set_resizable(True)
                 column.set_sort_column_id(i)
-                column.set_sort_indicator(True)   
+                column.set_sort_indicator(True)
                 self.builder.get_object(treeview ).append_column(column)
                 i+=1
-        
+
         self.window.show_all()
         self.builder.connect_signals(self)
 
@@ -105,11 +105,11 @@ class ChequeReport(GObject.GObject):
         datelist = ["", "", ""]
         datelist[share.config.datefields["year"]] = year
         datelist[share.config.datefields["month"]] = month
-        datelist[share.config.datefields["day"]] = day        
+        datelist[share.config.datefields["day"]] = day
         delimiter = share.config.datedelims[share.config.datedelim]
         placeH = datelist[0]+delimiter+datelist[1]+delimiter+datelist[2]
         dateToEntry.set_placeholder_text(placeH)
-        dateFromEntry.set_placeholder_text(placeH)            
+        dateFromEntry.set_placeholder_text(placeH)
         dateToEntry1.set_placeholder_text(placeH)
         dateFromEntry1.set_placeholder_text(placeH)
 
@@ -143,7 +143,7 @@ class ChequeReport(GObject.GObject):
         wDateTo = box.get_text()
         self.showResult(chequeId, chqSerial, amountFrom, amountTo , dateFrom, dateTo, wDateTo,wDateFrom)
 
-    def showResult(self, chequeId=None, chqSerial=None, amountFrom=None, amountTo=None, dateFrom=None, dateTo=None,wDateTo=None , wDateFrom=None):        
+    def showResult(self, chequeId=None, chqSerial=None, amountFrom=None, amountTo=None, dateFrom=None, dateTo=None,wDateTo=None , wDateFrom=None):
         self.treestoreIncoming.clear()
         self.treestoreOutgoing.clear()
         self.treestoreNotPassed.clear()
@@ -159,7 +159,7 @@ class ChequeReport(GObject.GObject):
 
         result = config.db.session.query(Cheque , Customers.custName).select_from(outerjoin(Cheque , Customers, Customers.custId == Cheque.chqCust))
         # Apply filters
-        delimiter = config.datedelims[config.datedelim]        
+        delimiter = config.datedelims[config.datedelim]
         if chequeId:
             result = result.filter(Cheque.chqId == chequeId)
         if chqSerial:
@@ -172,28 +172,28 @@ class ChequeReport(GObject.GObject):
         if dateTo:
             dateTo  = dateentry.stringToDate(dateTo)
         if dateFrom:
-            dateFrom  = dateentry.stringToDate(dateFrom)            
+            dateFrom  = dateentry.stringToDate(dateFrom)
         if wDateTo:
             wDateTo = dateentry.stringToDate(wDateTo)
         if wDateFrom:
             wDateFrom = dateentry.stringToDate(wDateFrom)
 
         if dateTo:
-            result = result.filter(Cheque.chqDueDate <= dateTo)        
+            result = result.filter(Cheque.chqDueDate <= dateTo)
         if wDateTo:
             result = result.filter(Cheque.chqWrtDate <= wDateTo)
-        if dateFrom:            
+        if dateFrom:
             #dateFrom -= timedelta(days=1)
             result = result.filter(Cheque.chqDueDate >= dateFrom)
-        if wDateFrom:            
+        if wDateFrom:
             #wDateFrom -= timedelta(days=1)
             result = result.filter(Cheque.chqWrtDate >= wDateFrom)
 
         totalIn = totalGo = totalnotcash = totalnotpass = totalPass = totalCash = totalSpent = totalBouncedp = totalBounced = totalRetT = totalRetF = totalFloat= 0
         # Show
-        for cheque , cust in result.all():       
-            chqWrtDate = dateentry.dateToString(cheque.chqWrtDate)            
-            chqDueDate = dateentry.dateToString(cheque.chqDueDate)            
+        for cheque , cust in result.all():
+            chqWrtDate = dateentry.dateToString(cheque.chqWrtDate)
+            chqDueDate = dateentry.dateToString(cheque.chqDueDate)
 
             # if (cheque.chqStatus == 2) or (cheque.chqStatus == 4):
             #     clear = _('Cleared')
@@ -201,7 +201,7 @@ class ChequeReport(GObject.GObject):
             #     clear = _('Not Cleared' )
             chqBill = config.db.session.query(Notebook.bill_id).filter(Notebook.chqId==cheque.chqId).first()
             if chqBill :
-                chqBill = chqBill.bill_id    
+                chqBill = chqBill.bill_id
             else:
                 chqBill = 0
             self.bankaccounts_class = class_bankaccounts.BankAccountsClass()
@@ -210,13 +210,13 @@ class ChequeReport(GObject.GObject):
             if stat == 6 :
                 history = config.db.session.query(ChequeHistory).filter(ChequeHistory.ChequeId==cheque.chqId).order_by(ChequeHistory.Id.desc()).limit(2).all()
                 if len(history):
-                    history = history[1]                    
+                    history = history[1]
                     isSpended  = True if history.Status == 5 else False
             if stat in [1,2,6,8] and not isSpended:
                 chqAccount = self.bankaccounts_class.get_account(cheque.chqAccount).accName
             else :
                 chqAccount = self.bankaccounts_class.get_bank_name(cheque.chqAccount)
-            addingRow = (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(cust), str(chqAccount), str(cheque.chqDesc), str(chqBill), str(unicode(self.chequeStatus[cheque.chqStatus])))        
+            addingRow = (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(cust), str(chqAccount), str(cheque.chqDesc), str(chqBill), str(unicode(self.chequeStatus[cheque.chqStatus])))
             if cheque.chqDelete == False:
                 if stat in [3,4,7,9]:
                     self.treestoreIncoming.append(None,addingRow )
@@ -239,66 +239,66 @@ class ChequeReport(GObject.GObject):
                     totalCash  +=cheque.chqAmount
                 elif stat  ==5:
                     self.treestoreSpent.append(None , addingRow)
-                    totalSpent += cheque.chqAmount            
+                    totalSpent += cheque.chqAmount
                 elif stat == 6 :
-                    self.treestoreReturnedF.append(None , addingRow)  
-                    totalRetF  +=cheque.chqAmount                         
+                    self.treestoreReturnedF.append(None , addingRow)
+                    totalRetF  +=cheque.chqAmount
                 elif stat == 7 :
-                    self.treestoreReturnedT.append(None , addingRow)  
-                    totalRetT  +=cheque.chqAmount                         
+                    self.treestoreReturnedT.append(None , addingRow)
+                    totalRetT  +=cheque.chqAmount
                 elif stat == 8 :
-                    self.treestoreBouncedP.append(None , addingRow)  
-                    totalBouncedp  +=cheque.chqAmount              
+                    self.treestoreBouncedP.append(None , addingRow)
+                    totalBouncedp  +=cheque.chqAmount
                 elif stat == 9 :
                     self.treestoreBounced.append(None , addingRow)
-                    totalBounced  +=cheque.chqAmount                
+                    totalBounced  +=cheque.chqAmount
                 elif stat == 10 :
                     self.treestoreFloat.append(None , addingRow)
                     totalFloat  +=cheque.chqAmount
-            else:                
+            else:
                 self.treestoreDeleted.     append(None, addingRow)
         self.totals = (totalIn , totalGo ,totalnotpass , totalnotcash, totalPass , totalCash ,totalSpent, totalBounced,totalBouncedp,totalRetT, totalRetF ,totalFloat, "")
         self.builder.get_object("totalLbl").set_text(str(totalIn) )
         self.currentTreeview = 0
 
-    def getSelection(self):        
+    def getSelection(self):
         treeview = self.builder.get_object(self.treeviews[self.currentTreeview ])
         selection = treeview.get_selection()
         iter = selection.get_selected()[1]
-        if iter != None :            
-            self.code = convertToLatin(treeview.get_model().get(iter, 0)[0])                               
+        if iter != None :
+            self.code = convertToLatin(treeview.get_model().get(iter, 0)[0])
 
     def editCheque (self , sender):
         self.getSelection()
         self.initChequeForm()
-        cheque = config.db.session.query(Cheque).filter(Cheque.chqId == self.code).first()        
+        cheque = config.db.session.query(Cheque).filter(Cheque.chqId == self.code).first()
         #payer_id   = cheque.chqCust
         amount = utility.LN(cheque.chqAmount, False)
         serial = cheque.chqSerial
         wrtDate = cheque.chqWrtDate
         dueDate = cheque.chqDueDate
         desc = cheque.chqDesc
-        
+
         self.builder.get_object("chequeStatusLbl") .set_text( self.chequeStatus[cheque.chqStatus])
         self.bankCombo.set_active(cheque.chqAccount - 1)
         #self.edtPymntFlg = True
-        #self.edititer = iter        
+        #self.edititer = iter
         self.addPymntDlg.set_title(_("Edit Non-Cash Payment"))
         self.builder.get_object("submitBtn").set_label(_("Save Changes..."))
         self.builder.get_object("paymentsStatusBar").push(1,"")
-        
+
         self.pymntAmntEntry.set_text(amount)
         self.serialNoEntry.set_text(serial)
         self.writeDateEntry.showDateObject(wrtDate)
         self.dueDateEntry.showDateObject(dueDate)
-        self.pymntDescEntry.set_text(desc)  
+        self.pymntDescEntry.set_text(desc)
 
     def initChequeForm(self):
         self.addPymntDlg = self.builder.get_object("addPaymentDlg")
         self.pymntAmntEntry = decimalentry.DecimalEntry()
         self.builder.get_object("pymntAmntBox").add(self.pymntAmntEntry)
         self.pymntAmntEntry.show()
-        
+
         self.dueDateEntry = dateentry.DateEntry()
         self.builder.get_object("pymntDueDateBox").add(self.dueDateEntry)
         self.dueDateEntry.show()
@@ -307,18 +307,18 @@ class ChequeReport(GObject.GObject):
         self.builder.get_object("pymntWritingDateBox").add(self.writeDateEntry)
         self.writeDateEntry.show()
         self.pymntDescEntry = self.builder.get_object("pymntDescEntry")
-        self.bankEntry = self.builder.get_object("bankEntry")   
+        self.bankEntry = self.builder.get_object("bankEntry")
         page = self.builder.get_object("notebook1").get_current_page()
         sellFlag = None
         if page == 0 :
             sellFlag = True
         elif page == 1:
-            sellFlag = False        
-            self.builder.get_object("payerLbl").set_text("Payid to:")        
-            self.builder.get_object("chooseBankBtn").set_sensitive(False)        
+            sellFlag = False
+            self.builder.get_object("payerLbl").set_text("Payid to:")
+            self.builder.get_object("chooseBankBtn").set_sensitive(False)
         self.bankCombo = self.builder.get_object('bank_names_combo')
         model = Gtk.ListStore(str)
-        self.bankCombo.set_model(model)               
+        self.bankCombo.set_model(model)
         if sellFlag: # other's cheque
             banks = self.bankaccounts_class.get_bank_names()
         else:
@@ -326,64 +326,64 @@ class ChequeReport(GObject.GObject):
         for item in banks:
             iter = model.append()
             name = item.Name if sellFlag else item.accName
-            model.set(iter, 0, name )           
+            model.set(iter, 0, name )
         cell = Gtk.CellRendererText()
         self.bankCombo.pack_start(cell, True)
         self.serialNoEntry = self.builder.get_object("serialNoEntry")
         self.payerEntry = self.builder.get_object("payerNameEntry")
-        self.customerNameLbl = self.builder.get_object("customerNameLbl")   
+        self.customerNameLbl = self.builder.get_object("customerNameLbl")
         self.addPymntDlg.show_all()
 
     def submitPayment(self, sender=0):
         if self.validatePayment() == False:
-            return          
+            return
         pymntAmnt   = self.pymntAmntEntry.get_float()
         wrtDate     = self.writeDateEntry.getDateObject()
         dueDte      = self.dueDateEntry.getDateObject()
         bank = int(self.bankCombo.get_active()) + 1
         # if self.sellFlag:
-        #     bank_name = self.bankaccounts_class.get_bank_name(bank)     
+        #     bank_name = self.bankaccounts_class.get_bank_name(bank)
         # else:
         #     bank_name = self.bankaccounts_class.get_account(bank).accName
         serial      = unicode(self.serialNoEntry.get_text())
-        pymntDesc   = unicode(self.pymntDescEntry.get_text())       
-        payer       = self.payerEntry.get_text()                
+        pymntDesc   = unicode(self.pymntDescEntry.get_text())
+        payer       = self.payerEntry.get_text()
         pymnt_str = utility.LN(pymntAmnt)
 
-        cheque = config.db.session.query(Cheque).filter(Cheque.chqId == self.code) .first()        
+        cheque = config.db.session.query(Cheque).filter(Cheque.chqId == self.code) .first()
         cheque.chqAmount = pymntAmnt
         cheque.chqWrtDate = wrtDate
         cheque.chqDueDate = dueDte
-        cheque.chqSerial = serial        
+        cheque.chqSerial = serial
         cheque.chqCust = int(self.builder.get_object("payerNameEntry").get_text() )
-        cheque.chqAccount = bank                        
-        cheque.chqDesc = pymntDesc  
+        cheque.chqAccount = bank
+        cheque.chqDesc = pymntDesc
 
         ch = cheque
-        ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, ch.chqDesc,self.current_time )            
+        ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, ch.chqDesc,self.current_time )
         config.db.session.add(ch_history)
         config.db.session.commit()
         self.addPymntDlg.hide()
         self.searchFilter()
 
-    def cancelPayment(self, sender=0, ev=0): 
-        self.addPymntDlg.hide()     
+    def cancelPayment(self, sender=0, ev=0):
+        self.addPymntDlg.hide()
         return True
 
-    def on_add_bank_clicked(self , sender):        
+    def on_add_bank_clicked(self , sender):
         model = self.bankCombo.get_model()
-        self.bankaccounts_class.addNewBank(model)        
+        self.bankaccounts_class.addNewBank(model)
 
     def odatAzMoshtari(self, sender):
         msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL,
                                   _("Are you sure to return this cheque?"))
         msgbox.set_title(_("Are you sure?"))
         result = msgbox.run();
-        
+
         if result == Gtk.ResponseType.CANCEL :
             msgbox.destroy()
             return
-        self.getSelection()       
+        self.getSelection()
         result = config.db.session.query(Cheque, Customers)
         result = result.filter(Customers.custId == Cheque.chqCust)
         result = result.filter(Cheque.chqId == self.code).first()
@@ -410,7 +410,7 @@ class ChequeReport(GObject.GObject):
                                    _("Are you sure to return this cheque?"))
         msgbox.set_title(_("Are you sure?"))
         result = msgbox.run();
-        
+
         if result == Gtk.ResponseType.CANCEL :
             msgbox.destroy()
             return
@@ -438,7 +438,7 @@ class ChequeReport(GObject.GObject):
                                    _("Are you sure to bounce this cheque?"))
         msgbox.set_title(_("Are you sure?"))
         result = msgbox.run();
-        
+
         if result == Gtk.ResponseType.CANCEL :
             msgbox.destroy()
             return
@@ -448,19 +448,19 @@ class ChequeReport(GObject.GObject):
         result = result.filter(Cheque.chqId == self.code).first()
         stat = result.Cheque.chqStatus
 
-        document = class_document.Document()        
+        document = class_document.Document()
         result.Cheque.chqStatus = 8 if stat in (1 , 2, 5) else 9
         if stat in  (1 , 2, 5): # our
             result.Cheque.chqStatus = 8
             document.add_notebook(result.Customers.custSubj   , result.Cheque.chqAmount, _('Bounced cheque'))
-            document.add_notebook(dbconf.get_int('our_cheque'), -result.Cheque.chqAmount, _('Bounced cheque'))   
+            document.add_notebook(dbconf.get_int('our_cheque'), -result.Cheque.chqAmount, _('Bounced cheque'))
         elif stat in (3 , 4): # their
-            result.Cheque.chqStatus  = 9 
+            result.Cheque.chqStatus  = 9
             document.add_notebook(result.Customers.custSubj  , -result.Cheque.chqAmount, _('Bounced cheque'))
-            document.add_notebook(dbconf.get_int('other_cheque'), result.Cheque.chqAmount, _('Bounced cheque'))   
+            document.add_notebook(dbconf.get_int('other_cheque'), result.Cheque.chqAmount, _('Bounced cheque'))
 
         ch_history = ChequeHistory(result.Cheque.chqId, result.Cheque.chqAmount, result.Cheque.chqWrtDate, result.Cheque.chqDueDate, result.Cheque.chqSerial, result.Cheque.chqStatus, result.Cheque.chqCust, result.Cheque.chqAccount, result.Cheque.chqTransId, result.Cheque.chqDesc, self.current_time)
-        config.db.session.add(ch_history)        
+        config.db.session.add(ch_history)
 
         document.save()
 
@@ -474,21 +474,21 @@ class ChequeReport(GObject.GObject):
                                    _("Are you sure to get this cheque passed?"))
         msgbox.set_title(_("Are you sure?"))
         result = msgbox.run();
-        
+
         if result == Gtk.ResponseType.CANCEL :
             msgbox.destroy()
             return
         self.getSelection()
         document = class_document.Document()
 
-        result = config.db.session.query(Cheque).filter(Cheque.chqId == self.code).first()          
+        result = config.db.session.query(Cheque).filter(Cheque.chqId == self.code).first()
         status = result.chqStatus
         if status == 3 or status == 10 :
             sub = subjects.Subjects(parent_id=[1,14])
             sub.connect('subject-selected', self.casheCheque)
 
         if status == 1 :
-            result.chqStatus = 2 
+            result.chqStatus = 2
             if status == 1 : # pass
                 ba = class_bankaccounts.BankAccountsClass()
                 accName = ba.get_account(result.chqAccount).accName
@@ -497,7 +497,7 @@ class ChequeReport(GObject.GObject):
                 document.add_notebook(dbconf.get_int('our_cheque'),_("Cheque with serial No.")+result.chqSerial+  -result.chqAmount, _('Passed'))
 
         ch_history = ChequeHistory(result.chqId, result.chqAmount, result.chqWrtDate, result.chqDueDate, result.chqSerial, result.chqStatus, result.chqCust, result.chqAccount, result.chqTransId, result.chqDesc, self.current_time)
-        config.db.session.add(ch_history)                                    
+        config.db.session.add(ch_history)
         document.save()
         config.db.session.commit()
         share.mainwin.silent_daialog(_("The operation was completed successfully."))
@@ -509,19 +509,19 @@ class ChequeReport(GObject.GObject):
                                    _("Are you sure to float this cheque?"))
         msgbox.set_title(_("Are you sure?"))
         result = msgbox.run();
-        
+
         if result == Gtk.ResponseType.CANCEL :
             msgbox.destroy()
             return
         self.getSelection()
-        result = config.db.session.query(Cheque).filter(Cheque.chqId == self.code).first()      
+        result = config.db.session.query(Cheque).filter(Cheque.chqId == self.code).first()
         status = result.chqStatus
         result.chqStatus = 10
-        document = class_document.Document()  
+        document = class_document.Document()
         document.add_notebook(dbconf.get_int('float'), -result.chqAmount,_("Cheque with serial No.")+result.chqSerial+ _('Floated'))
         document.add_notebook(dbconf.get_int('other_cheque'), result.chqAmount,_("Cheque with serial No.")+result.chqSerial+ _('Floated'))
         ch_history = ChequeHistory(result.chqId, result.chqAmount, result.chqWrtDate, result.chqDueDate, result.chqSerial, result.chqStatus, result.chqCust, result.chqAccount, result.chqTransId, result.chqDesc, self.current_time)
-        config.db.session.add(ch_history)                                    
+        config.db.session.add(ch_history)
         document.save()
         config.db.session.commit()
         share.mainwin.silent_daialog(_("The operation was completed successfully."))
@@ -534,7 +534,7 @@ class ChequeReport(GObject.GObject):
         result = result.filter(Cheque.chqId == self.code).first()
         status  =result.Cheque.chqStatus
         result.Cheque.chqStatus = 4
-        document = class_document.Document() 
+        document = class_document.Document()
         chequeValue =  result.Cheque.chqAmount
         desc = _("Cheque with serial No.")+result.Cheque.chqSerial+ _('Cashed')
         if status == 10:
@@ -542,9 +542,9 @@ class ChequeReport(GObject.GObject):
             document.add_notebook(dbconf.get_int('float'),chequeValue,desc)
         elif status == 3:
             document.add_notebook(id, -chequeValue, desc)
-            document.add_notebook(dbconf.get_int('other_cheque'), chequeValue,desc)   
+            document.add_notebook(dbconf.get_int('other_cheque'), chequeValue,desc)
         ch_history = ChequeHistory(result.Cheque.chqId, result.Cheque.chqAmount, result.Cheque.chqWrtDate, result.Cheque.chqDueDate, result.Cheque.chqSerial, result.Cheque.chqStatus, result.Cheque.chqCust, result.Cheque.chqAccount, result.Cheque.chqTransId, result.Cheque.chqDesc, self.current_time)
-        config.db.session.add(ch_history) 
+        config.db.session.add(ch_history)
         document.save()
         config.db.session.commit()
         subject.window.destroy()
@@ -553,23 +553,23 @@ class ChequeReport(GObject.GObject):
 
     def on_dialog_destroy(self, sender,data=None):
         sender.hide()
-        return True       
+        return True
 
     def selectChequeFromTreeview (self , treeview , path , view_column):
         treestore = treeview.get_model()
         iter = treestore.get_iter(path)
         if iter != None :
-            self.code = convertToLatin(treestore.get(iter , 0)[0])   
-            self.showHistory(self.code)     
+            self.code = convertToLatin(treestore.get(iter , 0)[0])
+            self.showHistory(self.code)
 
-    def showHistory(self, code):                    
+    def showHistory(self, code):
         self.treestoreHistory.clear()
         result = config.db.session.query(ChequeHistory, Cheque , Customers.custName)\
         .join(Cheque,ChequeHistory.ChequeId== Cheque.chqId).join(Customers,  Customers.custId == Cheque.chqCust)\
         .filter(ChequeHistory.ChequeId == code).all()
 
-        for  chequeHistory, cheque,cust in result:                        
-            if share.config.datetypes[share.config.datetype] == "jalali": 
+        for  chequeHistory, cheque,cust in result:
+            if share.config.datetypes[share.config.datetype] == "jalali":
                 year, month, day = str(chequeHistory.WrtDate).split("-")
                 chqWrtDate = gregorian_to_jalali(int(year),int(month),int(day))
                 chqWrtDate = str(chqWrtDate[0]) + '-' + str(chqWrtDate[1]) + '-' + str(chqWrtDate[2])
@@ -592,49 +592,49 @@ class ChequeReport(GObject.GObject):
 
             chqBill = config.db.session.query(Notebook.bill_id).filter(Notebook.chqId==cheque.chqId).first()
             if chqBill :
-                chqBill = chqBill.bill_id    
+                chqBill = chqBill.bill_id
             else:
                 chqBill = 0
             self.treestoreHistory.append(None, (str(chequeHistory.ChequeId), str(chequeHistory.Amount), str(chqWrtDate), str(chqDueDate), str(chequeHistory.Serial), str(clear), str(cust), str(chequeHistory.Account), str(chequeHistory.TransId), str(chequeHistory.Desc), str(chequeHistory.Date) ,str(chqBill),str(self.chequeStatus[chequeHistory.Status]) ))
             self.historywindow.show_all()
 
-    def on_select_cell(self, sender=0):              
-        self.builder.get_object("odatAsMoshtariButton").set_sensitive(True)        
-        self.builder.get_object("odatBeMoshtariButton").set_sensitive(True)        
-        self.builder.get_object("bargashtButton").set_sensitive(True)        
-        self.builder.get_object("passButton").set_sensitive(True)        
-        self.builder.get_object("deleteButton").set_sensitive(True)    
-        self.builder.get_object("editButton").set_sensitive(True)            
-        self.builder.get_object("JaryanButton").set_sensitive(True)            
-        self.getSelection()        
+    def on_select_cell(self, sender=0):
+        self.builder.get_object("odatAsMoshtariButton").set_sensitive(True)
+        self.builder.get_object("odatBeMoshtariButton").set_sensitive(True)
+        self.builder.get_object("bargashtButton").set_sensitive(True)
+        self.builder.get_object("passButton").set_sensitive(True)
+        self.builder.get_object("deleteButton").set_sensitive(True)
+        self.builder.get_object("editButton").set_sensitive(True)
+        self.builder.get_object("JaryanButton").set_sensitive(True)
+        self.getSelection()
         result = config.db.session.query(Cheque)
-        result = result.filter(Cheque.chqId == self.code).first()        
+        result = result.filter(Cheque.chqId == self.code).first()
         if result.chqStatus not in [1,5] :          # [2,3,4,5,6,7,8,9]: # 1
             self.builder.get_object("odatAsMoshtariButton").set_sensitive(False)
-        if result.chqStatus !=3 :           # [1,2,4,5,6,7,8]: # 3 
-            self.builder.get_object("odatBeMoshtariButton").set_sensitive(False)            
+        if result.chqStatus !=3 :           # [1,2,4,5,6,7,8]: # 3
+            self.builder.get_object("odatBeMoshtariButton").set_sensitive(False)
         if result.chqStatus not in [1 , 3 , 5 ,10]:  #[2,4,6,7,8]:   # 1 , 3 , 5
-            self.builder.get_object("bargashtButton").set_sensitive(False)       
-            self.builder.get_object("passButton").set_sensitive(False) 
+            self.builder.get_object("bargashtButton").set_sensitive(False)
+            self.builder.get_object("passButton").set_sensitive(False)
         if result.chqStatus not in  [1 , 3]:
-            self.builder.get_object("editButton").set_sensitive(False) 
-        if result.chqStatus in [2,4] : 
-            self.builder.get_object("editButton").set_sensitive(False)            
-            self.builder.get_object("deleteButton").set_sensitive(False)   
-            self.builder.get_object("passButton").set_sensitive(False) 
-            self.builder.get_object("bargashtButton").set_sensitive(False)    
+            self.builder.get_object("editButton").set_sensitive(False)
+        if result.chqStatus in [2,4] :
+            self.builder.get_object("editButton").set_sensitive(False)
+            self.builder.get_object("deleteButton").set_sensitive(False)
+            self.builder.get_object("passButton").set_sensitive(False)
+            self.builder.get_object("bargashtButton").set_sensitive(False)
         if result.chqStatus != 3:
-            self.builder.get_object("JaryanButton").set_sensitive(False)  
+            self.builder.get_object("JaryanButton").set_sensitive(False)
         if result.chqDelete == True:
-            self.builder.get_object("editButton").set_sensitive(False)            
-            self.builder.get_object("deleteButton").set_sensitive(False) 
-            self.builder.get_object("passButton").set_sensitive(False) 
-            self.builder.get_object("bargashtButton").set_sensitive(False) 
-            self.builder.get_object("odatBeMoshtariButton").set_sensitive(False) 
-            self.builder.get_object("odatAsMoshtariButton").set_sensitive(False) 
+            self.builder.get_object("editButton").set_sensitive(False)
+            self.builder.get_object("deleteButton").set_sensitive(False)
+            self.builder.get_object("passButton").set_sensitive(False)
+            self.builder.get_object("bargashtButton").set_sensitive(False)
+            self.builder.get_object("odatBeMoshtariButton").set_sensitive(False)
+            self.builder.get_object("odatAsMoshtariButton").set_sensitive(False)
 
-    def on_switch_page (self , sender ,tree  ,  page , data=0):          
-        self.currentTreeview = page 
+    def on_switch_page (self , sender ,tree  ,  page , data=0):
+        self.currentTreeview = page
         self.builder.get_object("totalLbl").set_text(str(self.totals[page]))
 
     def on_delete(self, sender):
@@ -642,31 +642,31 @@ class ChequeReport(GObject.GObject):
                                    _("Are you sure to delete the cheque?"))
         msgbox.set_title(_("Are you sure?"))
         result = msgbox.run();
-        
+
         if result == Gtk.ResponseType.OK :
             self.getSelection()
             result = config.db.session.query(Cheque).filter(Cheque.chqId == self.code).first()
-            
+
             notebook = config.db.session.query(Notebook).filter(Notebook.chqId == result.chqId)
-            bill_id = notebook.first().bill_id            
+            bill_id = notebook.first().bill_id
             notebook.delete()
-            noteCount = config.db.session.query(count(Notebook.bill_id)).filter(Notebook.bill_id== bill_id).first()[0]                   
+            noteCount = config.db.session.query(count(Notebook.bill_id)).filter(Notebook.bill_id== bill_id).first()[0]
             if noteCount == 0 :
                 config.db.session.query(Bill).filter(Bill.id == bill_id).delete()
-        
+
             result.chqDelete = True
             ch_history = ChequeHistory(result.chqId, result.chqAmount, result.chqWrtDate, result.chqDueDate, result.chqSerial, result.chqStatus, result.chqCust, result.chqAccount, result.chqTransId, result.chqDesc, self.current_time, result.chqDelete)
-            config.db.session.add(ch_history)        
+            config.db.session.add(ch_history)
             config.db.session.commit()
 
             share.mainwin.silent_daialog(_("The operation was completed successfully."))
             self.searchFilter()
         msgbox.destroy()
 
-    def createHistoryTreeview(self):        
+    def createHistoryTreeview(self):
         self.historywindow = self.builder.get_object("window1")
         self.historywindow.set_title("Cheque History")
-        
+
         self.treeviewHistory = self.builder.get_object("treeviewHistory")
         self.treestoreHistory = Gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str, str, str)
         self.treeviewHistory.set_model(self.treestoreHistory)
@@ -712,7 +712,7 @@ class ChequeReport(GObject.GObject):
         column.set_sort_column_id(1)
         column.set_sort_indicator(True)
         self.treeviewHistory.append_column(column)
-        
+
         column = Gtk.TreeViewColumn(_("Customer Name"), Gtk.CellRendererText(), text = 6)
         column.set_spacing(5)
         column.set_resizable(True)
@@ -754,7 +754,7 @@ class ChequeReport(GObject.GObject):
         column.set_sort_column_id(3)
         column.set_sort_indicator(True)
         self.treeviewHistory.append_column(column)
-        
+
         column = Gtk.TreeViewColumn(_("Status"), Gtk.CellRendererText(), text = 12)
         column.set_spacing(5)
         column.set_resizable(True)
@@ -764,34 +764,34 @@ class ChequeReport(GObject.GObject):
         self.builder.connect_signals(self)
 
 
-    def validatePayment(self):    
+    def validatePayment(self):
         errFlg  = False
         msg = ""
-        
+
         dueDte = self.dueDateEntry.get_text()
         if dueDte == "":
             msg += _("You must enter the due date for the non-cash payment.\n")
             errFlg  = True
-        
-        payment = self.pymntAmntEntry.get_text()    
+
+        payment = self.pymntAmntEntry.get_text()
         if payment =="":
              msg+=_("You must enter the Amount for cheque ")
              errFlg =True
-            
+
         wrtDate = self.writeDateEntry.get_text()
         if wrtDate == "":
             msg = _("You must enter a writing date for the cheque.\n")
             errFlg  = True
-            
+
         serialNo = self.serialNoEntry.get_text()
         if serialNo == "":
             msg += _("You must enter the serial number for the non-cash payment.\n")
-            errFlg  = True          
-                
+            errFlg  = True
+
         #----values:
         if errFlg:
             msg = _("The payment cannot be saved.\n\n%s") % msg
-            msgbox = Gtk.MessageDialog( self.addPymntDlg, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, 
+            msgbox = Gtk.MessageDialog( self.addPymntDlg, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING,
                                         Gtk.ButtonsType.OK, msg )
             msgbox.set_title(_("Invalid data"))
             msgbox.run()
@@ -805,17 +805,16 @@ class ChequeReport(GObject.GObject):
         customer_win = customers.Customer()
         customer_win.viewCustomers()
         customer_win.connect("customer-selected", self.sellerSelected)
-        
-    def sellerSelected(self, sender, id, code):     
+
+    def sellerSelected(self, sender, id, code):
         self.builder.get_object("payerNameEntry").set_text(code)
-        sender.window.destroy()     
+        sender.window.destroy()
         self.setCustomerName()
-                
+
     def setCustomerName(self, sender=0, ev=0):
         ccode = unicode(self.builder.get_object("payerNameEntry").get_text())
         query = config.db.session.query(Customers).select_from(Customers)
         customer = query.filter(Customers.custCode == ccode).first()
         self.builder.get_object("customerNameLbl").set_text("")
         if customer:
-            self.builder.get_object("customerNameLbl").set_text(customer.custName)                            
-                
+            self.builder.get_object("customerNameLbl").set_text(customer.custName)

@@ -18,21 +18,21 @@ def arrangeDocuments(parentWin):
     msgbox.destroy()
     if result == Gtk.ResponseType.CANCEL:
         return
-    
+
     query = config.db.session.query(Bill).select_from(Bill)
     query = query.order_by(Bill.date.asc(), Bill.number.asc())
     result = query.all()
-    
+
     num_index = 1
     for b in result:
         b.number = num_index
         num_index += 1
         config.db.session.add(b)
-        
-    config.db.session.commit()   
+
+    config.db.session.commit()
     msg = _("Ordering documents completed successfully.")
     msgbox = Gtk.MessageDialog(parentWin, Gtk.DialogFlags.MODAL, Gtk.MessageType.INFO, Gtk.ButtonsType.OK, msg)
     msgbox.set_title(_("Operation successfull"))
     result = msgbox.run()
-    msgbox.destroy()      
-    
+    msgbox.destroy()
+

@@ -27,7 +27,7 @@ class Printo:
             pageSetup = Gtk.PageSetup()
             pageSetup.set_orientation(Gtk.PageOrientation.LANDSCAPE)
             self.operation.set_default_page_setup(pageSetup)
-            
+
         settings = Gtk.PrintSettings()
 
         directory = GLib.get_user_special_dir(
@@ -38,7 +38,7 @@ class Printo:
         self.operation.set_print_settings(settings)
 
     def run(self):
-        self.operation.run(Gtk.PrintOperationAction.PRINT_DIALOG)       
+        self.operation.run(Gtk.PrintOperationAction.PRINT_DIALOG)
 
     def begin_print(self, operation, print_ctx, document):
         operation.set_n_pages(len(document.pages))
@@ -53,7 +53,7 @@ class Printo:
         page.paint(cairocffi_context, left_x=0, top_y=-40, scale=0.75)
 
 class WeasyprintReport:
-    def __init__(self):                  
+    def __init__(self):
         if config.locale == 'en_US':
             self.direction = 'left'
         else:
@@ -63,7 +63,7 @@ class WeasyprintReport:
 
     def doPrint(self, html, landscape = False):
         Printo(html, landscape).run()
-        
+
     def showPreview(self, html, landscape = False):
         HTML(string=html,base_url=__file__).write_pdf('report.pdf')
         if sys.platform == 'linux2':
@@ -72,9 +72,9 @@ class WeasyprintReport:
             os.startfile('report.pdf')
         time.sleep(3)
         os.remove('report.pdf');
-        
-    def createTable(self,report_header,report_data , col_wid=[]):   
-        hasWidth = True if len(col_wid) else False      
+
+    def createTable(self,report_header,report_data , col_wid=[]):
+        hasWidth = True if len(col_wid) else False
         col_width = [None] * len(report_header)
         for i in range(0, len(report_header)):
             col_width[i] = 'style="width:'+str(col_wid[i]) + 'pt" ' if hasWidth else ""
@@ -120,5 +120,5 @@ class WeasyprintReport:
                  body {font-family: "Vazir"} \
                  </style> \
                 <meta charset="UTF-8"> </head>\
-                <body>' + html + '</body> </html>'                
+                <body>' + html + '</body> </html>'
         return html

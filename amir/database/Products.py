@@ -17,7 +17,7 @@ class Products(Base):
     name            = Column(   Unicode(60),                        nullable    = False     )
     accGroup        = Column(   Integer,                            ForeignKey('productGroups.id') )
     location        = Column(   Unicode(50),                        nullable    = True      )
-    quantity        = Column(   Float,          ColumnDefault(0),   nullable    = False     ) 
+    quantity        = Column(   Float,          ColumnDefault(0),   nullable    = False     )
     qntyWarning     = Column(   Float,          ColumnDefault(0),   nullable    = True      )
     oversell        = Column(   Boolean,        ColumnDefault(0)                            )
     purchacePrice   = Column(   Float,          ColumnDefault(0),   nullable    = False     )

@@ -53,7 +53,7 @@ factorItems = Table('factorItems', meta,
 
 def _2to3digits(num):
     _3digit = ""
-    i = 0 
+    i = 0
     while i< len(num )- 1 :
         _3digit = "0" + num[len(num) - i - 2 ] + num [len(num) - i - 1] + _3digit
         i += 2
@@ -65,8 +65,8 @@ def upgrade(migrate_engine):
 
     customers = Table('customers' , meta , autoload =True)
     products  = Table('products' , meta , autoload =True)
-    subject   = Table('subject', meta, autoload=True)    
-    
+    subject   = Table('subject', meta, autoload=True)
+
     factors.create(checkfirst=True)
     factorItems.create(checkfirst=True)
 
@@ -88,26 +88,26 @@ def upgrade(migrate_engine):
    # s.query(subject).update({subject.c.code: _2to3digits(subject.c.code)})      #TODO try this instead of raw sql command
     query = s.query(subject)
     al = query.all()
-    for subj in al :       
+    for subj in al :
        # query.filter(subject.c.id == subj.id).first().update({subject.c.code : _2to3digits(subj.code)})    # TODO       try this instead of raw sql command
         s.execute("UPDATE subject set code = '"+ str(_2to3digits(subj.code))+"' where id ="+str(subj.id) + ";")
-    
+
 
     al = s.query(customers).all()
     for cust in al:
         s.execute("UPDATE customers set custCode='"+str(_2to3digits(cust.custCode)+"' WHERE custId  = "+str(cust.custId) ) )
-  
+
     # s.execute('INSERT INTO factors (Id, Code, tDate, Bill, Cust, Addition, Subtraction, VAT, CashPayment, ShipDate, Permanent, `Desc`, Sell, Activated, Fee, PayableAmnt, LastEdit)\
     #            SELECT transId, transCode, transDate, transBill, transCust, transAddition, transSubtraction, transTax, transCashPayment, transShipDate, transPermanent,  transDesc, transSell, 0, 0, 0, 0 FROM transactions;')
     # s.execute('INSERT INTO factorItems (exchngId, exchngNo, exchngProduct, exchngQnty, exchngUntPrc, exchngUntDisc, exchngTransId, exchngDesc)\
     #            SELECT exchngId, exchngNo, exchngProduct, exchngQnty, exchngUntPrc, exchngUntDisc, exchngTransId, exchngDesc FROM exchanges;')
-    # s.execute('DROP TABLE exchanges;')    
+    # s.execute('DROP TABLE exchanges;')
 
-    s.execute('ALTER TABLE `Cheque` ADD COLUMN `chqDelete` Boolean;')    
+    s.execute('ALTER TABLE `Cheque` ADD COLUMN `chqDelete` Boolean;')
 
     s.execute('DROP TABLE users;')
-    
-    s.execute('DELETE FROM config')    
+
+    s.execute('DELETE FROM config')
 
     s.execute('ALTER TABLE `products` ADD COLUMN `uMeasurement`  Text;')
 
@@ -135,8 +135,8 @@ def upgrade(migrate_engine):
     permissions.create(checkfirst=True)
 
     cheque = Table('Cheque', meta, autoload=True)
-    # factors = Table('factors', meta, autoload=True)    
-    # cons = ForeignKeyConstraint ([cheque.c.chqTransId] , [factors.c.Id])    
+    # factors = Table('factors', meta, autoload=True)
+    # cons = ForeignKeyConstraint ([cheque.c.chqTransId] , [factors.c.Id])
     cons = ForeignKeyConstraint ([notebook.c.chqId] , [cheque.c.chqId])
 
     config = Table('config', meta, autoload=True)
@@ -165,7 +165,7 @@ def upgrade(migrate_engine):
         {'cfgId' :11, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'buy-vat'       , 'cfgValue' : u'40', 'cfgDesc':u'مالیات خرید'},
         {'cfgId' :12, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'sell-fee'      , 'cfgValue' : u'57', 'cfgDesc':u'عوارض فروش'},
         {'cfgId' :13, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'buy-fee'       , 'cfgValue' : u'56', 'cfgDesc':u'عوارض خرید'},
-        {'cfgId' :14, 'cfgType' : 1, 'cfgCat' : 1, 'cfgKey' : u'vat-rate'      , 'cfgValue' : u'6',  'cfgDesc':u'درصد مالیات'},        
+        {'cfgId' :14, 'cfgType' : 1, 'cfgCat' : 1, 'cfgKey' : u'vat-rate'      , 'cfgValue' : u'6',  'cfgDesc':u'درصد مالیات'},
         {'cfgId' :15, 'cfgType' : 1, 'cfgCat' : 1, 'cfgKey' : u'fee-rate'      , 'cfgValue' : u'3',  'cfgDesc':u'درصد عوارض'},
         {'cfgId' :16, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'partners'      , 'cfgValue' : u'8',  'cfgDesc':u'شرکا'},
         {'cfgId' :17, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'cost'          , 'cfgValue' : u'2',  'cfgDesc':u'هزینه ها'},
@@ -189,7 +189,7 @@ def upgrade(migrate_engine):
 
     s.commit()
 
-def downgrade(migrate_engine):    
+def downgrade(migrate_engine):
     logging.error("Downgrade to 2 is not possible!")
-    
+
 

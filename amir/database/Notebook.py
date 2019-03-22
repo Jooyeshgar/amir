@@ -19,7 +19,7 @@ class Notebook(Base):
     value         = Column(Float, ColumnDefault(0), nullable = False)
     factorId      = Column(Integer, ColumnDefault(0), nullable = False)
     chqId         = Column(Integer, ForeignKey('Cheque.chqId'))
-    
+
     def __init__(self, subject_id, bill_id, value, desc , factorId=0 ,chqId=0,id=1):
         self.subject_id = subject_id
         self.bill_id = bill_id

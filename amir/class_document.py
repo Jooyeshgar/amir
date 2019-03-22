@@ -33,7 +33,7 @@ class Document:
         query = query.select_from(Bill)
         query = query.filter(Bill.number == number)
         bill  = query.first()
-        
+
         if bill != None:
             self.id            = bill.id
             self.number        = bill.number
@@ -43,7 +43,7 @@ class Document:
             self.permanent     = bill.permanent
             return True
         return False
-    
+
     def get_notebook_rows(self):
         query = share.config.db.session.query(Notebook, Subject)
         query = query.select_from(outerjoin(Notebook, Subject, Notebook.subject_id == Subject.id))
@@ -53,7 +53,7 @@ class Document:
     def set_permanent(self, permanent):
         if self.id == 0:
             raise Exception(_('You should save the document before make it permanent') )
-        
+
         self.permanent = permanent
         query = share.config.db.session.query(Bill).filter(Bill.id == self.id)
         query.update({Bill.permanent:self.permanent})
@@ -63,38 +63,38 @@ class Document:
         share.config.db.session.query(Notebook).filter(Notebook.bill_id == self.id).delete()
         share.config.db.session.query(Bill).filter(Bill.id == self.id).delete()
         share.config.db.session.commit()
-        
+
     def add_notebook(self, subject_id, value, desctxt, id=None):
         self.notebooks.append((subject_id, value, desctxt ,id))
-    
+
     def clear_notebook(self):
         self.notebooks = []
         self.cheques = []
         self.cheques_result = {}
 
     def add_cheque(self, subject_id , custId, value, desctxt, cheque_id):
-        self.cheques.append((subject_id, float(value), desctxt, cheque_id))  
-        self.cheques.append ((custId  , -float(value), desctxt, cheque_id))  
-            
+        self.cheques.append((subject_id, float(value), desctxt, cheque_id))
+        self.cheques.append ((custId  , -float(value), desctxt, cheque_id))
+
     def save(self, factorId = None ,delete_items=[]):
-        if (len(self.notebooks) == 0) and (len(self.cheques)==0) : 
+        if (len(self.notebooks) == 0) and (len(self.cheques)==0) :
             self.clear_notebook
             return -1
 
         if self.number > 0:
             logging.debug ("class_document : function save : if self.number")
-            bill = share.config.db.session.query(Bill)            
+            bill = share.config.db.session.query(Bill)
             bill = bill.filter(Bill.number == self.number).first()
             bill.lastedit_date = date.today()
-            bill.date = self.date            
+            bill.date = self.date
             #notebook_ides = []
             notebooks = share.config.db.session.query(Notebook)
-            for notbook in self.notebooks:                     
+            for notbook in self.notebooks:
                 if notbook[3] == 0:  # notebook id == 0    # self.id = bill.ID
                     share.config.db.session.add(Notebook(notbook[0], self.id, notbook[1], notbook[2]))
                 else:
-                    logging.debug ("class_document : function save : else_1")                   
-                    temp = notebooks.filter(Notebook.id == notbook[3]).first()                    
+                    logging.debug ("class_document : function save : else_1")
+                    temp = notebooks.filter(Notebook.id == notbook[3]).first()
                     if temp:
                         temp.subject_id = notbook[0]
                         temp.desc = notbook[2]
@@ -118,38 +118,38 @@ class Document:
                 #self.number = neededBill.first().number
                 neededBill.update({ Bill.lastedit_date: date.today() , Bill.date: self.date})
                 share.config.db.session.commit()
-                self.id = billId                
+                self.id = billId
 
                 old_notebooks = share.config.db.session.query(Notebook)    . filter(Notebook.bill_id == billId)  .all()
-                for nb in old_notebooks:                    
+                for nb in old_notebooks:
                     share.config.db.session.delete(nb)
             else :  # adding new factor and bill
                 logging.debug("class_document : function save: else_2 / else not factorId")
                 query = share.config.db.session.query(Bill.number)
-                last = query.order_by(Bill.number.desc()).first()  # get latest bill  (order by number) 
+                last = query.order_by(Bill.number.desc()).first()  # get latest bill  (order by number)
                 if last != None:
                     self.number = last[0] + 1
                 else:
                     self.number = 1
                 permanent = True if (factorId ==0 or self.cheques!=[]) else False
                 bill = Bill(self.number, self.creation_date, date.today(), self.date, permanent)
-                share.config.db.session.add(bill)                
+                share.config.db.session.add(bill)
 
                 query = share.config.db.session.query(Bill)
                 query = query.filter(Bill.number == self.number)
-                self.id = query.first().id                                    
+                self.id = query.first().id
 
             for notebook in self.notebooks:
-                share.config.db.session.add(Notebook(notebook[0], self.id, notebook[1], notebook[2],factorId=notebook[3]))                            
+                share.config.db.session.add(Notebook(notebook[0], self.id, notebook[1], notebook[2],factorId=notebook[3]))
 
-                    # triggers in automatic accounting 
-            for cheque in self.cheques:            
-               n = Notebook(cheque[0], self.id, cheque[1], cheque[2],chqId=cheque[3])           
-               share.config.db.session.add(n)        
-        share.config.db.session.commit()                      
+                    # triggers in automatic accounting
+            for cheque in self.cheques:
+               n = Notebook(cheque[0], self.id, cheque[1], cheque[2],chqId=cheque[3])
+               share.config.db.session.add(n)
+        share.config.db.session.commit()
         self.clear_notebook
-        
-        return self.id      # bill id   
+
+        return self.id      # bill id
 
     def get_error_message(self, code):
         if   code == -1:

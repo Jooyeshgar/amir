@@ -35,7 +35,7 @@ class BankAccountsClass:
     def get_bank_id(self, name):
         bank = config.db.session.query(BankNames).select_from(BankNames).filter(BankNames.Name == unicode(name)).first()
         bank_id  = None
-        if bank: 
+        if bank:
             bank_id = bank.Id
         return bank_id
 
@@ -64,12 +64,12 @@ class BankAccountsClass:
         dialog.vbox.pack_start(entry, False, False,0)
         dialog.show_all()
         result = dialog.run()
-        bank_name = entry.get_text()        
-        if result == Gtk.ResponseType.OK and len(bank_name) != 0:                                
+        bank_name = entry.get_text()
+        if result == Gtk.ResponseType.OK and len(bank_name) != 0:
                 iter = model.append()
-                model.set(iter, 0, bank_name)       
+                model.set(iter, 0, bank_name)
                 self.add_bank(bank_name)
- 
+
         dialog.destroy()
     def add_account(self, id, name, number="", type=0, owner="", bank=1, branch="", address="", phone="", webpage="", desc=""):
         name    = unicode(name)
@@ -81,20 +81,20 @@ class BankAccountsClass:
         phone   = unicode(phone)
         webpage = unicode(webpage)
         desc    = unicode(desc)
-        
+
         bank_id = bank
         dbconf = dbconfig.dbConfig()
         if id == -1:
             bank_account = BankAccounts(name, number, type, owner, bank_id, branch, address, phone, webpage, desc)
             config.db.session.add(bank_account)
             config.db.session.commit()
-            sub = class_subject.Subjects()   
-            # accountId = str(bank_account.accId)                
+            sub = class_subject.Subjects()
+            # accountId = str(bank_account.accId)
             # accSubjectCode = accountId.rjust(3 - len(accountId)+1 , '0')
             sub.add(dbconf.get_int('bank'), name)
         else:
             query = config.db.session.query(BankAccounts).filter(BankAccounts.accId == id)
-            prevName = query.first().accName            
+            prevName = query.first().accName
             q = config.db.session.query(Subject).filter(Subject.parent_id== (dbconf.get_int('bank')) ).filter(Subject.name==prevName)
             if q:
                 q.update({Subject.name:name})
@@ -107,8 +107,8 @@ class BankAccountsClass:
                            BankAccounts.accBankAddress : address,
                            BankAccounts.accBankPhone   : phone,
                            BankAccounts.accBankWebPage : webpage,
-                           BankAccounts.accDesc        : desc})           
-        
+                           BankAccounts.accDesc        : desc})
+
 
         if id == -1 and bank_account:
             return bank_account.accId
