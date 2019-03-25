@@ -2477,7 +2477,7 @@ msgstr "فاکتورها"
 
 #: amir/data/ui/mainwin.glade:313 amir/data/ui/mainwin.glade:711
 msgid "Cheques"
-msgstr "چک ها"
+msgstr "چک‌ها"
 
 #: amir/data/ui/mainwin.glade:414 amir/data/ui/notebook.glade:337
 msgid "label"
