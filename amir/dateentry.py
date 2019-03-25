@@ -1,7 +1,6 @@
 import gi
 from gi.repository import Gtk
 from gi.repository import GObject
-import string
 from datetime import date
 
 from .utility import LN,getInt,convertToLatin
@@ -114,7 +113,7 @@ class DateEntry(Gtk.Entry):
 
     def correctDate(self, sender, event):
         text = self.get_text()
-        datelist = string.split(text, share.config.datedelims[share.config.datedelim])
+        datelist = str.split(text, share.config.datedelims[share.config.datedelim])
         try:
             tyear = datelist[share.config.datefields["year"]]
             tyear = convertToLatin(tyear)
