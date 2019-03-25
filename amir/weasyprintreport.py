@@ -66,7 +66,7 @@ class WeasyprintReport:
 
     def showPreview(self, html, landscape = False):
         HTML(string=html,base_url=__file__).write_pdf('report.pdf')
-        if sys.platform == 'linux2':
+        if sys.platform == 'linux':
             subprocess.call(["xdg-open", 'report.pdf'])
         else:
             os.startfile('report.pdf')
