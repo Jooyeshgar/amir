@@ -9,16 +9,17 @@ Base = get_declarative_base()
 ## \defgroup DataBase
 ## @{
 
-#Version 0.2 tables
+# Version 0.2 tables
+
 
 class Cheque(Base):
     __tablename__ = "Cheque"
-    chqId       = Column(Integer,      primary_key = True)
-    chqAmount   = Column(Float,        ColumnDefault(0), nullable = False)
-    chqWrtDate  = Column(Date,         nullable = False)
-    chqDueDate  = Column(Date,         nullable = False)
-    chqSerial   = Column(Unicode(50),  nullable = False)
-    ## an integer describes cheque status
+    chqId = Column(Integer,                     primary_key=True)
+    chqAmount = Column(Float, ColumnDefault(0), nullable=False)
+    chqWrtDate = Column(Date,                   nullable=False)
+    chqDueDate = Column(Date,                   nullable=False)
+    chqSerial = Column(Unicode(50),             nullable=False)
+    # an integer describes cheque status
     #
     # 1 Pardakhti, Vosol nashode
     # 2 Pardakhti, Vosol shode
@@ -31,36 +32,37 @@ class Cheque(Base):
     # 9 Daryafti, Bargasht shode
     # 10 Dar jaryan e vosul
 
-    chqStatus     = Column(Integer,      ColumnDefault(0), nullable = False)
+    chqStatus = Column(Integer, ColumnDefault(0),              nullable=False)
     #chqOwnerName  = Column(Unicode(200),  nullable=True)
-    chqCust       = Column(Integer,      ForeignKey('customers.custId'), nullable=True)
-    chqAccount    = Column(Integer,      ForeignKey('bankAccounts.accId'), nullable = True)
-    chqTransId    = Column(Integer,      ColumnDefault(0), ForeignKey('factors.Id')) #Transaction id is zero for non-invoice cheques.
+    chqCust = Column(Integer, ForeignKey('customers.custId'),  nullable=True)
+    chqAccount = Column(Integer, ForeignKey(
+        'bankAccounts.accId'), nullable=True)
+    # Transaction id is zero for non-invoice cheques.
+    chqTransId = Column(Integer, ColumnDefault(0), ForeignKey('factors.Id'))
     chqNoteBookId = Column(Integer,      ColumnDefault(0))
-    chqDesc       = Column(Unicode(200), nullable = True)
-    chqHistoryId  = Column(Integer)
-    #chqBillId     = Column(Integer,      ColumnDefault(0)) #Bill id is zero for temporary transactions.
+    chqDesc = Column(Unicode(200), nullable=True)
+    chqHistoryId = Column(Integer)
+    # chqBillId     = Column(Integer,      ColumnDefault(0)) #Bill id is zero for temporary transactions.
     #chqOrder      = Column(Integer ,     nullable=False)
-    chqDelete     = Column(Boolean)
+    chqDelete = Column(Boolean)
 
-    def __init__( self, chqAmount, chqWrtDate, chqDueDate, chqSerial,
-                  chqStatus, chqCust , chqAccount, chqTransId, chqNoteBookId, chqDesc,chqHistoryId=0 ,chqOrder=0,chqDelete=False , chqId=0) :
+    def __init__(self, chqAmount, chqWrtDate, chqDueDate, chqSerial,
+                 chqStatus, chqCust, chqAccount, chqTransId, chqNoteBookId, chqDesc, chqHistoryId=0, chqOrder=0, chqDelete=False, chqId=0):
         if chqId != 0:
             self.chqId = chqId
-        self.chqAmount   = chqAmount
-        self.chqWrtDate  = chqWrtDate
-        self.chqDueDate  = chqDueDate
-        self.chqSerial   = chqSerial
-        self.chqStatus   = chqStatus
+        self.chqAmount = chqAmount
+        self.chqWrtDate = chqWrtDate
+        self.chqDueDate = chqDueDate
+        self.chqSerial = chqSerial
+        self.chqStatus = chqStatus
         #self.chqOwnerName= chqOwnerName
-        self.chqCust     = chqCust
-        self.chqAccount  = chqAccount
-        self.chqTransId  = chqTransId
+        self.chqCust = chqCust
+        self.chqAccount = chqAccount
+        self.chqTransId = chqTransId
         self.chqNoteBookId = chqNoteBookId
-        self.chqDesc     = chqDesc
+        self.chqDesc = chqDesc
         self.chqHistoryId = 0
         #self.chqBillId   = chqBillId
         #self.chqOrder    =  chqOrder
-        self.chqDelete    =  False
+        self.chqDelete = False
 ## @}
-
