@@ -62,7 +62,7 @@ setuptools.setup(
             'Programming Language :: Python',
             ],
         packages = setuptools.find_packages(),
-        package_data = {'amir': ['data/ui/*.glade', 'data/ui/*.glade.h', 'data/media/*.png', 'data/media/icon/*.png', 'data/amir_migrate/*.py', 'data/amir_migrate/*.cfg', 'data/amir_migrate/versions/*', 'data/weasyprint/*.py', 'data/weasyprint/*/*.py', 'data/weasyprint/*/*.css', 'data/weasyprint/*/*/*.css', 'data/cssselect2/*.py', 'data/cssselect2/*/*', 'data/pyphen/*.py', 'data/pyphen/*/*', 'data/tinycss2/*.py', 'data/tinycss2/*/*', 'data/webencodings/*']},
+        package_data = {'amir': ['data/ui/*.glade', 'data/ui/*.glade.h', 'data/media/*.png', 'data/media/icon/*.png', 'data/amir_migrate/*.py', 'data/amir_migrate/*.cfg', 'data/amir_migrate/versions/*']},
         keywords = 'amir accounting',
         scripts = ['scripts/amir'],
         data_files = data
