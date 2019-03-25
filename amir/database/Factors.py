@@ -6,8 +6,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from amir.database import get_declarative_base
 Base = get_declarative_base()
 
-# \defgroup DataBase
-# @{
+## \defgroup DataBase
+## @{
 
 # Version 0.2 tables
 
@@ -57,4 +57,4 @@ class Factors (Base):
         self.LastEdit = LastEdit
         self.Activated = Activated
 
-# @}
+## @}

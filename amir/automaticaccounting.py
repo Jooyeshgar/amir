@@ -1,4 +1,5 @@
 #import chequeui
+from gi.repository import Gtk
 from . import payments
 from . import class_cheque
 from . import class_document
@@ -12,29 +13,29 @@ from .share import share
 from .database import Subject
 from .database import Customers
 from .class_subject import Subjects
-from .utility import LN ,convertToLatin ,getFloat
+from .utility import LN, convertToLatin, getFloat
 
 import sys
 if sys.version_info > (3,):
     unicode = str
 
-from gi.repository import Gtk
 
 ## \defgroup UserInterface
 ## @{
 
+
 class AutomaticAccounting:
     type_names = (
         # 0 id, 1 name
-        (0 , _('Get From Customer')),
-        (1 , _('Pay To Customer')),
-        (2 , _('Bank To Bank')),
-        (3 , _('Cash To Bank')),
-        (4 , _('Bank To Cash')),
-        (5 , _('Bank Fee')),
-        (6 , _('Transfer To Customer')),
-        (7 , _('Investment')),
-        (8 , _('Cost')),
+        (0, _('Get From Customer')),
+        (1, _('Pay To Customer')),
+        (2, _('Bank To Bank')),
+        (3, _('Cash To Bank')),
+        (4, _('Bank To Cash')),
+        (5, _('Bank Fee')),
+        (6, _('Transfer To Customer')),
+        (7, _('Investment')),
+        (8, _('Cost')),
         (9, _('Income')),
         (10, _('Removal')),
     )
@@ -43,18 +44,20 @@ class AutomaticAccounting:
         #    0:non cash   2:spend_cheque 4:to is subject?   6:to key
         #    1:discount   3:from subj?   5:from key
         #    0    , 1    , 2    , 3    , 4    , 5          , 6
-        0:  (True , True , False, False, True , None       , 'cash'),
-        1:  (True , False, True , True , False, 'cash'     , None  ),
-        2:  (True , False, False, True , True , 'bank'     , 'bank'),
-        3:  (False, False, False, True , True , 'cash'     , 'bank'),
-        4:  (True , False, False, True , True , 'bank'     , 'cash'),
-        5:  (False, False, False, True , True , 'bank'     , 'bank-wage'), # 'to' is not changeable
-        6:  (False, False, False, False, True , None       , 'bank'),
-        7:  (True , False, True , True , True , 'partners' , 'cash,bank'),
-        8:  (True , False, True , True , True , 'cash'     , 'cost'),
-        9:  (False, True , False, True , False,  'income'  , None),
-        10: (True , False, True , True , True , 'cash,bank', 'partners'),
+        0:  (True, True, False, False, True, None, 'cash'),
+        1:  (True, False, True, True, False, 'cash', None),
+        2:  (True, False, False, True, True, 'bank', 'bank'),
+        3:  (False, False, False, True, True, 'cash', 'bank'),
+        4:  (True, False, False, True, True, 'bank', 'cash'),
+        # 'to' is not changeable
+        5:  (False, False, False, True, True, 'bank', 'bank-wage'),
+        6:  (False, False, False, False, True, None, 'bank'),
+        7:  (True, False, True, True, True, 'partners', 'cash,bank'),
+        8:  (True, False, True, True, True, 'cash', 'cost'),
+        9:  (False, True, False, True, False,  'income', None),
+        10: (True, False, True, True, True, 'cash,bank', 'partners'),
     }
+
     def __init__(self):
         #self.mode = None
         self.liststore = None
@@ -70,9 +73,10 @@ class AutomaticAccounting:
 
         #self.chequeui = chequeui.ChequeUI(self.builder.get_object('non-cash-payment-label'),self.builder.get_object('spend-cheque-label'))
         self.addChequeui = None
-        self.spendChequeui = payments.Payments(0 , 0 , True)
+        self.spendChequeui = payments.Payments(0, 0, True)
         self.spendChequeui.fillChequeTable()
-        self.spendChequeui.connect("payments-changed", self.update_spend_cheque_label )
+        self.spendChequeui.connect(
+            "payments-changed", self.update_spend_cheque_label)
         # Date entry
         date_box = self.builder.get_object('date-box')
         self.date_entry = dateentry.DateEntry()
@@ -98,7 +102,8 @@ class AutomaticAccounting:
         table = self.builder.get_object('payment-table')
 
         self.cash_payment_entry = decimalentry.DecimalEntry()
-        self.cash_payment_entry.connect('changed', self.on_cash_payment_entry_change)
+        self.cash_payment_entry.connect(
+            'changed', self.on_cash_payment_entry_change)
         table.attach(self.cash_payment_entry, 1, 2, 0, 1)
 
         self.discount_entry = decimalentry.DecimalEntry()
@@ -117,14 +122,15 @@ class AutomaticAccounting:
         table.attach(self.to_entry, 1, 2, 1, 2)
 
         self.total_credit_entry = decimalentry.DecimalEntry()
-        self.total_credit_entry.connect('changed', self.on_total_credit_entry_change)
+        self.total_credit_entry.connect(
+            'changed', self.on_total_credit_entry_change)
         table.attach(self.total_credit_entry, 1, 2, 2, 3)
 
         # choose first type
         type_combo.set_active(0)
 
     def on_type_change(self, combo):
-        iter =  combo.get_active_iter()
+        iter = combo.get_active_iter()
 
         if iter == None:
             return
@@ -142,11 +148,15 @@ class AutomaticAccounting:
         self.builder.get_object('discount-button').set_sensitive(discount)
         self.discount_entry.set_sensitive(discount)
 
-        self.builder.get_object('list-cheque-button').set_sensitive(spend_cheque)
-        self.builder.get_object('spend-cheque-label').set_sensitive(spend_cheque)
+        self.builder.get_object(
+            'list-cheque-button').set_sensitive(spend_cheque)
+        self.builder.get_object(
+            'spend-cheque-label').set_sensitive(spend_cheque)
 
-        self.builder.get_object('non-cash-payment-label').set_sensitive(non_cash)
-        self.builder.get_object('non_cash_payment_button').set_sensitive(non_cash)
+        self.builder.get_object(
+            'non-cash-payment-label').set_sensitive(non_cash)
+        self.builder.get_object(
+            'non_cash_payment_button').set_sensitive(non_cash)
 
         self.cash_payment_entry.set_sensitive((non_cash or spend_cheque))
 
@@ -163,16 +173,16 @@ class AutomaticAccounting:
             query = share.config.db.session.query(Subject).select_from(Subject)
             query = query.filter(Subject.id == dbconf.get_int('bank-wage'))
             query = query.first()
-            self.to_id =  query.id
+            self.to_id = query.id
             self.to_entry.set_text(query.name)
             self.to_code = query.code
             self.to_name = query.name
-        elif self.type_index in [0,4] :
+        elif self.type_index in [0, 4]:
             self.builder.get_object('to-button').set_sensitive(False)
             query = share.config.db.session.query(Subject).select_from(Subject)
             query = query.filter(Subject.id == dbconf.get_int('cash'))
             query = query.first()
-            self.to_id =  query.id
+            self.to_id = query.id
             self.to_entry.set_text(query.name)
             self.to_code = query.code
             self.to_name = query.name
@@ -189,38 +199,42 @@ class AutomaticAccounting:
             #mode = 'other'
             sellMode = 1    # daryafti
             customerEntry = self.from_entry
-        self.addChequeui = payments.Payments(0 , sellMode , False)
+        self.addChequeui = payments.Payments(0, sellMode, False)
         self.addChequeui.fillChequeTable()
         self.addChequeui.customerNameLbl.set_text(customerEntry.get_text())
-        self.addChequeui.connect("payments-changed",self.update_non_cash_payment_label  )
+        self.addChequeui.connect(
+            "payments-changed", self.update_non_cash_payment_label)
 
     def on_from_clicked(self, button):
-        entry  = self.from_entry
+        entry = self.from_entry
         dbconf = dbconfig.dbConfig()
 
-        #3:from subj?    5:from key
+        # 3:from subj?    5:from key
         if self.type_index is not None and self.type_configs[self.type_index][3]:
             if self.type_configs[self.type_index][5] == None:
                 sub = subjects.Subjects()
             else:
                 keys = self.type_configs[self.type_index][5]
-                parent_id=[]
+                parent_id = []
                 for key in keys.split(','):
                     if key == 'cash':
                         val = dbconf.get_value(key)
-                        sub = share.config.db.session.query(Subject).filter(Subject.id == val).first()
+                        sub = share.config.db.session.query(
+                            Subject).filter(Subject.id == val).first()
                         pID = sub.parent_id
-                        if pID !=0:
+                        if pID != 0:
                             parent_id.append(pID)
                         else:
                             parent_id.append(key)
                     else:
-                        parent_id+=dbconf.get_int_list(key)
+                        parent_id += dbconf.get_int_list(key)
                 sub = subjects.Subjects(parent_id=parent_id)
-            sub.connect('subject-selected', self.on_subject_selected, entry, False)
+            sub.connect('subject-selected',
+                        self.on_subject_selected, entry, False)
         else:
             cust = customers.Customer()
-            cust.connect('customer-selected', self.on_customer_selected, entry, False)
+            cust.connect('customer-selected',
+                         self.on_customer_selected, entry, False)
             cust.viewCustomers(True)
 
     def on_to_clicked(self, button):
@@ -232,14 +246,16 @@ class AutomaticAccounting:
                 sub = subjects.Subjects()
             else:
                 keys = self.type_configs[self.type_index][6]
-                parent_id=[]
+                parent_id = []
                 for key in keys.split(','):
-                    parent_id+=dbconf.get_int_list(key)
+                    parent_id += dbconf.get_int_list(key)
                 sub = subjects.Subjects(parent_id=parent_id)
-            sub.connect('subject-selected', self.on_subject_selected, entry, True)
+            sub.connect('subject-selected',
+                        self.on_subject_selected, entry, True)
         else:
             cust = customers.Customer()
-            cust.connect('customer-selected', self.on_customer_selected, entry, True)
+            cust.connect('customer-selected',
+                         self.on_customer_selected, entry, True)
             cust.viewCustomers(True)
 
     def on_total_credit_entry_change(self, entry):
@@ -254,18 +270,19 @@ class AutomaticAccounting:
         dialog = Gtk.Dialog("Discount percentage",
                             self.builder.get_object('general'),
                             Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
-                            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OK, Gtk.ResponseType.OK)
-                           )
+                            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                             Gtk.STOCK_OK, Gtk.ResponseType.OK)
+                            )
         adj = Gtk.Adjustment(0, 0, 100, 1, 1)
         spin = Gtk.SpinButton()
         spin.set_adjustment(adj)
 
         hbox = Gtk.HBox()
         hbox.pack_start(spin, True, True, 0)
-        hbox.pack_start(Gtk.Label(' % ', True, True, 0), False, False , 0)
+        hbox.pack_start(Gtk.Label(' % ', True, True, 0), False, False, 0)
         hbox.show_all()
 
-        dialog.vbox.pack_start(hbox, False, False , 0 )
+        dialog.vbox.pack_start(hbox, False, False, 0)
 
         result = dialog.run()
         if result == Gtk.ResponseType.OK:
@@ -278,8 +295,10 @@ class AutomaticAccounting:
 
     def on_cash_payment_entry_change(self, entry=None):
         val1 = self.cash_payment_entry.get_float()
-        val2 = float(unicode(self.builder.get_object('non-cash-payment-label').get_text()).replace(','  ,  ''))
-        val3 = float(unicode(self.builder.get_object('spend-cheque-label').get_text()).replace(','  ,  ''))
+        val2 = float(unicode(self.builder.get_object(
+            'non-cash-payment-label').get_text()).replace(',',  ''))
+        val3 = float(unicode(self.builder.get_object(
+            'spend-cheque-label').get_text()).replace(',',  ''))
         discount = self.discount_entry.get_float()
 
         paid = val1+val2+val3+discount
@@ -295,23 +314,24 @@ class AutomaticAccounting:
 
         self.check_save_button()
 
-    def update_non_cash_payment_label(self , sender , total_value):
+    def update_non_cash_payment_label(self, sender, total_value):
 
-        self.builder.get_object('non-cash-payment-label').set_text(str(total_value))
+        self.builder.get_object(
+            'non-cash-payment-label').set_text(str(total_value))
         self.on_cash_payment_entry_change()
 
-
-    def update_spend_cheque_label(self, sender , total_value):
-        self.builder.get_object("spend-cheque-label").set_text(str(total_value))
+    def update_spend_cheque_label(self, sender, total_value):
+        self.builder.get_object(
+            "spend-cheque-label").set_text(str(total_value))
         self.on_cash_payment_entry_change()
 
     def on_subject_selected(self, subject, id, code, name, entry, to):
         if to:
-            self.to_id   = id
+            self.to_id = id
             self.to_code = code
             self.to_name = name
         else:
-            self.from_id   = id
+            self.from_id = id
             self.from_code = code
             self.from_name = name
 
@@ -320,14 +340,16 @@ class AutomaticAccounting:
         subject.window.destroy()
 
     def on_customer_selected(self, customer, id, code, entry, to):
-        cust = share.config.db.session.query(Customers.custSubj, Customers.custName).select_from(Customers).filter(Customers.custId==id).first()
-        subj = share.config.db.session.query(Subject.code).select_from(Subject).filter(Subject.id==cust.custSubj).first()
+        cust = share.config.db.session.query(Customers.custSubj, Customers.custName).select_from(
+            Customers).filter(Customers.custId == id).first()
+        subj = share.config.db.session.query(Subject.code).select_from(
+            Subject).filter(Subject.id == cust.custSubj).first()
         if to:
-            self.to_id   = cust.custSubj
+            self.to_id = cust.custSubj
             self.to_code = subj.code
             self.to_name = cust.custName
         else:
-            self.from_id   = cust.custSubj
+            self.from_id = cust.custSubj
             self.from_code = subj.code
             self.from_name = cust.custName
         entry.set_text(cust.custName)
@@ -342,7 +364,7 @@ class AutomaticAccounting:
         if self.from_entry.get_text_length() == 0:
             return
 
-        if self.to_entry.get_text_length() == 0 :
+        if self.to_entry.get_text_length() == 0:
             return
 
         if self.total_credit_entry.get_float() == 0:
@@ -355,28 +377,31 @@ class AutomaticAccounting:
     def on_non_cash_payment_button_clicked(self, button):
         self.addChequeui. showPayments(self.win)
 
-    def on_spend_cheque_buttun_clicked(self,button):
+    def on_spend_cheque_buttun_clicked(self, button):
         cl_cheque = class_cheque.ClassCheque()
         self.spendChequeui. showPayments(self.win)
 
     def on_save_button_clicked(self, button):
         share.config.db.session.rollback()
         result = {}
-        result['type']                  = self.type_index
-        result['total_value']           = self.total_credit_entry.get_float()
-        result['cash_payment']          = self.cash_payment_entry.get_float()
-        result['non_cash_payment']      = self.builder.get_object('non-cash-payment-label').get_text()
-        result['spend_cheque']          = self.builder.get_object('spend-cheque-label').get_text()
-        result['discount']              = self.discount_entry.get_float()
-        result['non-cash-payment-info'] = None # TODO: = non cash payment infos
-        result['spend-cheque-info']     = None # TODO = spent cheque infos
-        result['desc']                  = self.builder.get_object('desc').get_text()
-        result['from']                  = self.from_id
-        result['to']                    = self.to_id
+        result['type'] = self.type_index
+        result['total_value'] = self.total_credit_entry.get_float()
+        result['cash_payment'] = self.cash_payment_entry.get_float()
+        result['non_cash_payment'] = self.builder.get_object(
+            'non-cash-payment-label').get_text()
+        result['spend_cheque'] = self.builder.get_object(
+            'spend-cheque-label').get_text()
+        result['discount'] = self.discount_entry.get_float()
+        # TODO: = non cash payment infos
+        result['non-cash-payment-info'] = None
+        result['spend-cheque-info'] = None  # TODO = spent cheque infos
+        result['desc'] = self.builder.get_object('desc').get_text()
+        result['from'] = self.from_id
+        result['to'] = self.to_id
 
         dbconf = dbconfig.dbConfig()
 
-        #Save data in data base for single use
+        # Save data in data base for single use
         if self.liststore == None:
             type(result['from'])
             if self.type_index is not None and self.type_configs[self.type_index][3]:
@@ -384,43 +409,50 @@ class AutomaticAccounting:
             else:
                 mode = 'other'
             desc = result['desc']
-            if desc =="":
+            if desc == "":
                 desc = self.type_names[self.type_index][1]
             document = class_document.Document()
-            if result['cash_payment']  :
-                document.add_notebook(result['from'], result['cash_payment'], unicode(desc))
-                document.add_notebook(result['to']  ,  -result['cash_payment'], unicode(desc ))
-            if result['discount'] :
-                document.add_notebook(dbconf.get_int('sell-discount'), -result['discount'], desc)
+            if result['cash_payment']:
+                document.add_notebook(
+                    result['from'], result['cash_payment'], unicode(desc))
+                document.add_notebook(
+                    result['to'],  -result['cash_payment'], unicode(desc))
+            if result['discount']:
+                document.add_notebook(dbconf.get_int(
+                    'sell-discount'), -result['discount'], desc)
 
-            if self.type_configs[self.type_index][3] == True: # from is subject
+            if self.type_configs[self.type_index][3] == True:  # from is subject
                 custSubj = self.to_id
-            else: # from is customer
+            else:  # from is customer
                 custSubj = self.from_id
             print(custSubj)
-            customer_id = share.config.db.session.query(Customers).filter(Customers.custSubj==custSubj).first().custId
+            customer_id = share.config.db.session.query(Customers).filter(
+                Customers.custSubj == custSubj).first().custId
 
             for cheque in self.addChequeui.chequesList:
                 if mode == 'our':
-                    document.add_cheque(dbconf.get_int('our_cheque'),custSubj,(cheque.chqAmount), cheque.chqDesc, cheque.chqId)
+                    document.add_cheque(dbconf.get_int(
+                        'our_cheque'), custSubj, (cheque.chqAmount), cheque.chqDesc, cheque.chqId)
                 else:
-                    document.add_cheque(dbconf.get_int('other_cheque'),custSubj, -cheque.chqAmount, cheque.chqDesc, cheque.chqId)
+                    document.add_cheque(dbconf.get_int(
+                        'other_cheque'), custSubj, -cheque.chqAmount, cheque.chqDesc, cheque.chqId)
 
             cl_cheque = class_cheque.ClassCheque()
 
-            #spendble cheques
+            # spendble cheques
             for sp_cheque in self.spendChequeui.chequesList:
-                cl_cheque.update_status(sp_cheque.chqId,5 , customer_id)
-                document.add_cheque(custSubj, dbconf.get_int('other_cheque'), -sp_cheque.chqAmount , unicode(_('Cheque No. %s spended') % sp_cheque.chqSerial) , sp_cheque.chqId)
+                cl_cheque.update_status(sp_cheque.chqId, 5, customer_id)
+                document.add_cheque(custSubj, dbconf.get_int('other_cheque'), -sp_cheque.chqAmount,
+                                    unicode(_('Cheque No. %s spended') % sp_cheque.chqSerial), sp_cheque.chqId)
 
             result = document.save()
 
             if result < 0:
-                dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, _('Failed, %s') % document.get_error_message(result))
+                dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, _(
+                    'Failed, %s') % document.get_error_message(result))
                 dialog.run()
                 dialog.destroy()
                 return
-
 
             for cheque in self.addChequeui.chequesList:
                 cl_cheque.add_cheque(cheque.chqAmount, cheque.chqWrtDate, cheque.chqDueDate,
@@ -431,43 +463,44 @@ class AutomaticAccounting:
             cl_cheque.save_cheque_history(self.current_time)
             self.on_destroy(self.builder.get_object('general'))
 
-            share.mainwin.silent_daialog(_('successfully added. Document number : %d') % document.number)
+            share.mainwin.silent_daialog(
+                _('successfully added. Document number : %d') % document.number)
 
-
-        #Store result in list store for showing in addeditdoc
+        # Store result in list store for showing in addeditdoc
         else:
             mysubject = Subjects()
             numrows = len(self.liststore) + 1
             #document.add_notebook(result['from'],  result['total_value'], result['desc'])
-            self.liststore.append ((LN(numrows), unicode(self.from_code), unicode(self.from_name), LN(0), LN(result['total_value']), result['desc'], None))
+            self.liststore.append((LN(numrows), unicode(self.from_code), unicode(
+                self.from_name), LN(0), LN(result['total_value']), result['desc'], None))
             #self.liststore.append ((numrows,                 code,                           sub.name,                          debt, credit,                              desc,           None))
             #document.add_notebook(result['to']  , -result['cash_payment'], result['desc'])
             numrows += 1
-            self.liststore.append ((LN(numrows), unicode(self.to_code), unicode(self.to_name), LN(result['cash_payment']), LN(0), result['desc'], None))
-            if result['discount'] :
+            self.liststore.append((LN(numrows), unicode(self.to_code), unicode(
+                self.to_name), LN(result['cash_payment']), LN(0), result['desc'], None))
+            if result['discount']:
                 numrows += 1
-                self.liststore.append ((LN(numrows), unicode(mysubject.get_code(dbconf.get_int('sell-discount'))), mysubject.get_name(dbconf.get_int('sell-discount')), LN(result['discount']), LN(0), result['desc'], None))
+                self.liststore.append((LN(numrows), unicode(mysubject.get_code(dbconf.get_int('sell-discount'))), mysubject.get_name(
+                    dbconf.get_int('sell-discount')), LN(result['discount']), LN(0), result['desc'], None))
 
             self.on_destroy(self.builder.get_object('general'))
 
-
-    def on_destroy(self, window,d=None):
+    def on_destroy(self, window, d=None):
         share.config.db.session.rollback()
         window.destroy()
 
-    #TODO get a parameter to can send data to parent
+    # TODO get a parameter to can send data to parent
     def run(self, parent=None, liststore=None):
         self.liststore = liststore
-        self.win  = self.builder.get_object('general')
+        self.win = self.builder.get_object('general')
         self.win.connect('delete-event', self.on_destroy)
         self.win.connect('destroy', self.on_destroy)
 
         if parent:
             self.win.set_transient_for(parent)
-        #win.set_position(Gtk.WindowPosition.CENTER)
+        # win.set_position(Gtk.WindowPosition.CENTER)
         self.win.set_destroy_with_parent(True)
         self.win.show_all()
-
 
 
 ## @}

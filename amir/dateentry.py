@@ -3,12 +3,13 @@ from gi.repository import Gtk
 from gi.repository import GObject
 from datetime import date
 
-from .utility import LN,getInt,convertToLatin
+from .utility import LN, getInt, convertToLatin
 from .share import share
 from .calverter import calverter
 
 ## \defgroup Utility
 ## @{
+
 
 def dateToString(date):
     if share.config.datetypes[share.config.datetype] == "jalali":
@@ -23,23 +24,25 @@ def dateToString(date):
     datelist[share.config.datefields["day"]] = day
 
     delim = share.config.datedelims[share.config.datedelim]
-    datestring = str(datelist[0]) + delim + str(datelist[1]) + delim + str(datelist[2])
+    datestring = str(datelist[0]) + delim + \
+        str(datelist[1]) + delim + str(datelist[2])
     datestring = LN(datestring, False)
     return datestring
+
 
 def stringToDate(dateString):
     dateString = convertToLatin(dateString)
     delim = share.config.datedelims[share.config.datedelim]
     dateList = dateString.split(delim)
-    if len(dateList) == 3 :
-        if dateList[0] != '' and dateList[1] != '' and dateList[2]!='' :
-            dy = int (dateList[share.config.datefields["year"]])
+    if len(dateList) == 3:
+        if dateList[0] != '' and dateList[1] != '' and dateList[2] != '':
+            dy = int(dateList[share.config.datefields["year"]])
             dm = int(dateList[share.config.datefields["month"]])
-            dd = int (dateList[share.config.datefields["day"]] )
-            d = (dy,dm,dd)
+            dd = int(dateList[share.config.datefields["day"]])
+            d = (dy, dm, dd)
             de = DateEntry(d)
             try:
-                dateObj =  de.getDateObject()
+                dateObj = de.getDateObject()
             except:
                 return
             return dateObj
@@ -47,6 +50,7 @@ def stringToDate(dateString):
 
 ## \defgroup Widgets
 ## @{
+
 
 class DateEntry(Gtk.Entry):
 
@@ -68,7 +72,8 @@ class DateEntry(Gtk.Entry):
         else:
             today = date.today()
             if share.config.datetypes[share.config.datetype] == "jalali":
-                jd = self.cal.gregorian_to_jd (today.year, today.month, today.day)
+                jd = self.cal.gregorian_to_jd(
+                    today.year, today.month, today.day)
                 jalali = self.cal.jd_to_jalali(jd)
                 (self.year, self.month, self.day) = jalali
             else:
@@ -85,14 +90,15 @@ class DateEntry(Gtk.Entry):
         datelist[share.config.datefields["day"]] = day
 
         delim = share.config.datedelims[share.config.datedelim]
-        datestring = str(datelist[0]) + delim + str(datelist[1]) + delim + str(datelist[2])
+        datestring = str(datelist[0]) + delim + \
+            str(datelist[1]) + delim + str(datelist[2])
         datestring = LN(datestring, False)
         self.set_text(datestring)
         self.year = year
         self.month = month
         self.day = day
 
-    #Assuming that date objects show gregorian date.
+    # Assuming that date objects show gregorian date.
     def showDateObject(self, date):
         if share.config.datetypes[share.config.datetype] == "jalali":
             jd = self.cal.gregorian_to_jd(date.year, date.month, date.day)
@@ -101,19 +107,20 @@ class DateEntry(Gtk.Entry):
         else:
             self.showDate(date.year, date.month, date.day)
 
-    def getDateObject(self,  d =None):
+    def getDateObject(self,  d=None):
         if share.config.datetypes[share.config.datetype] == "jalali":
 
             dat = [self.year, self.month, self.day]
-            jd = self.cal.jalali_to_jd(dat[0] , dat[1] , dat[2])
+            jd = self.cal.jalali_to_jd(dat[0], dat[1], dat[2])
             (gyear, gmonth, gday) = self.cal.jd_to_gregorian(jd)
             return date(gyear, gmonth, gday)
-        else :
+        else:
             return date(self.year, self.month, self.day)
 
     def correctDate(self, sender, event):
         text = self.get_text()
-        datelist = str.split(text, share.config.datedelims[share.config.datedelim])
+        datelist = str.split(
+            text, share.config.datedelims[share.config.datedelim])
         try:
             tyear = datelist[share.config.datefields["year"]]
             tyear = convertToLatin(tyear)

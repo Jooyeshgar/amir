@@ -1,4 +1,13 @@
 import re
+
+from sqlalchemy.ext.declarative import declarative_base
+
+Base = declarative_base()
+
+
+def get_declarative_base():
+    return Base
+
 from .Permission import Permissions
 from .User import Users
 from .Factors import Factors
@@ -18,19 +27,12 @@ from .BankAccounts import BankAccounts
 from .BankNames import BankNames
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
 
 from migrate.versioning import api
 # metadata = MetaData(bind=engine)
 
 ## \defgroup DataBase
 ## @{
-
-Base = declarative_base()
-
-
-def get_declarative_base():
-    return Base
 
 # create tables in database
 # metadata.create_all

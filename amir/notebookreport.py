@@ -28,6 +28,7 @@ if sys.version_info > (3,):
 
 config = share.config
 
+
 class NotebookReport(PreviewReport):
     DAILY = 1
     LEDGER = 2
@@ -104,10 +105,10 @@ class NotebookReport(PreviewReport):
         remaining = 1
         query1 = config.db.session.query(Notebook, Subject.code, Bill)
         query1 = query1.select_from(outerjoin(outerjoin(Notebook, Subject, Notebook.subject_id == Subject.id),
-                                            Bill, Notebook.bill_id == Bill.id))
+                                              Bill, Notebook.bill_id == Bill.id))
         query2 = config.db.session.query(sum(Notebook.value))
         query2 = query2.select_from(outerjoin(outerjoin(Notebook, Subject, Notebook.subject_id == Subject.id),
-                                            Bill, Notebook.bill_id == Bill.id))
+                                              Bill, Notebook.bill_id == Bill.id))
 
         # Check if the subject code is valid in ledger and subledger reports
         if self.type != self.__class__.DAILY:
@@ -116,8 +117,10 @@ class NotebookReport(PreviewReport):
             query3 = query3.select_from(Subject).filter(Subject.code == code)
             names = query3.first()
             if names == None:
-                errorstr = _("No subject is registered with the code: %s") % self.code.get_text()
-                msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK, errorstr)
+                errorstr = _(
+                    "No subject is registered with the code: %s") % self.code.get_text()
+                msgbox = Gtk.MessageDialog(
+                    self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK, errorstr)
                 msgbox.set_title(_("No subjects found"))
                 msgbox.run()
                 msgbox.destroy()
@@ -132,10 +135,11 @@ class NotebookReport(PreviewReport):
         if searchkey != "":
             try:
                 value = int(utility.convertToLatin(searchkey))
-            except (UnicodeEncodeError, ValueError):  #search key is not a number
+            except (UnicodeEncodeError, ValueError):  # search key is not a number
                 query1 = query1.filter(Notebook.desc.like("%"+searchkey+"%"))
             else:
-                query1 = query1.filter(or_(Notebook.desc.like("%"+searchkey+"%"), Notebook.value == value, Notebook.value == -value))
+                query1 = query1.filter(or_(Notebook.desc.like(
+                    "%"+searchkey+"%"), Notebook.value == value, Notebook.value == -value))
         # Check the report parameters
         if self.builder.get_object("allcontent").get_active() == True:
             query1 = query1.order_by(Bill.date.asc(), Bill.number.asc())
@@ -143,7 +147,8 @@ class NotebookReport(PreviewReport):
         else:
             if self.builder.get_object("atdate").get_active() == True:
                 date = self.date.getDateObject()
-                query1 = query1.filter(Bill.date == date).order_by(Bill.number.asc())
+                query1 = query1.filter(
+                    Bill.date == date).order_by(Bill.number.asc())
                 query2 = query2.filter(Bill.date < date)
             else:
                 if self.builder.get_object("betweendates").get_active() == True:
@@ -156,7 +161,8 @@ class NotebookReport(PreviewReport):
                         msgbox.run()
                         msgbox.destroy()
                         return
-                    query1 = query1.filter(Bill.date.between(fdate, tdate)).order_by(Bill.date.asc(), Bill.number.asc())
+                    query1 = query1.filter(Bill.date.between(fdate, tdate)).order_by(
+                        Bill.date.asc(), Bill.number.asc())
                     query2 = query2.filter(Bill.date < fdate)
                 else:
                     if unicode(self.fnum.get_text()) == '' or unicode(self.tnum.get_text()) == '':
@@ -176,15 +182,17 @@ class NotebookReport(PreviewReport):
                         msgbox.run()
                         msgbox.destroy()
                         return
-                    query1 = query1.filter(Bill.number.between(fnumber, tnumber)).order_by(Bill.date.asc(), Bill.number.asc())
+                    query1 = query1.filter(Bill.number.between(fnumber, tnumber)).order_by(
+                        Bill.date.asc(), Bill.number.asc())
                     query2 = query2.filter(Bill.number < fnumber)
 
-        #Prepare report data for PrintReport class
+        # Prepare report data for PrintReport class
         res = query1.all()
         if self.type == self.__class__.DAILY:
-            report_header = [_("Doc."), _("Date"), _("Subject Code"), _("Description"), _("Debt"), _("Credit")]
-            #define the percentage of table width that each column needs
-            col_width = [23, 25, 27, 250, 40, 40 ]
+            report_header = [_("Doc."), _("Date"), _("Subject Code"), _(
+                "Description"), _("Debt"), _("Credit")]
+            # define the percentage of table width that each column needs
+            col_width = [23, 25, 27, 250, 40, 40]
             for n, code, b in res:
                 desc = n.desc
                 if n.value < 0:
@@ -199,15 +207,17 @@ class NotebookReport(PreviewReport):
                 if config.digittype == 1:
                     code = utility.convertToPersian(code)
                     billnumber = utility.convertToPersian(billnumber)
-                report_data.append((billnumber, dateToString(b.date), code, desc, debt, credit))
+                report_data.append(
+                    (billnumber, dateToString(b.date), code, desc, debt, credit))
         else:
             diagnose = ""
             if remaining != 0:
                 remaining = query2.first()[0]
 
-            #if self.type == self.__class__.LEDGER:
-            report_header = [_("Doc."), _("Date"), _("Description"), _("Debt"), _("Credit"), _("Diagnosis"), _("Remaining")]
-            #define the percentage of table width that each column needs
+            # if self.type == self.__class__.LEDGER:
+            report_header = [_("Doc."), _("Date"), _("Description"), _(
+                "Debt"), _("Credit"), _("Diagnosis"), _("Remaining")]
+            # define the percentage of table width that each column needs
             col_width = [23, 25, 160, 40, 40, 15, 32]
             for n, code, b in res:
                 if n.value < 0:
@@ -223,14 +233,16 @@ class NotebookReport(PreviewReport):
                     billnumber = utility.convertToPersian(billnumber)
                 if remaining < 0:
                     diagnose = _("deb")
-                    report_data.append((billnumber, dateToString(b.date), n.desc, debt, credit, diagnose, utility.LN(-(remaining))))
+                    report_data.append((billnumber, dateToString(
+                        b.date), n.desc, debt, credit, diagnose, utility.LN(-(remaining))))
                 else:
                     if remaining == 0:
                         diagnose = _("equ")
                     else:
                         diagnose = _("cre")
-                    report_data.append((billnumber, dateToString(b.date), n.desc, debt, credit, diagnose, utility.LN(remaining)))
-        return {"data":report_data, "col-width":col_width ,"heading":report_header}
+                    report_data.append((billnumber, dateToString(
+                        b.date), n.desc, debt, credit, diagnose, utility.LN(remaining)))
+        return {"data": report_data, "col-width": col_width, "heading": report_header}
 
     def createPrintJob(self):
         report = self.createReport()
@@ -245,10 +257,12 @@ class NotebookReport(PreviewReport):
             return
         report_header = report['heading']
         report_data = report['data']
-        col_width  = report['col-width']
+        col_width = report['col-width']
         if self.type == self.__class__.DAILY:
             todaystr = dateToString(date.today())
-            html = '<p ' + self.reportObj.subjectHeaderStyle + '><u>' + _("Daily NoteBook") + '</u></p><p ' + self.reportObj.detailHeaderStyle + '>' + _("Date") + ': ' + todaystr +'</p>'
+            html = '<p ' + self.reportObj.subjectHeaderStyle + '><u>' + \
+                _("Daily NoteBook") + '</u></p><p ' + self.reportObj.detailHeaderStyle + \
+                '>' + _("Date") + ': ' + todaystr + '</p>'
         else:
             if config.digittype == 1:
                 code = utility.convertToPersian(self.subcode)
@@ -256,11 +270,13 @@ class NotebookReport(PreviewReport):
                 code = self.subcode
 
             if self.type == self.__class__.LEDGER:
-                html = '<p ' + self.reportObj.subjectHeaderStyle + '><u>' + _("Ledgers Notebook") + '</u></p><p style="text-align:center;">' + _("Subject Name") + ': ' + self.subname + '</p><p ' + self.reportObj.detailHeaderStyle + '>' + _("Subject Code") + ': ' + code +'</p>'
+                html = '<p ' + self.reportObj.subjectHeaderStyle + '><u>' + _("Ledgers Notebook") + '</u></p><p style="text-align:center;">' + _(
+                    "Subject Name") + ': ' + self.subname + '</p><p ' + self.reportObj.detailHeaderStyle + '>' + _("Subject Code") + ': ' + code + '</p>'
             else:
-                html = '<p ' + self.reportObj.subjectHeaderStyle + '><u>' + _("Sub-ledgers Notebook") + '</u></p><p style="text-align:center;">' + _("Subject Name") + ': ' + self.subname + '</p><p ' + self.reportObj.detailHeaderStyle + '>' + _("Subject Code") + ': ' + code +'</p>'
-        html += self.reportObj.createTable(report_header,report_data,col_width)
-
+                html = '<p ' + self.reportObj.subjectHeaderStyle + '><u>' + _("Sub-ledgers Notebook") + '</u></p><p style="text-align:center;">' + _(
+                    "Subject Name") + ': ' + self.subname + '</p><p ' + self.reportObj.detailHeaderStyle + '>' + _("Subject Code") + ': ' + code + '</p>'
+        html += self.reportObj.createTable(report_header,
+                                           report_data, col_width)
 
         return html
 
@@ -276,7 +292,8 @@ class NotebookReport(PreviewReport):
             msgbox.destroy()
             return
 
-        preview = previewreport.PreviewReport(report["data"], report["heading"])
+        preview = previewreport.PreviewReport(
+            report["data"], report["heading"])
         if self.type == self.__class__.DAILY:
             todaystr = dateToString(date.today())
             preview.setDrawFunction("drawDailyNotebook")
@@ -317,7 +334,7 @@ class NotebookReport(PreviewReport):
             content += "\n"
 
         dialog = Gtk.FileChooserDialog(None, self.window, Gtk.FileChooserAction.SAVE, (Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT,
-                                                                                         Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT))
+                                                                                       Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT))
         dialog.run()
         filename = os.path.splitext(dialog.get_filename())[0]
         file = open(filename + ".csv", "w")

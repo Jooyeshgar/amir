@@ -1,3 +1,5 @@
+from weasyprint import HTML
+import cairocffi
 import os
 import gi
 from gi.repository import GLib, Gtk
@@ -6,13 +8,12 @@ import sys
 import time
 from .share import share
 config = share.config
-import cairocffi
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, dir_path + '/data/')
-from weasyprint import HTML
+
 
 class Printo:
-    def __init__(self, url, landscape = False):
+    def __init__(self, url, landscape=False):
         self.operation = Gtk.PrintOperation()
 
         document = HTML(string=url).render()
@@ -52,6 +53,7 @@ class Printo:
             incref=True)
         page.paint(cairocffi_context, left_x=0, top_y=-40, scale=0.75)
 
+
 class WeasyprintReport:
     def __init__(self):
         if config.locale == 'en_US':
@@ -59,25 +61,27 @@ class WeasyprintReport:
         else:
             self.direction = 'right'
         self.subjectHeaderStyle = 'style="text-align:center;"'
-        self.detailHeaderStyle = 'style="text-align:' + self.direction + '; font-size:9px;"'
+        self.detailHeaderStyle = 'style="text-align:' + \
+            self.direction + '; font-size:9px;"'
 
-    def doPrint(self, html, landscape = False):
+    def doPrint(self, html, landscape=False):
         Printo(html, landscape).run()
 
-    def showPreview(self, html, landscape = False):
-        HTML(string=html,base_url=__file__).write_pdf('report.pdf')
+    def showPreview(self, html, landscape=False):
+        HTML(string=html, base_url=__file__).write_pdf('report.pdf')
         if sys.platform == 'linux':
             subprocess.call(["xdg-open", 'report.pdf'])
         else:
             os.startfile('report.pdf')
         time.sleep(3)
-        os.remove('report.pdf');
+        os.remove('report.pdf')
 
-    def createTable(self,report_header,report_data , col_wid=[]):
+    def createTable(self, report_header, report_data, col_wid=[]):
         hasWidth = True if len(col_wid) else False
         col_width = [None] * len(report_header)
         for i in range(0, len(report_header)):
-            col_width[i] = 'style="width:'+str(col_wid[i]) + 'pt" ' if hasWidth else ""
+            col_width[i] = 'style="width:' + \
+                str(col_wid[i]) + 'pt" ' if hasWidth else ""
         i = 0
         if config.locale == 'en_US':
             text_align = "left"
@@ -85,7 +89,7 @@ class WeasyprintReport:
                     <thead><tr>'
             for header in report_header:
                 html += '<th '+col_width[i]+'>' + header + '</th>'
-                i +=1
+                i += 1
             html += '</tr></thead>\
                     <tbody>'
             for row in report_data:
@@ -95,14 +99,14 @@ class WeasyprintReport:
                 html += '</tr>'
             html += '</tbody></table>'
         else:
-            text_align =  "right"
+            text_align = "right"
             html = '<table >\
                     <thead><tr>'
             report_header = report_header[::-1]
             col_width = col_width[::-1]
             for header in report_header:
                 html += '<th '+col_width[i]+'>' + header + '</th>'
-                i +=1
+                i += 1
             html += '</tr></thead>\
                     <tbody>'
             for row in report_data:

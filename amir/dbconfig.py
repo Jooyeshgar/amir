@@ -1,33 +1,34 @@
+import sys
 from . import database
 from .share import share
 
 config = share.config
 
-import sys
 if sys.version_info > (3,):
     unicode = str
 
 ## \defgroup Controller
 ## @{
 
+
 class dbConfig:
     data = {
-        'co-name'       :'Enter Company name',
-        'co-logo'       :'',
-        'custSubject'   : '4',
-        'bank'          : '1',
-        'cash'          :'14',
-        'buy'           :'17',
-        'sell'          :'18',
-        'sell-discount' :'25',
-        'tax'           :'33',
-        'partners'      : '8',
-        'cost'          : '2',
-        'bank-wage'     : '31',
-        'sell-adds'     : '7',
-        #"fund": '9',
-        #"acc-receivable": '10',
-        #"commission": '11',
+        'co-name': 'Enter Company name',
+        'co-logo': '',
+        'custSubject': '4',
+        'bank': '1',
+        'cash': '14',
+        'buy': '17',
+        'sell': '18',
+        'sell-discount': '25',
+        'tax': '33',
+        'partners': '8',
+        'cost': '2',
+        'bank-wage': '31',
+        'sell-adds': '7',
+        # "fund": '9',
+        # "acc-receivable": '10',
+        # "commission": '11',
     }
 
     def get_default(self, key):
@@ -43,7 +44,7 @@ class dbConfig:
         if query:
             return query.cfgValue
         else:
-            return '';
+            return ''
 
     def exists(self, key):
         query = config.db.session.query(database.Config)
@@ -56,8 +57,8 @@ class dbConfig:
         val = unicode(val)
         query = config.db.session.query(database.Config)
         query = query.filter(database.Config.cfgId == key)
-        query = query.update({u'cfgValue':val})
-        if commit: # commit all of the at once for more speed
+        query = query.update({u'cfgValue': val})
+        if commit:  # commit all of the at once for more speed
             config.db.session.commit()
 
     def add(self, key, mode, desc):
@@ -69,11 +70,12 @@ class dbConfig:
         config.db.session.commit()
 
     def delete(self, id):
-        query = config.db.session.query(database.Config).filter(database.Config.cfgId == id).first()
+        query = config.db.session.query(database.Config).filter(
+            database.Config.cfgId == id).first()
         config.db.session.delete(query)
         config.db.session.commit()
 
-    def get_int(self ,key):
+    def get_int(self, key):
         try:
             return int(self.get_value(key))
         except ValueError:
@@ -88,6 +90,7 @@ class dbConfig:
         except ValueError:
             return None
         return val
+
 
 try:
     dbconf

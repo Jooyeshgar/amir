@@ -1,4 +1,4 @@
-#-*- encoding: utf-8 -*-
+# -*- encoding: utf-8 -*-
 
 from .share import share
 
@@ -13,21 +13,23 @@ if sys.version_info > (3,):
 # TODO: Instead of using just persian characters,
 # TODO: chek mee
 ## Check the active locale and choose number characters from that locale
-def LN (num, comma=True):
+
+
+def LN(num, comma=True):
 
     if type(num) == int or type(num) == long:
         num = str(num)
     elif type(num) == float:
         num = str(num)
-    if num[-2:]==".0":
-            num = num[:-2]
-    if not len (num):
+    if num[-2:] == ".0":
+        num = num[:-2]
+    if not len(num):
         return ""
     num.replace(',', '')
     minus = False
-    if num[0] =='-':
+    if num[0] == '-':
         num = num[1:]
-        minus= True
+        minus = True
     if comma:
         s = num
         dot_pos = s.find('.')
@@ -50,7 +52,8 @@ def LN (num, comma=True):
         num = '-' + num
     return num
 
-def getFloatNumber (number_string):
+
+def getFloatNumber(number_string):
     """
         Reverses LN() procedure. Gets a string representing a number,
         (Maybe containing commas) And returns the value as float
@@ -63,7 +66,8 @@ def getFloatNumber (number_string):
     number_string = convertToLatin(number_string)
     return float(number_string)
 
-def getFloat (number_string):
+
+def getFloat(number_string):
     """
         Reverses LN() procedure. Gets a string representing a number,
         (Maybe containing commas) And returns the value as float
@@ -75,7 +79,8 @@ def getFloat (number_string):
     number_string = convertToLatin(number_string)
     return float(number_string)
 
-def getInt (number_string):
+
+def getInt(number_string):
     """
         Reverses LN() procedure. Gets a string representing a number,
         (Maybe containing commas) And returns the value as integer
@@ -87,14 +92,16 @@ def getInt (number_string):
     number_string = convertToLatin(number_string)
     return int(number_string)
 
-def readNumber (number):
-    #return number.replace('0123456789', u'۰۱۲۳۴۵۶۷۸۹')
+
+def readNumber(number):
+    # return number.replace('0123456789', u'۰۱۲۳۴۵۶۷۸۹')
     if share.config.digittype == 1:
         return convertToPersian(number)
     else:
         return convertToLatin(number)
 
-def convertToLatin (input_string):
+
+def convertToLatin(input_string):
     """
         Searchs for farsi digits in input_string and converts them to latin ones.
     """
@@ -108,7 +115,8 @@ def convertToLatin (input_string):
 
     return output_string
 
-def convertToPersian (input_string):
+
+def convertToPersian(input_string):
     """
         Searchs for latin digits in input_string and converts them to persian ones.
     """
@@ -125,7 +133,7 @@ def convertToPersian (input_string):
     return output_string
 
 # Localize number base on config file
-#def LN(num):
+# def LN(num):
 #    if type(num) == int:
 #        num = str(num)
 #    elif type(num) == float:
@@ -136,6 +144,7 @@ def convertToPersian (input_string):
 #        return convertToPersian(num)
 #    return num
 
+
 def is_numeric(var):
     try:
         float(readNumber(var))
@@ -143,17 +152,19 @@ def is_numeric(var):
     except ValueError:
         return False
 
+
 def setPermissionValue(permissionValue):
     global globalPrmissionValue
     globalPrmissionValue = permissionValue
 
+
 def checkPermission(value):
-        permissionValueTemp = globalPrmissionValue
-        for x in range(24, 0, -1):
-            if  permissionValueTemp >= 2**x:
-                if value == 2**x:
-                    return False
-                permissionValueTemp = permissionValueTemp - 2**x
-        return True
+    permissionValueTemp = globalPrmissionValue
+    for x in range(24, 0, -1):
+        if permissionValueTemp >= 2**x:
+            if value == 2**x:
+                return False
+            permissionValueTemp = permissionValueTemp - 2**x
+    return True
 
 ## @}

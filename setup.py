@@ -5,27 +5,30 @@ import os
 import platform
 import setuptools
 
+
 def removeall(path):
     if not os.path.isdir(path):
         return
 
-    files=os.listdir(path)
+    files = os.listdir(path)
 
     for x in files:
-        fullpath=os.path.join(path, x)
+        fullpath = os.path.join(path, x)
         if os.path.isfile(fullpath):
-            f=os.remove
+            f = os.remove
             rmgeneric(fullpath, f)
         elif os.path.isdir(fullpath):
             removeall(fullpath)
-            f=os.rmdir
+            f = os.rmdir
             rmgeneric(fullpath, f)
+
 
 def rmgeneric(path, __func__):
     try:
         __func__(path)
     except OSError:
         pass
+
 
 # Create mo files:
 if not os.path.exists("locale/"):
@@ -48,30 +51,32 @@ else:
     data = []
 # data = [('scripts' , ['/home/mint/Desktop/factors.py/'])]
 setuptools.setup(
-        name = 'amir',
-        version = '0.3.0',
-        description = 'Amir accounting software',
-        author = 'Jooyeshgar',
-        author_email = 'info@jooyeshgar.com',
-        maintainer = 'Jooyeshgar',
-        url = 'https://github.com/jooyeshgar/amir',
-        install_requires=['sqlalchemy-migrate>=0.9.0', 'sqlalchemy>=1.0.0', 'passlib>=1.7.1', 'cairocffi', 'bcrypt>=3.1.6'],
-        classifiers = [
-            'Intended Audience :: End Users/Desktop',
+    name='amir',
+    version='0.3.0',
+    description='Amir accounting software',
+    author='Jooyeshgar',
+    author_email='info@jooyeshgar.com',
+    maintainer='Jooyeshgar',
+    url='https://github.com/jooyeshgar/amir',
+    install_requires=['sqlalchemy-migrate>=0.9.0', 'sqlalchemy>=1.0.0',
+                      'passlib>=1.7.1', 'cairocffi', 'bcrypt>=3.1.6'],
+    classifiers=[
+        'Intended Audience :: End Users/Desktop',
             'License :: GNU General Public License v3.0 (GPL-3)',
             'Programming Language :: Python',
-            ],
-        packages = setuptools.find_packages(),
-        package_data = {'amir': ['data/ui/*.glade', 'data/ui/*.glade.h', 'data/media/*.png', 'data/media/icon/*.png', 'data/amir_migrate/*.py', 'data/amir_migrate/*.cfg', 'data/amir_migrate/versions/*']},
-        keywords = 'amir accounting',
-        scripts = ['scripts/amir'],
-        data_files = data
-        )
+    ],
+    packages=setuptools.find_packages(),
+    package_data={'amir': ['data/ui/*.glade', 'data/ui/*.glade.h', 'data/media/*.png', 'data/media/icon/*.png',
+                           'data/amir_migrate/*.py', 'data/amir_migrate/*.cfg', 'data/amir_migrate/versions/*']},
+    keywords='amir accounting',
+    scripts=['scripts/amir'],
+    data_files=data
+)
 
 
 # Cleanup (remove /build, /locale, and *.pyc files:
 print("Cleaning up...")
-try:    # is not needed
+try:  # is not needed
     pass
     removeall("build/")
     os.rmdir("build/")
