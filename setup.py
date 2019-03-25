@@ -40,10 +40,10 @@ for lang in ('fa', 'fr', 'he', 'tr'):
 
 if platform.system() != 'Windows':
     data = [
-        ('/usr/share/locale/fa/LC_MESSAGES', ['locale/fa/LC_MESSAGES/amir.mo']),
-        ('/usr/share/locale/fr/LC_MESSAGES', ['locale/fr/LC_MESSAGES/amir.mo']),
-        ('/usr/share/locale/he/LC_MESSAGES', ['locale/he/LC_MESSAGES/amir.mo']),
-        ('/usr/share/locale/tr/LC_MESSAGES', ['locale/tr/LC_MESSAGES/amir.mo'])]
+        ('share/locale/fa/LC_MESSAGES', ['locale/fa/LC_MESSAGES/amir.mo']),
+        ('share/locale/fr/LC_MESSAGES', ['locale/fr/LC_MESSAGES/amir.mo']),
+        ('share/locale/he/LC_MESSAGES', ['locale/he/LC_MESSAGES/amir.mo']),
+        ('share/locale/tr/LC_MESSAGES', ['locale/tr/LC_MESSAGES/amir.mo'])]
 else:
     data = []
 # data = [('scripts' , ['/home/mint/Desktop/factors.py/'])]

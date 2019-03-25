@@ -7,6 +7,7 @@ jobs:
 
     steps:
       - checkout
+      - run: sudo apt install gettext
 
       - restore_cache:
           keys:
@@ -26,11 +27,12 @@ jobs:
           key: v1-dependencies-{{ checksum "requirements.txt" }}
 
       - run:
-          name: run tests
+          name: installation
           command: |
             . venv/bin/activate
             # python manage.py test
-            python setup.py
+            make compile
+            python setup.py install
 
       - store_artifacts:
           path: test-reports
