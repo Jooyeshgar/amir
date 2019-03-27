@@ -11,7 +11,7 @@ from .dateentry import *
 from .share import share
 from .helpers import get_builder
 from gi.repository import Gdk
-from .converter import *
+from .calverter import calverter
 from datetime import datetime, timedelta
 from . import dateentry
 from . import class_document
@@ -37,6 +37,8 @@ class ChequeReport(GObject.GObject):
                  "treeviewSpent", "treeviewBounced", "treeviewBouncedP", "treeviewReturnedT", "treeviewReturnedF", "treeviewFloat", "treeviewDeleted"]
 
     def __init__(self):
+        self.cal = calverter()
+
         self.builder = get_builder("chequereport")
         self.window = self.builder.get_object("windowChequeReport")
         self.window.set_title(_("Cheques Report"))
@@ -116,15 +118,10 @@ class ChequeReport(GObject.GObject):
         dateFromEntry1 = self.builder.get_object("dateFromSearchentry1")
         dateToEntry1 = self.builder.get_object("dateToSearchentry1")
         if share.config.datetypes[share.config.datetype] == "jalali":
-            (year, month, day) = ("1397", "12", "20")
+            year, month, day = "1397", "12", "20"
         else:
-            (year, month, day) = ("2018", "12", "20")
-        datelist = ["", "", ""]
-        datelist[share.config.datefields["year"]] = year
-        datelist[share.config.datefields["month"]] = month
-        datelist[share.config.datefields["day"]] = day
-        delimiter = share.config.datedelims[share.config.datedelim]
-        placeH = datelist[0]+delimiter+datelist[1]+delimiter+datelist[2]
+            year, month, day = "2018", "12", "20"
+        placeH = self.format_date([year, month, day])
         dateToEntry.set_placeholder_text(placeH)
         dateFromEntry.set_placeholder_text(placeH)
         dateToEntry1.set_placeholder_text(placeH)
@@ -623,6 +620,21 @@ class ChequeReport(GObject.GObject):
             self.code = convertToLatin(treestore.get(iter, 0)[0])
             self.showHistory(self.code)
 
+    def format_date(self, date):
+        year, month, day = int(date[0]), int(date[1]), int(date[2])
+
+        if share.config.datetypes[share.config.datetype] == "jalali":
+            jd = self.cal.gregorian_to_jd(year, month, day)
+            year, month, day = self.cal.jd_to_gregorian(jd)
+
+        delim = share.config.datedelims[share.config.datedelim]
+        datelist = ["", "", ""]
+        datelist[share.config.datefields["year"]] = str(year)
+        datelist[share.config.datefields["month"]] = str(month)
+        datelist[share.config.datefields["day"]] = str(day)
+
+        return delim.join(datelist)
+
     def showHistory(self, code):
         self.treestoreHistory.clear()
         result = config.db.session.query(ChequeHistory, Cheque, Customers.custName)\
@@ -630,24 +642,8 @@ class ChequeReport(GObject.GObject):
             .filter(ChequeHistory.ChequeId == code).all()
 
         for chequeHistory, cheque, cust in result:
-            if share.config.datetypes[share.config.datetype] == "jalali":
-                year, month, day = str(chequeHistory.WrtDate).split("-")
-                chqWrtDate = gregorian_to_jalali(
-                    int(year), int(month), int(day))
-                chqWrtDate = str(
-                    chqWrtDate[0]) + '-' + str(chqWrtDate[1]) + '-' + str(chqWrtDate[2])
-
-                year, month, day = str(chequeHistory.DueDate).split("-")
-                DueDate = gregorian_to_jalali(int(year), int(month), int(day))
-                chqDueDate = str(DueDate[0]) + '-' + \
-                    str(DueDate[1]) + '-' + str(DueDate[2])
-
-            else:
-                year, month, day = str(chequeHistory.WrtDate).split("-")
-                chqWrtDate = str(day) + '-' + str(month) + '-' + str(year)
-
-                year, month, day = str(chequeHistory.DueDate).split("-")
-                chqDueDate = str(day) + '-' + str(month) + '-' + str(year)
+            chqWrtDate = self.format_date(str(chequeHistory.WrtDate).split('-'))
+            chqDueDate = self.format_date(str(chequeHistory.DueDate).split('-'))
 
             if (chequeHistory.Status == 2) or (chequeHistory.Status == 4):
                 clear = 'Cleared'

@@ -12,7 +12,6 @@ from .helpers import get_builder
 from . import customers
 from . import product
 from gi.repository import Gdk
-from .converter import *
 
 import sys
 if sys.version_info > (3,):
