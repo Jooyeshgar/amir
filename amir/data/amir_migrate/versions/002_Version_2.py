@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 from sqlalchemy import *
@@ -44,7 +44,7 @@ productGroups = Table('productGroups', meta,
     Column('sellId',       Integer,        ForeignKey('subject.id')),
     mysql_charset='utf8'
 )
-    
+
 transactions = Table('transactions', meta,
     Column('transId',            Integer,      primary_key = True                      ),
     Column('transCode',          Unicode(50),       nullable = False                        ),
@@ -110,7 +110,7 @@ cheque = Table('Cheque', meta,
     Column('chqHistoryId',   Integer,      nullable = True                         ),
     mysql_charset='utf8'
 )
-    
+
 custGroups = Table('custGroups', meta,
     Column('custGrpId',      Integer,      primary_key = True  ),
     Column('custGrpCode',    Unicode(50),  nullable = False    ),
@@ -286,7 +286,7 @@ def upgrade(migrate_engine):
         #{'cfgId' :13, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' :u'commission'     , 'cfgValue' : u'??',
         #    'cfgDesc':u'Enter here'}   #TODO cfgKey
      )
-               
+
     op = banknames.insert()
     op.execute(
         { 'Id': 1, "Name":u"پارسیان"},
@@ -309,15 +309,15 @@ def upgrade(migrate_engine):
     op.execute({'custId': 1 , 'custCode': u'001', 'custSubj' : 58 , 'custName': u'متفرقه', 'custGroup':1 ,
         'custPhone': u'', 'custCell':u'' , 'custFax' : u'' , 'custAddress':u'' , 'custPostalCode':'', 'custEmail' : u'' , 'custEcnmcsCode':u'' , 'custPersonalCode':'', 'custWebPage':u'',
         'custResposible': u'','custConnector':u'' , 'custDesc': u'' , 'custBalance': 0 , 'custCredit':0,'custRepViaEmail':False,
-        'custAccName1':u'', 'custAccNo1':u'' , 'custAccBank1':u'', 'custAccName2':u'' , 'custAccNo2':u'', 'custAccBank2':u'', 
+        'custAccName1':u'', 'custAccNo1':u'' , 'custAccBank1':u'', 'custAccName2':u'' , 'custAccNo2':u'', 'custAccBank2':u'',
         'custTypeBuyer':True , 'custTypeSeller':True,'custTypeMate':False, 'custTypeAgent':False,'custMarked':False ,
         'custIntroducer': u'' , 'custCommission': u'' , 'custReason':u'' , 'custDiscRate':u'' })
-    
+
     #productgroups = Table('productgroups' , meta , autoload = True)
     op = productGroups.insert()
     op.execute({'id':1 , 'code': 1 , 'name':u"گروه عمومی کالا" , 'buyId':19 , 'sellId': 20})
 
-    #products = Table('products', meta , autoload=True)    
+    #products = Table('products', meta , autoload=True)
     op = products.insert()
     op.execute({'id':1, 'code':1 , 'name': u"عمومی" , 'accGroup':1, 'location':u'محل در انبار', 'quantity':100, 'qntyWarning': 10 , 'oversell':True , 'purchacePrice':2000 ,
          'sellingPrice':3000 , 'discountFormula':u"" ,'productDesc': u"توضیح کالا: این یک کالای پیشفرض آزمایشی است.", 'uMeasurement':u"عدد" })
@@ -338,5 +338,5 @@ def downgrade(migrate_engine):
     bankAccounts.drop()
     config.drop()
     print("downgrade to 1")
-    
+
 

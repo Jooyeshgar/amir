@@ -19,12 +19,14 @@ from . import calverter
 
 Base = declarative_base()
 
+
 class Subject(Base):
     __tablename__ = "subject"
     id = Column(Integer, primary_key=True)
     code = Column(String(20), nullable=False)
     name = Column(Unicode(60), nullable=False)
-    parent_id = Column(Integer, ColumnDefault(0), ForeignKey('subject.id'), nullable=False)
+    parent_id = Column(Integer, ColumnDefault(
+        0), ForeignKey('subject.id'), nullable=False)
     lft = Column(Integer, nullable=False)
     rgt = Column(Integer, nullable=False)
     type = Column(Integer)      # 0 for Debtor, 1 for Creditor, 2 for both
@@ -37,14 +39,15 @@ class Subject(Base):
         self.rgt = right
         self.type = type
 
+
 class Bill(Base):
     __tablename__ = "bill"
     id = Column(Integer, primary_key=True)
-    number = Column(Integer, nullable = False)
-    creation_date = Column(Date, nullable = False)
-    lastedit_date = Column(Date, nullable = False)
-    date = Column(Date, nullable = False)   #date of transactions in the bill
-    permanent = Column(Boolean, ColumnDefault(False), nullable = False)
+    number = Column(Integer, nullable=False)
+    creation_date = Column(Date, nullable=False)
+    lastedit_date = Column(Date, nullable=False)
+    date = Column(Date, nullable=False)  # date of transactions in the bill
+    permanent = Column(Boolean, ColumnDefault(False), nullable=False)
 
     def __init__(self, number, creation_date, lastedit_date, date, permanent):
         self.number = number
@@ -53,13 +56,14 @@ class Bill(Base):
         self.date = date
         self.permanent = permanent
 
+
 class Notebook(Base):
     __tablename__ = "notebook"
     id = Column(Integer, primary_key=True)
     subject_id = Column(None, ForeignKey('subject.id'))
     bill_id = Column(None, ForeignKey('bill.id'))
     desc = Column(Unicode, ColumnDefault(""))
-    value = Column(Integer, ColumnDefault(0), nullable = False)
+    value = Column(Integer, ColumnDefault(0), nullable=False)
 
     def __init__(self, subject_id, bill_id, value, desc):
         self.subject_id = subject_id
@@ -67,16 +71,18 @@ class Notebook(Base):
         self.value = value
         self.desc = desc
 
+
 class Database:
     def __init__(self, file):
 
         logging.info(file)
-        engine = create_engine('sqlite:///%s' % file , echo=True)
+        engine = create_engine('sqlite:///%s' % file, echo=True)
 
         metadata = Base.metadata
         metadata.create_all(engine)
         Session = sessionmaker(engine)
         self.session = Session()
+
 
 def checkInputDb(inputfile):
     try:
@@ -98,67 +104,71 @@ def checkInputDb(inputfile):
         return -1
     return 0
 
+
 def update(inputfile, outputfile):
 
     engine = create_engine('sqlite:///%s' % inputfile, echo=True)
     metadata = MetaData(bind=engine)
 
-    outdb =  Database(outputfile)
+    outdb = Database(outputfile)
     outsession = outdb.session
 
     ledger = Table('ledger', metadata,
-        Column('id', Integer, primary_key = True),
-        Column('name', String),
-        Column('type', Integer),
-    )
+                   Column('id', Integer, primary_key=True),
+                   Column('name', String),
+                   Column('type', Integer),
+                   )
 
     subledger = Table('sub_ledger', metadata,
-        Column('ledger', Integer),
-        Column('name', String),
-        Column('id', Integer, primary_key = True),
-        Column('bed', Integer),
-        Column('bes', Integer),
-    )
+                      Column('ledger', Integer),
+                      Column('name', String),
+                      Column('id', Integer, primary_key=True),
+                      Column('bed', Integer),
+                      Column('bes', Integer),
+                      )
 
     moin = Table('moin', metadata,
-        Column('sub_name', String),
-        Column('ledger', Integer),
-        Column('name', String),
-        Column('sub', Integer),
-        Column('number', Integer),
-        Column('date', String),
-        Column('des', String),
-        Column('bed', Integer),
-        Column('bes', Integer),
-        Column('mondeh', Integer),
-        Column('tashkhis', String),
-    )
+                 Column('sub_name', String),
+                 Column('ledger', Integer),
+                 Column('name', String),
+                 Column('sub', Integer),
+                 Column('number', Integer),
+                 Column('date', String),
+                 Column('des', String),
+                 Column('bed', Integer),
+                 Column('bes', Integer),
+                 Column('mondeh', Integer),
+                 Column('tashkhis', String),
+                 )
     metadata.create_all()
 
-
-    query = outsession.query(Subject.code).select_from(Subject).order_by(Subject.id.desc())
+    query = outsession.query(Subject.code).select_from(
+        Subject).order_by(Subject.id.desc())
     code = query.filter(Subject.parent_id == 0).first()
-    if code == None :
+    if code == None:
         lastcode = 0
-    else :
+    else:
         lastcode = int(code[0][-2:])
 
-    s = outerjoin(ledger, subledger, ledger.c.id == subledger.c.ledger).select().order_by(ledger.c.id)
+    s = outerjoin(ledger, subledger, ledger.c.id ==
+                  subledger.c.ledger).select().order_by(ledger.c.id)
     result = s.execute()
 
     parent_id = 0
     pid = 0
     sid = 0
     pcode = ""
-    mainids = {}   #stores tuples like (oldid:newid) pairs to have old subject ids for later use
-    subids = {}    #stores tuples like (oldid:newid) pairs to have old subject ids for later use
+    # stores tuples like (oldid:newid) pairs to have old subject ids for later use
+    mainids = {}
+    # stores tuples like (oldid:newid) pairs to have old subject ids for later use
+    subids = {}
 
     for row in result:
         if row[0] != parent_id:
             lastcode += 1
             if lastcode > 99:
-                logging.error("Ledgers with numbers greater than %d are not imported to the new database" \
-                      "Because you can have just 99 Ledgers (level one subject)" % row[0])
+                logging.error("Ledgers with numbers greater than %d are not imported to the new database"
+                              "Because you can have just 99 Ledgers (level one subject)" % row[0])
                 break
             pcode = "%02d" % lastcode
             parentsub = Subject(pcode, row[1], 0, 2)
@@ -176,8 +186,8 @@ def update(inputfile, outputfile):
         if row[3] != None:
             childcode += 1
             if childcode > 99:
-                logging.error("SubLedgers with number %d is not imported to the new database" \
-                      "Because you can have just 99 subjects per level" % row[5])
+                logging.error("SubLedgers with number %d is not imported to the new database"
+                              "Because you can have just 99 subjects per level" % row[5])
                 continue
             childsub = Subject(pcode + "%02d" % childcode, row[4], pid, 2)
             outsession.add(childsub)
@@ -197,8 +207,9 @@ def update(inputfile, outputfile):
     for row in result:
         if row.number != bnumber:
 
-            fields = re.split(r"[:-]+",row.date)
-            jd = cal.jalali_to_jd(int(fields[0]), int(fields[1]), int(fields[2]))
+            fields = re.split(r"[:-]+", row.date)
+            jd = cal.jalali_to_jd(
+                int(fields[0]), int(fields[1]), int(fields[2]))
             (gyear, gmonth, gday) = cal.jd_to_gregorian(jd)
             ndate = date(gyear, gmonth, gday)
 
@@ -223,12 +234,14 @@ def update(inputfile, outputfile):
         outsession.add(n)
     outsession.commit()
 
+
 def main(argv):
 
     inputfile = ""
     outputfile = ""
     try:
-        opts, args = getopt.getopt(argv, "hi:o:", ["help", "inputfile=", "outputfile="])
+        opts, args = getopt.getopt(
+            argv, "hi:o:", ["help", "inputfile=", "outputfile="])
     except getopt.GetoptError:
         sys.exit(2)
 
@@ -261,8 +274,5 @@ def main(argv):
     result = update(inputfile, outputfile)
 
 
-
 if __name__ == "__main__":
-
     main(sys.argv[1:])
-

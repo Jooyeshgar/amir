@@ -1,30 +1,32 @@
+from amir.dateentry import dateToString
+from .share import share
+from . import utility
+import math
+import logging
+import cairo
 import gi
+from gi.repository import Pango
 from gi.repository import Gtk
 gi.require_version('PangoCairo', '1.0')
-from gi.repository import Pango
-import cairo
 from gi.repository import PangoCairo
-import logging
-import math
 
-from . import utility
-from .share import share
-from amir.dateentry import dateToString
 
 config = share.config
 
+
 class PrintReport:
     def __init__(self, content, cols_width, heading=None):
-#        self.lines_per_page = 24
+        # self.lines_per_page = 24
         self.cell_margin = 4
-        self.line = 2       #the thinest possible width of lines.
+        self.line = 2  # the thinest possible width of lines.
         self.row_height = 2 * (config.contentfont + self.cell_margin)
         self.header_height = 0
         self.heading_height = 35
 
         self.operation = Gtk.PrintOperation()
         settings = Gtk.PrintSettings()
-        paper_size = Gtk.PaperSize.new_from_ppd(config.paper_ppd, config.paper_name, config.paper_width, config.paper_height)
+        paper_size = Gtk.PaperSize.new_from_ppd(
+            config.paper_ppd, config.paper_name, config.paper_width, config.paper_height)
         self.page_setup = Gtk.PageSetup()
         self.page_setup.set_paper_size(paper_size)
         self.page_setup.set_orientation(config.paper_orientation)
@@ -40,11 +42,12 @@ class PrintReport:
 
         self.content = content
         tablewidth = self.page_setup.get_page_width(Gtk.Unit.POINTS)
-        tablewidth -= (len(cols_width) * (self.line + self.cell_margin)) + self.line + (config.rightmargin + config.leftmargin)
+        tablewidth -= (len(cols_width) * (self.line + self.cell_margin)) + \
+            self.line + (config.rightmargin + config.leftmargin)
         self.cols_width = []
         for percent in cols_width:
             self.cols_width.append(math.floor((percent * tablewidth) / 100))
-#        self.cols_width = cols_width
+        # self.cols_width = cols_width
         self.heading = heading
 
         self.operation.connect("begin_print", self.beginPrint)
@@ -52,9 +55,9 @@ class PrintReport:
         self.type = 0
         self.title = ""
         self.fields = {}
+        # self.content = data
 
-    ##self.content = data
-    def setHeader (self, title, fields):
+    def setHeader(self, title, fields):
         self.title = title
         self.fields = fields
 
@@ -62,10 +65,11 @@ class PrintReport:
         tableheight = self.page_setup.get_page_height(Gtk.Unit.POINTS)
         name_lineheight = 2 * config.namefont
         header_lineheight = 2 * config.headerfont
-        tableheight -= (math.floor((len(self.fields) + 1) / 2) * header_lineheight) + (config.topmargin + config.botmargin) + self.heading_height + name_lineheight + (self.cell_margin * 2)
+        tableheight -= (math.floor((len(self.fields) + 1) / 2) * header_lineheight) + (config.topmargin +
+                                                                                       config.botmargin) + self.heading_height + name_lineheight + (self.cell_margin * 2)
 
         self.lines_per_page = int(math.floor(tableheight / self.row_height))
-        #Subtract two lines that show "Sum of previous page" and "Sum"
+        # Subtract two lines that show "Sum of previous page" and "Sum"
         self.lines_per_page -= 2
         if self.drawfunction == 'drawDocument':
             lencontent = len(self.content)
@@ -77,16 +81,16 @@ class PrintReport:
                 offset = 0
                 self.documents[pages] = []
                 while (offset < self.lines_per_page and rindex < lencontent):
-                    #detect new document
+                    # detect new document
                     if docnumber != self.content[rindex][6]:
                         break
                     self.documents[pages].append(self.content[rindex])
                     rindex += 1
                     offset += 1
 
-                pages+=1
+                pages += 1
         else:
-            pages = ((len(self.content) - 1) / self.lines_per_page ) + 1
+            pages = ((len(self.content) - 1) / self.lines_per_page) + 1
 
         operation.set_n_pages(pages)
 
@@ -94,6 +98,7 @@ class PrintReport:
         self.operation.run(action)
 
     '''Handel the print page signal and call correct draw function'''
+
     def printPage(self, operation, context, page_nr):
         self.pangolayout = context.create_pango_layout()
         self.cairo_context = context.get_cairo_context()
@@ -102,12 +107,12 @@ class PrintReport:
         self.PangoCairo = PangoCairo.create_context(self.cairo_context)
 
         getattr(self, self.drawfunction)(page_nr)
-        #self.drawDailyNotebook(page_nr)
+        # self.drawDailyNotebook(page_nr)
 
     def formatHeader(self):
         LINE_HEIGHT = 2 * (config.namefont)
-#        MARGIN = self.page_margin
-#        cwidth = context.get_width()
+        # MARGIN = self.page_margin
+        # cwidth = context.get_width()
         cwidth = self.page_setup.get_page_width(Gtk.Unit.POINTS)
         logging.info("Paper width: " + str(cwidth))
         cr = self.cairo_context
@@ -121,14 +126,16 @@ class PrintReport:
             self.pangolayout.set_text(self.title, -1)
             (width, height) = self.pangolayout.get_size()
             self.pangolayout.set_alignment(Pango.Alignment.CENTER)
-            cr.move_to ((cwidth - width / Pango.SCALE) / 2, (LINE_HEIGHT - (height/ Pango.SCALE))/2)
+            cr.move_to((cwidth - width / Pango.SCALE) / 2,
+                       (LINE_HEIGHT - (height / Pango.SCALE))/2)
             PangoCairo.show_layout(cr, self.pangolayout)
 
-#            cr.move_to((cwidth + width / Pango.SCALE) / 2, LINE_HEIGHT + config.topmargin)
-#            cr.line_to((cwidth - width / Pango.SCALE) / 2, LINE_HEIGHT + config.topmargin)
-            cr.move_to((cwidth + width / Pango.SCALE) / 2, LINE_HEIGHT + self.cell_margin)
-            cr.line_to((cwidth - width / Pango.SCALE) / 2, LINE_HEIGHT + self.cell_margin)
-
+            # cr.move_to((cwidth + width / Pango.SCALE) / 2, LINE_HEIGHT + config.topmargin)
+            # cr.line_to((cwidth - width / Pango.SCALE) / 2, LINE_HEIGHT + config.topmargin)
+            cr.move_to((cwidth + width / Pango.SCALE) /
+                       2, LINE_HEIGHT + self.cell_margin)
+            cr.line_to((cwidth - width / Pango.SCALE) /
+                       2, LINE_HEIGHT + self.cell_margin)
 
         addh = LINE_HEIGHT + self.cell_margin
         LINE_HEIGHT = 2 * config.headerfont
@@ -137,28 +144,30 @@ class PrintReport:
         self.pangolayout.set_font_description(fdesc)
 
         flag = 1
-        for k,v in self.fields.items():
+        for k, v in self.fields.items():
             self.pangolayout.set_text(k + ": " + v, -1)
             (width, height) = self.pangolayout.get_size()
             self.pangolayout.set_alignment(Pango.Alignment.CENTER)
             if flag == 1:
                 addh += LINE_HEIGHT
-                cr.move_to (cwidth - (width / Pango.SCALE) - config.rightmargin, addh - (height/ Pango.SCALE)/2)
+                cr.move_to(cwidth - (width / Pango.SCALE) -
+                           config.rightmargin, addh - (height / Pango.SCALE)/2)
                 flag = 0
             else:
-                cr.move_to ((width / Pango.SCALE) + config.leftmargin, addh - (height/ Pango.SCALE)/2)
+                cr.move_to((width / Pango.SCALE) + config.leftmargin,
+                           addh - (height / Pango.SCALE)/2)
                 flag = 1
             PangoCairo.show_layout(cr, self.pangolayout)
 
         cr.stroke()
         self.header_height = addh + 8
 
-
     def drawDailyNotebook(self, page_nr):
         self.formatHeader()
 
 #        RIGHT_EDGE = 570  #(table width + PAGE_MARGIN)
-        RIGHT_EDGE = self.page_setup.get_page_width(Gtk.Unit.POINTS) - config.rightmargin
+        RIGHT_EDGE = self.page_setup.get_page_width(
+            Gtk.Unit.POINTS) - config.rightmargin
         HEADER_HEIGHT = self.header_height
         HEADING_HEIGHT = self.heading_height
 #        PAGE_MARGIN = self.page_margin
@@ -179,7 +188,7 @@ class PrintReport:
 
         self.drawTableHeading()
 
-        #Draw table data
+        # Draw table data
         rindex = page_nr * self.lines_per_page
         offset = 0
 
@@ -193,7 +202,8 @@ class PrintReport:
 
         for i in range(0, 3):
             right_txt -= MARGIN + LINE
-            cr.move_to (right_txt -(width / Pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+            cr.move_to(right_txt - (width / Pango.SCALE),
+                       TABLE_TOP + (ROW_HEIGHT-(height / Pango.SCALE))/2)
             PangoCairo.show_layout(cr, self.pangolayout)
             right_txt -= self.cols_width[i]
             cr.move_to(right_txt, TABLE_TOP)
@@ -206,7 +216,8 @@ class PrintReport:
         self.pangolayout.set_text(_("Sum of previous page"), -1)
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-        cr.move_to (right_txt -(width / Pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+        cr.move_to(right_txt - (width / Pango.SCALE), TABLE_TOP +
+                   (ROW_HEIGHT-(height / Pango.SCALE))/2)
         PangoCairo.show_layout(cr, self.pangolayout)
         right_txt -= self.cols_width[3]
         cr.move_to(right_txt, TABLE_TOP)
@@ -223,7 +234,8 @@ class PrintReport:
             self.pangolayout.set_text(utility.LN(self.debt_sum), -1)
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-        cr.move_to (right_txt -(width / Pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+        cr.move_to(right_txt - (width / Pango.SCALE), TABLE_TOP +
+                   (ROW_HEIGHT-(height / Pango.SCALE))/2)
         PangoCairo.show_layout(cr, self.pangolayout)
         right_txt -= self.cols_width[4]
         cr.move_to(right_txt, TABLE_TOP)
@@ -237,13 +249,14 @@ class PrintReport:
             self.pangolayout.set_text(utility.LN(self.credit_sum), -1)
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-        cr.move_to (right_txt -(width / Pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+        cr.move_to(right_txt - (width / Pango.SCALE), TABLE_TOP +
+                   (ROW_HEIGHT-(height / Pango.SCALE))/2)
         PangoCairo.show_layout(cr, self.pangolayout)
         right_txt -= self.cols_width[5]
         cr.move_to(right_txt, TABLE_TOP)
         cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
 
-        addh= ROW_HEIGHT + TABLE_TOP
+        addh = ROW_HEIGHT + TABLE_TOP
         try:
             while (offset < self.lines_per_page):
                 row = self.content[rindex + offset]
@@ -262,7 +275,8 @@ class PrintReport:
                         self.pangolayout.set_text(data, -1)
                         (width, height) = self.pangolayout.get_size()
                         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-                        cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+                        cr.move_to(right_txt - (width / Pango.SCALE),
+                                   addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
                         PangoCairo.show_layout(cr, self.pangolayout)
                         fontsize = config.contentfont
                         fdesc.set_size(fontsize * Pango.SCALE)
@@ -271,7 +285,8 @@ class PrintReport:
                         self.pangolayout.set_text(data, -1)
                         (width, height) = self.pangolayout.get_size()
                         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-                        cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+                        cr.move_to(right_txt - (width / Pango.SCALE),
+                                   addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
                         PangoCairo.show_layout(cr, self.pangolayout)
 
                     right_txt -= self.cols_width[dindex]
@@ -298,7 +313,8 @@ class PrintReport:
 
         for i in range(0, 3):
             right_txt -= MARGIN + LINE
-            cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+            cr.move_to(right_txt - (width / Pango.SCALE), addh +
+                       (ROW_HEIGHT-(height / Pango.SCALE))/2)
             PangoCairo.show_layout(cr, self.pangolayout)
             right_txt -= self.cols_width[i]
             cr.move_to(right_txt, addh)
@@ -311,7 +327,8 @@ class PrintReport:
         self.pangolayout.set_text(_("Sum"), -1)
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-        cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+        cr.move_to(right_txt - (width / Pango.SCALE), addh +
+                   (ROW_HEIGHT-(height / Pango.SCALE))/2)
         PangoCairo.show_layout(cr, self.pangolayout)
         right_txt -= self.cols_width[3]
         cr.move_to(right_txt, addh)
@@ -324,7 +341,8 @@ class PrintReport:
         self.pangolayout.set_text(utility.LN(self.debt_sum), -1)
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-        cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+        cr.move_to(right_txt - (width / Pango.SCALE), addh +
+                   (ROW_HEIGHT-(height / Pango.SCALE))/2)
         PangoCairo.show_layout(cr, self.pangolayout)
         right_txt -= self.cols_width[4]
         cr.move_to(right_txt, addh)
@@ -334,17 +352,18 @@ class PrintReport:
         self.pangolayout.set_text(utility.LN(self.credit_sum), -1)
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-        cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+        cr.move_to(right_txt - (width / Pango.SCALE), addh +
+                   (ROW_HEIGHT-(height / Pango.SCALE))/2)
         PangoCairo.show_layout(cr, self.pangolayout)
         right_txt -= self.cols_width[5]
         cr.move_to(right_txt, addh)
         cr.line_to(right_txt, addh + ROW_HEIGHT)
 
-         #Table top line
+        # Table top line
         cr.move_to(right_txt, TABLE_TOP)
         cr.line_to(RIGHT_EDGE, TABLE_TOP)
 
-        #Table bottom line
+        # Table bottom line
         cr.move_to(right_txt, addh + ROW_HEIGHT)
         cr.line_to(RIGHT_EDGE, addh + ROW_HEIGHT)
 
@@ -353,7 +372,8 @@ class PrintReport:
     def drawSubjectNotebook(self, page_nr):
         self.formatHeader()
 #        RIGHT_EDGE = 570  #(table width + PAGE_MARGIN)
-        RIGHT_EDGE = self.page_setup.get_page_width(Gtk.Unit.POINTS) - config.rightmargin
+        RIGHT_EDGE = self.page_setup.get_page_width(
+            Gtk.Unit.POINTS) - config.rightmargin
         HEADER_HEIGHT = self.header_height
         HEADING_HEIGHT = self.heading_height
 #        PAGE_MARGIN = self.page_margin
@@ -374,7 +394,7 @@ class PrintReport:
 
         self.drawTableHeading()
 
-        #Draw table data
+        # Draw table data
         rindex = page_nr * self.lines_per_page
         offset = 0
 
@@ -388,7 +408,8 @@ class PrintReport:
 
         for i in range(0, 2):
             right_txt -= MARGIN + LINE
-            cr.move_to (right_txt -(width / Pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+            cr.move_to(right_txt - (width / Pango.SCALE),
+                       TABLE_TOP + (ROW_HEIGHT-(height / Pango.SCALE))/2)
             PangoCairo.show_layout(cr, self.pangolayout)
             right_txt -= self.cols_width[i]
             cr.move_to(right_txt, TABLE_TOP)
@@ -401,7 +422,8 @@ class PrintReport:
         self.pangolayout.set_text(_("Sum of previous page"), -1)
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-        cr.move_to (right_txt -(width / Pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+        cr.move_to(right_txt - (width / Pango.SCALE), TABLE_TOP +
+                   (ROW_HEIGHT-(height / Pango.SCALE))/2)
         PangoCairo.show_layout(cr, self.pangolayout)
         right_txt -= self.cols_width[2]
         cr.move_to(right_txt, TABLE_TOP)
@@ -418,7 +440,8 @@ class PrintReport:
             self.pangolayout.set_text(utility.LN(self.debt_sum), -1)
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-        cr.move_to (right_txt -(width / Pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+        cr.move_to(right_txt - (width / Pango.SCALE), TABLE_TOP +
+                   (ROW_HEIGHT-(height / Pango.SCALE))/2)
         PangoCairo.show_layout(cr, self.pangolayout)
         right_txt -= self.cols_width[3]
         cr.move_to(right_txt, TABLE_TOP)
@@ -432,14 +455,16 @@ class PrintReport:
             self.pangolayout.set_text(utility.LN(self.credit_sum), -1)
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-        cr.move_to (right_txt -(width / Pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+        cr.move_to(right_txt - (width / Pango.SCALE), TABLE_TOP +
+                   (ROW_HEIGHT-(height / Pango.SCALE))/2)
         PangoCairo.show_layout(cr, self.pangolayout)
         right_txt -= self.cols_width[4]
         cr.move_to(right_txt, TABLE_TOP)
         cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
 
         if page_nr == 0:
-            remaining = int(self.content[0][3].replace(",", "")) - int(self.content[0][4].replace(",", ""))
+            remaining = int(self.content[0][3].replace(
+                ",", "")) - int(self.content[0][4].replace(",", ""))
             if self.content[0][5] == _("deb"):
                 remaining -= int(self.content[0][6].replace(",", ""))
             else:
@@ -458,7 +483,8 @@ class PrintReport:
         self.pangolayout.set_text(self.diagnose, -1)
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-        cr.move_to (right_txt -(width / Pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+        cr.move_to(right_txt - (width / Pango.SCALE), TABLE_TOP +
+                   (ROW_HEIGHT-(height / Pango.SCALE))/2)
         PangoCairo.show_layout(cr, self.pangolayout)
         right_txt -= self.cols_width[5]
         cr.move_to(right_txt, TABLE_TOP)
@@ -468,13 +494,14 @@ class PrintReport:
         self.pangolayout.set_text(self.remaining, -1)
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-        cr.move_to (right_txt -(width / Pango.SCALE), TABLE_TOP + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+        cr.move_to(right_txt - (width / Pango.SCALE), TABLE_TOP +
+                   (ROW_HEIGHT-(height / Pango.SCALE))/2)
         PangoCairo.show_layout(cr, self.pangolayout)
         right_txt -= self.cols_width[6]
         cr.move_to(right_txt, TABLE_TOP)
         cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
 
-        addh= ROW_HEIGHT + TABLE_TOP
+        addh = ROW_HEIGHT + TABLE_TOP
         try:
             while (offset < self.lines_per_page):
                 row = self.content[rindex + offset]
@@ -493,7 +520,8 @@ class PrintReport:
                         self.pangolayout.set_text(data, -1)
                         (width, height) = self.pangolayout.get_size()
                         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-                        cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+                        cr.move_to(right_txt - (width / Pango.SCALE),
+                                   addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
                         PangoCairo.show_layout(cr, self.pangolayout)
                         fontsize = config.contentfont
                         fdesc.set_size(fontsize * Pango.SCALE)
@@ -502,7 +530,8 @@ class PrintReport:
                         self.pangolayout.set_text(data, -1)
                         (width, height) = self.pangolayout.get_size()
                         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-                        cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+                        cr.move_to(right_txt - (width / Pango.SCALE),
+                                   addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
                         PangoCairo.show_layout(cr, self.pangolayout)
                     right_txt -= self.cols_width[dindex]
                     cr.move_to(right_txt, addh)
@@ -532,7 +561,8 @@ class PrintReport:
 
         for i in range(0, 2):
             right_txt -= MARGIN + LINE
-            cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+            cr.move_to(right_txt - (width / Pango.SCALE), addh +
+                       (ROW_HEIGHT-(height / Pango.SCALE))/2)
             PangoCairo.show_layout(cr, self.pangolayout)
             right_txt -= self.cols_width[i]
             cr.move_to(right_txt, addh)
@@ -545,7 +575,8 @@ class PrintReport:
         self.pangolayout.set_text(_("Sum"), -1)
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-        cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+        cr.move_to(right_txt - (width / Pango.SCALE), addh +
+                   (ROW_HEIGHT-(height / Pango.SCALE))/2)
         PangoCairo.show_layout(cr, self.pangolayout)
         right_txt -= self.cols_width[2]
         cr.move_to(right_txt, addh)
@@ -558,7 +589,8 @@ class PrintReport:
         self.pangolayout.set_text(utility.LN(self.debt_sum), -1)
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-        cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+        cr.move_to(right_txt - (width / Pango.SCALE), addh +
+                   (ROW_HEIGHT-(height / Pango.SCALE))/2)
         PangoCairo.show_layout(cr, self.pangolayout)
         right_txt -= self.cols_width[3]
         cr.move_to(right_txt, addh)
@@ -568,7 +600,8 @@ class PrintReport:
         self.pangolayout.set_text(utility.LN(self.credit_sum), -1)
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-        cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+        cr.move_to(right_txt - (width / Pango.SCALE), addh +
+                   (ROW_HEIGHT-(height / Pango.SCALE))/2)
         PangoCairo.show_layout(cr, self.pangolayout)
         right_txt -= self.cols_width[4]
         cr.move_to(right_txt, addh)
@@ -578,7 +611,8 @@ class PrintReport:
         self.pangolayout.set_text(self.diagnose, -1)
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-        cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+        cr.move_to(right_txt - (width / Pango.SCALE), addh +
+                   (ROW_HEIGHT-(height / Pango.SCALE))/2)
         PangoCairo.show_layout(cr, self.pangolayout)
         right_txt -= self.cols_width[5]
         cr.move_to(right_txt, addh)
@@ -588,17 +622,18 @@ class PrintReport:
         self.pangolayout.set_text(self.remaining, -1)
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-        cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+        cr.move_to(right_txt - (width / Pango.SCALE), addh +
+                   (ROW_HEIGHT-(height / Pango.SCALE))/2)
         PangoCairo.show_layout(cr, self.pangolayout)
         right_txt -= self.cols_width[6]
         cr.move_to(right_txt, addh)
         cr.line_to(right_txt, addh + ROW_HEIGHT)
 
-        #Table top line
+        # Table top line
         cr.move_to(right_txt, TABLE_TOP)
         cr.line_to(RIGHT_EDGE, TABLE_TOP)
 
-        #Table bottom line
+        # Table bottom line
 #        cr.move_to(self.page_margin, addh + ROW_HEIGHT)
         cr.move_to(right_txt, addh + ROW_HEIGHT)
         cr.line_to(RIGHT_EDGE, addh + ROW_HEIGHT)
@@ -609,10 +644,11 @@ class PrintReport:
         content = self.documents[page_nr]
         docnumber = content[0][6]
         datestr = content[0][7]
-        self.fields = {_("Document Number"):docnumber, _("Date"):datestr}
+        self.fields = {_("Document Number"): docnumber, _("Date"): datestr}
         self.formatHeader()
 #        RIGHT_EDGE = 570  #(table width + PAGE_MARGIN)
-        RIGHT_EDGE = self.page_setup.get_page_width(Gtk.Unit.POINTS) - config.rightmargin
+        RIGHT_EDGE = self.page_setup.get_page_width(
+            Gtk.Unit.POINTS) - config.rightmargin
         HEADER_HEIGHT = self.header_height
         HEADING_HEIGHT = self.heading_height
 #        PAGE_MARGIN = self.page_margin
@@ -627,15 +663,14 @@ class PrintReport:
         fdesc.set_size(fontsize * Pango.SCALE)
         self.pangolayout.set_font_description(fdesc)
 
-
         self.drawTableHeading()
 
-        #Draw table data
+        # Draw table data
         offset = 0
         self.debt_sum = 0
         self.credit_sum = 0
 
-        addh= TABLE_TOP
+        addh = TABLE_TOP
         for row in content:
             cr.move_to(RIGHT_EDGE, addh)
             cr.line_to(RIGHT_EDGE, addh+ROW_HEIGHT)
@@ -644,7 +679,7 @@ class PrintReport:
             dindex = 0
             for data in row:
                 right_txt -= MARGIN+LINE
-                if dindex==6 or dindex==7 or dindex==8 or dindex==9:
+                if dindex == 6 or dindex == 7 or dindex == 8 or dindex == 9:
                     break
                 elif dindex == 2 or dindex == 3:
                     fontsize -= 1
@@ -653,7 +688,8 @@ class PrintReport:
                     self.pangolayout.set_text(data, -1)
                     (width, height) = self.pangolayout.get_size()
                     self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-                    cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+                    cr.move_to(right_txt - (width / Pango.SCALE),
+                               addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
                     PangoCairo.show_layout(cr, self.pangolayout)
                     fontsize = config.contentfont
                     fdesc.set_size(fontsize * Pango.SCALE)
@@ -662,7 +698,8 @@ class PrintReport:
                     self.pangolayout.set_text(data, -1)
                     (width, height) = self.pangolayout.get_size()
                     self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-                    cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+                    cr.move_to(right_txt - (width / Pango.SCALE),
+                               addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
                     PangoCairo.show_layout(cr, self.pangolayout)
 
                 right_txt -= self.cols_width[dindex]
@@ -683,11 +720,13 @@ class PrintReport:
         cr.move_to(right_txt, addh)
         cr.line_to(right_txt, addh + ROW_HEIGHT)
 
-        right_txt -= 4*(MARGIN + LINE) + self.cols_width[0] + self.cols_width[1] + self.cols_width[2]
+        right_txt -= 4*(MARGIN + LINE) + \
+            self.cols_width[0] + self.cols_width[1] + self.cols_width[2]
         self.pangolayout.set_text(_("Sum"), -1)
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-        cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+        cr.move_to(right_txt - (width / Pango.SCALE), addh +
+                   (ROW_HEIGHT-(height / Pango.SCALE))/2)
         PangoCairo.show_layout(cr, self.pangolayout)
         right_txt -= self.cols_width[3]
         cr.move_to(right_txt, addh)
@@ -700,7 +739,8 @@ class PrintReport:
         self.pangolayout.set_text(utility.LN(self.debt_sum), -1)
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-        cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+        cr.move_to(right_txt - (width / Pango.SCALE), addh +
+                   (ROW_HEIGHT-(height / Pango.SCALE))/2)
         PangoCairo.show_layout(cr, self.pangolayout)
         right_txt -= self.cols_width[4]
         cr.move_to(right_txt, addh)
@@ -710,17 +750,18 @@ class PrintReport:
         self.pangolayout.set_text(utility.LN(self.credit_sum), -1)
         (width, height) = self.pangolayout.get_size()
         self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-        cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+        cr.move_to(right_txt - (width / Pango.SCALE), addh +
+                   (ROW_HEIGHT-(height / Pango.SCALE))/2)
         PangoCairo.show_layout(cr, self.pangolayout)
         right_txt -= self.cols_width[5]
         cr.move_to(right_txt, addh)
         cr.line_to(right_txt, addh + ROW_HEIGHT)
 
-        #Table top line
+        # Table top line
         cr.move_to(right_txt, TABLE_TOP)
         cr.line_to(RIGHT_EDGE, TABLE_TOP)
 
-        #Table bottom line
+        # Table bottom line
         cr.move_to(right_txt, addh + ROW_HEIGHT)
         cr.line_to(RIGHT_EDGE, addh + ROW_HEIGHT)
 
@@ -728,7 +769,8 @@ class PrintReport:
 
     def drawTrialReport(self, page_nr):
         self.formatHeader()
-        RIGHT_EDGE = self.page_setup.get_page_width(Gtk.Unit.POINTS) - config.rightmargin
+        RIGHT_EDGE = self.page_setup.get_page_width(
+            Gtk.Unit.POINTS) - config.rightmargin
         HEADER_HEIGHT = self.header_height
         HEADING_HEIGHT = self.heading_height
         MARGIN = self.cell_margin
@@ -744,10 +786,10 @@ class PrintReport:
 
         self.drawTableHeading()
 
-        #Draw table data
+        # Draw table data
         rindex = page_nr * self.lines_per_page
         offset = 0
-        addh= TABLE_TOP
+        addh = TABLE_TOP
 
         try:
             while (offset < self.lines_per_page):
@@ -763,7 +805,8 @@ class PrintReport:
                     self.pangolayout.set_text(data, -1)
                     (width, height) = self.pangolayout.get_size()
                     self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-                    cr.move_to (right_txt -(width / Pango.SCALE), addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
+                    cr.move_to(right_txt - (width / Pango.SCALE),
+                               addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
                     PangoCairo.show_layout(cr, self.pangolayout)
 
                     right_txt -= self.cols_width[dindex]
@@ -776,11 +819,11 @@ class PrintReport:
         except IndexError:
             pass
 
-        #Table top line
+        # Table top line
         cr.move_to(right_txt, TABLE_TOP)
         cr.line_to(RIGHT_EDGE, TABLE_TOP)
 
-        #Table bottom line
+        # Table bottom line
         cr.move_to(right_txt, addh)
         cr.line_to(RIGHT_EDGE, addh)
 
@@ -790,8 +833,9 @@ class PrintReport:
         self.drawfunction = func
 
     def drawTableHeading(self):
-#        RIGHT_EDGE = 570  #(table width + PAGE_MARGIN)
-        RIGHT_EDGE = self.page_setup.get_page_width(Gtk.Unit.POINTS) - config.rightmargin
+        #        RIGHT_EDGE = 570  #(table width + PAGE_MARGIN)
+        RIGHT_EDGE = self.page_setup.get_page_width(
+            Gtk.Unit.POINTS) - config.rightmargin
         HEADING_HEIGHT = self.heading_height
         MARGIN = self.cell_margin
         LINE = self.line
@@ -806,7 +850,7 @@ class PrintReport:
         cr.move_to(RIGHT_EDGE, htop)
         cr.line_to(RIGHT_EDGE, htop + HEADING_HEIGHT)
 
-        #Draw table headings
+        # Draw table headings
         right_txt = RIGHT_EDGE
         dindex = 0
         for data in self.heading:
@@ -818,18 +862,21 @@ class PrintReport:
                 self.pangolayout.set_text(res[0], -1)
                 (width, height) = self.pangolayout.get_size()
                 if (width / Pango.SCALE) < self.cols_width[dindex]:
-                    #self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-                    cr.move_to (right_txt -(width / Pango.SCALE), htop + (HEADING_HEIGHT/2-(height / Pango.SCALE))/2)
+                    # self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
+                    cr.move_to(right_txt - (width / Pango.SCALE), htop +
+                               (HEADING_HEIGHT/2-(height / Pango.SCALE))/2)
                     PangoCairo.show_layout(cr, self.pangolayout)
                     #
                     self.pangolayout.set_text(res[1], -1)
                     (width, height) = self.pangolayout.get_size()
-                    #self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-                    cr.move_to (right_txt -(width / Pango.SCALE), htop + ((HEADING_HEIGHT*3)/2-(height / Pango.SCALE))/2)
+                    # self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
+                    cr.move_to(right_txt - (width / Pango.SCALE), htop +
+                               ((HEADING_HEIGHT*3)/2-(height / Pango.SCALE))/2)
                     PangoCairo.show_layout(cr, self.pangolayout)
             else:
-                #self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
-                cr.move_to (right_txt -(width / Pango.SCALE), htop + (HEADING_HEIGHT-(height / Pango.SCALE))/2)
+                # self.pangolayout.set_alignment(Pango.Alignment.RIGHT)
+                cr.move_to(right_txt - (width / Pango.SCALE), htop +
+                           (HEADING_HEIGHT-(height / Pango.SCALE))/2)
                 PangoCairo.show_layout(cr, self.pangolayout)
 
             right_txt -= self.cols_width[dindex]
@@ -838,7 +885,7 @@ class PrintReport:
 
             dindex += 1
 
-        #Heading top line
+        # Heading top line
         cr.move_to(right_txt, htop)
         cr.line_to(RIGHT_EDGE, htop)
 

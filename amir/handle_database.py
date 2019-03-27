@@ -6,12 +6,14 @@ from sqlalchemy import *
 from amir.database import *
 from . import database
 import os
-from shutil import make_archive , rmtree
-from sqlalchemy.ext.serializer import dumps,loads
+from shutil import make_archive, rmtree
+from sqlalchemy.ext.serializer import dumps, loads
 from datetime import date
 
+
 def checkInputDb(inputfile, selectedFormat):
-    import os, sys
+    import os
+    import sys
     import logging
     from sqlalchemy import create_engine
     from sqlalchemy import MetaData, Table, Column, ForeignKey, ColumnDefault
@@ -22,7 +24,8 @@ def checkInputDb(inputfile, selectedFormat):
     filename = ""
     if selectedFormat != 1:
 
-        filename = os.path.split(inputfile)  # filename = ( 'directory' , 'file.format')
+        # filename = ( 'directory' , 'file.format')
+        filename = os.path.split(inputfile)
         splitByDot = filename[1].split(".")
         l = len(splitByDot)
         if l > 1:  # if file name is with format (e.g .sqlite)
@@ -42,7 +45,8 @@ def checkInputDb(inputfile, selectedFormat):
         #     return filename
     try:
         #engine = create_engine(type + inputfile, echo=True)
-        database.Database(inputfile, share.config.db_repository, share.config.echodbresult)
+        database.Database(inputfile, share.config.db_repository,
+                          share.config.echodbresult)
         print(" yesss")
     except exc.DatabaseError:
         logging.debug(sys.exc_info()[0])
@@ -78,27 +82,30 @@ def checkInputDb(inputfile, selectedFormat):
 #     share.mainwin.silent_daialog(_("Backup saved successfully"))
 #     return
 
-def backup(location,backupName):
-    additionaldata = {"basic": {"Your company":"Jooyeshgar" },"info":{"user":"root","time":"17:38"}}
-    if backupName=="":
+def backup(location, backupName):
+    additionaldata = {"basic": {"Your company": "Jooyeshgar"},
+                      "info": {"user": "root", "time": "17:38"}}
+    if backupName == "":
         from datetime import date
         year = date.today().year
-        currentDbName = (share.config.dbnames[share.config.currentdb - 1]).split(".")
-        currentDbName = ''.join(str(e) for e in currentDbName[:len(currentDbName) - 1])
+        currentDbName = (
+            share.config.dbnames[share.config.currentdb - 1]).split(".")
+        currentDbName = ''.join(str(e)
+                                for e in currentDbName[:len(currentDbName) - 1])
         newName = currentDbName + str(year)
     else:
         newName = backupName
-    dir = os.path.join(location.get_filename(), newName )
+    dir = os.path.join(location.get_filename(), newName)
     os.mkdir(dir)
     tables = (Bill, Config, Notebook, BankNames, BankAccounts, ProductGroups, Products, Users, Permissions, Subject, Factors,
-         FactorItems, CustGroups, Customers, Cheque, ChequeHistory)
+              FactorItems, CustGroups, Customers, Cheque, ChequeHistory)
     serialized_data = ""
-    for table in tables :
+    for table in tables:
         arrayData = []
         q = share.config.db.session.query(table)
         all = q.all()
         serialized_data = dumps(all)
-        file = open(os.path.join(dir ,str(table.__name__) ),"w")
+        file = open(os.path.join(dir, str(table.__name__)), "w")
         file.write(serialized_data)
         file.close()
 
@@ -109,7 +116,7 @@ def backup(location,backupName):
         base_dir=newName)
 
     for table in tables:
-        os.remove(os.path.join(dir,table.__name__))
+        os.remove(os.path.join(dir, table.__name__))
     os.rmdir(dir)
 
     share.mainwin.silent_daialog(_("Backup saved successfully"))
@@ -120,6 +127,7 @@ def backup(location,backupName):
 #         d[column.name] = unicode(getattr(row, column.name))
 #
 #     return d
+
 
 def restore(location):
     import zipfile
@@ -132,10 +140,10 @@ def restore(location):
     dbname = os.path.split(backupfolder)
     dbname = dbname[len(dbname)-1]
     metadata = MetaData(share.config.db.engine)
-    folder = os.path.join(backupfolder,dbname)
-    a = ( Bill, Config, Notebook, BankNames, BankAccounts, ProductGroups, Products, Users, Permissions, Subject, Factors,
-          CustGroups, Customers, Cheque, ChequeHistory )
-    for table in a :
+    folder = os.path.join(backupfolder, dbname)
+    a = (Bill, Config, Notebook, BankNames, BankAccounts, ProductGroups, Products, Users, Permissions, Subject, Factors,
+         CustGroups, Customers, Cheque, ChequeHistory)
+    for table in a:
         file = open(os.path.join(folder, str(table.__name__)), "r")
         serialized_data = file.read()
         restore_q = loads(serialized_data,  metadata, share.config.db.session)
@@ -153,17 +161,19 @@ def restore(location):
 def createDb(dbName, builder):
     # creating new empty db
     from gi.repository import Gtk
-    pathname = os.path.join(os.path.dirname(amirconfig.__file__), amirconfig.__amir_data_directory__)
+    pathname = os.path.join(os.path.dirname(
+        amirconfig.__file__), amirconfig.__amir_data_directory__)
     abs_data_path = os.path.abspath(pathname)
     db_repository = os.path.join(abs_data_path, 'amir_migrate')
     dbformat = "sqlite"
     dbType = "sqlite:///"
     from platform import system
 
-    fileaddress= os.path.join(share.config.confdir, dbName + "." + dbformat)
+    fileaddress = os.path.join(share.config.confdir, dbName + "." + dbformat)
     dbFile = dbType + fileaddress
     try:
-        newdb = database.Database(dbFile, db_repository, share.config.echodbresult)
+        newdb = database.Database(
+            dbFile, db_repository, share.config.echodbresult)
     except Exception as e:
         msg = _("There was a problem in creating new database. Maybe trying with another name will help...\n" + str(e))
         msgbox = Gtk.MessageDialog(builder.get_object("window1"), Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR,
@@ -200,7 +210,8 @@ def createDb(dbName, builder):
             clas2 = clas.__table__
             columns = list(clas2.columns.keys())
             for d in movingData:
-                data = dict([(str(column), getattr(d, column)) for column in columns])
+                data = dict([(str(column), getattr(d, column))
+                             for column in columns])
                 instant = clas(**data)
                 newdb.session.add(instant)
             # #     or :
@@ -211,14 +222,16 @@ def createDb(dbName, builder):
             # newdb.session.execute(insert)
     newdb.session.commit()
 
-def detectDbType( fullname):
+
+def detectDbType(fullname):
     format = fullname.split("/")[0]
     format = format.split(":")[0]
     return format
 
+
 def showDBdetails(fullname):
-    pieces =  fullname.split("/")
-    format =pieces[0]
+    pieces = fullname.split("/")
+    format = pieces[0]
     if format == "mysql:":
         lastPart = pieces[len(pieces)-1]
         lastPart = lastPart.split("?")[0]
@@ -226,25 +239,29 @@ def showDBdetails(fullname):
     if format == "sqlite:":
         return fullname[10:]
 
-def importData(rdb , inputfile):
-    sTables = [Config, Subject, ProductGroups, Products, BankNames, BankAccounts]
+
+def importData(rdb, inputfile):
+    sTables = [Config, Subject, ProductGroups,
+               Products, BankNames, BankAccounts]
     cTables = [CustGroups, Customers]
-    dTables = [Bill, Notebook, Factors, FactorItems, Cheque , ChequeHistory]
+    dTables = [Bill, Notebook, Factors, FactorItems, Cheque, ChequeHistory]
     if rdb == "rdbClean":
         return
     if rdb == 'rdbS':   # structure
         tables = sTables
     elif rdb == 'rdbSC':
         tables = sTables + cTables
-    elif  rdb == 'rdbAll':
+    elif rdb == 'rdbAll':
         tables = sTables + cTables + dTables
-    newdb = database.Database(inputfile, share.config.db_repository, share.config.echodbresult)
+    newdb = database.Database(
+        inputfile, share.config.db_repository, share.config.echodbresult)
     for clas in tables:
         newdb.session.query(clas).delete()
         movingData = share.config.db.session.query(clas).all()
         clas2 = clas.__table__
         columns = list(clas2.columns.keys())
         for d in movingData:
-            data = dict([(str(column), getattr(d, column)) for column in columns])
+            data = dict([(str(column), getattr(d, column))
+                         for column in columns])
             instant = clas(**data)
             newdb.session.add(instant)

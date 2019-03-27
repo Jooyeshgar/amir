@@ -7,7 +7,7 @@ import gi
 from gi.repository import Gtk
 from gi.repository import Gdk
 
-from sqlalchemy.sql import and_ , or_ , desc
+from sqlalchemy.sql import and_, or_, desc
 from sqlalchemy.orm.util import outerjoin
 
 from . import numberentry
@@ -30,22 +30,24 @@ if sys.version_info > (3,):
 
 config = share.config
 
+
 class Payments(GObject.GObject):
 
-    chequeStatus = ["" , _("Paid-Not passed"), _("Paid-Passed"), _("Recieved-Not cashed"), _("Recieved-Cashed"), _("Spent") , _("Returned from customer") , _("Returned to customer") ,  _("Paid-Bounced"),_("Recieved-Bounced")]
-    chequePayment=[]
-    recieptPayment=[]
+    chequeStatus = ["", _("Paid-Not passed"), _("Paid-Passed"), _("Recieved-Not cashed"), _("Recieved-Cashed"), _(
+        "Spent"), _("Returned from customer"), _("Returned to customer"),  _("Paid-Bounced"), _("Recieved-Bounced")]
+    chequePayment = []
+    recieptPayment = []
 
-    def __init__(self, transId=0, sellFlag = 1 , spendCheque = False):
+    def __init__(self, transId=0, sellFlag=1, spendCheque=False):
 
-        #temp for vackground
+        # temp for vackground
         self.bank_names_count = 0
         self.sellFlag = sellFlag
         self.chequesList = []
         self.lastChqID = 0
         #self.background = Gtk.Fixed()
-        #self.background.put(Gtk.Image.new_from_file(os.path.join(config.data_path, "media", "background.png")), 0, 0)     # not working !
-        #self.background.show_all()
+        # self.background.put(Gtk.Image.new_from_file(os.path.join(config.data_path, "media", "background.png")), 0, 0)     # not working !
+        # self.background.show_all()
 
         GObject.GObject.__init__(self)
 
@@ -55,11 +57,11 @@ class Payments(GObject.GObject):
 
         self.addPymntDlg = self.builder.get_object("addPaymentDlg")
         #self.spendCheque = spendCheque
-        if spendCheque :         # if is from automatic accounting-> spend cheque
+        if spendCheque:         # if is from automatic accounting-> spend cheque
             self.builder.get_object("addpaymentBtn") . set_sensitive(False)
             self.builder.get_object("editPaymentBtn") . set_sensitive(False)
             self.builder.get_object("selectPayBtn") . set_sensitive(True)
-        if transId :             # if is from adding/editing factors
+        if transId:             # if is from adding/editing factors
             self.builder.get_object("selectPayBtn") . set_sensitive(True)
         self.totalAmount = 0
         self.numrecpts = 0
@@ -98,54 +100,53 @@ class Payments(GObject.GObject):
         self.bankCombo.pack_start(cell, True)
         # self.bankCombo.add_attribute(cell, 'text', 0)
 
-
-
-
         self.serialNoEntry = self.builder.get_object("serialNoEntry")
         self.payerEntry = self.builder.get_object("payerNameEntry")
         self.customerNameLbl = self.builder.get_object("customerNameLbl")
 
-
         self.cheqTreeView = self.builder.get_object("chequeTreeView")
-        self.cheqListStore = Gtk.ListStore(str, str, str, str, str, str, str, str, str , str)
+        self.cheqListStore = Gtk.ListStore(
+            str, str, str, str, str, str, str, str, str, str)
         self.cheqListStore.clear()
         self.cheqTreeView.set_model(self.cheqListStore)
 
         payByTo = _("Payid by") if sellFlag else _("Payid to")
 
-
-        cheqHeaders = (_("ID") , _("No."), payByTo, _("Amount"), _("Writing date"), _("Due Date"),
-                      _("Bank"), _("Serial No."), _("Status"), _("Description"))
+        cheqHeaders = (_("ID"), _("No."), payByTo, _("Amount"), _("Writing date"), _("Due Date"),
+                       _("Bank"), _("Serial No."), _("Status"), _("Description"))
         txt = 0
         for header in cheqHeaders:
-            column = Gtk.TreeViewColumn(header,Gtk.CellRendererText(),text = txt)
+            column = Gtk.TreeViewColumn(
+                header, Gtk.CellRendererText(), text=txt)
             column.set_spacing(5)
             column.set_resizable(True)
             self.cheqTreeView.append_column(column)
             txt += 1
 
         self.chqSltWindow = self.builder.get_object("selectCheque")
-        self.freeChequesTreeview = self.builder.get_object("freeChequesTreeview")
-        self.sltCheqListStore = Gtk.ListStore(str, str, str, str, str, str, str, str, str , str)
+        self.freeChequesTreeview = self.builder.get_object(
+            "freeChequesTreeview")
+        self.sltCheqListStore = Gtk.ListStore(
+            str, str, str, str, str, str, str, str, str, str)
         self.sltCheqListStore.clear()
         self.freeChequesTreeview.set_model(self.sltCheqListStore)
 
         payByTo = "Customer"
         cheqHeaders = (_("ID"), _("No."), payByTo, _("Amount"), _("Writing date"), _("Due Date"),
-                      _("Bank"), _("Serial No."), _("Status"), _("Description"))
+                       _("Bank"), _("Serial No."), _("Status"), _("Description"))
         txt = 0
         for header in cheqHeaders:
-            column = Gtk.TreeViewColumn(header,Gtk.CellRendererText(),text = txt)
+            column = Gtk.TreeViewColumn(
+                header, Gtk.CellRendererText(), text=txt)
             column.set_spacing(5)
             column.set_resizable(True)
             self.freeChequesTreeview.append_column(column)
             txt += 1
 
-
         self.builder.connect_signals(self)
         #
 
-    #NOTE: Don't call this in __init__(), Because at initialize time, "payments-changed"
+    # NOTE: Don't call this in __init__(), Because at initialize time, "payments-changed"
     # signal hasn't connected to factor forms yet, So payment-sum can not be shown there
     # even after the tables being filled.
     def fillPaymentTables(self):
@@ -153,18 +154,19 @@ class Payments(GObject.GObject):
 
     def fillChequeTable(self):
         total = 0
-        if self.transId != 0 :                    #  from factors
-            if  self.sellFlag:
+        if self.transId != 0:  # from factors
+            if self.sellFlag:
                 #spendedCheuqesList =self.session.execute("select cheque.* from cheque join chequehistory on cheque.chqId = chequehistory.ChequeId where TransId = 4 and Status <>5 ")
 
                 query = self.session.query(Cheque).select_from(ChequeHistory).filter(Cheque.chqId == ChequeHistory.ChequeId)\
-                    .filter(Cheque.chqStatus==5).filter(ChequeHistory.TransId == self.transId).order_by(ChequeHistory.Id.desc()).distinct(Cheque.chqId)
+                    .filter(Cheque.chqStatus == 5).filter(ChequeHistory.TransId == self.transId).order_by(ChequeHistory.Id.desc()).distinct(Cheque.chqId)
                 spendedCheuqesList = query.all()
-                self.chequesList+=spendedCheuqesList
+                self.chequesList += spendedCheuqesList
             query = self.session.query(Cheque)
-            query = query.filter(Cheque.chqTransId== self.transId).filter(Cheque.chqDelete == False)
+            query = query.filter(Cheque.chqTransId == self.transId).filter(
+                Cheque.chqDelete == False)
             cheqlist = query.all()
-            self.chequesList +=  cheqlist
+            self.chequesList += cheqlist
             for cheq in self.chequesList:
                 self.numcheqs += 1
                 total += cheq.chqAmount
@@ -175,16 +177,18 @@ class Payments(GObject.GObject):
                 wrtDate = dateentry.dateToString(cheq.chqWrtDate)
                 dueDate = dateentry.dateToString(cheq.chqDueDate)
                 status = self.chequeStatus[cheq.chqStatus]
-                bank = self.bankaccounts_class.get_bank_name (cheq.chqAccount)
-                customer = self.session.query(Customers) .filter(Customers.custId == cheq.chqCust).first().custName
-                self.cheqListStore.append((ID , order, customer, amount, wrtDate, dueDate, bank,
-                                         cheq.chqSerial, status, cheq.chqDesc))
+                bank = self.bankaccounts_class.get_bank_name(cheq.chqAccount)
+                customer = self.session.query(Customers) .filter(
+                    Customers.custId == cheq.chqCust).first().custName
+                self.cheqListStore.append((ID, order, customer, amount, wrtDate, dueDate, bank,
+                                           cheq.chqSerial, status, cheq.chqDesc))
             self.addToTotalAmount(total)
-        cheque = self.session.query(Cheque).order_by(desc(Cheque.chqId)).first()
-        if cheque != None :
+        cheque = self.session.query(Cheque).order_by(
+            desc(Cheque.chqId)).first()
+        if cheque != None:
             self. lastChqID = cheque.chqId
 
-    def showPayments(self , parent = None):
+    def showPayments(self, parent=None):
         if parent:
             self.window.set_transient_for(parent)
             self.window.set_destroy_with_parent(True)
@@ -192,28 +196,27 @@ class Payments(GObject.GObject):
 
     def hidePayments(self, sender=0, ev=0):
         self.window.hide()
-        #Returns true to avoid destroying payments window
+        # Returns true to avoid destroying payments window
         return True
-
 
     def addPayment(self, sender=0, is_cheque=True):
         self.editingPay = None
         self.addPymntDlg.set_title(_("Add Non-Cash Payment"))
         self.edtPymntFlg = False
-        self.removeFlg=False
-        btnVal  = _("Add payment to list")
+        self.removeFlg = False
+        btnVal = _("Add payment to list")
 
         model = self.bankCombo.get_model()
-        if self.sellFlag: # other's cheque
+        if self.sellFlag:  # other's cheque
             banks = self.bankaccounts_class.get_bank_names()
         else:
-            banks =  self.bankaccounts_class.get_all_accounts()
+            banks = self.bankaccounts_class.get_all_accounts()
         for item in banks:
             iter = model.append()
             name = item.Name if self.sellFlag else item.accName
-            model.set(iter, 0, name )
+            model.set(iter, 0, name)
 
-        today   = date.today()
+        today = date.today()
         self.dueDateEntry.showDateObject(today)
         self.bankCombo.set_active(0)
         self.serialNoEntry.set_text("")
@@ -222,26 +225,24 @@ class Payments(GObject.GObject):
         self.writeDateEntry.showDateObject(today)
         self.pymntDescEntry.set_text("")
 
-        self.btn    = self.builder.get_object("submitBtn")
+        self.btn = self.builder.get_object("submitBtn")
         self.btn.set_label(btnVal)
 
-        status = 3  if  self.sellFlag else 1     # buy -> pardakhti , sell -> daryafti
-        self.chequeStatusLbl .set_text( self.chequeStatus[status])
-        self.builder.get_object("paymentsStatusBar").push(1,"")
+        status = 3 if self.sellFlag else 1     # buy -> pardakhti , sell -> daryafti
+        self.chequeStatusLbl .set_text(self.chequeStatus[status])
+        self.builder.get_object("paymentsStatusBar").push(1, "")
         self.addPymntDlg.show_all()
-
-
 
     def editPay(self, sender=0):
         model = self.bankCombo.get_model()
-        if self.sellFlag: # other's cheque
+        if self.sellFlag:  # other's cheque
             banks = self.bankaccounts_class.get_bank_names()
         else:
-            banks =  self.bankaccounts_class.get_all_accounts()
+            banks = self.bankaccounts_class.get_all_accounts()
         for item in banks:
             iter = model.append()
             name = item.Name if self.sellFlag else item.accName
-            model.set(iter, 0, name )
+            model.set(iter, 0, name)
 
         iter = self.cheqTreeView.get_selection().get_selected()[1]
         if iter == None:
@@ -249,8 +250,9 @@ class Payments(GObject.GObject):
         else:
             number = utility.convertToLatin(self.cheqListStore.get(iter, 1)[0])
             number = utility.getInt(number)
-            cheque = self.chequesList [number-1]        # reads from cheques list that holds temporary changes in cheque table. for adding or edditing without effect on database before submiting factor form
-            if cheque.chqStatus == 5 :
+            # reads from cheques list that holds temporary changes in cheque table. for adding or edditing without effect on database before submiting factor form
+            cheque = self.chequesList[number-1]
+            if cheque.chqStatus == 5:
                 return
             self.editid = cheque.chqId
             #payer_id   = cheque.chqCust
@@ -260,14 +262,14 @@ class Payments(GObject.GObject):
             dueDate = cheque.chqDueDate
             desc = cheque.chqDesc
 
-            self.chequeStatusLbl .set_text( self.chequeStatus[cheque.chqStatus])
+            self.chequeStatusLbl .set_text(self.chequeStatus[cheque.chqStatus])
             self.bankCombo.set_active(cheque.chqAccount - 1)
 
         self.edtPymntFlg = True
         self.edititer = iter
         self.addPymntDlg.set_title(_("Edit Non-Cash Payment"))
         self.builder.get_object("submitBtn").set_label(_("Save Changes..."))
-        self.builder.get_object("paymentsStatusBar").push(1,"")
+        self.builder.get_object("paymentsStatusBar").push(1, "")
 
         self.pymntAmntEntry.set_text(amount)
         self.serialNoEntry.set_text(serial)
@@ -292,15 +294,15 @@ class Payments(GObject.GObject):
         if answer != Gtk.ResponseType.OK:
             return
         ID = utility.getInt(self.cheqListStore.get(iter, 0)[0])
-        cheque =self.session.query(Cheque). filter(Cheque.chqId == ID).first()
-        self.removeCheque    (cheque)
+        cheque = self.session.query(Cheque). filter(Cheque.chqId == ID).first()
+        self.removeCheque(cheque)
 
         self.numcheqs -= 1
         liststore = self.cheqListStore
         del self.chequesList[number - 1]
 
         amount = utility.getInt(self.cheqListStore.get(iter, 3)[0])
-        #self.session.commit()
+        # self.session.commit()
         self.addToTotalAmount(-(amount))
         hasrow = liststore.remove(iter)
         # if there is a row after the deleted one
@@ -308,106 +310,106 @@ class Payments(GObject.GObject):
             # Decrease the order-number in next rows
             while iter != None:
                 number_str = utility.LN(number, False)
-                liststore.set_value (iter, 1, number_str)
+                liststore.set_value(iter, 1, number_str)
                 number += 1
                 iter = liststore.iter_next(iter)
-
 
     def submitPayment(self, sender=0):
         if self.validatePayment() == False:
             return
-        pre_amnt     = 0
-        pymntAmnt     = self.pymntAmntEntry.get_float()
-        wrtDate     = self.writeDateEntry.getDateObject()
-        dueDte         = self.dueDateEntry.getDateObject()
+        pre_amnt = 0
+        pymntAmnt = self.pymntAmntEntry.get_float()
+        wrtDate = self.writeDateEntry.getDateObject()
+        dueDte = self.dueDateEntry.getDateObject()
         bank = int(self.bankCombo.get_active()) + 1
         if self.sellFlag:
             bank_name = self.bankaccounts_class.get_bank_name(bank)
         else:
             bank_name = self.bankaccounts_class.get_account(bank) .accName
-        serial         = unicode(self.serialNoEntry.get_text())
-        pymntDesc     = unicode(self.pymntDescEntry.get_text())
-        payer        = self.payerEntry.get_text()
+        serial = unicode(self.serialNoEntry.get_text())
+        pymntDesc = unicode(self.pymntDescEntry.get_text())
+        payer = self.payerEntry.get_text()
         iter = None
         pymnt_str = utility.LN(pymntAmnt)
         wrtDate_str = dateentry.dateToString(wrtDate)
         dueDte_str = dateentry.dateToString(dueDte)
 
-        status = 3  if  self.sellFlag else 1     # buy -> pardakhti , sell -> daryafti
+        status = 3 if self.sellFlag else 1     # buy -> pardakhti , sell -> daryafti
         if self.edtPymntFlg:
             iter = self.edititer
             number = utility.convertToLatin(self.cheqListStore.get(iter, 1)[0])
             number = utility.getInt(number)
             cheque = self.chequesList[number - 1]
-            if cheque.chqStatus == 5 :
+            if cheque.chqStatus == 5:
                 return
             query = self.session.query(Cheque)
-            cheque = query.filter(and_(Cheque.chqTransId == cheque.chqTransId) ).first()
+            cheque = query.filter(
+                and_(Cheque.chqTransId == cheque.chqTransId)).first()
             pre_amnt = cheque.chqAmount
             cheque.chqAmount = pymntAmnt
             cheque.chqWrtDate = wrtDate
             cheque.chqDueDate = dueDte
             cheque.chqSerial = serial
-            #cheque.chqStatus = status              must edit from automatic accounting
-            cheque.chqCust = None  #self.payerEntry.get_text()
+            # cheque.chqStatus = status              must edit from automatic accounting
+            cheque.chqCust = None  # self.payerEntry.get_text()
             cheque.chqAccount = bank
         #    cheque.chqOwnerName    = self.payerEntry.get_text()
             cheque.chqDesc = pymntDesc
 
-            self.cheqListStore.set(iter, 2,self.customerNameLbl.get_text() , 3, pymnt_str,
-                                  4, wrtDate_str, 5, dueDte_str, 6 ,unicode(bank_name) , 7, serial, 8,
-                                  self.chequeStatus[status], 9, pymntDesc)
+            self.cheqListStore.set(iter, 2, self.customerNameLbl.get_text(), 3, pymnt_str,
+                                   4, wrtDate_str, 5, dueDte_str, 6, unicode(
+                                       bank_name), 7, serial, 8,
+                                   self.chequeStatus[status], 9, pymntDesc)
             self. lastChqID += 1
 
             self.chequesList[number-1] = Cheque(
-                        pymntAmnt                        ,
-                        wrtDate                            ,
-                        dueDte                            ,
-                        serial                            ,
-                        status                            ,
-                        None                            ,
-                        bank                            ,
-                        self.transId                    ,
-                        0                    , #notebook ID
-                        pymntDesc                        ,
-                        0                    ,    #history
-                        chqId = cheque.chqId            )
+                pymntAmnt,
+                wrtDate,
+                dueDte,
+                serial,
+                status,
+                None,
+                bank,
+                self.transId,
+                0,  # notebook ID
+                pymntDesc,
+                0,  # history
+                chqId=cheque.chqId)
         else:        # adding cheque
             self.numcheqs += 1
             order = utility.LN(self.numcheqs)
             self. lastChqID += 1
             cheque = Cheque(
-                        pymntAmnt                        ,
-                        wrtDate                            ,
-                        dueDte                            ,
-                        serial                            ,
-                        status                            ,
-                        None                            , # customer Id . later after submiting factor or auto accounting will be updated
-                        bank                            ,
-                        self.transId                    ,
-                        0                        ,
-                        pymntDesc                        ,
-                        0                    ,
-                           chqId = self.lastChqID    )
+                pymntAmnt,
+                wrtDate,
+                dueDte,
+                serial,
+                status,
+                None,  # customer Id . later after submiting factor or auto accounting will be updated
+                bank,
+                self.transId,
+                0,
+                pymntDesc,
+                0,
+                chqId=self.lastChqID)
 
             self.session.add(cheque)
-            iter = self.cheqListStore.append((unicode(self.lastChqID ) , order ,self.customerNameLbl.get_text()  , pymnt_str, wrtDate_str,
-                          dueDte_str, unicode(bank_name), serial, self.chequeStatus[status], pymntDesc))
+            iter = self.cheqListStore.append((unicode(self.lastChqID), order, self.customerNameLbl.get_text(), pymnt_str, wrtDate_str,
+                                              dueDte_str, unicode(bank_name), serial, self.chequeStatus[status], pymntDesc))
             self.chequesList .append(cheque)
 
             path = self.cheqListStore.get_path(iter)
             self.cheqTreeView.scroll_to_cell(path, None, False, 0, 0)
             self.cheqTreeView.set_cursor(path, None, False)
 
-        #self.session.commit()
-        self.addToTotalAmount(pymntAmnt - pre_amnt) # current pay value - prev pay value
+        # self.session.commit()
+        # current pay value - prev pay value
+        self.addToTotalAmount(pymntAmnt - pre_amnt)
         self.addPymntDlg.hide()
-
-
 
     def validatePayment(self):
 
-        errFlg  = False
+        errFlg = False
         msg = ""
 
         dueDte = self.dueDateEntry.get_text()
@@ -415,8 +417,8 @@ class Payments(GObject.GObject):
             msg += _("You must enter the due date for the non-cash payment.\n")
 
         payment = self.pymntAmntEntry.get_text()
-        if payment =="":
-             msg+=_("You must enter the Amount for cheque ")
+        if payment == "":
+            msg += _("You must enter the Amount for cheque ")
 
         wrtDate = self.writeDateEntry.get_text()
         if wrtDate == "":
@@ -433,13 +435,13 @@ class Payments(GObject.GObject):
                 msg += _("No bank is defined.")
         else:
             bank_name = self.bankaccounts_class.get_account(bank)
-            if not bank_name :
+            if not bank_name:
                 msg += _("No bank is defined. (Go to 'management->Bank Accounts' in order to define new bank accounts)\n")
-        #----values:
-        if msg!="":
+        # ----values:
+        if msg != "":
             msg = _("The payment cannot be saved.\n\n%s") % msg
-            msgbox = Gtk.MessageDialog( self.addPymntDlg, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING,
-                                        Gtk.ButtonsType.OK, msg )
+            msgbox = Gtk.MessageDialog(self.addPymntDlg, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING,
+                                       Gtk.ButtonsType.OK, msg)
             msgbox.set_title(_("Invalid data"))
             msgbox.run()
             msgbox.destroy()
@@ -454,7 +456,7 @@ class Payments(GObject.GObject):
     def addToTotalAmount(self, amount):
         self.totalAmount += amount
         ttlNonCashLabel = self.builder.get_object("ttlNonCashLabel")
-        total_str  = utility.LN(self.totalAmount)
+        total_str = utility.LN(self.totalAmount)
         ttlNonCashLabel.set_text(total_str)
         self.emit("payments-changed", total_str)
 
@@ -462,7 +464,7 @@ class Payments(GObject.GObject):
         if event.type == Gdk.EventType._2BUTTON_PRESS:
             selection = self.cheqTreeView.get_selection()
             iter = selection.get_selected()[1]
-            if iter != None :
+            if iter != None:
                 if self.builder.get_object("addpaymentBtn") . get_sensitive():
                     self.editPay(sender)
             else:
@@ -473,15 +475,14 @@ class Payments(GObject.GObject):
         model = self.bankCombo.get_model()
         self.bankaccounts_class.addNewBank(model)
 
-    def selectSeller(self,sender=0):                # not needed in submiting factor
+    def selectSeller(self, sender=0):                # not needed in submiting factor
         customer_win = customers.Customer()
         customer_win.viewCustomers()
-
 
         code = self.payerEntry.get_text()
         if code != '':
             customer_win.highlightCust(code)
-        customer_win.connect("customer-selected",self.sellerSelected)
+        customer_win.connect("customer-selected", self.sellerSelected)
 
     def sellerSelected(self, sender, id, code):       # not needed in submiting factor
         self.payerEntry.set_text(code)
@@ -492,41 +493,44 @@ class Payments(GObject.GObject):
 
         self.payerEntry.set_text(customer.custId)
 
-
-    def selectPayBtn_clicked(self , sender):
+    def selectPayBtn_clicked(self, sender):
         self.sltCheqListStore.clear()
-        query = self.session.query(Cheque) . filter (or_(Cheque.chqStatus== 3, Cheque.chqStatus== 6 ) ).filter(Cheque.chqDelete == False)
+        query = self.session.query(Cheque) . filter(or_(
+            Cheque.chqStatus == 3, Cheque.chqStatus == 6)).filter(Cheque.chqDelete == False)
         cheqlist = query.all()
         numcheqs = 0
         for cheq in cheqlist:
-            numcheqs +=1
+            numcheqs += 1
             order = utility.LN(numcheqs, False)
             ID = utility.LN(cheq.chqId)
             amount = utility.LN(cheq.chqAmount)
             wrtDate = dateentry.dateToString(cheq.chqWrtDate)
             dueDate = dateentry.dateToString(cheq.chqDueDate)
             status = self.chequeStatus[cheq.chqStatus]
-            bank = self.bankaccounts_class.get_bank_name (cheq.chqAccount)
-            customer = self.session.query(Customers) .filter(Customers.custId == cheq.chqCust).first()
+            bank = self.bankaccounts_class.get_bank_name(cheq.chqAccount)
+            customer = self.session.query(Customers) .filter(
+                Customers.custId == cheq.chqCust).first()
             if customer != None:
                 customer = customer.custName
             else:
                 continue
-            self.sltCheqListStore.append((ID , order, customer, amount, wrtDate, dueDate, bank,
-                                     cheq.chqSerial, status, cheq.chqDesc    ))
+            self.sltCheqListStore.append((ID, order, customer, amount, wrtDate, dueDate, bank,
+                                          cheq.chqSerial, status, cheq.chqDesc))
         self.chqSltWindow.show_all()
 
-    def removeCheque(self,cheque) :
+    def removeCheque(self, cheque):
         ch_history = None
-        if cheque.chqStatus!= 5 : #cheque is just related to this transaction and is not spended from anywhere
+        if cheque.chqStatus != 5:  # cheque is just related to this transaction and is not spended from anywhere
             if cheque.chqId == self.lastChqID:
                 self.lastChqID -= 1
-            wasSubmited = self.session.query(Notebook).filter(cheque.chqId== Notebook.chqId).delete()
+            wasSubmited = self.session.query(Notebook).filter(
+                cheque.chqId == Notebook.chqId).delete()
             ch = cheque
-            if wasSubmited :
-                ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, unicode(_("deleted")), date.today(),True)
+            if wasSubmited:
+                ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial,
+                                           ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, unicode(_("deleted")), date.today(), True)
 
-            #self.session.delete(cheque)
+            # self.session.delete(cheque)
             cheque.chqDelete = True
         else:        # is a spended cheque
             history = self.session.query(ChequeHistory).\
@@ -534,53 +538,59 @@ class Payments(GObject.GObject):
                 filter(ChequeHistory.Status != 5).\
                 order_by(ChequeHistory.Id.desc()).limit(1).first()
 
-            dNotes = self.session.query(Notebook).filter(cheque.chqId== Notebook.chqId).order_by(Notebook.id.desc()).limit(2).all()
+            dNotes = self.session.query(Notebook).filter(
+                cheque.chqId == Notebook.chqId).order_by(Notebook.id.desc()).limit(2).all()
             if len(dNotes):
-                self.session.query(Notebook).filter(or_(Notebook.id==dNotes[0].id ,Notebook.id== dNotes[1].id  )).delete()
+                self.session.query(Notebook).filter(
+                    or_(Notebook.id == dNotes[0].id, Notebook.id == dNotes[1].id)).delete()
 
-            #revert cheque to  it's last history of previous Factor before the cheque spended
+            # revert cheque to  it's last history of previous Factor before the cheque spended
             cheque.chqAmount = history.Amount
             cheque.chqWrtDate = history.WrtDate
             cheque.chqDueDate = history.DueDate
-            cheque.chqSerial  = history.Serial
+            cheque.chqSerial = history.Serial
             cheque . chqStatus = history. Status
-            cheque. chqCust  = history.Cust
+            cheque. chqCust = history.Cust
             cheque.chqAccount = history.Account
-            cheque.chqTransId  = history.TransId
+            cheque.chqTransId = history.TransId
             cheque.chqDesc = history.Desc
             ch = cheque
-            ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial, ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, ch.chqStatus, date.today(),True)
+            ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial,
+                                       ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, ch.chqStatus, date.today(), True)
         if ch_history:
             self.session.add(ch_history)
 
-
-    def closeSltChqWnd (self , sender= None , ser_data = None):
+    def closeSltChqWnd(self, sender=None, ser_data=None):
         self. chqSltWindow . hide()
         return True
 
-    def onFreeChequeSelected (self , sender , path = None , col = 0):
+    def onFreeChequeSelected(self, sender, path=None, col=0):
         treeiter = self.sltCheqListStore.get_iter(path)
-        chequeId = utility.convertToLatin(self.sltCheqListStore.get_value(treeiter , 0) )
-        cheque = self.session.query(Cheque ) . filter(Cheque.chqId == chequeId).first()
+        chequeId = utility.convertToLatin(
+            self.sltCheqListStore.get_value(treeiter, 0))
+        cheque = self.session.query(Cheque) . filter(
+            Cheque.chqId == chequeId).first()
         cheque.chqStatus = 5
         cheque.chqTransId = self.transId
         self.chequesList .append(cheque)
-        self.numcheqs  += 1
+        self.numcheqs += 1
         #chequeNo = self.sltCheqListStore.get_value(treeiter , 1)
-        chequeCust = self.sltCheqListStore.get_value(treeiter , 2)
-        chequeAmnt = self.sltCheqListStore.get_value(treeiter , 3)
-        chequeWDate = self.sltCheqListStore.get_value(treeiter , 4)
-        chequeDDate = self.sltCheqListStore.get_value(treeiter , 5)
-        chequeBank = self.sltCheqListStore.get_value(treeiter , 6)
-        chequeSerial = self.sltCheqListStore.get_value(treeiter , 7)
-        chequeStatus = self.chequeStatus[cheque.chqStatus] #self.sltCheqListStore.get_value(treeiter , 7)
-        chequeDesc = self.sltCheqListStore.get_value(treeiter , 7)
-        self.cheqListStore.append((chequeId , utility.LN(self.numcheqs  ),chequeCust  , chequeAmnt, chequeWDate,
-               chequeDDate, chequeBank, chequeSerial, chequeStatus, chequeDesc))
+        chequeCust = self.sltCheqListStore.get_value(treeiter, 2)
+        chequeAmnt = self.sltCheqListStore.get_value(treeiter, 3)
+        chequeWDate = self.sltCheqListStore.get_value(treeiter, 4)
+        chequeDDate = self.sltCheqListStore.get_value(treeiter, 5)
+        chequeBank = self.sltCheqListStore.get_value(treeiter, 6)
+        chequeSerial = self.sltCheqListStore.get_value(treeiter, 7)
+        # self.sltCheqListStore.get_value(treeiter , 7)
+        chequeStatus = self.chequeStatus[cheque.chqStatus]
+        chequeDesc = self.sltCheqListStore.get_value(treeiter, 7)
+        self.cheqListStore.append((chequeId, utility.LN(self.numcheqs), chequeCust, chequeAmnt, chequeWDate,
+                                   chequeDDate, chequeBank, chequeSerial, chequeStatus, chequeDesc))
 
-        self.addToTotalAmount(utility.getFloat(chequeAmnt) )
+        self.addToTotalAmount(utility.getFloat(chequeAmnt))
         #self.cheqListStore .append(cheque)
         self.closeSltChqWnd()
+
 
 GObject.type_register(Payments)
 GObject.signal_new("payments-changed", Payments, GObject.SignalFlags.RUN_LAST,

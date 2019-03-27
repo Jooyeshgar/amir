@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010 <jooyeshgar> <info@jooyeshgar.com>
 #This program is free software: you can redistribute it and/or modify it

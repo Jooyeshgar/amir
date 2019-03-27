@@ -9,18 +9,20 @@ Base = get_declarative_base()
 ## \defgroup DataBase
 ## @{
 
-#Version 0.2 tables
+# Version 0.2 tables
+
+
 class CustGroups(Base):
     __tablename__ = "custGroups"
-    custGrpId   = Column( Integer,      primary_key = True  )
-    custGrpCode = Column( String(50),   nullable = False    )
-    custGrpName = Column( Unicode(50),  nullable = False    )
-    custGrpDesc = Column( Unicode(200), nullable = True     )
+    custGrpId = Column(Integer,        primary_key=True)
+    custGrpCode = Column(String(50),   nullable=False)
+    custGrpName = Column(Unicode(50),  nullable=False)
+    custGrpDesc = Column(Unicode(200), nullable=True)
 
-    def __init__( self, custGrpCode, custGrpName, custGrpDesc  ,custGrpId=1  ):
+    def __init__(self, custGrpCode, custGrpName, custGrpDesc, custGrpId=1):
 
-        self.custGrpCode    = custGrpCode
-        self.custGrpName    = custGrpName
-        self.custGrpDesc    = custGrpDesc
+        self.custGrpCode = custGrpCode
+        self.custGrpName = custGrpName
+        self.custGrpDesc = custGrpDesc
 
 ## @}

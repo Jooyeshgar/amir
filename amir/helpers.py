@@ -18,7 +18,7 @@
 
 __all__ = [
     'make_window',
-    ]
+]
 
 import os
 import logging
@@ -29,6 +29,7 @@ from gi.repository import Gtk
 ## \defgroup Utility
 ## @{
 
+
 def get_builder(builder_file_name):
     """Return a fully-instantiated Gtk.Builder instance from specified ui
     file
@@ -38,7 +39,8 @@ def get_builder(builder_file_name):
     """
     # Look for the ui file that describes the user interface.
     #ui_filename = get_data_file('ui', '%s.ui' % (builder_file_name,))
-    ui_filename = os.path.join(share.config.data_path, 'ui', '%s.glade' % (builder_file_name,))
+    ui_filename = os.path.join(
+        share.config.data_path, 'ui', '%s.glade' % (builder_file_name,))
 
     if not os.path.exists(ui_filename):
         logging.error("UI file \"%s\" not found." % ui_filename)
@@ -49,6 +51,7 @@ def get_builder(builder_file_name):
     logging.info("UI file \"%s\" loaded." % ui_filename)
     builder.add_from_file(ui_filename)
     return builder
+
 
 def comboInsertItems(combo, items):
     ls = Gtk.ListStore(str)

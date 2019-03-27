@@ -10,15 +10,16 @@ Base = get_declarative_base()
 ## \defgroup DataBase
 ## @{
 
+
 class Users(Base):
     __tablename__ = 'users'
-    id = Column(Integer, primary_key=True)
-    name = Column(Unicode(60), nullable=False)
+    id = Column(Integer,           primary_key=True)
+    name = Column(Unicode(60),     nullable=False)
     username = Column(Unicode(60), nullable=False)
     password = Column(String(300), nullable=False)
-    permission = Column(Integer, nullable=False)
+    permission = Column(Integer,   nullable=False)
 
-    def __init__(self, name, username, password, permission,id=1):
+    def __init__(self, name, username, password, permission, id=1):
         self.name = name
         self.username = username
         self.password = bcrypt.encrypt(password)

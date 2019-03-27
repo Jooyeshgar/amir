@@ -9,13 +9,15 @@ Base = get_declarative_base()
 ## \defgroup DataBase
 ## @{
 
-#Version 0.2 tables
+# Version 0.2 tables
+
+
 class BankNames(Base):
     __tablename__ = 'BankNames'
-    Id   = Column(Integer    , primary_key=True)
+    Id = Column(Integer,       primary_key=True)
     Name = Column(Unicode(50), nullable=False)
 
-    def __init__(self, Name,Id=1):
+    def __init__(self, Name, Id=1):
         self.Name = Name
 
 ## @}

@@ -25,7 +25,10 @@ __amir_data_directory__ = r'data'
 __license__ = 'GPL-3'
 
 
-import os, optparse, logging, sys
+import os
+import optparse
+import logging
+import sys
 from optparse import IndentedHelpFormatter
 from .share import share
 import textwrap
@@ -42,6 +45,7 @@ from . import database
 ## \defgroup Utility
 ## @{
 
+
 class IndentedHelpFormatterWithNL(IndentedHelpFormatter):
     def format_option(self, option):
         result = []
@@ -50,25 +54,26 @@ class IndentedHelpFormatterWithNL(IndentedHelpFormatter):
         if len(opts) > opt_width:
             opts = "%*s%s\n" % (self.current_indent, "", opts)
             indent_first = self.help_position
-        else: # start help on same line as opts
+        else:  # start help on same line as opts
             opts = "%*s%-*s    " % (self.current_indent, "", opt_width, opts)
             indent_first = 0
         result.append(opts)
         if option.help:
             #help_text = option.help
-            help_text  = self.expand_default(option)
+            help_text = self.expand_default(option)
             help_lines = []
             #help_text = "\n".join([x.strip() for x in help_text.split("\n")])
             for para in help_text.split("\n\n"):
                 help_lines.extend(textwrap.wrap(para, self.help_width))
-                #if len(help_lines):
+                # if len(help_lines):
                 #    help_lines[-1] += "\n"
             result.append("%*s%s\n" % (indent_first, "", help_lines[0]))
             result.extend(["%*s%s\n" % (self.help_position, "", line)
-                for line in help_lines[1:]])
+                           for line in help_lines[1:]])
         elif opts[-1] != "\n":
             result.append("\n")
         return "".join(result)
+
 
 class AmirConfig:
     """Retrieve amir data path
@@ -85,20 +90,25 @@ class AmirConfig:
 
     datetypes = ["jalali", "gregorian"]
     datedelims = [":", "/", "-"]
-    datefields = {"day":0, "month":1, "year":2}
+    datefields = {"day": 0, "month": 1, "year": 2}
     dateorders = [('year', 'month', 'day'), ('month', 'year', 'day'),
                   ('day', 'year', 'month'), ('year', 'day', 'month'),
                   ('day', 'month', 'year'), ('month', 'day', 'year')]
 
     def __init__(self):
-        parser = optparse.OptionParser(version="%prog %ver",formatter=IndentedHelpFormatterWithNL() )
-        parser.add_option("-v", "--verbose", action="store_const", const=1, dest="verbose", help="Show debug messages")
-        parser.add_option("-n", "--noisy", action="store_const", const=2, dest="verbose", help="Show all debug messages")
-        parser.add_option("-d", "--database", metavar="URL", action="store", dest="database", help="Set custom url for database (RFC-1738)\n\nExamples:\n\n-d sqlite:////absolute/path/to/foo.db\n\n-d sqlite:///:memory:\n\n-d mysql://user:pass@localhost/foo?charset=utf8")
-        parser.add_option("-p", "--path", action="store", dest="pathname", help="Set data path")
+        parser = optparse.OptionParser(
+            version="%prog %ver", formatter=IndentedHelpFormatterWithNL())
+        parser.add_option("-v", "--verbose", action="store_const",
+                          const=1, dest="verbose", help="Show debug messages")
+        parser.add_option("-n", "--noisy", action="store_const",
+                          const=2, dest="verbose", help="Show all debug messages")
+        parser.add_option("-d", "--database", metavar="URL", action="store", dest="database",
+                          help="Set custom url for database (RFC-1738)\n\nExamples:\n\n-d sqlite:////absolute/path/to/foo.db\n\n-d sqlite:///:memory:\n\n-d mysql://user:pass@localhost/foo?charset=utf8")
+        parser.add_option("-p", "--path", action="store",
+                          dest="pathname", help="Set data path")
         (self.options, self.args) = parser.parse_args()
 
-        #set the logging level to show debug messages
+        # set the logging level to show debug messages
         self.echodbresult = False
         if self.options.verbose:
             logging.basicConfig(level=logging.DEBUG)
@@ -108,7 +118,8 @@ class AmirConfig:
 
         # get pathname absolute or relative
         if self.options.pathname == None:
-            pathname = os.path.join(os.path.dirname(__file__) , __amir_data_directory__)
+            pathname = os.path.join(os.path.dirname(
+                __file__), __amir_data_directory__)
             logging.debug('Project data directory. "%s"' % pathname)
         else:
             pathname = self.options.pathname
@@ -138,7 +149,7 @@ class AmirConfig:
         os.system.__subclasshook__
         logging.debug('Reading configuration "%s"' % confpath)
 
-        #A ConfigParser is defined with default configuration values
+        # A ConfigParser is defined with default configuration values
         self.defaultConfig = {"current_database": "1", "repair_at_start": "no", "language": "C", "dateformat": "jalali", "delimiter": ":",
                               "dateorder": "0", "use_latin_numbers": "yes", "name_font": "14", "header_font": "12",
                               "content_font": "9", "footer_font": "8", "paper_ppd_name": "A4", "paper_display_name": "A4",
@@ -149,7 +160,7 @@ class AmirConfig:
         if not os.path.exists(confpath):
             open(confpath, 'w').close()
 
-        self.sconfig.readfp(open(confpath,'r+'))
+        self.sconfig.readfp(open(confpath, 'r+'))
         if not self.sconfig.has_section('General'):
             self.sconfig.add_section('General')
         if not self.sconfig.has_section('Report Fonts'):
@@ -157,11 +168,10 @@ class AmirConfig:
         if not self.sconfig.has_section('Paper Setup'):
             self.sconfig.add_section('Paper Setup')
 
-
         self.dblist = []
         self.dbnames = []
-        #NOTE: Current Db indice starts from 1 to be more readable for users
-        #To access dblist and dbnames arrays, it should be subtracted by 1.
+        # NOTE: Current Db indice starts from 1 to be more readable for users
+        # To access dblist and dbnames arrays, it should be subtracted by 1.
         self.currentdb = 1
         try:
             dblist = self.sconfig.get('General', 'databases')
@@ -182,14 +192,16 @@ class AmirConfig:
             dbfile = 'sqlite:///'+os.path.join(confdir, 'amir.sqlite')
             self.dblist.append(dbfile)
             self.dbnames.append('amir.sqlite')
-            logging.info("No database path found. The default database %s will be opened for use." % dbfile)
+            logging.info(
+                "No database path found. The default database %s will be opened for use." % dbfile)
 
         logging.info('database path: ' + dbfile)
-        #try:
+        # try:
         self.db_repository = os.path.join(abs_data_path, 'amir_migrate')
-        self.db = database.Database(dbfile, self.db_repository, self.echodbresult)
+        self.db = database.Database(
+            dbfile, self.db_repository, self.echodbresult)
         share.session = self.db.session
-        #except:
+        # except:
         #    sys.exit("Cannot open database.")
 
 #        str = self.configfile.returnStringValue("repair_at_start")
@@ -226,7 +238,7 @@ class AmirConfig:
         else:
             self.dateorder = int(str)
 
-        for i in range(0,3):
+        for i in range(0, 3):
             field = self.dateorders[self.dateorder][i]
             self.datefields[field] = i
 
@@ -244,9 +256,12 @@ class AmirConfig:
 
         self.paper_ppd = self.sconfig.get('Paper Setup', 'paper_ppd_name')
         self.paper_name = self.sconfig.get('Paper Setup', 'paper_display_name')
-        self.paper_width = self.sconfig.getfloat('Paper Setup', 'paper_width_points')
-        self.paper_height = self.sconfig.getfloat('Paper Setup', 'paper_height_points')
-        self.paper_orientation = self.sconfig.getint('Paper Setup', 'paper_orientation')
+        self.paper_width = self.sconfig.getfloat(
+            'Paper Setup', 'paper_width_points')
+        self.paper_height = self.sconfig.getfloat(
+            'Paper Setup', 'paper_height_points')
+        self.paper_orientation = self.sconfig.getint(
+            'Paper Setup', 'paper_orientation')
 
         self.topmargin = self.sconfig.getint('Paper Setup', 'top_margin')
         self.botmargin = self.sconfig.getint('Paper Setup', 'bottom_margin')
@@ -277,8 +292,10 @@ class AmirConfig:
         self.sconfig.set('General', 'repair_at_start', repair)
         self.sconfig.set('General', 'language', self.locale)
 
-        self.sconfig.set('General', 'dateformat', self.datetypes[self.datetype])
-        self.sconfig.set('General', 'delimiter', self.datedelims[self.datedelim])
+        self.sconfig.set('General', 'dateformat',
+                         self.datetypes[self.datetype])
+        self.sconfig.set('General', 'delimiter',
+                         self.datedelims[self.datedelim])
         self.sconfig.set('General', 'dateorder', str(self.dateorder))
         self.sconfig.set('General', 'use_latin_numbers', uselatin)
 
@@ -288,10 +305,14 @@ class AmirConfig:
         self.sconfig.set('Report Fonts', 'footer_font', str(self.footerfont))
 
         self.sconfig.set('Paper Setup', 'paper_ppd_name', str(self.paper_ppd))
-        self.sconfig.set('Paper Setup', 'paper_display_name', str(self.paper_name))
-        self.sconfig.set('Paper Setup', 'paper_width_points', str(self.paper_width))
-        self.sconfig.set('Paper Setup', 'paper_height_points', str(self.paper_height))
-        self.sconfig.set('Paper Setup', 'paper_orientation', str(self.paper_orientation))
+        self.sconfig.set('Paper Setup', 'paper_display_name',
+                         str(self.paper_name))
+        self.sconfig.set('Paper Setup', 'paper_width_points',
+                         str(self.paper_width))
+        self.sconfig.set('Paper Setup', 'paper_height_points',
+                         str(self.paper_height))
+        self.sconfig.set('Paper Setup', 'paper_orientation',
+                         str(self.paper_orientation))
 
         self.sconfig.set('Paper Setup', 'top_margin', str(self.topmargin))
         self.sconfig.set('Paper Setup', 'bottom_margin', str(self.botmargin))

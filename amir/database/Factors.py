@@ -6,8 +6,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from amir.database import get_declarative_base
 Base = get_declarative_base()
 
-# \defgroup DataBase
-# @{
+## \defgroup DataBase
+## @{
 
 # Version 0.2 tables
 
@@ -17,7 +17,7 @@ class Factors (Base):
     Id = Column(Integer, primary_key=True)
     Code = Column(Integer, nullable=False)
     tDate = Column(Date, nullable=False)
-    Bill = Column(Integer, ColumnDefault(0)) # Bill id is zero for temporary
+    Bill = Column(Integer, ColumnDefault(0))  # Bill id is zero for temporary
     Cust = Column(Integer, ForeignKey('customers.custId'))
     Addition = Column(Float, ColumnDefault(0), nullable=False)
     Subtraction = Column(Float, ColumnDefault(0), nullable=False)
@@ -26,7 +26,7 @@ class Factors (Base):
     PayableAmnt = Column(Float, ColumnDefault(0), nullable=False)
     CashPayment = Column(Float, ColumnDefault(0), nullable=False)
     ShipDate = Column(Date, nullable=True)
-    Delivery = Column(Unicode(50), nullable=True) #Place of delivery
+    Delivery = Column(Unicode(50), nullable=True)  # Place of delivery
     ShipVia = Column(Unicode(100), nullable=True)
     Permanent = Column(Boolean, ColumnDefault(0))
     Desc = Column(Unicode(200), nullable=True)
@@ -36,7 +36,7 @@ class Factors (Base):
 
     def __init__(self, Code, tDate, Bill, Cust, Addition, Subtraction, VAT, Fee,
                  PayableAmnt, CashPayment, ShipDate, Delivery, ShipVia, Permanent,
-                 Desc, Sell, LastEdit, Activated , Id=1):
+                 Desc, Sell, LastEdit, Activated, Id=1):
 
         self.Code = Code
         self.tDate = tDate
@@ -57,4 +57,4 @@ class Factors (Base):
         self.LastEdit = LastEdit
         self.Activated = Activated
 
-# @}
+## @}
