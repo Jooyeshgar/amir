@@ -1,6 +1,7 @@
 import gi
 from gi.repository import Gtk, Gdk
 from gi.repository import GObject
+from gettext import gettext as _
 
 from sqlalchemy.orm.util import outerjoin
 from sqlalchemy.orm.query import aliased
