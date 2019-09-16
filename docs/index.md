@@ -1,6 +1,7 @@
-<p dir='rtl' align='right'>
-
 به راهنمای نرم‌افزار امیر خوش آمدید
+<div dir='rtl' align='right'>
+
+
 
 برنامه حسابداری امیر به صورت [آزاد](http://fa.wikipedia.org/wiki/%D9%86%D8%B1%D9%85%E2%80%8C%D8%A7%D9%81%D8%B2%D8%A7%D8%B1_%D8%A2%D8%B2%D8%A7%D8%AF) نوشته شده و شما می توانید آنرا تغییر داده و یا به دوستان خود نیز بدهید
 
@@ -13,4 +14,4 @@
 نرم افزار امیر بر اساس مجوز [GPLv3(external link)](http://www.gnu.org/licenses/licenses.html#GPL "General Public License") منتشر می شود.
 
 * * *
-</p>
+</div>
