@@ -1,3 +1,4 @@
+<p dir='rtl' align='right'>
 
 به راهنمای نرم‌افزار امیر خوش آمدید
 
@@ -12,3 +13,4 @@
 نرم افزار امیر بر اساس مجوز [GPLv3(external link)](http://www.gnu.org/licenses/licenses.html#GPL "General Public License") منتشر می شود.
 
 * * *
+</p>
