@@ -1,5 +1,10 @@
+<style>
+  .main-content{direction:rtl}
+ </style>
 به راهنمای نرم‌افزار امیر خوش آمدید
-<div dir='rtl' align='right'>
+
+
+
 
 
 
@@ -14,4 +19,4 @@
 نرم افزار امیر بر اساس مجوز [GPLv3(external link)](http://www.gnu.org/licenses/licenses.html#GPL "General Public License") منتشر می شود.
 
 * * *
-</div>
+
