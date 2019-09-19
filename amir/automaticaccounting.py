@@ -14,6 +14,7 @@ from .database import Subject
 from .database import Customers
 from .class_subject import Subjects
 from .utility import LN, convertToLatin, getFloat
+from gettext import gettext as _
 
 import sys
 if sys.version_info > (3,):
