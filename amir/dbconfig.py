@@ -39,7 +39,7 @@ class dbConfig:
 
     def get_value(self, key):
         key = unicode(key)
-        query = config.db.session.query(database.Config)
+        query = share.config.db.session.query(database.Config)
         query = query.filter(database.Config.cfgKey == key).first()
         if query:
             return query.cfgValue
@@ -47,7 +47,7 @@ class dbConfig:
             return ''
 
     def exists(self, key):
-        query = config.db.session.query(database.Config)
+        query = share.config.db.session.query(database.Config)
         query = query.filter(database.Config.cfgKey == key)
         if query.first():
             return True
@@ -55,25 +55,25 @@ class dbConfig:
 
     def set_value(self, key, val, commit=True):
         val = unicode(val)
-        query = config.db.session.query(database.Config)
+        query = share.config.db.session.query(database.Config)
         query = query.filter(database.Config.cfgId == key)
         query = query.update({u'cfgValue': val})
         if commit:  # commit all of the at once for more speed
-            config.db.session.commit()
+            share.config.db.session.commit()
 
     def add(self, key, mode, desc):
         if self.exists(key):
             raise Exception('Key already exists')
 
         row = database.Config(unicode(key), u'', unicode(desc), mode, 2)
-        config.db.session.add(row)
-        config.db.session.commit()
+        share.config.db.session.add(row)
+        share.config.db.session.commit()
 
     def delete(self, id):
-        query = config.db.session.query(database.Config).filter(
+        query = share.config.db.session.query(database.Config).filter(
             database.Config.cfgId == id).first()
-        config.db.session.delete(query)
-        config.db.session.commit()
+        share.config.db.session.delete(query)
+        share.config.db.session.commit()
 
     def get_int(self, key):
         try:

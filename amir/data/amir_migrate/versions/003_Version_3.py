@@ -110,6 +110,7 @@ def upgrade(migrate_engine):
     s.execute('DELETE FROM config')
 
     s.execute('ALTER TABLE `products` ADD COLUMN `uMeasurement`  Text;')
+    s.commit()
 
     notebook = Table('notebook', meta, autoload=True)
     colFactor = Column('factorId' , Integer, default =0)
@@ -186,8 +187,6 @@ def upgrade(migrate_engine):
         {'cfgId' :32, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'purchase-return'        , 'cfgValue' : u'42',  'cfgDesc':u'برگشت از خرید'},
         {'cfgId' :33, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'sale-return'            , 'cfgValue' : u'43',  'cfgDesc':u'برگشت از فروش'}
     )
-
-    s.commit()
 
 def downgrade(migrate_engine):
     logging.error("Downgrade to 2 is not possible!")

@@ -53,7 +53,7 @@ class Factor(Payments):
         self.fee = 0
         self.vatCheck = True
 
-        self.session = config.db.session
+        self.session = share.config.db.session
         self.Document = class_document.Document()
 
         query = self.session.query(Factors.Id).select_from(Factors)

@@ -52,7 +52,7 @@ class Payments(GObject.GObject):
 
         GObject.GObject.__init__(self)
 
-        self.session = config.db.session
+        self.session = share.config.db.session
         self.builder = get_builder("cheque")
         self.window = self.builder.get_object("showPymnts")
 

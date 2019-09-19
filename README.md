@@ -9,14 +9,16 @@ Amir is an accounting software mostly focused on businesses based in Iran.
 * python3
 * pip3 (python-pip3)
 * setuptools
-* python3-glade2 gettext python3-passlib python3-cairocffi python3-cairosvg python3-pdfrw
+* python3-gi gettext python3-passlib python3-cairocffi python3-cairosvg python3-pdfrw
 
 to install requirements simply run below commands:
 
 ```bash
+git clone https://github.com/Jooyeshgar/amir.git
+cd amir
 sudo apt install python3-pip
 pip3 install -r requirements.txt
-sudo apt install python3-setuptools python3-glade2 gettext python3-passlib python3-cairocffi python3-cairosvg python3-pdfrw
+sudo apt install python3-setuptools python3-gi gettext python3-passlib python3-cairocffi python3-cairosvg python3-pdfrw
 ```
 
 ## Installation
@@ -24,8 +26,6 @@ sudo apt install python3-setuptools python3-glade2 gettext python3-passlib pytho
 ### From source
 
 ```bash
-git clone https://github.com/Jooyeshgar/amir.git
-cd amir
 sudo python3 setup.py install
 ```
 
