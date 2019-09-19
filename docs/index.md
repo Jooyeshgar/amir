@@ -1,22 +1,14 @@
-<style>
-  .main-content{direction:rtl}
- </style>
-به راهنمای نرم‌افزار امیر خوش آمدید
+Welcome
+-------
 
+Welcome to Amir accounting software guide  
+Amir accounting program is [free](http://en.wikipedia.org/wiki/Free_software) (as in freedom), and you can change it or even give it to your friends.
 
+Version 0.1 of this program is now available for Windows and Linux operating systems. Program is writen with Python and if you are a programmer then you can run it on other platforms. See here for [installation](installation.md) or you can download  from [here](https://github.com/jooyeshgar/amir/releases) and  you can view screenshot of the program [here](pictures.md).
 
+Amir want to be internationalised. All [contributors](cooperation.md) are welcome.
 
+Amir is released under the [GPL v3](https://gnu.org/licenses/gpl.html) license.
 
-
-برنامه حسابداری امیر به صورت [آزاد](http://fa.wikipedia.org/wiki/%D9%86%D8%B1%D9%85%E2%80%8C%D8%A7%D9%81%D8%B2%D8%A7%D8%B1_%D8%A2%D8%B2%D8%A7%D8%AF) نوشته شده و شما می توانید آنرا تغییر داده و یا به دوستان خود نیز بدهید
-
-هم اکنون نسخه ۰.۱ این برنامه برای سیستم عامل لینوکس و ویندوز در دسترس است. البته برنامه به زبان پاینون نوشته شده و در صورتی که برنامه نویس باشید می توایند آنرا در بقیه سیستم عامل ها نیز اجرا کنید. برای [نصب](http://www.freeamir.com/fa/index.php?page=Installation) اینجا را مطالعه کنید و یا فایل های برنامه را از اینجا [دریافت](http://www.freeamir.com/fa/index.php?page=Download) کنید و برای مشاهده [تصاویر](http://www.freeamir.com/fa/index.php?page=Pictures) برنامه نیز [اینجا](http://www.freeamir.com/fa/index.php?page=Pictures) را کلیک کنید.
-
-در صورتی که به این پروژه علاقه دارید می توانید با ما در این پروژه [همکاری](http://www.freeamir.com/fa/index.php?page=Cooperation) کنید. برای این کار حتما نیاز نیست برنامه نویس باشید. برای اینکه با انواع همکاری آشنا شوید می توانید به قسمت [همکاری](http://www.freeamir.com/fa/index.php?page=Cooperation) مراجعه کنید.
-
-### مجوز
-
-نرم افزار امیر بر اساس مجوز [GPLv3(external link)](http://www.gnu.org/licenses/licenses.html#GPL "General Public License") منتشر می شود.
-
-* * *
+***
 

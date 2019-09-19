@@ -1,0 +1,13 @@
+![Screenshot](https://github.com/nikomrd8867/amir/blob/master/docs/assets/727px-Win1.png?raw=true)
+![Screenshot](https://github.com/nikomrd8867/amir/blob/master/docs/assets/709px-Win2.png?raw=true)
+![Screenshot](https://github.com/nikomrd8867/amir/blob/master/docs/assets/729px-Win3.png?raw=true)
+![Screenshot](https://github.com/nikomrd8867/amir/blob/master/docs/assets/708px-Win4.png?raw=true)
+![Screenshot](https://github.com/nikomrd8867/amir/blob/master/docs/assets/Subjects_en.png?raw=true)
+![Screenshot](https://github.com/nikomrd8867/amir/blob/master/docs/assets/EditDocument_fa.png?raw=true)
+![Screenshot](https://github.com/nikomrd8867/amir/blob/master/docs/assets/800px-LedgerReport_fa.png?raw=true)
+![Screenshot](https://github.com/nikomrd8867/amir/blob/master/docs/assets/FormatSettings_fa.png?raw=true)
+![Screenshot](https://github.com/nikomrd8867/amir/blob/master/docs/assets/SubledgerReport_fa.png?raw=true)
+![Screenshot](https://github.com/nikomrd8867/amir/blob/master/docs/assets/SubledgerReport_fa.png?raw=true)
+![Screenshot](https://github.com/nikomrd8867/amir/blob/master/docs/assets/SetLanguage.png?raw=true)
+![Screenshot](https://github.com/nikomrd8867/amir/blob/master/docs/assets/715px-MainWindow.png?raw=true)
+
