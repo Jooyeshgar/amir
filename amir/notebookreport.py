@@ -26,7 +26,7 @@ import sys
 if sys.version_info > (3,):
     unicode = str
 
-config = share.config
+# config = share.config
 
 
 class NotebookReport(PreviewReport):
@@ -103,17 +103,17 @@ class NotebookReport(PreviewReport):
         report_data = []
         col_width = []
         remaining = 1
-        query1 = config.db.session.query(Notebook, Subject.code, Bill)
+        query1 = share.config.db.session.query(Notebook, Subject.code, Bill)
         query1 = query1.select_from(outerjoin(outerjoin(Notebook, Subject, Notebook.subject_id == Subject.id),
                                               Bill, Notebook.bill_id == Bill.id))
-        query2 = config.db.session.query(sum(Notebook.value))
+        query2 = share.config.db.session.query(sum(Notebook.value))
         query2 = query2.select_from(outerjoin(outerjoin(Notebook, Subject, Notebook.subject_id == Subject.id),
                                               Bill, Notebook.bill_id == Bill.id))
 
         # Check if the subject code is valid in ledger and subledger reports
         if self.type != self.__class__.DAILY:
             code = utility.convertToLatin(self.code.get_text())
-            query3 = config.db.session.query(Subject.name)
+            query3 = share.config.db.session.query(Subject.name)
             query3 = query3.select_from(Subject).filter(Subject.code == code)
             names = query3.first()
             if names == None:
@@ -204,7 +204,7 @@ class NotebookReport(PreviewReport):
                     desc = "   " + desc
 
                 billnumber = str(b.number)
-                if config.digittype == 1:
+                if share.config.digittype == 1:
                     code = utility.convertToPersian(code)
                     billnumber = utility.convertToPersian(billnumber)
                 report_data.append(
@@ -229,7 +229,7 @@ class NotebookReport(PreviewReport):
 
                 remaining += n.value
                 billnumber = str(b.number)
-                if config.digittype == 1:
+                if share.config.digittype == 1:
                     billnumber = utility.convertToPersian(billnumber)
                 if remaining < 0:
                     diagnose = _("deb")
@@ -264,7 +264,7 @@ class NotebookReport(PreviewReport):
                 _("Daily NoteBook") + '</u></p><p ' + self.reportObj.detailHeaderStyle + \
                 '>' + _("Date") + ': ' + todaystr + '</p>'
         else:
-            if config.digittype == 1:
+            if share.config.digittype == 1:
                 code = utility.convertToPersian(self.subcode)
             else:
                 code = self.subcode
@@ -298,7 +298,7 @@ class NotebookReport(PreviewReport):
             todaystr = dateToString(date.today())
             preview.setDrawFunction("drawDailyNotebook")
         else:
-            if config.digittype == 1:
+            if share.config.digittype == 1:
                 code = utility.convertToPersian(self.subcode)
             else:
                 code = self.subcode
@@ -352,7 +352,7 @@ class NotebookReport(PreviewReport):
         subject_win.connect("subject-selected", self.subjectSelected)
 
     def subjectSelected(self, sender, id, code, name):
-        if config.digittype == 1:
+        if share.config.digittype == 1:
             code = utility.convertToPersian(code)
         self.code.set_text(code)
         sender.window.destroy()

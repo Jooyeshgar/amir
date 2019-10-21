@@ -6,7 +6,7 @@ from . import utility
 from .share import share
 from .helpers import get_builder
 
-config = share.config
+# config = share.config
 
 
 class PreviewReport:

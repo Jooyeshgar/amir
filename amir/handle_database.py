@@ -97,7 +97,7 @@ def backup(location, backupName):
         newName = backupName
     dir = os.path.join(location.get_filename(), newName)
     os.mkdir(dir)
-    tables = (Bill, Config, Notebook, BankNames, BankAccounts, ProductGroups, Products, Users, Permissions, Subject, Factors,
+    tables = (Bill, share.config, Notebook, BankNames, BankAccounts, ProductGroups, Products, Users, Permissions, Subject, Factors,
               FactorItems, CustGroups, Customers, Cheque, ChequeHistory)
     serialized_data = ""
     for table in tables:
@@ -141,7 +141,7 @@ def restore(location):
     dbname = dbname[len(dbname)-1]
     metadata = MetaData(share.config.db.engine)
     folder = os.path.join(backupfolder, dbname)
-    a = (Bill, Config, Notebook, BankNames, BankAccounts, ProductGroups, Products, Users, Permissions, Subject, Factors,
+    a = (Bill, share.config, Notebook, BankNames, BankAccounts, ProductGroups, Products, Users, Permissions, Subject, Factors,
          CustGroups, Customers, Cheque, ChequeHistory)
     for table in a:
         file = open(os.path.join(folder, str(table.__name__)), "r")
@@ -188,7 +188,7 @@ def createDb(dbName, builder):
         e = {
             "chkDoc": (Bill, Notebook),
             "chkBank": (BankNames, BankAccounts),
-            "chkConf": (Config,),
+            "chkConf": (share.config,),
             "chkNote": (Subject,),
             "chkFact": (Factors, FactorItems),
             "chkUser": (),
@@ -241,7 +241,7 @@ def showDBdetails(fullname):
 
 
 def importData(rdb, inputfile):
-    sTables = [Config, Subject, ProductGroups,
+    sTables = [share.config, Subject, ProductGroups,
                Products, BankNames, BankAccounts]
     cTables = [CustGroups, Customers]
     dTables = [Bill, Notebook, Factors, FactorItems, Cheque, ChequeHistory]

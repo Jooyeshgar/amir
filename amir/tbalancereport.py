@@ -18,7 +18,7 @@ from .share import share
 from .helpers import get_builder
 from .weasyprintreport import *
 
-config = share.config
+# config = share.config
 
 
 class TBalanceReport:
@@ -58,10 +58,10 @@ class TBalanceReport:
             "Debt"), _("Credit"), _("Remaining")]
         col_width = [25, 45, 40, 40, 40]
 
-        query = config.db.session.query(Subject).select_from(Subject)
+        query = share.config.db.session.query(Subject).select_from(Subject)
         result = query.order_by(Subject.code).all()
 
-        query1 = config.db.session.query(sum(Notebook.value))
+        query1 = share.config.db.session.query(sum(Notebook.value))
         # Check the report parameters
         if self.builder.get_object("allcontent1").get_active() == True:
             query1 = query1.select_from(

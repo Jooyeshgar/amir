@@ -15,7 +15,7 @@ import sys
 if sys.version_info > (3,):
     unicode = str
 
-config = share.config
+# config = share.config
 ## \defgroup Controller
 ## @{
 
@@ -25,16 +25,16 @@ class BankAccountsClass:
         pass
 
     def get_bank_names(self):
-        return config.db.session.query(BankNames).select_from(BankNames).all()
+        return share.config.db.session.query(BankNames).select_from(BankNames).all()
 
     def get_account(self, id):
-        return config.db.session.query(BankAccounts).select_from(BankAccounts).filter(BankAccounts.accId == id).first()
+        return share.config.db.session.query(BankAccounts).select_from(BankAccounts).filter(BankAccounts.accId == id).first()
 
     def get_all_accounts(self):
-        return config.db.session.query(BankAccounts).select_from(BankAccounts).all()
+        return share.config.db.session.query(BankAccounts).select_from(BankAccounts).all()
 
     def get_bank_id(self, name):
-        bank = config.db.session.query(BankNames).select_from(
+        bank = share.config.db.session.query(BankNames).select_from(
             BankNames).filter(BankNames.Name == unicode(name)).first()
         bank_id = None
         if bank:
@@ -42,7 +42,7 @@ class BankAccountsClass:
         return bank_id
 
     def get_bank_name(self, id):
-        bank = config.db.session.query(BankNames).select_from(
+        bank = share.config.db.session.query(BankNames).select_from(
             BankNames).filter(BankNames.Id == id).first()
         bank_name = None
         if bank:
@@ -51,11 +51,11 @@ class BankAccountsClass:
 
     def add_bank(self, bank_name):
         bank_name = unicode(bank_name)
-        query = config.db.session.query(BankNames).select_from(
+        query = share.config.db.session.query(BankNames).select_from(
             BankNames).filter(BankNames.Name == bank_name).first()
         if query == None:
-            config.db.session.add(BankNames(bank_name))
-            config.db.session.commit()
+            share.config.db.session.add(BankNames(bank_name))
+            share.config.db.session.commit()
 
     def addNewBank(self, model):
         dialog = Gtk.Dialog(None, None,
@@ -92,17 +92,17 @@ class BankAccountsClass:
         if id == -1:
             bank_account = BankAccounts(
                 name, number, type, owner, bank_id, branch, address, phone, webpage, desc)
-            config.db.session.add(bank_account)
+            share.config.db.session.add(bank_account)
             config.db.session.commit()
             sub = class_subject.Subjects()
             # accountId = str(bank_account.accId)
             # accSubjectCode = accountId.rjust(3 - len(accountId)+1 , '0')
             sub.add(dbconf.get_int('bank'), name)
         else:
-            query = config.db.session.query(
+            query = share.config.db.session.query(
                 BankAccounts).filter(BankAccounts.accId == id)
             prevName = query.first().accName
-            q = config.db.session.query(Subject).filter(Subject.parent_id == (
+            q = share.config.db.session.query(Subject).filter(Subject.parent_id == (
                 dbconf.get_int('bank'))).filter(Subject.name == prevName)
             if q:
                 q.update({Subject.name: name})
@@ -125,14 +125,14 @@ class BankAccountsClass:
     #
     # @param Integer bank account id
     def delete_account(self, id):
-        query = config.db.session.query(BankAccounts).filter(
+        query = share.config.db.session.query(BankAccounts).filter(
             BankAccounts.accId == id).first()
         if query:
             accName = query.accName
         query.delete()
         bankSubject = dbconfig.dbConfig().get_int('bank')
-        config.db.session.query(Subject).filter(
+        share.config.db.session.query(Subject).filter(
             Subject.parent_id == bankSubject).filter(Subject.name == accName).delete()
-        config.db.session.commit()
+        share.config.db.session.commit()
 
 ## @}
