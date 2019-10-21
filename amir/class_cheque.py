@@ -8,7 +8,7 @@ from . import class_subject
 from . import dateentry
 from sqlalchemy.orm.util import outerjoin
 
-config = share.config
+# config = share.config
 
 if sys.version_info > (3,):
     unicode = str
@@ -34,7 +34,7 @@ class ClassCheque:
         pass
 
     def get_spendable_cheques(self):
-        li = config.db.session.query(Cheque, BankAccounts).select_from(outerjoin(
+        li = share.config.db.session.query(Cheque, BankAccounts).select_from(outerjoin(
             Cheque, BankAccounts, Cheque.chqAccount == BankAccounts.accId)).filter(Cheque.chqStatus == 4).all()
         return li
     # get the history of a single cheque
@@ -54,19 +54,19 @@ class ClassCheque:
     # only deletes from Cheque table. ChequeHistory will be updated cheque new status (deleted)
     def delete(self, serial):
         serial = unicode(serial)
-        config.db.session.commit()
-        id = config.db.session.query(Cheque).filter(
+        share.config.db.session.commit()
+        id = share.config.db.session.query(Cheque).filter(
             Cheque.chqSerial == serial).first()
         id = id.chqId
-        config.db.session.query(Cheque).filter(Cheque.chqId == id).delete()
-        config.db.session.commit()
+        share.config.db.session.query(Cheque).filter(Cheque.chqId == id).delete()
+        share.config.db.session.commit()
 
     # edit cheque
     #
     # edit cheque and put last configs in database
     # @param info new configs as a dictionary
     def edit(self, chequeC, chqId,):
-        cheque = config.db.session.query(Cheque).filter(chqId == chqId)
+        cheque = share.config.db.session.query(Cheque).filter(chqId == chqId)
         cheque.chqAmount = chequeC.chqAmount
         cheque.chqWrtDate = chequeC. chqWrtDate
         cheque.chqDueDate = chequeC. chqDueDte
@@ -75,7 +75,7 @@ class ClassCheque:
         cheque.chqCust = chequeC.chqCust
         cheque.chqAccount = chequeC.chqAccount
         cheque.chqDesc = chequeC.chqDesc
-        config.db.session.commit()
+        share.config.db.session.commit()
         self.new_cheques.append(chequeC)
 
     # get cheque id from cheque number
@@ -100,11 +100,11 @@ class ClassCheque:
     # @param customer_id new customer Id
     def update_status(self, id,  status, customer_id):
         current_date = dateentry.DateEntry().getDateObject()
-        ch = config.db.session.query(Cheque).filter(Cheque.chqId == id).first()
+        ch = share.config.db.session.query(Cheque).filter(Cheque.chqId == id).first()
         ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial,
                                    status, customer_id, ch.chqAccount, ch.chqTransId, ch.chqDesc, current_date)
-        config.db.session.add(ch_history)
-        config.db.session.commit()
+        share.config.db.session.add(ch_history)
+        share.config.db.session.commit()
         ch.chqHistoryId = ch_history. Id
         ch.chqStatus = status
         ch.chqCust = customer_id
@@ -112,21 +112,21 @@ class ClassCheque:
     # Save datas to database
     def save(self):
         for cheque in self.new_cheques:
-            config.db.session.add(cheque)
-        config.db.session.commit()
+            share.config.db.session.add(cheque)
+        share.config.db.session.commit()
 
     def save_cheque_history(self, current_date):
         for new_ch in self.new_cheques:
-            ch = config.db.session.query(Cheque).filter(
+            ch = share.config.db.session.query(Cheque).filter(
                 Cheque.chqSerial == new_ch.chqSerial).filter(Cheque.chqCust == new_ch.chqCust).first()
             ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial,
                                        ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, ch.chqDesc, current_date)
-            config.db.session.add(ch_history)
-            config.db.session.commit()
+            share.config.db.session.add(ch_history)
+            share.config.db.session.commit()
             ch.chqHistoryId = ch_history. Id
         # for sp in self.sp_cheques:
         #     ch = config.db.session.query(Cheque).filter(Cheque.chqSerial == sp['serial']).first()
-        config.db.session.commit()
+        share.config.db.session.commit()
 
 
 ## @}

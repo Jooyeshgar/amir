@@ -173,10 +173,10 @@ class ChequeReport(GObject.GObject):
         self.treestoreReturnedT.clear()
         self.treestoreReturnedF.clear()
 
-        result = config.db.session.query(Cheque, Customers.custName).select_from(
+        result = share.config.db.session.query(Cheque, Customers.custName).select_from(
             outerjoin(Cheque, Customers, Customers.custId == Cheque.chqCust))
         # Apply filters
-        delimiter = config.datedelims[config.datedelim]
+        delimiter = share.config.datedelims[config.datedelim]
         if chequeId:
             result = result.filter(Cheque.chqId == chequeId)
         if chqSerial:
@@ -628,7 +628,7 @@ class ChequeReport(GObject.GObject):
             jd = self.cal.gregorian_to_jd(year, month, day)
             year, month, day = self.cal.jd_to_gregorian(jd)
 
-        delim = share.config.datedelims[share.config.datedelim]
+        delim = share.config.datedelims[config.datedelim]
         datelist = ["", "", ""]
         datelist[share.config.datefields["year"]] = str(year)
         datelist[share.config.datefields["month"]] = str(month)

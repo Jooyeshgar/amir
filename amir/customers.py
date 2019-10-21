@@ -28,7 +28,7 @@ if sys.version_info > (3,):
     unicode = str
 
 gi.require_version('Gtk', '3.0')
-config = share.config
+# config = share.config
 
 ## \defgroup UserInterface
 ## @{
@@ -108,14 +108,14 @@ class Customer(customergroup.Group):
         self.treestore.set_sort_column_id(0, Gtk.SortType.ASCENDING)
 
         # Fill groups treeview
-        query = config.db.session.query(CustGroups, Customers)
+        query = share.config.db.session.query(CustGroups, Customers)
         query = query.select_from(
             outerjoin(CustGroups, Customers, CustGroups.custGrpId == Customers.custGroup))
         query = query.order_by(CustGroups.custGrpId.asc())
         result = query.all()
 
         # Fill groups treeview
-        query = config.db.session.query(Notebook)
+        query = share.config.db.session.query(Notebook)
         notes = query.all()
         creditNote = {}
         debtNote = {}
@@ -166,7 +166,7 @@ class Customer(customergroup.Group):
         self.builder.get_object(
             "addCustSubmitBtn").set_label(_("Add Customer"))
 
-        query = config.db.session.query(
+        query = share.config.db.session.query(
             Subject.code).order_by(Subject.id.desc())
         code = query.filter(Subject.parent_id ==
                             dbconf.get_int('custSubject')).first()
@@ -297,7 +297,7 @@ class Customer(customergroup.Group):
         if custCode == "":
             msg += _("Customer code should not be empty.\n")
         else:
-            codeQuery = config.db.session.query(
+            codeQuery = share.config.db.session.query(
                 Customers).select_from(Customers)
             codeQuery = codeQuery.filter(Customers.custCode == custCode)
             if self.editCustomer:
@@ -313,7 +313,7 @@ class Customer(customergroup.Group):
         if custGrp == "":
             msg += _("Customer group should not be empty.\n")
         else:
-            query = config.db.session.query(CustGroups.custGrpId).select_from(
+            query = share.config.db.session.query(CustGroups.custGrpId).select_from(
                 CustGroups).filter(CustGroups.custGrpCode == custGrp)
             groupid = query.first()
             if groupid == None:
@@ -344,9 +344,9 @@ class Customer(customergroup.Group):
                                  custRepViaEmail, custAccName1, custAccNo1, custAccBank1, custAccName2, custAccNo2,
                                  custAccBank2, custTypeBuyer, custTypeSeller, custTypeMate, custTypeAgent,
                                  custIntroducer, custCommission, custMarked, custReason, custDiscRate)
-            config.db.session.add(customer)
+            share.config.db.session.add(customer)
         else:
-            query = config.db.session.query(Customers).select_from(Customers)
+            query = share.config.db.session.query(Customers).select_from(Customers)
             customer = query.filter(
                 Customers.custId == self.customerId).first()
             # customer code not need to change
@@ -383,7 +383,7 @@ class Customer(customergroup.Group):
             customer.custAccNo2 = custAccNo2
             customer.custAccBank2 = custAccBank2
 
-        config.db.session.commit()
+        share.config.db.session.commit()
 
         # Show new customer in table
         if self.treestore != None:
@@ -413,7 +413,7 @@ class Customer(customergroup.Group):
         else:
             code = self.treestore.get_value(iter, 0)
             code = utility.convertToLatin(code)
-            query = config.db.session.query(Customers, CustGroups.custGrpCode)
+            query = share.config.db.session.query(Customers, CustGroups.custGrpCode)
             query = query.select_from(
                 outerjoin(CustGroups, Customers, CustGroups.custGrpId == Customers.custGroup))
             result = query.filter(Customers.custCode == code).first()
@@ -515,13 +515,13 @@ class Customer(customergroup.Group):
         else:
             # Iter points to a customer
             code = utility.convertToLatin(self.treestore.get_value(iter, 0))
-            query = config.db.session.query(Customers)
+            query = share.config.db.session.query(Customers)
             customer = query.filter(Customers.custCode == code).first()
 
             custId = customer.custId
-            q1 = config.db.session.query(Factors.Cust).filter(
+            q1 = share.config.db.session.query(Factors.Cust).filter(
                 Factors.Cust == custId)  # .limit(1)
-            q2 = config.db.session.query(Cheque.chqCust).filter(
+            q2 = share.config.db.session.query(Cheque.chqCust).filter(
                 Cheque.chqCust == custId)  # .limit(1)
             existsFlag = (q1.union(q2)).first()
             if existsFlag:
@@ -531,15 +531,15 @@ class Customer(customergroup.Group):
                 msgbox.run()
                 msgbox.destroy()
             else:
-                subjectCode = config.db.session.query(Subject).filter(
+                subjectCode = share.config.db.session.query(Subject).filter(
                     Subject.id == dbconf.get_int('custSubject')).first().code
                 subjectCode = unicode(subjectCode) + unicode(code)
                 # TODO check if this customer is used somewhere else
 
-                config.db.session.delete(customer)
-                config.db.session.delete(config.db.session.query(
+                share.config.db.session.delete(customer)
+                share.config.db.session.delete(share.config.db.session.query(
                     Subject).filter(Subject.code == subjectCode).first())
-                config.db.session.commit()
+                share.config.db.session.commit()
                 self.treestore.remove(iter)
 
     # @param treeiter: the TreeIter which data should be saved in
@@ -616,7 +616,7 @@ class Customer(customergroup.Group):
         if self.treestore.iter_parent(iter) != None:
             code = utility.convertToLatin(self.treestore.get_value(iter, 0))
 
-            query = config.db.session.query(Customers).select_from(Customers)
+            query = share.config.db.session.query(Customers).select_from(Customers)
             query = query.filter(Customers.custCode == code)
             customer_id = query.first().custId
             self.emit("customer-selected", customer_id, code)

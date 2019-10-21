@@ -17,7 +17,7 @@ import sys
 if sys.version_info > (3,):
     unicode = str
 
-config = share.config
+# config = share.config
 
 
 class CardexReport:
@@ -45,7 +45,7 @@ class CardexReport:
         self.rows = []
         self.window.show_all()
         self.builder.connect_signals(self)
-        self.session = config.db.session
+        self.session = share.config.db.session
 
         self.dateToEntry = self.builder.get_object("dateToEntry")
         self.dateFromEntry = self.builder.get_object("dateFromEntry")
@@ -69,7 +69,7 @@ class CardexReport:
         obj.viewProducts()
         obj.connect("product-selected", self.proSelected)
         id = self.proVal.get_text()
-        prod = config.db.session.query(
+        prod = share.config.db.session.query(
             Products).filter(Products.id == id).first()
         if prod:
             code = prod.code
@@ -96,7 +96,7 @@ class CardexReport:
         sender.window.destroy()
 
     def showResult(self, productCode, factorType, customerCode, dateFrom, dateTo):
-        query = config.db.session.query(Products)
+        query = share.config.db.session.query(Products)
         query = query.filter(
             Products.code == utility.convertToLatin(productCode))
         product = query.first()
@@ -129,7 +129,7 @@ class CardexReport:
 
             totalSellQnt = totalBuyQnt = totalSellIncome = totalBuyPrice = 0
             # Fill factor treeview
-            initQ = config.db.session.query(FactorItems).filter(
+            initQ = share.config.db.session.query(FactorItems).filter(
                 FactorItems.factorId == 0).first()
             productCount = 0
             if initQ:
@@ -139,7 +139,7 @@ class CardexReport:
                 totalBuyPrice += float(initQ.untPrc) * float(initQ.qnty)
                 totalBuyQnt += float(initQ.qnty)
                 productCount = initQ.qnty
-            query = config.db.session.query(FactorItems, Factors, Customers)
+            query = share.config.db.session.query(FactorItems, Factors, Customers)
             query = query.filter(product.id == FactorItems.productId,
                                  FactorItems.factorId == Factors.Id, Customers.custId == Factors.Cust)
             # if factorType>= 0 and factorType != 2:

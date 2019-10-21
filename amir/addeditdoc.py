@@ -14,7 +14,7 @@ import sys
 if sys.version_info > (3,):
     unicode = str
 
-config = share.config
+# config = share.config
 
 ## \defgroup UserInterface
 ## @{
@@ -168,7 +168,7 @@ class AddEditDoc:
                 code = 0
                 s = Subject()
             numrows = str(self.numrows)
-            if config.digittype == 1:
+            if share.config.digittype == 1:
                 code = utility.convertToPersian(code)
                 numrows = utility.convertToPersian(numrows)
             self.liststore.append(
@@ -259,11 +259,11 @@ class AddEditDoc:
 
     # Save or update row from liststore and update the sum and diff of row
     def saveRow(self, code, amount, type, desc, iter=None):
-        query = config.db.session.query(Subject).select_from(Subject)
+        query = share.config.db.session.query(Subject).select_from(Subject)
         query = query.filter(Subject.code == code)
         sub = query.first()
         if sub == None:
-            if config.digittype == 1:
+            if share.config.digittype == 1:
                 code = utility.convertToPersian(code)
             errorstr = _("No subject is registered with the code: %s") % code
             msgbox = Gtk.MessageDialog(
@@ -279,7 +279,7 @@ class AddEditDoc:
         debt = "0"
         credit = "0"
 
-        if config.digittype == 1:
+        if share.config.digittype == 1:
             debt = utility.convertToPersian(debt)
             credit = utility.convertToPersian(credit)
             code = utility.convertToPersian(code)
@@ -297,7 +297,7 @@ class AddEditDoc:
         else:
             self.numrows += 1
             numrows = str(self.numrows)
-            if config.digittype == 1:
+            if share.config.digittype == 1:
                 numrows = utility.convertToPersian(numrows)
             self.liststore.append(
                 (numrows, code, sub.name, debt, credit, desc, None))
@@ -334,7 +334,7 @@ class AddEditDoc:
                 if res:
                     while iter != None:
                         strindex = str(index)
-                        if config.digittype == 1:
+                        if share.config.digittype == 1:
                             strindex = utility.convertToPersian(strindex)
                         self.liststore.set_value(iter, 0, strindex)
                         index += 1
@@ -376,7 +376,7 @@ class AddEditDoc:
                 value = credit
             desctxt = unicode(self.liststore.get(iter, 5)[0])
 
-            query = config.db.session.query(Subject)
+            query = share.config.db.session.query(Subject)
             query = query.filter(Subject.code == code)
             subject_id = query.first().id
 
@@ -473,11 +473,11 @@ class AddEditDoc:
 
     # Call back when subject selected from subjects::Subjects::selectSubjectFromList()
     def subjectSelected(self, sender, id, code, name):
-        if config.digittype == 1:
+        if share.config.digittype == 1:
             code = utility.convertToPersian(code)
         self.code.set_text(code)
         self.builder.get_object("nameLbl").set_text(name)
-        q = config.db.session.query(func.sum(Notebook.value)).filter(
+        q = share.config.db.session.query(func.sum(Notebook.value)).filter(
             Notebook.subject_id == id)
         if q.first()[0]:
             val = q.first()[0]

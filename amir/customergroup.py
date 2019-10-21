@@ -24,7 +24,7 @@ from gi.repository import Gtk
 from gi.repository import Gdk
 
 gi.require_version('Gtk', '3.0')
-config = share.config
+# config = share.config
 
 
 class Group(GObject.GObject):
@@ -76,7 +76,7 @@ class Group(GObject.GObject):
         self.treestore.set_sort_column_id(0, Gtk.SortType.ASCENDING)
 
         # Fill groups treeview
-        query = config.db.session.query(CustGroups).select_from(CustGroups)
+        query = share.config.db.session.query(CustGroups).select_from(CustGroups)
         result = query.all()
 
         for group in result:
@@ -97,8 +97,7 @@ class Group(GObject.GObject):
             grpcode = self.grpCodeEntry.get_text()
             grpname = self.builder.get_object("grpNameEntry").get_text()
             grpdesc = self.builder.get_object("grpDescEntry").get_text()
-            self.saveCustGroup(grpcode, unicode(
-                grpname), unicode(grpdesc), None)
+            self.saveCustGroup(grpcode, str(grpname).encode('utf-8'), str(grpdesc).encode('utf-8'), None)
 
         dialog.hide()
 
@@ -109,12 +108,12 @@ class Group(GObject.GObject):
         iter = selection.get_selected()[1]
 
         if iter != None:
-            if config.digittype == 1:
+            if share.config.digittype == 1:
                 code = utility.convertToLatin(self.treestore.get(iter, 0)[0])
             else:
                 code = self.treestore.get(iter, 0)[0]
 
-            query = config.db.session.query(CustGroups).select_from(CustGroups)
+            query = share.config.db.session.query(CustGroups).select_from(CustGroups)
             group = query.filter(CustGroups.custGrpCode == code).first()
             name = group.custGrpName
             desc = group.custGrpDesc
@@ -139,7 +138,7 @@ class Group(GObject.GObject):
         if iter != None:
             code = utility.convertToLatin(self.treestore.get(iter, 0)[0])
 
-            query = config.db.session.query(
+            query = share.config.db.session.query(
                 CustGroups, count(Customers.custId))
             query = query.select_from(
                 outerjoin(CustGroups, Customers, CustGroups.custGrpId == Customers.custGroup))
@@ -153,8 +152,8 @@ class Group(GObject.GObject):
                 msgbox.destroy()
             else:
                 group = result[0]
-                config.db.session.delete(group)
-                config.db.session.commit()
+                share.config.db.session.delete(group)
+                share.config.db.session.commit()
                 self.treestore.remove(iter)
 
     # @param edititer: None if a new customer group is to be saved.
@@ -177,12 +176,12 @@ class Group(GObject.GObject):
         if edititer != None:
             pcode = self.treestore.get_value(edititer, 0)
             pcode = utility.convertToLatin(pcode)
-            query = config.db.session.query(CustGroups).select_from(CustGroups)
+            query = share.config.db.session.query(CustGroups).select_from(CustGroups)
             group = query.filter(CustGroups.custGrpCode == pcode).first()
             gid = group.custGrpId
 
         code = utility.convertToLatin(code)
-        query = config.db.session.query(CustGroups).select_from(CustGroups)
+        query = share.config.db.session.query(CustGroups).select_from(CustGroups)
         query = query.filter(or_(CustGroups.custGrpCode ==
                                  code, CustGroups.custGrpName == name))
         if edititer != None:
@@ -216,10 +215,10 @@ class Group(GObject.GObject):
             group.custGrpName = name
             group.custGrpDesc = desc
 
-        config.db.session.add(group)
-        config.db.session.commit()
+        share.config.db.session.add(group)
+        share.config.db.session.commit()
 
-        if config.digittype == 1:
+        if share.config.digittype == 1:
             code = utility.convertToPersian(code)
         self.saveRow(edititer, (code, name, desc))
 
@@ -259,7 +258,7 @@ class Group(GObject.GObject):
         iter = self.treestore.get_iter(path)
         code = utility.convertToLatin(self.treestore.get_value(iter, 0))
 
-        query = config.db.session.query(CustGroups).select_from(CustGroups)
+        query = share.config.db.session.query(CustGroups).select_from(CustGroups)
         query = query.filter(CustGroups.custGrpCode == code)
         group_id = query.first().custGrpId
         self.emit("group-selected", group_id, code)

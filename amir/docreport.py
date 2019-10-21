@@ -22,7 +22,7 @@ import sys
 if sys.version_info > (3,):
     unicode = str
 
-config = share.config
+# config = share.config
 
 
 class DocumentReport:
@@ -69,12 +69,12 @@ class DocumentReport:
 
         html = ""
         bill_ids = []
-        bills = config.db.session.query(Bill).filter(
+        bills = share.config.db.session.query(Bill).filter(
             Bill.number.in_(self.docnumbers)).order_by(Bill.number.asc()).all()
         for bill in bills:
             bill_ids.append(bill.id)
 
-        query = config.db.session.query(Notebook, Subject).select_from(outerjoin(
+        query = share.config.db.session.query(Notebook, Subject).select_from(outerjoin(
             Notebook, Subject, Notebook.subject_id == Subject.id)).filter(Notebook.bill_id.in_(bill_ids)).order_by(Notebook.id.asc())
         res = query.all()
         if len(res) == 0:
@@ -84,7 +84,7 @@ class DocumentReport:
             msgbox.run()
             msgbox.destroy()
             return
-        if config.locale == 'en_US':
+        if share.config.locale == 'en_US':
             doDirection = 'left'
             daDirection = 'right'
             text_align = "left"
@@ -102,7 +102,7 @@ class DocumentReport:
                 report_data = [("", "", "", "", "", "")] * table_h
             else:
                 report_data = [("", "", "", "", "", "", "", "")]
-            query = config.db.session.query(Notebook, Subject).select_from(outerjoin(
+            query = share.config.db.session.query(Notebook, Subject).select_from(outerjoin(
                 Notebook, Subject, Notebook.subject_id == Subject.id)).filter(Notebook.bill_id == b.id).order_by(Notebook.id.asc())
             res = query.all()
 
@@ -111,7 +111,7 @@ class DocumentReport:
             debt_sum = credit_sum = 0
             datestr = dateToString(docdate)
             docnumber = b.number
-            if config.digittype == 1:
+            if share.config.digittype == 1:
                 docnumber = utility.convertToPersian(docnumber)
 
             for n, s in res:
@@ -156,7 +156,7 @@ class DocumentReport:
                 <div style="text-align:' + doDirection + '; font-size:12px;float:'+doDirection+'">' + _("Document Number") + ': ' + str(docnumber) + '</div>\
                 <div style="text-align:' + daDirection + '; font-size:12px;float:'+daDirection+'">' + _("Date") + ': ' + todaystr + '</div> <br/>'
             html += '<table class="notebooks"><thead><tr>'
-            if config.locale == 'en_US':
+            if share.config.locale == 'en_US':
                 for header in report_header:
                     html += '<th '+col_width[i]+'>' + header + '</th>'
                     i += 1
@@ -182,7 +182,7 @@ class DocumentReport:
                 utility.LN(debt_sum)+'</td>'), '<td>'+unicode(utility.LN(credit_sum))+'</td>']
             signaturesRow = [unicode(_("Accounting")), unicode(
                 _("Financial Manager")), unicode(_("Managing Director"))]
-            if config.locale != 'en_US':
+            if share.config.locale != 'en_US':
                 row = row[::-1]
                 signaturesRow = signaturesRow[::-1]
             html += '<tr style="border:1px solid black;">' + \

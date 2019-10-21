@@ -11,7 +11,7 @@ gi.require_version('PangoCairo', '1.0')
 from gi.repository import PangoCairo
 
 
-config = share.config
+# config = share.config
 
 
 class PrintReport:
@@ -19,23 +19,23 @@ class PrintReport:
         # self.lines_per_page = 24
         self.cell_margin = 4
         self.line = 2  # the thinest possible width of lines.
-        self.row_height = 2 * (config.contentfont + self.cell_margin)
+        self.row_height = 2 * (share.config.contentfont + self.cell_margin)
         self.header_height = 0
         self.heading_height = 35
 
         self.operation = Gtk.PrintOperation()
         settings = Gtk.PrintSettings()
         paper_size = Gtk.PaperSize.new_from_ppd(
-            config.paper_ppd, config.paper_name, config.paper_width, config.paper_height)
+            share.config.paper_ppd, share.config.paper_name, share.config.paper_width, share.config.paper_height)
         self.page_setup = Gtk.PageSetup()
         self.page_setup.set_paper_size(paper_size)
-        self.page_setup.set_orientation(config.paper_orientation)
+        self.page_setup.set_orientation(share.config.paper_orientation)
 #        self.page_setup = Gtk.print_run_page_setup_dialog(None, self.page_setup, settings)
 
-        self.page_setup.set_top_margin(config.topmargin, Gtk.Unit.POINTS)
-        self.page_setup.set_bottom_margin(config.botmargin, Gtk.Unit.POINTS)
-        self.page_setup.set_right_margin(config.rightmargin, Gtk.Unit.POINTS)
-        self.page_setup.set_left_margin(config.leftmargin, Gtk.Unit.POINTS)
+        self.page_setup.set_top_margin(share.config.topmargin, Gtk.Unit.POINTS)
+        self.page_setup.set_bottom_margin(share.config.botmargin, Gtk.Unit.POINTS)
+        self.page_setup.set_right_margin(share.config.rightmargin, Gtk.Unit.POINTS)
+        self.page_setup.set_left_margin(share.config.leftmargin, Gtk.Unit.POINTS)
 
         self.operation.set_default_page_setup(self.page_setup)
         self.operation.set_unit(Gtk.Unit.POINTS)
@@ -43,7 +43,7 @@ class PrintReport:
         self.content = content
         tablewidth = self.page_setup.get_page_width(Gtk.Unit.POINTS)
         tablewidth -= (len(cols_width) * (self.line + self.cell_margin)) + \
-            self.line + (config.rightmargin + config.leftmargin)
+            self.line + (share.config.rightmargin + share.config.leftmargin)
         self.cols_width = []
         for percent in cols_width:
             self.cols_width.append(math.floor((percent * tablewidth) / 100))
@@ -63,10 +63,10 @@ class PrintReport:
 
     def beginPrint(self, operation, context):
         tableheight = self.page_setup.get_page_height(Gtk.Unit.POINTS)
-        name_lineheight = 2 * config.namefont
-        header_lineheight = 2 * config.headerfont
-        tableheight -= (math.floor((len(self.fields) + 1) / 2) * header_lineheight) + (config.topmargin +
-                                                                                       config.botmargin) + self.heading_height + name_lineheight + (self.cell_margin * 2)
+        name_lineheight = 2 * share.config.namefont
+        header_lineheight = 2 * share.config.headerfont
+        tableheight -= (math.floor((len(self.fields) + 1) / 2) * header_lineheight) + (share.config.topmargin +
+                                                                                       share.config.botmargin) + self.heading_height + name_lineheight + (self.cell_margin * 2)
 
         self.lines_per_page = int(math.floor(tableheight / self.row_height))
         # Subtract two lines that show "Sum of previous page" and "Sum"
@@ -110,14 +110,14 @@ class PrintReport:
         # self.drawDailyNotebook(page_nr)
 
     def formatHeader(self):
-        LINE_HEIGHT = 2 * (config.namefont)
+        LINE_HEIGHT = 2 * (share.config.namefont)
         # MARGIN = self.page_margin
         # cwidth = context.get_width()
         cwidth = self.page_setup.get_page_width(Gtk.Unit.POINTS)
         logging.info("Paper width: " + str(cwidth))
         cr = self.cairo_context
 
-        fontsize = config.namefont
+        fontsize = share.config.namefont
         fdesc = Pango.FontDescription("Sans")
         fdesc.set_size(fontsize * Pango.SCALE)
         self.pangolayout.set_font_description(fdesc)
@@ -138,8 +138,8 @@ class PrintReport:
                        2, LINE_HEIGHT + self.cell_margin)
 
         addh = LINE_HEIGHT + self.cell_margin
-        LINE_HEIGHT = 2 * config.headerfont
-        fontsize = config.headerfont
+        LINE_HEIGHT = 2 * share.config.headerfont
+        fontsize = share.config.headerfont
         fdesc.set_size(fontsize * Pango.SCALE)
         self.pangolayout.set_font_description(fdesc)
 
@@ -151,10 +151,10 @@ class PrintReport:
             if flag == 1:
                 addh += LINE_HEIGHT
                 cr.move_to(cwidth - (width / Pango.SCALE) -
-                           config.rightmargin, addh - (height / Pango.SCALE)/2)
+                           share.config.rightmargin, addh - (height / Pango.SCALE)/2)
                 flag = 0
             else:
-                cr.move_to((width / Pango.SCALE) + config.leftmargin,
+                cr.move_to((width / Pango.SCALE) + share.config.leftmargin,
                            addh - (height / Pango.SCALE)/2)
                 flag = 1
             PangoCairo.show_layout(cr, self.pangolayout)
@@ -167,7 +167,7 @@ class PrintReport:
 
 #        RIGHT_EDGE = 570  #(table width + PAGE_MARGIN)
         RIGHT_EDGE = self.page_setup.get_page_width(
-            Gtk.Unit.POINTS) - config.rightmargin
+            Gtk.Unit.POINTS) - share.config.rightmargin
         HEADER_HEIGHT = self.header_height
         HEADING_HEIGHT = self.heading_height
 #        PAGE_MARGIN = self.page_margin
@@ -177,7 +177,7 @@ class PrintReport:
         LINE = self.line
 
         cr = self.cairo_context
-        fontsize = config.contentfont
+        fontsize = share.config.contentfont
         fdesc = Pango.FontDescription("Sans")
         fdesc.set_size(fontsize * Pango.SCALE)
         self.pangolayout.set_font_description(fdesc)
@@ -224,7 +224,7 @@ class PrintReport:
         cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
 
         right_txt -= MARGIN + LINE
-        fontsize = config.contentfont
+        fontsize = share.config.contentfont
         fdesc.set_size(fontsize * Pango.SCALE)
         self.pangolayout.set_font_description(fdesc)
         if page_nr == 0:
@@ -278,7 +278,7 @@ class PrintReport:
                         cr.move_to(right_txt - (width / Pango.SCALE),
                                    addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
                         PangoCairo.show_layout(cr, self.pangolayout)
-                        fontsize = config.contentfont
+                        fontsize = share.config.contentfont
                         fdesc.set_size(fontsize * Pango.SCALE)
                         self.pangolayout.set_font_description(fdesc)
                     else:
@@ -335,7 +335,7 @@ class PrintReport:
         cr.line_to(right_txt, addh + ROW_HEIGHT)
 
         right_txt -= MARGIN + LINE
-        fontsize = config.contentfont
+        fontsize = share.config.contentfont
         fdesc.set_size(fontsize * Pango.SCALE)
         self.pangolayout.set_font_description(fdesc)
         self.pangolayout.set_text(utility.LN(self.debt_sum), -1)
@@ -373,7 +373,7 @@ class PrintReport:
         self.formatHeader()
 #        RIGHT_EDGE = 570  #(table width + PAGE_MARGIN)
         RIGHT_EDGE = self.page_setup.get_page_width(
-            Gtk.Unit.POINTS) - config.rightmargin
+            Gtk.Unit.POINTS) - share.config.rightmargin
         HEADER_HEIGHT = self.header_height
         HEADING_HEIGHT = self.heading_height
 #        PAGE_MARGIN = self.page_margin
@@ -383,7 +383,7 @@ class PrintReport:
         LINE = self.line
 
         cr = self.cairo_context
-        fontsize = config.contentfont
+        fontsize = share.config.contentfont
         fdesc = Pango.FontDescription("Sans")
         fdesc.set_size(fontsize * Pango.SCALE)
         self.pangolayout.set_font_description(fdesc)
@@ -430,7 +430,7 @@ class PrintReport:
         cr.line_to(right_txt, TABLE_TOP + ROW_HEIGHT)
 
         right_txt -= MARGIN + LINE
-        fontsize = config.contentfont
+        fontsize = share.config.contentfont
         fdesc.set_size(fontsize * Pango.SCALE)
         self.pangolayout.set_font_description(fdesc)
         if page_nr == 0:
@@ -523,7 +523,7 @@ class PrintReport:
                         cr.move_to(right_txt - (width / Pango.SCALE),
                                    addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
                         PangoCairo.show_layout(cr, self.pangolayout)
-                        fontsize = config.contentfont
+                        fontsize = share.config.contentfont
                         fdesc.set_size(fontsize * Pango.SCALE)
                         self.pangolayout.set_font_description(fdesc)
                     else:
@@ -583,7 +583,7 @@ class PrintReport:
         cr.line_to(right_txt, addh + ROW_HEIGHT)
 
         right_txt -= MARGIN + LINE
-        fontsize = config.contentfont
+        fontsize = share.config.contentfont
         fdesc.set_size(fontsize * Pango.SCALE)
         self.pangolayout.set_font_description(fdesc)
         self.pangolayout.set_text(utility.LN(self.debt_sum), -1)
@@ -648,7 +648,7 @@ class PrintReport:
         self.formatHeader()
 #        RIGHT_EDGE = 570  #(table width + PAGE_MARGIN)
         RIGHT_EDGE = self.page_setup.get_page_width(
-            Gtk.Unit.POINTS) - config.rightmargin
+            Gtk.Unit.POINTS) - share.config.rightmargin
         HEADER_HEIGHT = self.header_height
         HEADING_HEIGHT = self.heading_height
 #        PAGE_MARGIN = self.page_margin
@@ -658,7 +658,7 @@ class PrintReport:
         LINE = self.line
 
         cr = self.cairo_context
-        fontsize = config.contentfont
+        fontsize = share.config.contentfont
         fdesc = Pango.FontDescription("Sans")
         fdesc.set_size(fontsize * Pango.SCALE)
         self.pangolayout.set_font_description(fdesc)
@@ -691,7 +691,7 @@ class PrintReport:
                     cr.move_to(right_txt - (width / Pango.SCALE),
                                addh + (ROW_HEIGHT-(height / Pango.SCALE))/2)
                     PangoCairo.show_layout(cr, self.pangolayout)
-                    fontsize = config.contentfont
+                    fontsize = share.config.contentfont
                     fdesc.set_size(fontsize * Pango.SCALE)
                     self.pangolayout.set_font_description(fdesc)
                 else:
@@ -770,7 +770,7 @@ class PrintReport:
     def drawTrialReport(self, page_nr):
         self.formatHeader()
         RIGHT_EDGE = self.page_setup.get_page_width(
-            Gtk.Unit.POINTS) - config.rightmargin
+            Gtk.Unit.POINTS) - share.config.rightmargin
         HEADER_HEIGHT = self.header_height
         HEADING_HEIGHT = self.heading_height
         MARGIN = self.cell_margin
@@ -779,7 +779,7 @@ class PrintReport:
         LINE = self.line
 
         cr = self.cairo_context
-        fontsize = config.contentfont
+        fontsize = share.config.contentfont
         fdesc = Pango.FontDescription("Sans")
         fdesc.set_size(fontsize * Pango.SCALE)
         self.pangolayout.set_font_description(fdesc)
@@ -835,7 +835,7 @@ class PrintReport:
     def drawTableHeading(self):
         #        RIGHT_EDGE = 570  #(table width + PAGE_MARGIN)
         RIGHT_EDGE = self.page_setup.get_page_width(
-            Gtk.Unit.POINTS) - config.rightmargin
+            Gtk.Unit.POINTS) - share.config.rightmargin
         HEADING_HEIGHT = self.heading_height
         MARGIN = self.cell_margin
         LINE = self.line

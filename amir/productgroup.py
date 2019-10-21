@@ -25,7 +25,7 @@ import sys
 if sys.version_info > (3,):
     unicode = str
 
-config = share.config
+# config = share.config
 
 gi.require_version('Gtk', '3.0')
 
@@ -100,7 +100,7 @@ class ProductGroup(GObject.GObject):
         self.treestore.set_sort_column_id(0, Gtk.SortType.ASCENDING)
 
         # Fill groups treeview
-        query = config.db.session.query(
+        query = share.config.db.session.query(
             ProductGroups).select_from(ProductGroups)
         result = query.all()
 
@@ -108,7 +108,7 @@ class ProductGroup(GObject.GObject):
             code = group.code
             buyId = group.buyId
             sellId = group.sellId
-            if config.digittype == 1:
+            if share.config.digittype == 1:
                 #code = utility.convertToPersian(code)
                 buyId = utility.convertToPersian(buyId)
                 sellId = utility.convertToPersian(sellId)
@@ -157,14 +157,14 @@ class ProductGroup(GObject.GObject):
             BuySub = aliased(Subject, name="bs")
             SellSub = aliased(Subject, name="ss")
 
-            query = config.db.session.query(
+            query = share.config.db.session.query(
                 ProductGroups, BuySub.code, SellSub.code)
             query = query.select_from(outerjoin(outerjoin(ProductGroups, BuySub, ProductGroups.buyId == BuySub.id),
                                                 SellSub, ProductGroups.sellId == SellSub.id))
             (group, buy_code, sell_code) = query.filter(
                 ProductGroups.code == grpcode).first()
             name = group.name
-            if config.digittype == 1:
+            if share.config.digittype == 1:
                 buy_code = utility.convertToPersian(buy_code)
                 sell_code = utility.convertToPersian(sell_code)
 
@@ -197,7 +197,7 @@ class ProductGroup(GObject.GObject):
             #code = utility.convertToLatin(self.treestore.get(iter, 0)[0])
             code = unicode(self.treestore.get(iter, 0)[0])
 
-            query = config.db.session.query(ProductGroups, count(Products.id))
+            query = share.config.db.session.query(ProductGroups, count(Products.id))
             query = query.select_from(
                 outerjoin(ProductGroups, Products, ProductGroups.id == Products.accGroup))
             result = query.filter(ProductGroups.code == code).first()
@@ -210,8 +210,8 @@ class ProductGroup(GObject.GObject):
                 msgbox.destroy()
             else:
                 group = result[0]
-                config.db.session.delete(group)
-                config.db.session.commit()
+                share.config.db.session.delete(group)
+                share.config.db.session.commit()
                 self.treestore.remove(iter)
 
     # @param edititer: None if a new product group is to be saved.
@@ -235,7 +235,7 @@ class ProductGroup(GObject.GObject):
         if edititer != None:
             pcode = unicode(self.treestore.get_value(edititer, 0))
             #pcode = utility.convertToLatin(pcode)
-            query = config.db.session.query(
+            query = share.config.db.session.query(
                 ProductGroups).select_from(ProductGroups)
             group = query.filter(ProductGroups.code == pcode).first()
             gid = group.id
@@ -245,7 +245,7 @@ class ProductGroup(GObject.GObject):
         sell_code = utility.convertToLatin(sell_code)
 
         # Checks if the group name or code is repeated.
-        query = config.db.session.query(
+        query = share.config.db.session.query(
             ProductGroups).select_from(ProductGroups)
         query = query.filter(
             or_(ProductGroups.code == code, ProductGroups.name == name))
@@ -263,12 +263,12 @@ class ProductGroup(GObject.GObject):
 
         # Check if buy_code & sell_code are valid
         # TODO Check if buying subject is creditor/debtor, and so for selling one.
-        query = config.db.session.query(Subject).select_from(Subject)
+        query = share.config.db.session.query(Subject).select_from(Subject)
         buy_sub = query.filter(Subject.code == buy_code).first()
         if buy_sub == None:
             msg += _("Buying code is not valid.\n")
 
-        query = config.db.session.query(Subject).select_from(Subject)
+        query = share.config.db.session.query(Subject).select_from(Subject)
         sell_sub = query.filter(Subject.code == sell_code).first()
         if sell_sub == None:
             msg += _("Selling code is not valid.\n")
@@ -294,10 +294,10 @@ class ProductGroup(GObject.GObject):
             group.buyId = buy_sub.id
             group.sellId = sell_sub.id
 
-        config.db.session.add(group)
-        config.db.session.commit()
+        share.config.db.session.add(group)
+        share.config.db.session.commit()
 
-        if config.digittype == 1:
+        if share.config.digittype == 1:
             #code = utility.convertToPersian(code)
             buy_code = utility.convertToPersian(buy_code)
             sell_code = utility.convertToPersian(sell_code)
@@ -312,13 +312,12 @@ class ProductGroup(GObject.GObject):
             treeiter, 0, data[0], 1, data[1], 2, data[2], 3, data[3])
 
     def highlightGroup(self, code):
-        code = code.decode('utf-8')
         l = len(code)
         iter = self.treestore.get_iter_first()
         pre = iter
 
         while iter:
-            itercode = self.treestore.get_value(iter, 0).decode('utf-8')[0:l]
+            itercode = self.treestore.get_value(iter, 0)[0:l]
             if itercode < code:
                 pre = iter
                 iter = self.treestore.iter_next(iter)
@@ -341,7 +340,7 @@ class ProductGroup(GObject.GObject):
         iter = self.treestore.get_iter(path)
         code = unicode(self.treestore.get_value(iter, 0))
 
-        query = config.db.session.query(
+        query = share.config.db.session.query(
             ProductGroups).select_from(ProductGroups)
         query = query.filter(ProductGroups.code == code)
         group_id = query.first().id
@@ -398,7 +397,7 @@ class ProductGroup(GObject.GObject):
         subject_win.connect("subject-selected", self.buyingSubjectSelected)
 
     def buyingSubjectSelected(self, sender, id, code, name):
-        if config.digittype == 1:
+        if share.config.digittype == 1:
             code = utility.convertToPersian(code)
         self.buyCodeEntry.set_text(code)
         sender.window.destroy()
@@ -410,7 +409,7 @@ class ProductGroup(GObject.GObject):
         subject_win.connect("subject-selected", self.sellingingSubjectSelected)
 
     def sellingingSubjectSelected(self, sender, id, code, name):
-        if config.digittype == 1:
+        if share.config.digittype == 1:
             code = utility.convertToPersian(code)
         self.sellCodeEntry.set_text(code)
         sender.window.destroy()
