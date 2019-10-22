@@ -1,4 +1,5 @@
 import gi
+gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
 from gi.repository import GObject
 from gettext import gettext as _
@@ -24,7 +25,7 @@ if sys.version_info > (3,):
 
 
 class Subjects(GObject.GObject):
-    subjecttypes = [_("Debtor"), _("Creditor"), _("Both")]
+    subjecttypes = [_("Debtor"), _("Creditor"), _("Both"), _("Alaki")]
 
     def __init__(self, ledgers_only=False, parent_id=[0, ], multiselect=False):
         GObject.GObject.__init__(self)
@@ -168,7 +169,7 @@ class Subjects(GObject.GObject):
             a = [1, 10, 11]
             type = a.index(ttype)
             per = self.builder.get_object("permanent").get_active()
-            self.saveLedger(unicode(entry.get_text()),
+            self.saveLedger(str(entry.get_text()),
                             type, None, False, dialog, per)
         dialog.hide()
 
@@ -217,7 +218,7 @@ class Subjects(GObject.GObject):
                 a = [1, 10, 11]
                 type = a.index(ttype)
                 per = self.builder.get_object("permanent").get_active()
-                self.saveLedger(unicode(entry.get_text()),
+                self.saveLedger(str(entry.get_text()),
                                 type, parent, False, dialog, per)
             dialog.hide()
         else:
@@ -273,7 +274,7 @@ class Subjects(GObject.GObject):
                 a = [1, 10, 11]
                 type = a.index(ttype)
                 per = self.builder.get_object("permanent").get_active()
-                self.saveLedger(unicode(entry.get_text()),
+                self.saveLedger(str(entry.get_text()),
                                 type, iter, True, dialog, per)
 
             dialog.hide()
@@ -378,7 +379,6 @@ class Subjects(GObject.GObject):
                 msgbox.run()
                 msgbox.destroy()
                 return
-
             # TODO pass code through function parameters
             lastcode = convertToLatin(self.code.get_text())[0:3]
             if lastcode == '':
@@ -405,8 +405,9 @@ class Subjects(GObject.GObject):
                 msgbox.run()
                 msgbox.destroy()
                 return
-
+           
             if edit == True:
+
                 query = share.config.db.session.query(
                     count(Notebook.id)).select_from(Notebook)
                 query = query.filter(Notebook.subject_id == iter_id)
@@ -429,7 +430,6 @@ class Subjects(GObject.GObject):
                     msgbox.run()
                     msgbox.destroy()
                     return
-
                 sub.code = lastcode
                 sub.name = name
                 sub.type = type
@@ -511,7 +511,6 @@ class Subjects(GObject.GObject):
 
                 sub_left = sub_right + 1
                 sub_right = sub_left + 1
-
                 # Now create new subject:
                 ledger = Subject(lastcode, name, parent_id,
                                  sub_left, sub_right, type, permanent)
@@ -521,8 +520,7 @@ class Subjects(GObject.GObject):
 
                 lastcode = LN(lastcode, False)
                 child = self.treestore.append(
-                    iter, (lastcode, name, _(self.subjecttypes[type]), LN("0")))
-
+                    iter, (lastcode, name, _(self.subjecttypes[type]), LN("0"),""))
                 self.temppath = self.treestore.get_path(child)
                 self.treeview.scroll_to_cell(self.temppath, None, False, 0, 0)
                 self.treeview.set_cursor(self.temppath, None, False)

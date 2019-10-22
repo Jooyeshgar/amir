@@ -47,16 +47,16 @@ class dbConfig:
             return ''
 
     def exists(self, key):
-        query = share.config.db.session.query(database.share.config)
-        query = query.filter(database.share.config.cfgKey == key)
+        query = share.config.db.session.query(database.Config)
+        query = query.filter(database.Config.cfgKey == key)
         if query.first():
             return True
         return False
 
     def set_value(self, key, val, commit=True):
         val = unicode(val)
-        query = share.config.db.session.query(database.share.config)
-        query = query.filter(database.share.config.cfgId == key)
+        query = share.config.db.session.query(database.Config)
+        query = query.filter(database.Config.cfgId == key)
         query = query.update({u'cfgValue': val})
         if commit:  # commit all of the at once for more speed
             share.config.db.session.commit()
