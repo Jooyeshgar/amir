@@ -28,7 +28,7 @@ if sys.version_info > (3,):
     unicode = str
 
 dbconf = dbconfig.dbConfig()
-config = share.config
+# config = share.config
 
 
 class ChequeReport(GObject.GObject):
@@ -176,7 +176,7 @@ class ChequeReport(GObject.GObject):
         result = share.config.db.session.query(Cheque, Customers.custName).select_from(
             outerjoin(Cheque, Customers, Customers.custId == Cheque.chqCust))
         # Apply filters
-        delimiter = share.config.datedelims[config.datedelim]
+        delimiter = share.config.datedelims[share.config.datedelim]
         if chequeId:
             result = result.filter(Cheque.chqId == chequeId)
         if chqSerial:
@@ -216,7 +216,7 @@ class ChequeReport(GObject.GObject):
             #     clear = _('Cleared')
             # else:
             #     clear = _('Not Cleared' )
-            chqBill = config.db.session.query(Notebook.bill_id).filter(
+            chqBill = share.config.db.session.query(Notebook.bill_id).filter(
                 Notebook.chqId == cheque.chqId).first()
             if chqBill:
                 chqBill = chqBill.bill_id
@@ -226,7 +226,7 @@ class ChequeReport(GObject.GObject):
             isSpended = False
             stat = cheque.chqStatus
             if stat == 6:
-                history = config.db.session.query(ChequeHistory).filter(
+                history = share.config.db.session.query(ChequeHistory).filter(
                     ChequeHistory.ChequeId == cheque.chqId).order_by(ChequeHistory.Id.desc()).limit(2).all()
                 if len(history):
                     history = history[1]
@@ -295,7 +295,7 @@ class ChequeReport(GObject.GObject):
     def editCheque(self, sender):
         self.getSelection()
         self.initChequeForm()
-        cheque = config.db.session.query(Cheque).filter(
+        cheque = share.config.db.session.query(Cheque).filter(
             Cheque.chqId == self.code).first()
         #payer_id   = cheque.chqCust
         amount = utility.LN(cheque.chqAmount, False)
@@ -376,7 +376,7 @@ class ChequeReport(GObject.GObject):
         payer = self.payerEntry.get_text()
         pymnt_str = utility.LN(pymntAmnt)
 
-        cheque = config.db.session.query(Cheque).filter(
+        cheque = share.config.db.session.query(Cheque).filter(
             Cheque.chqId == self.code) .first()
         cheque.chqAmount = pymntAmnt
         cheque.chqWrtDate = wrtDate
@@ -390,8 +390,8 @@ class ChequeReport(GObject.GObject):
         ch = cheque
         ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial,
                                    ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, ch.chqDesc, self.current_time)
-        config.db.session.add(ch_history)
-        config.db.session.commit()
+        share.config.db.session.add(ch_history)
+        share.config.db.session.commit()
         self.addPymntDlg.hide()
         self.searchFilter()
 
@@ -413,7 +413,7 @@ class ChequeReport(GObject.GObject):
             msgbox.destroy()
             return
         self.getSelection()
-        result = config.db.session.query(Cheque, Customers)
+        result = share.config.db.session.query(Cheque, Customers)
         result = result.filter(Customers.custId == Cheque.chqCust)
         result = result.filter(Cheque.chqId == self.code).first()
         stat = result.Cheque.chqStatus
@@ -432,8 +432,8 @@ class ChequeReport(GObject.GObject):
                 'Cheque with serial No. ')+result.Cheque.chqSerial + _(' returned from ')+result.Customers.custName)
         document.save()
 
-        config.db.session.add(ch_history)
-        config.db.session.commit()
+        share.config.db.session.add(ch_history)
+        share.config.db.session.commit()
         share.mainwin.silent_daialog(
             _("The operation was completed successfully."))
         self.searchFilter()
@@ -449,14 +449,14 @@ class ChequeReport(GObject.GObject):
             msgbox.destroy()
             return
         self.getSelection()
-        result = config.db.session.query(Cheque, Customers)
+        result = share.config.db.session.query(Cheque, Customers)
         result = result.filter(Customers.custId == Cheque.chqCust)
         result = result.filter(Cheque.chqId == self.code).first()
         result.Cheque.chqStatus = 7
         ch_history = ChequeHistory(result.Cheque.chqId, result.Cheque.chqAmount, result.Cheque.chqWrtDate, result.Cheque.chqDueDate, result.Cheque.chqSerial,
                                    result.Cheque.chqStatus, result.Cheque.chqCust, result.Cheque.chqAccount, result.Cheque.chqTransId, result.Cheque.chqDesc, self.current_time)
-        config.db.session.add(ch_history)
-        config.db.session.commit()
+        share.config.db.session.add(ch_history)
+        share.config.db.session.commit()
 
         document = class_document.Document()
         document.add_notebook(result.Customers.custSubj, -result.Cheque.chqAmount, _(
@@ -465,7 +465,7 @@ class ChequeReport(GObject.GObject):
             'Cheque with serial No. ')+result.Cheque.chqSerial + _(' returned to ')+result.Customers.custName)
         document.save()
 
-        config.db.session.commit()
+        share.config.db.session.commit()
         share.mainwin.silent_daialog(
             _("The operation was completed successfully."))
         self.searchFilter()
@@ -481,7 +481,7 @@ class ChequeReport(GObject.GObject):
             msgbox.destroy()
             return
         self.getSelection()
-        result = config.db.session.query(Cheque, Customers)
+        result = share.config.db.session.query(Cheque, Customers)
         result = result.filter(Customers.custId == Cheque.chqCust)
         result = result.filter(Cheque.chqId == self.code).first()
         stat = result.Cheque.chqStatus
@@ -503,11 +503,11 @@ class ChequeReport(GObject.GObject):
 
         ch_history = ChequeHistory(result.Cheque.chqId, result.Cheque.chqAmount, result.Cheque.chqWrtDate, result.Cheque.chqDueDate, result.Cheque.chqSerial,
                                    result.Cheque.chqStatus, result.Cheque.chqCust, result.Cheque.chqAccount, result.Cheque.chqTransId, result.Cheque.chqDesc, self.current_time)
-        config.db.session.add(ch_history)
+        share.config.db.session.add(ch_history)
 
         document.save()
 
-        config.db.session.commit()
+        share.config.db.session.commit()
         share.mainwin.silent_daialog(
             _("The operation was completed successfully."))
         self.searchFilter()
@@ -525,7 +525,7 @@ class ChequeReport(GObject.GObject):
         self.getSelection()
         document = class_document.Document()
 
-        result = config.db.session.query(Cheque).filter(
+        result = share.config.db.session.query(Cheque).filter(
             Cheque.chqId == self.code).first()
         status = result.chqStatus
         if status == 3 or status == 10:
@@ -537,7 +537,7 @@ class ChequeReport(GObject.GObject):
             if status == 1:  # pass
                 ba = class_bankaccounts.BankAccountsClass()
                 accName = ba.get_account(result.chqAccount).accName
-                banksub = config.db.session.query(Subject).filter(Subject.parent_id == (
+                banksub = share.config.db.session.query(Subject).filter(Subject.parent_id == (
                     dbconf.get_int('bank'))).filter(Subject.name == accName).first().id
                 document.add_notebook(banksub, result.chqAmount, _(
                     "Cheque with serial No.")+result.chqSerial + _('Passed'))
@@ -546,9 +546,9 @@ class ChequeReport(GObject.GObject):
 
         ch_history = ChequeHistory(result.chqId, result.chqAmount, result.chqWrtDate, result.chqDueDate, result.chqSerial,
                                    result.chqStatus, result.chqCust, result.chqAccount, result.chqTransId, result.chqDesc, self.current_time)
-        config.db.session.add(ch_history)
+        share.config.db.session.add(ch_history)
         document.save()
-        config.db.session.commit()
+        share.config.db.session.commit()
         share.mainwin.silent_daialog(
             _("The operation was completed successfully."))
         self.searchFilter()
@@ -564,7 +564,7 @@ class ChequeReport(GObject.GObject):
             msgbox.destroy()
             return
         self.getSelection()
-        result = config.db.session.query(Cheque).filter(
+        result = share.config.db.session.query(Cheque).filter(
             Cheque.chqId == self.code).first()
         status = result.chqStatus
         result.chqStatus = 10
@@ -575,16 +575,16 @@ class ChequeReport(GObject.GObject):
             "Cheque with serial No.")+result.chqSerial + _('Floated'))
         ch_history = ChequeHistory(result.chqId, result.chqAmount, result.chqWrtDate, result.chqDueDate, result.chqSerial,
                                    result.chqStatus, result.chqCust, result.chqAccount, result.chqTransId, result.chqDesc, self.current_time)
-        config.db.session.add(ch_history)
+        share.config.db.session.add(ch_history)
         document.save()
-        config.db.session.commit()
+        share.config.db.session.commit()
         share.mainwin.silent_daialog(
             _("The operation was completed successfully."))
         self.searchFilter()
         msgbox.destroy()
 
     def casheCheque(self, subject, id, code, name):
-        result = config.db.session.query(Cheque, Customers)
+        result = share.config.db.session.query(Cheque, Customers)
         result = result.filter(Customers.custId == Cheque.chqCust)
         result = result.filter(Cheque.chqId == self.code).first()
         status = result.Cheque.chqStatus
@@ -602,9 +602,9 @@ class ChequeReport(GObject.GObject):
                 'other_cheque'), chequeValue, desc)
         ch_history = ChequeHistory(result.Cheque.chqId, result.Cheque.chqAmount, result.Cheque.chqWrtDate, result.Cheque.chqDueDate, result.Cheque.chqSerial,
                                    result.Cheque.chqStatus, result.Cheque.chqCust, result.Cheque.chqAccount, result.Cheque.chqTransId, result.Cheque.chqDesc, self.current_time)
-        config.db.session.add(ch_history)
+        share.config.db.session.add(ch_history)
         document.save()
-        config.db.session.commit()
+        share.config.db.session.commit()
         subject.window.destroy()
         share.mainwin.silent_daialog(
             _("The operation was completed successfully."))
@@ -628,7 +628,7 @@ class ChequeReport(GObject.GObject):
             jd = self.cal.gregorian_to_jd(year, month, day)
             year, month, day = self.cal.jd_to_gregorian(jd)
 
-        delim = share.config.datedelims[config.datedelim]
+        delim = share.config.datedelims[share.config.datedelim]
         datelist = ["", "", ""]
         datelist[share.config.datefields["year"]] = str(year)
         datelist[share.config.datefields["month"]] = str(month)
@@ -638,7 +638,7 @@ class ChequeReport(GObject.GObject):
 
     def showHistory(self, code):
         self.treestoreHistory.clear()
-        result = config.db.session.query(ChequeHistory, Cheque, Customers.custName)\
+        result = share.config.db.session.query(ChequeHistory, Cheque, Customers.custName)\
             .join(Cheque, ChequeHistory.ChequeId == Cheque.chqId).join(Customers,  Customers.custId == Cheque.chqCust)\
             .filter(ChequeHistory.ChequeId == code).all()
 
@@ -651,7 +651,7 @@ class ChequeReport(GObject.GObject):
             else:
                 clear = 'Not Cleared'
 
-            chqBill = config.db.session.query(Notebook.bill_id).filter(
+            chqBill = share.config.db.session.query(Notebook.bill_id).filter(
                 Notebook.chqId == cheque.chqId).first()
             if chqBill:
                 chqBill = chqBill.bill_id
@@ -670,7 +670,7 @@ class ChequeReport(GObject.GObject):
         self.builder.get_object("editButton").set_sensitive(True)
         self.builder.get_object("JaryanButton").set_sensitive(True)
         self.getSelection()
-        result = config.db.session.query(Cheque)
+        result = share.config.db.session.query(Cheque)
         result = result.filter(Cheque.chqId == self.code).first()
         if result.chqStatus not in [1, 5]:          # [2,3,4,5,6,7,8,9]: # 1
             self.builder.get_object(
@@ -712,24 +712,24 @@ class ChequeReport(GObject.GObject):
 
         if result == Gtk.ResponseType.OK:
             self.getSelection()
-            result = config.db.session.query(Cheque).filter(
+            result = share.config.db.session.query(Cheque).filter(
                 Cheque.chqId == self.code).first()
 
-            notebook = config.db.session.query(
+            notebook = share.config.db.session.query(
                 Notebook).filter(Notebook.chqId == result.chqId)
             bill_id = notebook.first().bill_id
             notebook.delete()
-            noteCount = config.db.session.query(count(Notebook.bill_id)).filter(
+            noteCount = share.config.db.session.query(count(Notebook.bill_id)).filter(
                 Notebook.bill_id == bill_id).first()[0]
             if noteCount == 0:
-                config.db.session.query(Bill).filter(
+                share.config.db.session.query(Bill).filter(
                     Bill.id == bill_id).delete()
 
             result.chqDelete = True
             ch_history = ChequeHistory(result.chqId, result.chqAmount, result.chqWrtDate, result.chqDueDate, result.chqSerial, result.chqStatus,
                                        result.chqCust, result.chqAccount, result.chqTransId, result.chqDesc, self.current_time, result.chqDelete)
-            config.db.session.add(ch_history)
-            config.db.session.commit()
+            share.config.db.session.add(ch_history)
+            share.config.db.session.commit()
 
             share.mainwin.silent_daialog(
                 _("The operation was completed successfully."))
@@ -896,7 +896,7 @@ class ChequeReport(GObject.GObject):
 
     def setCustomerName(self, sender=0, ev=0):
         ccode = unicode(self.builder.get_object("payerNameEntry").get_text())
-        query = config.db.session.query(Customers).select_from(Customers)
+        query = share.config.db.session.query(Customers).select_from(Customers)
         customer = query.filter(Customers.custCode == ccode).first()
         self.builder.get_object("customerNameLbl").set_text("")
         if customer:

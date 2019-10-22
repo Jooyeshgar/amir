@@ -93,7 +93,7 @@ class BankAccountsClass:
             bank_account = BankAccounts(
                 name, number, type, owner, bank_id, branch, address, phone, webpage, desc)
             share.config.db.session.add(bank_account)
-            config.db.session.commit()
+            share.config.db.session.commit()
             sub = class_subject.Subjects()
             # accountId = str(bank_account.accId)
             # accSubjectCode = accountId.rjust(3 - len(accountId)+1 , '0')
@@ -126,9 +126,9 @@ class BankAccountsClass:
     # @param Integer bank account id
     def delete_account(self, id):
         query = share.config.db.session.query(BankAccounts).filter(
-            BankAccounts.accId == id).first()
+            BankAccounts.accId == id)   
         if query:
-            accName = query.accName
+            accName = query.first() .accName
         query.delete()
         bankSubject = dbconfig.dbConfig().get_int('bank')
         share.config.db.session.query(Subject).filter(

@@ -19,11 +19,11 @@ from .share import share
 from datetime import date
 from .database import *
 import gi
+gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 from gi.repository import Gtk
 from gi.repository import Gdk
 
-gi.require_version('Gtk', '3.0')
 # config = share.config
 
 
@@ -78,7 +78,6 @@ class Group(GObject.GObject):
         # Fill groups treeview
         query = share.config.db.session.query(CustGroups).select_from(CustGroups)
         result = query.all()
-
         for group in result:
             self.treestore.append(
                 None, (group.custGrpCode, group.custGrpName, group.custGrpDesc))
@@ -97,7 +96,7 @@ class Group(GObject.GObject):
             grpcode = self.grpCodeEntry.get_text()
             grpname = self.builder.get_object("grpNameEntry").get_text()
             grpdesc = self.builder.get_object("grpDescEntry").get_text()
-            self.saveCustGroup(grpcode, str(grpname).encode('utf-8'), str(grpdesc).encode('utf-8'), None)
+            self.saveCustGroup(grpcode, str(grpname), str(grpdesc), None)
 
         dialog.hide()
 
@@ -127,8 +126,8 @@ class Group(GObject.GObject):
                 grpcode = self.grpCodeEntry.get_text()
                 grpname = self.builder.get_object("grpNameEntry").get_text()
                 grpdesc = self.builder.get_object("grpDescEntry").get_text()
-                self.saveCustGroup(grpcode, unicode(
-                    grpname), unicode(grpdesc), iter)
+                self.saveCustGroup(grpcode, str(
+                    grpname), str(grpdesc), iter)
 
             dialog.hide()
 

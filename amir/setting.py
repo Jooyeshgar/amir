@@ -526,7 +526,7 @@ class Setting(GObject.GObject):
 
     def setup_config_tab(self):
         sub = class_subject.Subjects()
-        query = share.config.db.session.query(database.share.config).all()
+        query = share.config.db.session.query(database.Config).all()
 
         company = self.builder.get_object('company_table')
         subjects = self.builder.get_object('subjects_table')
