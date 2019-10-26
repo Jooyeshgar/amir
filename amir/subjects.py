@@ -1,4 +1,5 @@
 import gi
+gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
 from gi.repository import GObject
 from gettext import gettext as _
@@ -20,11 +21,11 @@ import sys
 if sys.version_info > (3,):
     unicode = str
 
-config = share.config
+# config = share.config
 
 
 class Subjects(GObject.GObject):
-    subjecttypes = [_("Debtor"), _("Creditor"), _("Both")]
+    subjecttypes = [_("Debtor"), _("Creditor"), _("Both"), _("Alaki")]
 
     def __init__(self, ledgers_only=False, parent_id=[0, ], multiselect=False):
         GObject.GObject.__init__(self)
@@ -84,7 +85,7 @@ class Subjects(GObject.GObject):
         Subject2 = aliased(Subject, name="s2")
 
         # Find top level ledgers (with parent_id equal to 0)
-        query = config.db.session.query(Subject1.code, Subject1.name, Subject1.type,
+        query = share.config.db.session.query(Subject1.code, Subject1.name, Subject1.type,
                                         Subject1.lft, Subject1.rgt, count(Subject2.id), Subject1.permanent)
         query = query.select_from(
             outerjoin(Subject1, Subject2, Subject1.id == Subject2.parent_id))
@@ -100,7 +101,7 @@ class Subjects(GObject.GObject):
             permanent = _("Permanent") if a[6] == True else "-"
             code = LN(a[0], False)
             # --------
-            subject_sum = config.db.session.query(sum(Notebook.value)).select_from(
+            subject_sum = share.config.db.session.query(sum(Notebook.value)).select_from(
                 outerjoin(Subject, Notebook, Subject.id == Notebook.subject_id))
             subject_sum = subject_sum.filter(
                 and_(Subject.lft >= a.lft, Subject.lft <= a.rgt)).first()
@@ -146,7 +147,7 @@ class Subjects(GObject.GObject):
         entry.set_text("")
         self.builder.get_object("debtor").set_active(False)
         self.builder.get_object("creditor").set_active(False)
-        query = config.db.session.query(Subject.code).select_from(
+        query = share.config.db.session.query(Subject.code).select_from(
             Subject).order_by(Subject.code.desc())
         code = query.filter(Subject.parent_id == 0).first()
         if code == None:
@@ -168,7 +169,7 @@ class Subjects(GObject.GObject):
             a = [1, 10, 11]
             type = a.index(ttype)
             per = self.builder.get_object("permanent").get_active()
-            self.saveLedger(unicode(entry.get_text()),
+            self.saveLedger(str(entry.get_text()),
                             type, None, False, dialog, per)
         dialog.hide()
 
@@ -186,7 +187,7 @@ class Subjects(GObject.GObject):
             self.builder.get_object("parentcode").set_text(pcode)
             pcode = convertToLatin(pcode)
 
-            query = config.db.session.query(Subject).select_from(Subject)
+            query = share.config.db.session.query(Subject).select_from(Subject)
             query = query.filter(Subject.code == pcode)
             psub = query.first()
 
@@ -196,7 +197,7 @@ class Subjects(GObject.GObject):
             entry = self.builder.get_object("ledgername")
             entry.set_text("")
 
-            query = config.db.session.query(Subject.code).select_from(
+            query = share.config.db.session.query(Subject.code).select_from(
                 Subject).order_by(Subject.id.desc())
             code = query.filter(Subject.parent_id == psub.id).first()
             if code == None:
@@ -217,7 +218,7 @@ class Subjects(GObject.GObject):
                 a = [1, 10, 11]
                 type = a.index(ttype)
                 per = self.builder.get_object("permanent").get_active()
-                self.saveLedger(unicode(entry.get_text()),
+                self.saveLedger(str(entry.get_text()),
                                 type, parent, False, dialog, per)
             dialog.hide()
         else:
@@ -273,7 +274,7 @@ class Subjects(GObject.GObject):
                 a = [1, 10, 11]
                 type = a.index(ttype)
                 per = self.builder.get_object("permanent").get_active()
-                self.saveLedger(unicode(entry.get_text()),
+                self.saveLedger(str(entry.get_text()),
                                 type, iter, True, dialog, per)
 
             dialog.hide()
@@ -288,7 +289,7 @@ class Subjects(GObject.GObject):
             code = convertToLatin(self.treestore.get(iter, 0)[0])
 
             # Check to see if there is any subledger for this ledger.
-            query = config.db.session.query(Subject1.id, count(Subject2.id))
+            query = share.config.db.session.query(Subject1.id, count(Subject2.id))
             query = query.select_from(
                 outerjoin(Subject1, Subject2, Subject1.id == Subject2.parent_id))
             result = query.filter(Subject1.code == code).first()
@@ -301,7 +302,7 @@ class Subjects(GObject.GObject):
                 msgbox.destroy()
             else:
                 # check to see if there is any document registered for this ledger.
-                query = config.db.session.query(count(Notebook.id))
+                query = share.config.db.session.query(count(Notebook.id))
                 query = query.filter(Notebook.subject_id == result[0])
                 rowcount = query.first()[0]
                 if rowcount != 0:
@@ -312,24 +313,24 @@ class Subjects(GObject.GObject):
                     msgbox.destroy()
                 else:
                     # Now it's OK to delete ledger
-                    row = config.db.session.query(Subject).filter(
+                    row = share.config.db.session.query(Subject).filter(
                         Subject.id == result[0]).first()
                     sub_left = row.lft
-                    config.db.session.delete(row)
+                    share.config.db.session.delete(row)
 
-                    rlist = config.db.session.query(Subject).filter(
+                    rlist = share.config.db.session.query(Subject).filter(
                         Subject.rgt > sub_left).all()
                     for r in rlist:
                         r.rgt -= 2
-                        config.db.session.add(r)
+                        share.config.db.session.add(r)
 
-                    llist = config.db.session.query(Subject).filter(
+                    llist = share.config.db.session.query(Subject).filter(
                         Subject.lft > sub_left).all()
                     for l in llist:
                         l.lft -= 2
-                        config.db.session.add(l)
+                        share.config.db.session.add(l)
 
-                    config.db.session.commit()
+                    share.config.db.session.commit()
                     self.treestore.remove(iter)
 
     def saveLedger(self, name, type, iter, edit, widget, permanent):
@@ -348,7 +349,7 @@ class Subjects(GObject.GObject):
                 parent_left = 0
             else:
                 iter_code = convertToLatin(self.treestore.get(iter, 0)[0])
-                query = config.db.session.query(Subject).select_from(Subject)
+                query = share.config.db.session.query(Subject).select_from(Subject)
                 query = query.filter(Subject.code == iter_code)
                 sub = query.first()
                 if edit == True:
@@ -363,7 +364,7 @@ class Subjects(GObject.GObject):
                     parent_right = sub.rgt
                     parent_left = sub.lft
 
-            query = config.db.session.query(
+            query = share.config.db.session.query(
                 count(Subject.id)).select_from(Subject)
             query = query.filter(
                 and_(Subject.name == name, Subject.parent_id == parent_id))
@@ -378,7 +379,6 @@ class Subjects(GObject.GObject):
                 msgbox.run()
                 msgbox.destroy()
                 return
-
             # TODO pass code through function parameters
             lastcode = convertToLatin(self.code.get_text())[0:3]
             if lastcode == '':
@@ -390,7 +390,7 @@ class Subjects(GObject.GObject):
                 return
             result = None
             lastcode = iter_code + lastcode[0:3]
-            query = config.db.session.query(
+            query = share.config.db.session.query(
                 count(Subject.id)).select_from(Subject)
             query = query.filter(
                 and_(Subject.parent_id == parent_id, Subject.code == lastcode))
@@ -405,9 +405,10 @@ class Subjects(GObject.GObject):
                 msgbox.run()
                 msgbox.destroy()
                 return
-
+           
             if edit == True:
-                query = config.db.session.query(
+
+                query = share.config.db.session.query(
                     count(Notebook.id)).select_from(Notebook)
                 query = query.filter(Notebook.subject_id == iter_id)
                 rowcount = 0
@@ -429,7 +430,6 @@ class Subjects(GObject.GObject):
                     msgbox.run()
                     msgbox.destroy()
                     return
-
                 sub.code = lastcode
                 sub.name = name
                 sub.type = type
@@ -438,7 +438,7 @@ class Subjects(GObject.GObject):
                 # update subledger codes if parent ledger code has changed
                 length = len(lastcode)
                 if temp_code != lastcode:
-                    query = config.db.session.query(
+                    query = share.config.db.session.query(
                         Subject).select_from(Subject)
                     query = query.filter(
                         and_(Subject.lft > parent_left, Subject.rgt < parent_right))
@@ -447,7 +447,7 @@ class Subjects(GObject.GObject):
                         child.code = lastcode + child.code[length:]
                         # config.db.session.add(child)
 
-                config.db.session.commit()
+                share.config.db.session.commit()
 
                 # TODO show updated children on screen
                 basecode = LN(lastcode, False)
@@ -482,7 +482,7 @@ class Subjects(GObject.GObject):
                 if iter != None:
                     self.treeview.expand_row(
                         self.treestore.get_path(iter), False)
-                    sub_right = config.db.session.query(max(Subject.rgt)).select_from(
+                    sub_right = share.config.db.session.query(max(Subject.rgt)).select_from(
                         Subject).filter(Subject.parent_id == parent_id).first()
                     sub_right = sub_right[0]
                     if sub_right == None:
@@ -490,20 +490,20 @@ class Subjects(GObject.GObject):
 
                 else:
                     #sub_right = self.session.query(Subject.rgt).select_from(Subject).order_by(Subject.rgt.desc()).first();
-                    sub_right = config.db.session.query(
+                    sub_right = share.config.db.session.query(
                         max(Subject.rgt)).select_from(Subject).first()
                     sub_right = sub_right[0]
                     if sub_right == None:
                         sub_right = 0
 
                 # Update subjects which we want to place new subject before them:
-                rlist = config.db.session.query(Subject).filter(
+                rlist = share.config.db.session.query(Subject).filter(
                     Subject.rgt > sub_right).all()
                 for r in rlist:
                     r.rgt += 2
                    # config.db.session.add(r)
 
-                llist = config.db.session.query(Subject).filter(
+                llist = share.config.db.session.query(Subject).filter(
                     Subject.lft > sub_right).all()
                 for l in llist:
                     l.lft += 2
@@ -511,18 +511,16 @@ class Subjects(GObject.GObject):
 
                 sub_left = sub_right + 1
                 sub_right = sub_left + 1
-
                 # Now create new subject:
                 ledger = Subject(lastcode, name, parent_id,
                                  sub_left, sub_right, type, permanent)
-                config.db.session.add(ledger)
+                share.config.db.session.add(ledger)
 
-                config.db.session.commit()
+                share.config.db.session.commit()
 
                 lastcode = LN(lastcode, False)
                 child = self.treestore.append(
-                    iter, (lastcode, name, _(self.subjecttypes[type]), LN("0")))
-
+                    iter, (lastcode, name, _(self.subjecttypes[type]), LN("0"),""))
                 self.temppath = self.treestore.get_path(child)
                 self.treeview.scroll_to_cell(self.temppath, None, False, 0, 0)
                 self.treeview.set_cursor(self.temppath, None, False)
@@ -537,12 +535,12 @@ class Subjects(GObject.GObject):
                 # remove empty subledger to add real children instead
                 self.treestore.remove(chiter)
 
-                parent_id = config.db.session.query(Subject.id).filter(
+                parent_id = share.config.db.session.query(Subject.id).filter(
                     Subject.code == value).first() .id
                 Sub = aliased(Subject, name="s")
                 Child = aliased(Subject, name="c")
 
-                query = config.db.session.query(Sub.code, Sub.name, Sub.type, count(
+                query = share.config.db.session.query(Sub.code, Sub.name, Sub.type, count(
                     Child.id), Sub.lft, Sub.rgt, Sub.permanent)
                 query = query.select_from(
                     outerjoin(Sub, Child, Sub.id == Child.parent_id))
@@ -554,7 +552,7 @@ class Subjects(GObject.GObject):
                     type = _(self.subjecttypes[row[2]])
 
                     # --------
-                    subject_sum = config.db.session.query(sum(Notebook.value)).select_from(
+                    subject_sum = share.config.db.session.query(sum(Notebook.value)).select_from(
                         outerjoin(Subject, Notebook, Subject.id == Notebook.subject_id))
                     subject_sum = subject_sum.filter(
                         and_(Subject.lft >= row[4], Subject.lft <= row[5])).first()
@@ -597,10 +595,10 @@ class Subjects(GObject.GObject):
         name = unicode(self.builder.get_object('nameEntry').get_text())
         if name == "":
             self.treeview.collapse_all()
-        code = config.db.session.query(Subject.code).filter(
+        code = share.config.db.session.query(Subject.code).filter(
             Subject.name.like(name+"%")).first()
         if not code:
-            code = config.db.session.query(Subject.code).filter(
+            code = share.config.db.session.query(Subject.code).filter(
                 Subject.name.like("% " + name+"%")).first()
         if code:
             code = code.code
@@ -608,7 +606,6 @@ class Subjects(GObject.GObject):
 
     def highlightSubject(self, code):
         i = 3
-        code = code.decode('utf-8')
         part = code[0:i]
         iter = self.treestore.get_iter_first()
         parent = iter
@@ -690,7 +687,7 @@ class Subjects(GObject.GObject):
         code = convertToLatin(self.treestore.get(iter, 0)[0])
         name = self.treestore.get(iter, 1)[0]
 
-        query = config.db.session.query(Subject).select_from(Subject)
+        query = share.config.db.session.query(Subject).select_from(Subject)
         query = query.filter(Subject.code == code)
         sub_id = query.first().id
         self.emit("subject-selected", sub_id, code, name)
@@ -707,7 +704,7 @@ class Subjects(GObject.GObject):
             code = convertToLatin(self.treestore.get(iter, 0)[0])
             name = self.treestore.get(iter, 1)[0]
 
-            query = config.db.session.query(Subject).select_from(Subject)
+            query = share.config.db.session.query(Subject).select_from(Subject)
             query = query.filter(Subject.code == code)
             sub_id = query.first().id
             items.append((sub_id, code, name))

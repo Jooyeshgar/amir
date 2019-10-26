@@ -29,7 +29,7 @@ import logging
 if sys.version_info > (3,):
     unicode = str
 
-config = share.config
+# config = share.config
 
 
 class Payments(GObject.GObject):

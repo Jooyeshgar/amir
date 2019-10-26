@@ -7,7 +7,7 @@ import subprocess
 import sys
 import time
 from .share import share
-config = share.config
+# config = share.config
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, dir_path + '/data/')
 
@@ -56,7 +56,7 @@ class Printo:
 
 class WeasyprintReport:
     def __init__(self):
-        if config.locale == 'en_US':
+        if share.config.locale == 'en_US':
             self.direction = 'left'
         else:
             self.direction = 'right'
@@ -83,7 +83,7 @@ class WeasyprintReport:
             col_width[i] = 'style="width:' + \
                 str(col_wid[i]) + 'pt" ' if hasWidth else ""
         i = 0
-        if config.locale == 'en_US':
+        if share.config.locale == 'en_US':
             text_align = "left"
             html = '<table>\
                     <thead><tr>'

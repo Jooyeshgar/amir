@@ -28,7 +28,7 @@ from gi.repository import GObject
 if sys.version_info > (3,):
     unicode = str
 
-config = share.config
+# config = share.config
 
 gi.require_version('Gtk', '3.0')
 
@@ -131,7 +131,7 @@ class Product(productgroup.ProductGroup):
     # Fill groups treeview
     def fillTreeview(self):
         self.treestore.clear()
-        query = config.db.session.query(ProductGroups, Products)
+        query = share.config.db.session.query(ProductGroups, Products)
         query = query.select_from(
             outerjoin(ProductGroups, Products, ProductGroups.id == Products.accGroup))
         query = query.order_by(ProductGroups.id.asc())
@@ -168,7 +168,7 @@ class Product(productgroup.ProductGroup):
         dialog.set_title(_("Add New Product"))
 
         self.builder.get_object("qnttyLbl").set_text(_("Initial inventory:"))
-        lastProCode = config.db.session.query(Products.code).filter(
+        lastProCode = share.config.db.session.query(Products.code).filter(
             Products.accGroup == accgrp).order_by(Products.code.desc()).first()
         if lastProCode:
             lastProCode = lastProCode.code
@@ -231,7 +231,7 @@ class Product(productgroup.ProductGroup):
                 self.builder.get_object("qnttyLbl").set_text(_("Quantity:"))
                 code = self.treestore.get_value(iter, 0)
                 id = self.treestore.get_value(iter, 6)
-                query = config.db.session.query(Products, ProductGroups.code)
+                query = share.config.db.session.query(Products, ProductGroups.code)
                 query = query.select_from(
                     outerjoin(ProductGroups, Products, ProductGroups.id == Products.accGroup))
                 result = query.filter(Products.id == id).first()
@@ -242,7 +242,7 @@ class Product(productgroup.ProductGroup):
                 quantity_warn = str(product.qntyWarning)
                 p_price = str(product.purchacePrice)
                 s_price = str(product.sellingPrice)
-                if config.digittype == 1:
+                if share.config.digittype == 1:
                     quantity = utility.convertToPersian(quantity)
                     quantity_warn = utility.convertToPersian(quantity_warn)
                     p_price = utility.convertToPersian(p_price)
@@ -318,7 +318,7 @@ class Product(productgroup.ProductGroup):
             return False
         result = 0
         # Checks if the product code is repeated.
-        query = config.db.session.query(count(Products.id))
+        query = share.config.db.session.query(count(Products.id))
         query = query.filter(Products.code == code).filter(
             Products.accGroup == accgrp)
         if edititer != None:
@@ -327,7 +327,7 @@ class Product(productgroup.ProductGroup):
         if result != 0:
             msg += _("A product with this code already exists.\n")
 
-        query = config.db.session.query(
+        query = share.config.db.session.query(
             ProductGroups).select_from(ProductGroups)
         group = query.filter(ProductGroups.code == accgrp).first()
         if group == None:
@@ -378,13 +378,13 @@ class Product(productgroup.ProductGroup):
         if edititer == None:
             product = Products(code, name, quantity_warn, oversell, location, quantity,
                                purchase_price, sell_price, group.id, desc, formula, uMeasurement)
-            config.db.session.add(product)
-            config.db.session.commit()
+            share.config.db.session.add(product)
+            share.config.db.session.commit()
 
             if quantity > 0:
-                if config.db.session.query(Bill).filter(Bill.id == 1).first():
+                if share.config.db.session.query(Bill).filter(Bill.id == 1).first():
                     prevFund = 0
-                    query = config.db.session.query(
+                    query = share.config.db.session.query(
                         Notebook).filter(Notebook.bill_id == 1)
                     pNote = query.first()
                     if pNote:
@@ -393,15 +393,15 @@ class Product(productgroup.ProductGroup):
                     val = float(quantity) * \
                         float(purchase_price) + abs(prevFund)
                     dbconf = dbconfig.dbConfig()
-                    config.db.session.add(Notebook(dbconf.get_int(
+                    share.config.db.session.add(Notebook(dbconf.get_int(
                         'inventories'), 1, -val, _("Initial balance")))
-                    config.db.session.add(Notebook(dbconf.get_int(
+                    share.config.db.session.add(Notebook(dbconf.get_int(
                         'fund'), 1, val, _("Initial funding (share capital)")))
-                    config.db.session.add(FactorItems(
+                    share.config.db.session.add(FactorItems(
                         1, product.id, quantity, purchase_price, 0, 0, _("Initial inventory")))
 
         else:
-            product = config.db.session.query(
+            product = share.config.db.session.query(
                 Products).filter(Products.id == editId).first()
             product.code = code
             product.name = name
@@ -416,7 +416,7 @@ class Product(productgroup.ProductGroup):
             product.discountFormula = formula
             product.uMeasurement = uMeasurement
 
-        config.db.session.commit()
+        share.config.db.session.commit()
 
         # Show new product in table
 
@@ -475,13 +475,13 @@ class Product(productgroup.ProductGroup):
             else:
                 # Iter points to a product
                 id = unicode(self.treestore.get_value(iter, 6))
-                query = config.db.session.query(Products)
+                query = share.config.db.session.query(Products)
                 product = query.filter(Products.id == id).first()
 
                 # TODO check if this product is used somewhere else
 
-                config.db.session.delete(product)
-                config.db.session.commit()
+                share.config.db.session.delete(product)
+                share.config.db.session.commit()
                 self.treestore.remove(iter)
 
     # @param treeiter: the TreeIter which data should be saved in
@@ -501,7 +501,7 @@ class Product(productgroup.ProductGroup):
         if code != "":
             code = code.decode('utf-8')
 
-            query = config.db.session.query(ProductGroups)
+            query = share.config.db.session.query(ProductGroups)
             query = query.select_from(
                 outerjoin(ProductGroups, Products, ProductGroups.id == Products.accGroup))
             group = query.filter(Products.code == code).filter(
@@ -542,7 +542,7 @@ class Product(productgroup.ProductGroup):
             parent_iter = self.treestore.iter_parent(iter)
             group = utility.convertToLatin(
                 self.treestore.get_value(parent_iter, 0))
-            query = config.db.session.query(Products).select_from(Products)
+            query = share.config.db.session.query(Products).select_from(Products)
             query = query.filter(Products.code == code).filter(
                 Products.accGroup == group)
             product_id = query.first().id
@@ -559,7 +559,7 @@ class Product(productgroup.ProductGroup):
     def groupSelected(self, sender, id, code):
         self.builder.get_object("accGrpEntry").set_text(code)
 
-        lastProCode = config.db.session.query(Products.code).filter(
+        lastProCode = share.config.db.session.query(Products.code).filter(
             Products.accGroup == code).order_by(Products.code.desc()).first()
         if lastProCode:
             lastProCode = lastProCode.code

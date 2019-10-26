@@ -8,7 +8,7 @@ from sqlalchemy.orm.util import outerjoin
 from .database import *
 from .share import share
 
-config = share.config
+# config = share.config
 
 
 def arrangeDocuments(parentWin):
@@ -21,7 +21,7 @@ def arrangeDocuments(parentWin):
     if result == Gtk.ResponseType.CANCEL:
         return
 
-    query = config.db.session.query(Bill).select_from(Bill)
+    query = share.config.db.session.query(Bill).select_from(Bill)
     query = query.order_by(Bill.date.asc(), Bill.number.asc())
     result = query.all()
 
@@ -29,9 +29,9 @@ def arrangeDocuments(parentWin):
     for b in result:
         b.number = num_index
         num_index += 1
-        config.db.session.add(b)
+        share.config.db.session.add(b)
 
-    config.db.session.commit()
+    share.config.db.session.commit()
     msg = _("Ordering documents completed successfully.")
     msgbox = Gtk.MessageDialog(
         parentWin, Gtk.DialogFlags.MODAL, Gtk.MessageType.INFO, Gtk.ButtonsType.OK, msg)

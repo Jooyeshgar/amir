@@ -31,7 +31,7 @@ import sys
 if sys.version_info > (3,):
     unicode = str
 
-config = share.config
+# config = share.config
 
 ## \defgroup Controller
 ## @{
@@ -235,7 +235,7 @@ class Factor(Payments):
         self.treestore.clear()
         # 0: buy   1: sell      2:purchase return     3:sales return
         factorType = 2*int(self.returning) + int(self.sell)
-        query = config.db.session.query(Factors, Customers)
+        query = share.config.db.session.query(Factors, Customers)
         query = query.select_from(
             outerjoin(Factors, Customers, Factors.Cust == Customers.custId))
         query = query.order_by(Factors.Id.asc())
@@ -248,7 +248,7 @@ class Factor(Payments):
             date = dateToString(date)
             pre_invoice = _("pre-invoice") if not t.Permanent else "-"
             bill_id = "-"
-            bill = config.db.session.query(Bill).select_from(Notebook).filter(
+            bill = share.config.db.session.query(Bill).select_from(Notebook).filter(
                 Notebook.factorId == t.Id).filter(Notebook.bill_id == Bill.id).first()
             if bill:
                 bill_id = str(bill.id)
@@ -335,7 +335,7 @@ class Factor(Payments):
             self.builder.get_object(saveBtn).set_label(_("Save Changes"))
 
             self.Codeentry = self.builder.get_object("transCode")
-            if config.digittype == 1:
+            if share.config.digittype == 1:
                 self.Codeentry.set_text(utility.convertToPersian(
                     str(self.editTransaction.Code)))
             else:
@@ -394,7 +394,7 @@ class Factor(Payments):
         selection = self.treeview.get_selection()
         iter = selection.get_selected()[1]
         code = self.treestore.get_value(iter, 0)
-        query = config.db.session.query(Factors, Customers)
+        query = share.config.db.session.query(Factors, Customers)
         query = query.select_from(
             outerjoin(Factors, Customers, Factors.Cust == Customers.custId))
         result, result2 = query.filter(Factors.Id == code).first()
@@ -417,7 +417,7 @@ class Factor(Payments):
             if result != Gtk.ResponseType.OK:
                 return
         code = self.treestore.get_value(iter1, 0)
-        factor = config.db.session.query(Factors).filter(
+        factor = share.config.db.session.query(Factors).filter(
             Factors.Id == unicode(code)).first()
         TransactionId = factor  . Id
 
@@ -431,7 +431,7 @@ class Factor(Payments):
                 product.quantity += factorItem.qnty
             else:
                 product.quantity -= factorItem.qnty
-            config.db.session.delete(factorItem)
+            share.config.db.session.delete(factorItem)
 
         self.paymentManager = payments.Payments(
             transId=self.Id, sellFlag=self.sell)
@@ -450,10 +450,10 @@ class Factor(Payments):
             self.session.delete(self.session.query(
                 Bill).filter(Bill.id == bill_id).first())
 
-        Transaction = config.db.session.query(Factors).filter(
+        Transaction = share.config.db.session.query(Factors).filter(
             Factors.Id == unicode(code)).first()
-        config.db.session.delete(Transaction)
-        config.db.session.commit()
+        share.config.db.session.delete(Transaction)
+        share.config.db.session.commit()
         self.treestore.remove(iter1)
 
     def selectCustomers(self, sender=0):
@@ -816,7 +816,7 @@ class Factor(Payments):
 
     def clearSellFields(self):
         zerostr = "0"
-        if config.digittype == 1:
+        if share.config.digittype == 1:
             zerostr = utility.convertToPersian(zerostr)
 
         self.proVal.set_text("")
@@ -1716,7 +1716,7 @@ class Factor(Payments):
         if self.editFlag == False:  # adding
             if not self.submitFactorPressed(sender):
                 return
-            query = config.db.session.query(Factors, Customers)
+            query = share.config.db.session.query(Factors, Customers)
             query = query.select_from(
                 outerjoin(Factors, Customers, Factors.Cust == Customers.custId))
             result, result2 = query.filter(Factors.Id == self.Id).first()

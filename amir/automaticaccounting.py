@@ -1,4 +1,6 @@
 #import chequeui
+import gi
+gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from . import payments
 from . import class_cheque
@@ -106,7 +108,6 @@ class AutomaticAccounting:
         self.cash_payment_entry.connect(
             'changed', self.on_cash_payment_entry_change)
         table.attach(self.cash_payment_entry, 1, 2, 0, 1)
-
         self.discount_entry = decimalentry.DecimalEntry()
         self.discount_entry.connect('changed', self.on_discount_entry_change)
         table.attach(self.discount_entry, 1, 2, 3, 4)
@@ -160,7 +161,6 @@ class AutomaticAccounting:
             'non_cash_payment_button').set_sensitive(non_cash)
 
         self.cash_payment_entry.set_sensitive((non_cash or spend_cheque))
-
         self.from_entry.set_text("")
         self.to_entry.set_text("")
         self.cash_payment_entry.set_text(LN(0))

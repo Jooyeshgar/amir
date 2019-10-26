@@ -2,7 +2,7 @@ from .share import share
 from amir.database import *
 from sqlalchemy.sql.functions import *
 
-config = share.config
+# config = share.config
 
 ## \defgroup Controller
 ## @{
@@ -20,11 +20,11 @@ class Subjects():
     # @param type: 0 for Debtor, 1 for Creditor, 2 for both
     def add(self, parentid, name, code=None, type=2):
 
-        parent = config.db.session.query(Subject.code, Subject.lft).select_from(
+        parent = share.config.db.session.query(Subject.code, Subject.lft).select_from(
             Subject).filter(Subject.id == parentid).first()
 
         # get left and right value
-        sub_right = config.db.session.query(max(Subject.rgt)).select_from(
+        sub_right = share.config.db.session.query(max(Subject.rgt)).select_from(
             Subject).filter(Subject.parent_id == parentid).first()
         sub_right = sub_right[0]
 
@@ -32,26 +32,26 @@ class Subjects():
             sub_right = parent[1]
 
         # Update subjects which we want to place new subject before them:
-        rlist = config.db.session.query(Subject).filter(
+        rlist = share.config.db.session.query(Subject).filter(
             Subject.rgt > sub_right).all()
         for r in rlist:
             r.rgt += 2
-            config.db.session.add(r)
+            share.config.db.session.add(r)
 
-        llist = config.db.session.query(Subject).filter(
+        llist = share.config.db.session.query(Subject).filter(
             Subject.lft > sub_right).all()
         for l in llist:
             l.lft += 2
-            config.db.session.add(l)
+            share.config.db.session.add(l)
 
-        config.db.session.commit()
+        share.config.db.session.commit()
 
         sub_left = sub_right + 1
         sub_right = sub_left + 1
 
         if code == None:
             # get customer code
-            code = config.db.session.query(Subject.code).select_from(Subject).order_by(
+            code = share.config.db.session.query(Subject.code).select_from(Subject).order_by(
                 Subject.id.desc()).filter(Subject.parent_id == parentid).first()
             if code == None:
                 code = "001"
@@ -61,15 +61,15 @@ class Subjects():
         code = parent[0] + code
 
         mysubject = Subject(code, name, parentid, sub_left, sub_right, 2)
-        config.db.session.add(mysubject)
-        config.db.session.commit()
+        share.config.db.session.add(mysubject)
+        share.config.db.session.commit()
 
-        query = config.db.session.query(Subject).select_from(Subject)
+        query = share.config.db.session.query(Subject).select_from(Subject)
         query = query.filter(Subject.code == code)
         return query.first().id
 
     def get_code(self, id):
-        query = config.db.session.query(Subject).select_from(Subject)
+        query = share.config.db.session.query(Subject).select_from(Subject)
         query = query.filter(Subject.id == id).first()
         if query == None:
             return str(id)
@@ -77,7 +77,7 @@ class Subjects():
             return query.code
 
     def get_name(self, id):
-        query = config.db.session.query(Subject).select_from(Subject)
+        query = share.config.db.session.query(Subject).select_from(Subject)
         query = query.filter(Subject.id == id).first()
         if query == None:
             return str(id)
@@ -85,13 +85,13 @@ class Subjects():
             return query.name
 
     def get_id(self, code):
-        query = config.db.session.query(Subject).select_from(Subject)
+        query = share.config.db.session.query(Subject).select_from(Subject)
         query = query.filter(Subject.code == code)
         return query.first().id
 
     # Get id from name of subject
     def get_id_from_name(self, name):
-        query = config.db.session.query(Subject.id).select_from(Subject)
+        query = share.config.db.session.query(Subject.id).select_from(Subject)
         query = query.filter(Subject.name == name)
         try:
             return query.first().id
@@ -103,7 +103,7 @@ class Subjects():
     def chek_code(self, code):
         if len(code) % 3 == 1:
             return -1
-        query = config.db.session.query(Subject.id).select_from(
+        query = share.config.db.session.query(Subject.id).select_from(
             Subject).filter(Subject.code == code).all()
         if len(query) == 0:
             return 1

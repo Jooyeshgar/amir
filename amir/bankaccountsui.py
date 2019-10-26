@@ -13,7 +13,7 @@ import sys
 if sys.version_info > (3,):
     unicode = str
 
-config = share.config
+# config = share.config
 
 ## \defgroup UserInterface
 ## @{
@@ -104,7 +104,7 @@ class BankAccountsUI:
     # add acount
 
     def add_account(self, id=-1):
-        if id > 0:
+        if int(id) > 0:
             account = self.bankaccounts_class.get_account(id)
         else:
             account = BankAccounts('', '', 0, '', 1, '', '', '', '', '')
@@ -229,8 +229,8 @@ class BankAccountsUI:
                                                      self.builder.get_object(
                                                          'bank_webpage').get_text(),
                                                      self.builder.get_object('desc').get_text())
-        if result > 0:
-            config.db.session.commit()
+        if int(result) > 0:
+            share.config.db.session.commit()
             window = self.builder.get_object('add_window').hide()
             share.mainwin.silent_daialog(_('successfully added.'))
             # infobar = Gtk.InfoBar()
@@ -260,5 +260,5 @@ class BankAccountsUI:
                       account_number, 3, account_owner, 4, accType, 5, bank_name)
            # glib.timeout_add_seconds(3, lambda w: w.destroy(), infobar)
         else:
-            config.db.session.rollback()
+            share.config.db.session.rollback()
 ## @}

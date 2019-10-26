@@ -20,7 +20,7 @@ except:  # py3 most likely
 if sys.version_info > (3,):
     unicode = str
 
-config = share.config
+# config = share.config
 
 
 class Setting(GObject.GObject):
@@ -71,12 +71,12 @@ class Setting(GObject.GObject):
         self.treeview.set_model(self.liststore)
 
         i = 0
-        for dbpath in config.dblist:
-            if i == config.currentdb - 1:
-                self.active_iter = self.liststore.append((True, config.dbnames[i], handle_database.detectDbType(
+        for dbpath in share.config.dblist:
+            if i == share.config.currentdb - 1:
+                self.active_iter = self.liststore.append((True, share.config.dbnames[i], handle_database.detectDbType(
                     dbpath), handle_database.showDBdetails(dbpath), dbpath))
             else:
-                self.liststore.append((False, config.dbnames[i], handle_database.detectDbType(
+                self.liststore.append((False, share.config.dbnames[i], handle_database.detectDbType(
                     dbpath), handle_database.showDBdetails(dbpath), dbpath))
             i += 1
 
@@ -84,50 +84,50 @@ class Setting(GObject.GObject):
 #        self.newdb = self.builder.get_object("newdb")
         self.infolabel = self.builder.get_object("infolabel")
 
-        self.infolabel.set_text(config.db.dbfile)
+        self.infolabel.set_text(share.config.db.dbfile)
 
         self.langlist = self.builder.get_object("language")
-        comboInsertItems(self.langlist, config.langlist)
-        self.langlist.set_active(config.localelist.index(config.locale))
+        comboInsertItems(self.langlist, share.config.langlist)
+        self.langlist.set_active(share.config.localelist.index(share.config.locale))
 
         self.dateformat = self.builder.get_object("dateformat")
-        comboInsertItems(self.dateformat, config.datetypes)
-        self.dateformat.set_active(config.datetype)
+        comboInsertItems(self.dateformat, share.config.datetypes)
+        self.dateformat.set_active(share.config.datetype)
 
         self.delimiter = self.builder.get_object("delimiter")
-        comboInsertItems(self.delimiter, config.datedelims)
-        self.delimiter.set_active(config.datedelim)
+        comboInsertItems(self.delimiter, share.config.datedelims)
+        self.delimiter.set_active(share.config.datedelim)
 
         self.dateorder = self.builder.get_object("dateorder")
-        comboInsertItems(self.dateorder, config.dateorders)
+        comboInsertItems(self.dateorder, share.config.dateorders)
         # for order in config.dateorders:
         #     self.dateorder.append_text(order[0] + " - " + order[1] + " - " + order[2])
-        self.dateorder.set_active(config.dateorder)
+        self.dateorder.set_active(share.config.dateorder)
 
         self.uselatin = self.builder.get_object("uselatin")
-        if config.digittype == 0:
+        if share.config.digittype == 0:
             self.uselatin.set_active(True)
         else:
             self.uselatin.set_active(False)
 
         self.repair_atstart = self.builder.get_object("repair_atstart")
-        self.repair_atstart.set_active(config.repair_atstart)
+        self.repair_atstart.set_active(share.config.repair_atstart)
 
-        self.builder.get_object("topmargin").set_value(config.topmargin)
-        self.builder.get_object("botmargin").set_value(config.botmargin)
-        self.builder.get_object("rightmargin").set_value(config.rightmargin)
-        self.builder.get_object("leftmargin").set_value(config.leftmargin)
+        self.builder.get_object("topmargin").set_value(share.config.topmargin)
+        self.builder.get_object("botmargin").set_value(share.config.botmargin)
+        self.builder.get_object("rightmargin").set_value(share.config.rightmargin)
+        self.builder.get_object("leftmargin").set_value(share.config.leftmargin)
 
-        self.builder.get_object("namefont").set_value(config.namefont)
-        self.builder.get_object("headerfont").set_value(config.headerfont)
-        self.builder.get_object("contentfont").set_value(config.contentfont)
-        self.builder.get_object("footerfont").set_value(config.footerfont)
+        self.builder.get_object("namefont").set_value(share.config.namefont)
+        self.builder.get_object("headerfont").set_value(share.config.headerfont)
+        self.builder.get_object("contentfont").set_value(share.config.contentfont)
+        self.builder.get_object("footerfont").set_value(share.config.footerfont)
 
         # paper_size = Gtk.paper_size_new_from_ppd(config.paper_ppd, config.paper_name, config.paper_width, config.paper_height)
         self.page_setup = Gtk.PageSetup()
         # self.page_setup.set_paper_size(paper_size)
-        self.page_setup.set_orientation(config.paper_orientation)
-        self.builder.get_object("papersize").set_text(config.paper_name)
+        self.page_setup.set_orientation(share.config.paper_orientation)
+        self.builder.get_object("papersize").set_text(share.config.paper_name)
 
         self.setup_config_tab()
         self.builder.connect_signals(self)
@@ -141,7 +141,7 @@ class Setting(GObject.GObject):
             self.active_iter = iter
 
     def selectDbFile(self, sender):
-        self.filechooser.set_current_folder(os.path.dirname(config.db.dbfile))
+        self.filechooser.set_current_folder(os.path.dirname(share.config.db.dbfile))
         result = self.filechooser.run()
         if result == Gtk.ResponseType.OK:
             self.builder.get_object("filepath").set_text(
@@ -253,7 +253,7 @@ class Setting(GObject.GObject):
         GObject.timeout_add(1000, self.repairDbFunc)
 
     def repairDbFunc(self):
-        config.db.rebuild_nested_set(0, 0)
+        share.config.db.rebuild_nested_set(0, 0)
 
         self.msgbox.set_markup(_("Repair Operation Completed!"))
         self.msgbox.add_button(Gtk.STOCK_OK, -5)
@@ -264,22 +264,22 @@ class Setting(GObject.GObject):
     def applyDatabaseSetting(self):
         active_path = self.liststore.get(self.active_iter, 4)[0]
         iter = self.liststore.get_iter_first()
-        now_current = config.currentdb - 1
-        config.dblist = []
-        config.dbnames = []
+        now_current = share.config.currentdb - 1
+        share.config.dblist = []
+        share.config.dbnames = []
         i = 1
         while iter != None:
-            config.dbnames.append(self.liststore.get(iter, 1)[0])
+            share.config.dbnames.append(self.liststore.get(iter, 1)[0])
             path = self.liststore.get(iter, 2)[0]
-            config.dblist.append(self.liststore.get(iter, 4)[0])
+            share.config.dblist.append(self.liststore.get(iter, 4)[0])
             if path == active_path:
-                config.currentdb = i
+                share.config.currentdb = i
             database.Database(
-                active_path, config.db_repository, config.echodbresult)
+                active_path, share.config.db_repository, share.config.echodbresult)
             iter = self.liststore.iter_next(iter)
             i += 1
         dbchanged_flag = False
-        if active_path != config.dblist[now_current]:
+        if active_path != share.config.dblist[now_current]:
             msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK_CANCEL,
                                        _("You have changed the current database, any unsaved data will be lost.\nAre you sure to continue?"))
             msgbox.set_title(_("Are you sure?"))
@@ -288,12 +288,12 @@ class Setting(GObject.GObject):
             if result == Gtk.ResponseType.CANCEL:
                 return
             else:
-                config.db.session.close()
-                config.db = database.Database(
-                    active_path, config.db_repository, config.echodbresult)
+                share.config.db.session.close()
+                share.config.db = database.Database(
+                    active_path, share.config.db_repository, share.config.echodbresult)
                 dbchanged_flag = True
 
-        config.repair_atstart = self.repair_atstart.get_active()
+        share.config.repair_atstart = self.repair_atstart.get_active()
 
         if dbchanged_flag == True:
             self.emit("database-changed", active_path)
@@ -402,25 +402,25 @@ class Setting(GObject.GObject):
 
     def applyFormatSetting(self):
         langindex = self.langlist.get_active()
-        if langindex != config.localelist.index(config.locale):
-            config.locale = config.localelist[langindex]
-            self.emit("locale-changed", config.locale)
+        if langindex != share.config.localelist.index(share.config.locale):
+            share.config.locale = share.config.localelist[langindex]
+            self.emit("locale-changed", share.config.locale)
 
-            if config.directionlist[langindex] == "rtl":
+            if share.config.directionlist[langindex] == "rtl":
                 Gtk.Widget.set_default_direction(Gtk.TextDirection.RTL)
             else:
                 Gtk.Widget.set_default_direction(Gtk.TextDirection.LTR)
 
-        config.datetype = self.dateformat.get_active()
-        config.datedelim = self.delimiter.get_active()
-        config.dateorder = self.dateorder.get_active()
+        share.config.datetype = self.dateformat.get_active()
+        share.config.datedelim = self.delimiter.get_active()
+        share.config.dateorder = self.dateorder.get_active()
         for i in range(0, 3):
-            field = config.dateorders[config.dateorder][i]
-            config.datefields[field] = i
+            field = share.config.dateorders[share.config.dateorder][i]
+            share.config.datefields[field] = i
         if self.uselatin.get_active() == True:
-            config.digittype = 0
+            share.config.digittype = 0
         else:
-            config.digittype = 1
+            share.config.digittype = 1
 
     def reportPaperSetup(self, sender):
         settings = Gtk.PrintSettings()
@@ -430,54 +430,54 @@ class Setting(GObject.GObject):
             self.page_setup.get_paper_size().get_display_name())
 
     def applyReportSetting(self):
-        config.topmargin = self.builder.get_object(
+        share.config.topmargin = self.builder.get_object(
             "topmargin").get_value_as_int()
-        config.botmargin = self.builder.get_object(
+        share.config.botmargin = self.builder.get_object(
             "botmargin").get_value_as_int()
-        config.rightmargin = self.builder.get_object(
+        share.config.rightmargin = self.builder.get_object(
             "rightmargin").get_value_as_int()
-        config.leftmargin = self.builder.get_object(
+        share.config.leftmargin = self.builder.get_object(
             "leftmargin").get_value_as_int()
 
-        config.namefont = self.builder.get_object(
+        share.config.namefont = self.builder.get_object(
             "namefont").get_value_as_int()
-        config.headerfont = self.builder.get_object(
+        share.config.headerfont = self.builder.get_object(
             "headerfont").get_value_as_int()
-        config.contentfont = self.builder.get_object(
+        share.config.contentfont = self.builder.get_object(
             "contentfont").get_value_as_int()
-        config.footerfont = self.builder.get_object(
+        share.config.footerfont = self.builder.get_object(
             "footerfont").get_value_as_int()
 
         paper_size = self.page_setup.get_paper_size()
-        config.paper_ppd = paper_size.get_ppd_name()
-        config.paper_name = paper_size.get_display_name()
-        config.paper_width = paper_size.get_width(Gtk.Unit.POINTS)
-        config.paper_height = paper_size.get_height(Gtk.Unit.POINTS)
-        config.paper_orientation = int(self.page_setup.get_orientation())
+        share.config.paper_ppd = paper_size.get_ppd_name()
+        share.config.paper_name = paper_size.get_display_name()
+        share.config.paper_width = paper_size.get_width(Gtk.Unit.POINTS)
+        share.config.paper_height = paper_size.get_height(Gtk.Unit.POINTS)
+        share.config.paper_orientation = int(self.page_setup.get_orientation())
 #        self.page_setup.to_file(config.reportconfig)
 
     def restoreDefaultsReports(self):
         paper_size = self.page_setup.get_paper_size()
-        config.topmargin = int(
+        share.config.topmargin = int(
             paper_size.get_default_top_margin(Gtk.Unit.POINTS))
-        config.botmargin = int(
+        share.config.botmargin = int(
             paper_size.get_default_bottom_margin(Gtk.Unit.POINTS))
-        config.rightmargin = int(
+        share.config.rightmargin = int(
             paper_size.get_default_right_margin(Gtk.Unit.POINTS))
-        config.leftmargin = int(
+        share.config.leftmargin = int(
             paper_size.get_default_left_margin(Gtk.Unit.POINTS))
 
-        config.restoreDefaultFonts()
+        share.config.restoreDefaultFonts()
 
-        self.builder.get_object("topmargin").set_value(config.topmargin)
-        self.builder.get_object("botmargin").set_value(config.botmargin)
-        self.builder.get_object("rightmargin").set_value(config.rightmargin)
-        self.builder.get_object("leftmargin").set_value(config.leftmargin)
+        self.builder.get_object("topmargin").set_value(share.config.topmargin)
+        self.builder.get_object("botmargin").set_value(share.config.botmargin)
+        self.builder.get_object("rightmargin").set_value(share.config.rightmargin)
+        self.builder.get_object("leftmargin").set_value(share.config.leftmargin)
 
-        self.builder.get_object("namefont").set_value(config.namefont)
-        self.builder.get_object("headerfont").set_value(config.headerfont)
-        self.builder.get_object("contentfont").set_value(config.contentfont)
-        self.builder.get_object("footerfont").set_value(config.footerfont)
+        self.builder.get_object("namefont").set_value(share.config.namefont)
+        self.builder.get_object("headerfont").set_value(share.config.headerfont)
+        self.builder.get_object("contentfont").set_value(share.config.contentfont)
+        self.builder.get_object("footerfont").set_value(share.config.footerfont)
 
     def applyConfigSetting(self):
         conf = dbconfig.dbConfig()
@@ -498,7 +498,7 @@ class Setting(GObject.GObject):
                 val = ids[:-1]
             conf.set_value(item[0], val, False)
 
-        config.db.session.commit()
+        share.config.db.session.commit()
 
     def on_cancel_clicked(self, sender):
         self.window.destroy()
@@ -526,7 +526,7 @@ class Setting(GObject.GObject):
 
     def setup_config_tab(self):
         sub = class_subject.Subjects()
-        query = config.db.session.query(database.Config).all()
+        query = share.config.db.session.query(database.Config).all()
 
         company = self.builder.get_object('company_table')
         subjects = self.builder.get_object('subjects_table')

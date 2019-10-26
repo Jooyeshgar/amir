@@ -22,7 +22,7 @@ import sys
 if sys.version_info > (3,):
     unicode = str
 
-config = share.config
+# config = share.config
 # Users and permissions:
 #       create: 2
 #       read:   4
@@ -96,11 +96,11 @@ class User(GObject.GObject):
         self.userTreeview.append_column(column)
 
         # Find top level ledgers (with parent_id equal to 0)
-        result = config.db.session.query(
+        result = share.config.db.session.query(
             Users.id, Users.name, Users.username, Users.permission).all()
 
         for a in result:
-            permissionName = config.db.session.query(Permissions.name).filter(
+            permissionName = share.config.db.session.query(Permissions.name).filter(
                 Permissions.id == a.permission).first()
             if permissionName:
                 iter = self.userTreestore.append(
@@ -152,7 +152,7 @@ class User(GObject.GObject):
                          unicode(password), type, None)
 
     def selectGroup(self, sender=0, edit=None):
-        self.session = config.db.session
+        self.session = share.config.db.session
         # self.Document = class_document.Document()
 
         query = self.session.query(Factors.Id).select_from(Factors)
@@ -175,7 +175,7 @@ class User(GObject.GObject):
         column.set_resizable(True)
         self.groupTreeview.append_column(column)
 
-        result = config.db.session.query(
+        result = share.config.db.session.query(
             Permissions.id, Permissions.name).all()
         for a in result:
             iter = self.groupTreestore.append(None, (int(a.id), str(a.name)))
@@ -225,7 +225,7 @@ class User(GObject.GObject):
         password = self.builder.get_object("passwordEdit")
         name = self.builder.get_object("nameEdit")
         permission = self.builder.get_object("permissionEdit").get_text()
-        permissionId = config.db.session.query(Permissions.id).filter(
+        permissionId = share.config.db.session.query(Permissions.id).filter(
             Permissions.name == permission).first()
         self.groupId = permissionId[0]
         self.saveEditUser(userId, unicode(name.get_text()), unicode(
@@ -240,10 +240,10 @@ class User(GObject.GObject):
             Subject2 = aliased(Subject, name="s2")
 
             code = convertToLatin(self.userTreestore.get(iter, 0)[0])
-            row = config.db.session.query(
+            row = share.config.db.session.query(
                 Users).filter(Users.id == code).first()
-            config.db.session.delete(row)
-            config.db.session.commit()
+            share.config.db.session.delete(row)
+            share.config.db.session.commit()
             self.userTreestore.remove(iter)
 
     def deleteGroup(self, sender):
@@ -251,17 +251,17 @@ class User(GObject.GObject):
         iter = selection.get_selected()[1]
         if iter != None:
             code = convertToLatin(self.groupTreestore.get(iter, 0)[0])
-            row = config.db.session.query(Permissions).filter(
+            row = share.config.db.session.query(Permissions).filter(
                 Permissions.id == code).first()
-            config.db.session.delete(row)
-            config.db.session.commit()
+            share.config.db.session.delete(row)
+            share.config.db.session.commit()
             self.groupTreestore.remove(iter)
 
     def saveNewUser(self, name, username, password, type, iter):
         user = Users(name, username, password, self.groupId)
-        config.db.session.add(user)
+        share.config.db.session.add(user)
 
-        config.db.session.commit()
+        share.config.db.session.commit()
 
         child = self.userTreestore.append(
             iter, (user.id, name, username, self.groupName))
@@ -271,14 +271,14 @@ class User(GObject.GObject):
         self.userTreeview.set_cursor(self.temppath, None, False)
 
     def saveEditUser(self, userId, name, username, password, type, iter):
-        result = config.db.session.query(Users)
+        result = share.config.db.session.query(Users)
         result = result.filter(Users.id == userId)
         result[0].name = name
         result[0].username = username
         if password:
             result[0].password = bcrypt.encrypt(password)
         result[0].permission = self.groupId
-        config.db.session.commit()
+        share.config.db.session.commit()
 
     def getPermission(self):
         permissionResult = 0
@@ -288,7 +288,7 @@ class User(GObject.GObject):
         return permissionResult
 
     def setPermission(self, id):
-        result = config.db.session.query(Permissions)
+        result = share.config.db.session.query(Permissions)
         result = result.filter(Permissions.id == id)
         permissionResult = int(result[0].value)
         for x in range(self.numberOfCheckboxes, 0, -1):
@@ -302,9 +302,9 @@ class User(GObject.GObject):
         name = self.builder.get_object("nameEntry")
         permission = Permissions(
             unicode(name.get_text()), str(permissionResult))
-        config.db.session.add(permission)
+        share.config.db.session.add(permission)
 
-        config.db.session.commit()
+        share.config.db.session.commit()
 
         child = self.groupTreestore.append(
             None, (int(permission.id), str(permission.name)))
@@ -320,7 +320,7 @@ class User(GObject.GObject):
         iter = selection.get_selected()[1]
         id = convertToLatin(self.groupTreestore.get(iter, 0)[0])
         permissionName = self.groupTreestore.get(iter, 1)[0]
-        permissionId = config.db.session.query(Permissions.id).filter(
+        permissionId = share.config.db.session.query(Permissions.id).filter(
             Permissions.name == permissionName).first()
         self.groupId = permissionId[0]
         self.setPermission(id)
@@ -335,11 +335,11 @@ class User(GObject.GObject):
     def saveEditPermission(self, sender):
         permissionResult = self.getPermission()
         name = self.builder.get_object("nameEntry").get_text()
-        result = config.db.session.query(Permissions).filter(
+        result = share.config.db.session.query(Permissions).filter(
             Permissions.id == self.groupId)
         result[0].name = name
         result[0].value = permissionResult
-        config.db.session.commit()
+        share.config.db.session.commit()
         child = self.groupTreestore.append(
             None, (int(result[0].id), str(name)))
         self.window.hide()
@@ -452,7 +452,7 @@ class User(GObject.GObject):
             code = convertToLatin(self.treestore.get(iter, 0)[0])
             name = self.treestore.get(iter, 1)[0]
 
-            query = config.db.session.query(Subject).select_from(Subject)
+            query = share.config.db.session.query(Subject).select_from(Subject)
             query = query.filter(Subject.code == code)
             sub_id = query.first().id
             items.append((sub_id, code, name))
