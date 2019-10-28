@@ -4,6 +4,8 @@
   <requires lib="gtk+" version="3.0"/>
   <object class="GtkWindow" id="editUserWindow">
     <property name="can_focus">False</property>
+    <property name="margin_left">15</property>
+    <property name="margin_right">15</property>
     <property name="destroy_with_parent">True</property>
     <child>
       <placeholder/>

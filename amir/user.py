@@ -1,4 +1,5 @@
 import gi
+gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from gi.repository import GObject
 
@@ -228,8 +229,8 @@ class User(GObject.GObject):
         permissionId = share.config.db.session.query(Permissions.id).filter(
             Permissions.name == permission).first()
         self.groupId = permissionId[0]
-        self.saveEditUser(userId, unicode(name.get_text()), unicode(
-            username.get_text()), unicode(password.get_text()), type, None)
+        self.saveEditUser(userId, str(name.get_text()), str(
+            username.get_text()), str(password.get_text()), type, None,permission)
         self.window.hide()
 
     def deleteUser(self, sender):
@@ -270,7 +271,7 @@ class User(GObject.GObject):
         self.userTreeview.scroll_to_cell(self.temppath, None, False, 0, 0)
         self.userTreeview.set_cursor(self.temppath, None, False)
 
-    def saveEditUser(self, userId, name, username, password, type, iter):
+    def saveEditUser(self, userId, name, username, password, type, iter,permission):
         result = share.config.db.session.query(Users)
         result = result.filter(Users.id == userId)
         result[0].name = name
