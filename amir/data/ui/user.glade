@@ -16,6 +16,7 @@
         <property name="margin_right">15</property>
         <property name="margin_top">10</property>
         <property name="margin_bottom">15</property>
+        <property name="orientation">vertical</property>
         <property name="spacing">5</property>
         <child>
           <object class="GtkBox" id="vbox1">
@@ -301,6 +302,7 @@
         <property name="margin_right">15</property>
         <property name="margin_top">10</property>
         <property name="margin_bottom">15</property>
+        <property name="orientation">vertical</property>
         <property name="spacing">5</property>
         <child>
           <object class="GtkBox" id="vbox2">

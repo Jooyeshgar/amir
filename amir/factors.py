@@ -530,7 +530,7 @@ class Factor(Payments):
         self.edtSellFlg = False
         if edit:
             self.editCde = edit[0]
-            ttl = _("Edit sell:\t%s - %s") % (self.editCde, edit[1])
+            ttl = _("Edit sell:\t%(code)s - %(subject)s") % (self.editCde, edit[1])
             self.addDlg.set_title(ttl)
             self.edtSellFlg = True  # TODO find usage
             self.oldTtl = utility.getFloat(edit[4])

@@ -25,7 +25,7 @@ if sys.version_info > (3,):
 
 
 class Subjects(GObject.GObject):
-    subjecttypes = [_("Debtor"), _("Creditor"), _("Both"), _("Alaki")]
+    subjecttypes = [_("Debtor"), _("Creditor"), _("Both"))]
 
     def __init__(self, ledgers_only=False, parent_id=[0, ], multiselect=False):
         GObject.GObject.__init__(self)
