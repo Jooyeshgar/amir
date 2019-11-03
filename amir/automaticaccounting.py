@@ -28,21 +28,8 @@ if sys.version_info > (3,):
 
 
 class AutomaticAccounting:
-    type_names = (
-        # 0 id, 1 name
-        (0, _('Get From Customer')),
-        (1, _('Pay To Customer')),
-        (2, _('Bank To Bank')),
-        (3, _('Cash To Bank')),
-        (4, _('Bank To Cash')),
-        (5, _('Bank Fee')),
-        (6, _('Transfer To Customer')),
-        (7, _('Investment')),
-        (8, _('Cost')),
-        (9, _('Income')),
-        (10, _('Removal')),
-    )
-
+    
+    type_names = ()
     type_configs = {
         #    0:non cash   2:spend_cheque 4:to is subject?   6:to key
         #    1:discount   3:from subj?   5:from key
@@ -62,6 +49,21 @@ class AutomaticAccounting:
     }
 
     def __init__(self):
+        self.type_names = (
+            # 0 id, 1 name
+            (0, _('Get From Customer')),
+            (1, _('Pay To Customer')),
+            (2, _('Bank To Bank')),
+            (3, _('Cash To Bank')),
+            (4, _('Bank To Cash')),
+            (5, _('Bank Fee')),
+            (6, _('Transfer To Customer')),
+            (7, _('Investment')),
+            (8, _('Cost')),
+            (9, _('Income')),
+            (10, _('Removal')),
+        )
+        
         #self.mode = None
         self.liststore = None
 
