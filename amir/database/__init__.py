@@ -1,4 +1,5 @@
 import re
+import logging
 
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -52,7 +53,7 @@ class Database:
         # migrate code
         try:
             dbversion = api.db_version(file, self.repository)
-            # print dbversion
+            logging.debug('Current DB version: "%d"' % dbversion)
         except:  # if no previous database found => first installing
             dbversion = 0
             api.version_control(file, self.repository, dbversion)
