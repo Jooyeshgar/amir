@@ -164,7 +164,7 @@ class AddEditDoc:
             else:
                 code = 0
                 s = Subject()
-            numrows = self.numrows
+            numrows = str(self.numrows)
             if share.config.digittype == 1:
                 code = utility.convertToPersian(code)
                 numrows = utility.convertToPersian(numrows)
