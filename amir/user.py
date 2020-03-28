@@ -19,10 +19,6 @@ from .helpers import get_builder
 from amir.share import Share
 from passlib.hash import bcrypt
 
-import sys
-if sys.version_info > (3,):
-    unicode = str
-
 # config = share.config
 # Users and permissions:
 #       create: 2
@@ -149,8 +145,7 @@ class User(GObject.GObject):
         name = self.builder.get_object("name").get_text()
         self.builder.get_object("name").set_text("")
         self.window.hide()
-        self.saveNewUser(unicode(name), unicode(username),
-                         unicode(password), type, None)
+        self.saveNewUser(name, username, password, type, None)
 
     def selectGroup(self, sender=0, edit=None):
         self.session = share.config.db.session
@@ -229,8 +224,8 @@ class User(GObject.GObject):
         permissionId = share.config.db.session.query(Permissions.id).filter(
             Permissions.name == permission).first()
         self.groupId = permissionId[0]
-        self.saveEditUser(userId, str(name.get_text()), str(
-            username.get_text()), str(password.get_text()), type, None,permission)
+        self.saveEditUser(userId, str(name.get_text()), str(username.get_text()),
+            str(password.get_text()), type, None,permission)
         self.window.hide()
 
     def deleteUser(self, sender):
@@ -294,15 +289,13 @@ class User(GObject.GObject):
         permissionResult = int(result[0].value)
         for x in range(self.numberOfCheckboxes, 0, -1):
             if permissionResult >= 2**x:
-                self.builder.get_object(
-                    "checkbutton" + str(x)).set_active(True)
+                self.builder.get_object("checkbutton" + str(x)).set_active(True)
                 permissionResult = permissionResult - 2**x
 
     def saveNewPermission(self, sender):
         permissionResult = self.getPermission()
         name = self.builder.get_object("nameEntry")
-        permission = Permissions(
-            unicode(name.get_text()), str(permissionResult))
+        permission = Permissions(name.get_text(), str(permissionResult))
         share.config.db.session.add(permission)
 
         share.config.db.session.commit()
@@ -341,8 +334,7 @@ class User(GObject.GObject):
         result[0].name = name
         result[0].value = permissionResult
         share.config.db.session.commit()
-        child = self.groupTreestore.append(
-            None, (int(result[0].id), str(name)))
+        child = self.groupTreestore.append(None, (int(result[0].id), name))
         self.window.hide()
 
     def match_func(self, iter, data):
@@ -357,7 +349,6 @@ class User(GObject.GObject):
 
     def highlightSubject(self, code):
         i = 2
-        code = code.decode('utf-8')
         part = code[0:i]
         iter = self.treestore.get_iter_first()
         parent = iter

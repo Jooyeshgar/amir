@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 from sqlalchemy import *
 from migrate import *
@@ -90,12 +89,12 @@ def upgrade(migrate_engine):
     al = query.all()
     for subj in al :
        # query.filter(subject.c.id == subj.id).first().update({subject.c.code : _2to3digits(subj.code)})    # TODO       try this instead of raw sql command
-        s.execute("UPDATE subject set code = '"+ str(_2to3digits(subj.code))+"' where id ="+str(subj.id) + ";")
+        s.execute("UPDATE subject set code = '" + _2to3digits(subj.code) + "' where id =" + str(subj.id) + ";")
 
 
     al = s.query(customers).all()
     for cust in al:
-        s.execute("UPDATE customers set custCode='"+str(_2to3digits(cust.custCode)+"' WHERE custId  = "+str(cust.custId) ) )
+        s.execute("UPDATE customers set custCode='" + _2to3digits(cust.custCode) + "' WHERE custId  = " + str(cust.custId))
 
     # s.execute('INSERT INTO factors (Id, Code, tDate, Bill, Cust, Addition, Subtraction, VAT, CashPayment, ShipDate, Permanent, `Desc`, Sell, Activated, Fee, PayableAmnt, LastEdit)\
     #            SELECT transId, transCode, transDate, transBill, transCust, transAddition, transSubtraction, transTax, transCashPayment, transShipDate, transPermanent,  transDesc, transSell, 0, 0, 0, 0 FROM transactions;')
@@ -153,39 +152,39 @@ def upgrade(migrate_engine):
         # 1 : Entry
         # 2 : Entry (Single Int from Subjects)
         # 3 : Entry (Multi  Int from Subjects)
-        {'cfgId' : 1, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-name'       , 'cfgValue' : u'نام شرکت', 'cfgDesc' : u'نام شرکت شما'},
-        {'cfgId' : 2, 'cfgType' : 0, 'cfgCat' : 0, 'cfgKey' : u'co-logo'       , 'cfgValue' : u'', 'cfgDesc' : u'لوگوی شرکت خود را انتخاب نمایید'},
-        {'cfgId' : 3, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'custSubject'   , 'cfgValue' : u'4',  'cfgDesc' : u'طرف حساب ها'},
-        {'cfgId' : 4, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'bank'          , 'cfgValue' : u'1',  'cfgDesc' : u'بانک ها'},
-        {'cfgId' : 5, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'cash'          , 'cfgValue' : u'14',  'cfgDesc' : u'نقدی'},
-        # {'cfgId' : 6, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'buy'           , 'cfgValue' : u'17', 'cfgDesc':u'Enter here'},
-        {'cfgId' : 7, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'buy-discount'  , 'cfgValue' : u'53', 'cfgDesc':u'تخفیفات خرید'},
-        # {'cfgId' : 8, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'sell'          , 'cfgValue' : u'18', 'cfgDesc':u'Enter here'},
-        {'cfgId' : 9, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'sell-discount' , 'cfgValue' : u'55', 'cfgDesc':u'تخفیفات فروش'},
-        {'cfgId' :10, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'sell-vat'      , 'cfgValue' : u'41', 'cfgDesc':u'مالیات فروش'},
-        {'cfgId' :11, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'buy-vat'       , 'cfgValue' : u'40', 'cfgDesc':u'مالیات خرید'},
-        {'cfgId' :12, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'sell-fee'      , 'cfgValue' : u'57', 'cfgDesc':u'عوارض فروش'},
-        {'cfgId' :13, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'buy-fee'       , 'cfgValue' : u'56', 'cfgDesc':u'عوارض خرید'},
-        {'cfgId' :14, 'cfgType' : 1, 'cfgCat' : 1, 'cfgKey' : u'vat-rate'      , 'cfgValue' : u'6',  'cfgDesc':u'درصد مالیات'},
-        {'cfgId' :15, 'cfgType' : 1, 'cfgCat' : 1, 'cfgKey' : u'fee-rate'      , 'cfgValue' : u'3',  'cfgDesc':u'درصد عوارض'},
-        {'cfgId' :16, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'partners'      , 'cfgValue' : u'8',  'cfgDesc':u'شرکا'},
-        {'cfgId' :17, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'cost'          , 'cfgValue' : u'2',  'cfgDesc':u'هزینه ها'},
-        {'cfgId' :18, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'bank-wage'     , 'cfgValue' : u'31', 'cfgDesc':u'کارمزد بانک'},
-        {'cfgId' :19, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'our_cheque'    , 'cfgValue' : u'46', 'cfgDesc':u'اسناد پرداختنی'},
-        {'cfgId' :20, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'other_cheque'  , 'cfgValue' : u'44',  'cfgDesc':u'اسناد دریافتنی'},
-        {'cfgId' :21, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'income'        , 'cfgValue' : u'81', 'cfgDesc':u'درآمد'},
-        {'cfgId' :22, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-address'    , 'cfgValue' : u'نشانی شرکت (قابل تنظیم در تنظیمات->پیکربندی',  'cfgDesc':u'نشانی شرکت شما'},
-        {'cfgId' :23, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-economical-code'     , 'cfgValue' : u'کد اقتصادی',  'cfgDesc':u'کد اقتصادی شما'},
-        {'cfgId' :24, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-national-code'       , 'cfgValue' : u'کد ملی',  'cfgDesc':u'کد ملی شما'},
-        {'cfgId' :25, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-postal-code'         , 'cfgValue' : u'کد پستی',  'cfgDesc':u'کد پستی شما'},
-        {'cfgId' :26, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-phone-number'        , 'cfgValue' : u'شماره تلفن',  'cfgDesc':u'شماره تلفن شما'},
-        {'cfgId' :27, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'sell-adds'              , 'cfgValue' : u'36',  'cfgDesc':u'اضافات فروش'},
-        {'cfgId' :28, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'buy-adds'               , 'cfgValue' : u'32',  'cfgDesc':u'اضافات خرید'},
-        {'cfgId' :29, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'inventories'            , 'cfgValue' : u'70',  'cfgDesc':u'موجودی اولیه'},
-        {'cfgId' :30, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'fund'                   , 'cfgValue' : u'21',  'cfgDesc':u'سرمایه اولیه'},
-        {'cfgId' :31, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'float'                  , 'cfgValue' : u'68',  'cfgDesc':u'اسناد در جریان وصول'},
-        {'cfgId' :32, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'purchase-return'        , 'cfgValue' : u'42',  'cfgDesc':u'برگشت از خرید'},
-        {'cfgId' :33, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'sale-return'            , 'cfgValue' : u'43',  'cfgDesc':u'برگشت از فروش'}
+        {'cfgId' : 1, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : 'co-name'       , 'cfgValue' : 'نام شرکت', 'cfgDesc' : 'نام شرکت شما'},
+        {'cfgId' : 2, 'cfgType' : 0, 'cfgCat' : 0, 'cfgKey' : 'co-logo'       , 'cfgValue' : '', 'cfgDesc' : 'لوگوی شرکت خود را انتخاب نمایید'},
+        {'cfgId' : 3, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : 'custSubject'   , 'cfgValue' : '4',  'cfgDesc' : 'طرف حساب ها'},
+        {'cfgId' : 4, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : 'bank'          , 'cfgValue' : '1',  'cfgDesc' : 'بانک ها'},
+        {'cfgId' : 5, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : 'cash'          , 'cfgValue' : '14',  'cfgDesc' : 'نقدی'},
+        # {'cfgId' : 6, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : 'buy'           , 'cfgValue' : '17', 'cfgDesc':'Enter here'},
+        {'cfgId' : 7, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : 'buy-discount'  , 'cfgValue' : '53', 'cfgDesc':'تخفیفات خرید'},
+        # {'cfgId' : 8, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : 'sell'          , 'cfgValue' : '18', 'cfgDesc':'Enter here'},
+        {'cfgId' : 9, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : 'sell-discount' , 'cfgValue' : '55', 'cfgDesc':'تخفیفات فروش'},
+        {'cfgId' :10, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : 'sell-vat'      , 'cfgValue' : '41', 'cfgDesc':'مالیات فروش'},
+        {'cfgId' :11, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : 'buy-vat'       , 'cfgValue' : '40', 'cfgDesc':'مالیات خرید'},
+        {'cfgId' :12, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : 'sell-fee'      , 'cfgValue' : '57', 'cfgDesc':'عوارض فروش'},
+        {'cfgId' :13, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : 'buy-fee'       , 'cfgValue' : '56', 'cfgDesc':'عوارض خرید'},
+        {'cfgId' :14, 'cfgType' : 1, 'cfgCat' : 1, 'cfgKey' : 'vat-rate'      , 'cfgValue' : '6',  'cfgDesc':'درصد مالیات'},
+        {'cfgId' :15, 'cfgType' : 1, 'cfgCat' : 1, 'cfgKey' : 'fee-rate'      , 'cfgValue' : '3',  'cfgDesc':'درصد عوارض'},
+        {'cfgId' :16, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : 'partners'      , 'cfgValue' : '8',  'cfgDesc':'شرکا'},
+        {'cfgId' :17, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : 'cost'          , 'cfgValue' : '2',  'cfgDesc':'هزینه ها'},
+        {'cfgId' :18, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : 'bank-wage'     , 'cfgValue' : '31', 'cfgDesc':'کارمزد بانک'},
+        {'cfgId' :19, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : 'our_cheque'    , 'cfgValue' : '46', 'cfgDesc':'اسناد پرداختنی'},
+        {'cfgId' :20, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : 'other_cheque'  , 'cfgValue' : '44',  'cfgDesc':'اسناد دریافتنی'},
+        {'cfgId' :21, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : 'income'        , 'cfgValue' : '81', 'cfgDesc':'درآمد'},
+        {'cfgId' :22, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : 'co-address'    , 'cfgValue' : 'نشانی شرکت (قابل تنظیم در تنظیمات->پیکربندی',  'cfgDesc':'نشانی شرکت شما'},
+        {'cfgId' :23, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : 'co-economical-code'     , 'cfgValue' : 'کد اقتصادی',  'cfgDesc':'کد اقتصادی شما'},
+        {'cfgId' :24, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : 'co-national-code'       , 'cfgValue' : 'کد ملی',  'cfgDesc':'کد ملی شما'},
+        {'cfgId' :25, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : 'co-postal-code'         , 'cfgValue' : 'کد پستی',  'cfgDesc':'کد پستی شما'},
+        {'cfgId' :26, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : 'co-phone-number'        , 'cfgValue' : 'شماره تلفن',  'cfgDesc':'شماره تلفن شما'},
+        {'cfgId' :27, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : 'sell-adds'              , 'cfgValue' : '36',  'cfgDesc':'اضافات فروش'},
+        {'cfgId' :28, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : 'buy-adds'               , 'cfgValue' : '32',  'cfgDesc':'اضافات خرید'},
+        {'cfgId' :29, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : 'inventories'            , 'cfgValue' : '70',  'cfgDesc':'موجودی اولیه'},
+        {'cfgId' :30, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : 'fund'                   , 'cfgValue' : '21',  'cfgDesc':'سرمایه اولیه'},
+        {'cfgId' :31, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : 'float'                  , 'cfgValue' : '68',  'cfgDesc':'اسناد در جریان وصول'},
+        {'cfgId' :32, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : 'purchase-return'        , 'cfgValue' : '42',  'cfgDesc':'برگشت از خرید'},
+        {'cfgId' :33, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : 'sale-return'            , 'cfgValue' : '43',  'cfgDesc':'برگشت از فروش'}
     )
 
 def downgrade(migrate_engine):

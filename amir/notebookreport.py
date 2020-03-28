@@ -9,7 +9,6 @@ from sqlalchemy.orm.util import outerjoin
 from sqlalchemy.sql import between
 from sqlalchemy.sql.functions import sum
 
-
 from . import numberentry
 from . import subjects
 from . import utility
@@ -21,10 +20,6 @@ from .share import share
 from .helpers import get_builder
 from .previewreport import PreviewReport
 from .weasyprintreport import *
-
-import sys
-if sys.version_info > (3,):
-    unicode = str
 
 # config = share.config
 
@@ -131,7 +126,7 @@ class NotebookReport(PreviewReport):
                 query1 = query1.filter(Subject.code.startswith(code))
                 query2 = query2.filter(Subject.code.startswith(code))
 
-        searchkey = unicode(self.builder.get_object("searchentry").get_text())
+        searchkey = self.builder.get_object("searchentry").get_text()
         if searchkey != "":
             try:
                 value = int(utility.convertToLatin(searchkey))
@@ -165,7 +160,7 @@ class NotebookReport(PreviewReport):
                         Bill.date.asc(), Bill.number.asc())
                     query2 = query2.filter(Bill.date < fdate)
                 else:
-                    if unicode(self.fnum.get_text()) == '' or unicode(self.tnum.get_text()) == '':
+                    if self.fnum.get_text() == '' or str(self.tnum.get_text()) == '':
                         msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK,
                                                    _("One of document numbers are empty."))
                         msgbox.set_title(_("Invalid document order"))
@@ -173,8 +168,8 @@ class NotebookReport(PreviewReport):
                         msgbox.destroy()
                         return
 
-                    fnumber = int(unicode(self.fnum.get_text()))
-                    tnumber = int(unicode(self.tnum.get_text()))
+                    fnumber = int(self.fnum.get_text())
+                    tnumber = int(self.tnum.get_text())
                     if tnumber < fnumber:
                         msgbox = Gtk.MessageDialog(self.window, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK,
                                                    _("Second document number shouldn't be greater than the first one."))

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 
 from . import product
@@ -26,10 +25,6 @@ from gi.repository import Gdk
 from .payments import Payments
 from .weasyprintreport import *
 #import logging
-
-import sys
-if sys.version_info > (3,):
-    unicode = str
 
 # config = share.config
 
@@ -417,15 +412,13 @@ class Factor(Payments):
             if result != Gtk.ResponseType.OK:
                 return
         code = self.treestore.get_value(iter1, 0)
-        factor = share.config.db.session.query(Factors).filter(
-            Factors.Id == unicode(code)).first()
-        TransactionId = factor  . Id
+        factor = share.config.db.session.query(Factors).filter(Factors.Id == code).first()
+        TransactionId = factor.Id
 
         # correcting products' count table
-        factorItems = self.session.query(FactorItems) . filter(
-            FactorItems.factorId == TransactionId).all()
+        factorItems = self.session.query(FactorItems).filter(FactorItems.factorId == TransactionId).all()
         for factorItem in factorItems:
-            product = self.session.query(Products) .filter(
+            product = self.session.query(Products).filter(
                 Products.id == factorItem.productId).first()
             if self.sell:
                 product.quantity += factorItem.qnty
@@ -451,7 +444,7 @@ class Factor(Payments):
                 Bill).filter(Bill.id == bill_id).first())
 
         Transaction = share.config.db.session.query(Factors).filter(
-            Factors.Id == unicode(code)).first()
+            Factors.Id == str(code)).first()
         share.config.db.session.delete(Transaction)
         share.config.db.session.commit()
         self.treestore.remove(iter1)
@@ -470,7 +463,7 @@ class Factor(Payments):
         self.setCustomerName()
 
     def setCustomerName(self, sender=0, ev=0):
-        ccode = unicode(self.customerEntry.get_text())
+        ccode = self.customerEntry.get_text()
         query = self.session.query(Customers).select_from(Customers)
         customer = query.filter(Customers.custCode == ccode).first()
         if customer:
@@ -485,10 +478,10 @@ class Factor(Payments):
         obj.connect("product-selected", self.proSelected)
         code = self.proVal.get_text()
         group = self.productGroup.get_text()
-        obj.highlightProduct(unicode(code), unicode(group))
+        obj.highlightProduct(code, group)
 
     def proSelected(self, sender=0, id=0, code=0):
-        code = unicode(code)
+        code = str(code)
         selectedPro = self.session.query(
             Products).filter(Products.id == id).first()
         id = selectedPro.id
@@ -513,8 +506,8 @@ class Factor(Payments):
 
         self.discountEntry.set_text(utility.LN(discnt, comma=False))
         self.stndrdPVal.set_text(utility.LN(sellPrc))
-        self.productGroup .set_text(unicode(accGroup))
-        self.proNameLbl.set_text(unicode(name))
+        self.productGroup.set_text(str(accGroup))
+        self.proNameLbl.set_text(str(name))
         self.proNameLbl.show()
 
         self.avQntyVal.show()
@@ -522,7 +515,7 @@ class Factor(Payments):
         self.stndrdPVal.show()
 
         if sender:
-            self.proVal.set_text(unicode(code))
+            self.proVal.set_text(str(code))
             sender.window.destroy()
 
     def addProduct(self, sender=0, edit=None):
@@ -570,8 +563,8 @@ class Factor(Payments):
 
         if self.edtSellFlg:
             (No, pName, qnty, untPrc, ttlPrc, untDisc, ttlDisc, desc, pId) = edit
-            pId = unicode(pId)
-            pName = unicode(pName)
+            pId = str(pId)
+            pName = str(pName)
             pro = self.session.query(Products).filter(
                 Products.id == pId).first()
             self.proVal.set_text(pro.code)
@@ -585,7 +578,7 @@ class Factor(Payments):
             self.descVal.set_text(desc)
 
             self.proNameLbl.set_text(pName)
-            self.productGroup.set_text(unicode(pro.accGroup))
+            self.productGroup.set_text(str(pro.accGroup))
             self.avQntyVal.set_text(utility.LN(pro.quantity))
             self.stndrdPVal.set_text(utility.LN(pro.sellingPrice))
 
@@ -626,7 +619,7 @@ class Factor(Payments):
     def removeProduct(self, sender):
         delIter = self.factorTreeView.get_selection().get_selected()[1]
         if delIter:
-            No = unicode(self.sellListStore.get(delIter, 0)[0])
+            No = str(self.sellListStore.get(delIter, 0)[0])
             msg = _("Are You sure you want to delete the sell row number %s?") % No
             msgBox = Gtk.MessageDialog(
                 self.mainDlg, Gtk.DialogFlags.MODAL, Gtk.MessageType.QUESTION, Gtk.ButtonsType.OK_CANCEL, msg)
@@ -689,9 +682,9 @@ class Factor(Payments):
         return True
 
     def addProToList(self, sender=0):
-        proCd = unicode(self.proVal.get_text())
+        proCd = self.proVal.get_text()
         product = self.session.query(Products).filter(and_(
-            Products.code == proCd, Products.accGroup == unicode(self.productGroup.get_text()))).first()
+            Products.code == proCd, Products.accGroup == str(self.productGroup.get_text()))).first()
         if not product:
             errorstr = _(
                 "The \"Product Code\" which you selected is not a valid Code.")
@@ -871,8 +864,8 @@ class Factor(Payments):
         self.calculateBalance()
 
     def validatePCode(self, sender, event):
-        productCd = unicode(self.proVal.get_text())
-        productGroup = unicode(self.productGroup.get_text())
+        productCd = self.proVal.get_text()
+        productGroup = self.productGroup.get_text()
         if self.product_code != productCd:
             product = self.session.query(Products).filter(
                 and_(Products.id == productCd, Products.accGroup == productGroup)).first()
@@ -887,8 +880,8 @@ class Factor(Payments):
                 self.proVal.modify_base(Gtk.StateType.NORMAL, self.whiteClr)
                 self.proVal.set_tooltip_text("")
                 # self.proSelected(code=product.code)
-                self.proNameLbl.set_text(unicode(product.name))
-                self.productGroup.set_text(unicode(product.accGroup))
+                self.proNameLbl.set_text(product.name)
+                self.productGroup.set_text(product.accGroup)
                 self.product = product
             self.product_code = productCd
 
@@ -1007,9 +1000,9 @@ class Factor(Payments):
                 disc = utility.convertToLatin(self.discountEntry.get_text())
                 discval = 0
                 if disc != "":
-                    pindex = disc.find(u'%')
+                    pindex = disc.find('%')
                     if pindex == 0 or pindex == len(disc) - 1:
-                        discp = float(disc.strip(u'%'))
+                        discp = float(disc.strip('%'))
 
                         if discp > 100 or discp < 0:
                             self.discountEntry.modify_base(
@@ -1059,11 +1052,11 @@ class Factor(Payments):
 
     def calcDiscount(self, formula, qnty, sell_price):
         discnt = 0
-        flist = formula.split(u',')
+        flist = formula.split(',')
         for elm in flist:
             if elm != '':
-                partlist = elm.split(u':')
-                numlist = partlist[0].split(u'-')
+                partlist = elm.split(':')
+                numlist = partlist[0].split('-')
                 if len(numlist) == 1:
                     firstnum = float(numlist[0])
                     if qnty > firstnum:
@@ -1131,7 +1124,7 @@ class Factor(Payments):
         return False
 
     def checkFullFactor(self):
-        cust_code = unicode(self.customerEntry.get_text())
+        cust_code = self.customerEntry.get_text()
         query = self.session.query(Customers).select_from(Customers)
         cust = query.filter(Customers.custCode == cust_code).first()
         if not cust:
@@ -1155,7 +1148,7 @@ class Factor(Payments):
         if not self.subPreInv:
             pro_dic = {}
             for exch in self.sellListStore:
-                pro_id = unicode(exch[8])
+                pro_id = str(exch[8])
                 pro_qnty = utility.getFloat(exch[2])
 
                 if pro_id in pro_dic:
@@ -1183,10 +1176,8 @@ class Factor(Payments):
         self.subAdd = self.additionsEntry.get_float()
         self.subSub = self.subsEntry.get_float()
         self.subShpDate = self.shippedDate.getDateObject()
-        self.subShipVia = unicode(
-            self.builder.get_object("shipViaEntry").get_text())
-        self.subDesc = unicode(
-            self.builder.get_object("transDescEntry").get_text())
+        self.subShipVia = self.builder.get_object("shipViaEntry").get_text()
+        self.subDesc = self.builder.get_object("transDescEntry").get_text()
         self.totalFactor = utility.getFloat(self.payableAmntEntry.get_text())
         self.totalDisc = utility.getFloat(self.totalDiscsEntry.get_text())
         self.totalPayment = utility.getFloat(
@@ -1231,7 +1222,7 @@ class Factor(Payments):
                 foundFlag = False
                 for exch in self.sellListStore:  # The new sell list store
                     #query = self.session.query(Products)
-                    #pid = query.filter(Products.name == unicode(exch[1])).first().id
+                    #pid = query.filter(Products.name == str(exch[1])).first().id
                     pid = exch[8]
                     if pid == oldProduct.productId:
                         foundFlag = True
@@ -1250,7 +1241,7 @@ class Factor(Payments):
                         FactorItems.productId == oldProduct.productId).delete()
 
         for exch in self.sellListStore:  # The new sell list store
-            # query.filter(Products.name == unicode(exch[1])).first().id
+            # query.filter(Products.name == str(exch[1])).first().id
             pid = exch[8]
             query = self.session.query(Products).filter(Products.id == pid)
             pro = query.first()
@@ -1270,7 +1261,7 @@ class Factor(Payments):
                     factorItem = FactorItems(utility.getInt(exch[0]), pid, utility.getFloat(exch[2]),
                                              utility.getFloat(
                                                  exch[3]), utility.getFloat(exch[5]),
-                                             self.Id, unicode(exch[7]))
+                                             self.Id, str(exch[7]))
                     self.session.add(factorItem)
                     if factorType in (1, 2):
                         pro.quantity -= nowfactorItemquantity
@@ -1282,7 +1273,7 @@ class Factor(Payments):
                     nowfactorItemquantity = utility.getFloat(exch[2])
 
                     Item.update({FactorItems.number: utility.getInt(exch[0]), FactorItems.productId: pid, FactorItems.qnty: utility.getFloat(exch[2]),
-                                 FactorItems.untPrc: utility.getFloat(exch[3]),      FactorItems.untDisc: utility.getFloat(exch[5]), FactorItems.desc: unicode(exch[7])})
+                                 FactorItems.untPrc: utility.getFloat(exch[3]),      FactorItems.untDisc: utility.getFloat(exch[5]), FactorItems.desc: str(exch[7])})
 
                     if lastfactorItemquantity != nowfactorItemquantity:
                         if factorType in (1, 2):
@@ -1297,7 +1288,7 @@ class Factor(Payments):
                 factorItem = FactorItems(utility.getInt(exch[0]), pid, utility.getFloat(exch[2]),
                                          utility.getFloat(
                                              exch[3]), utility.getFloat(exch[5]),
-                                         self.Id, unicode(exch[7]))
+                                         self.Id, str(exch[7]))
                 self.session.add(factorItem)
 
                 # ---- Updating the products quantity
@@ -1312,7 +1303,7 @@ class Factor(Payments):
         self.session.commit()
 
     def registerDocument(self):
-        cust_code = unicode(self.customerEntry.get_text())
+        cust_code = self.customerEntry.get_text()
         cust = self.session.query(Customers).filter(
             Customers.custCode == cust_code).first()
 
@@ -1321,14 +1312,14 @@ class Factor(Payments):
         for cheque in self.paymentManager.chequesList:
             if cheque.chqStatus == 5:
                 #cl_cheque.update_status(sp_cheque.chqId,5 , self.custId)
-                self.Document.add_cheque(dbconf.get_int(
-                    'other_cheque'), self.custSubj, -cheque.chqAmount, unicode(_('spended')), cheque.chqId)
+                self.Document.add_cheque(dbconf.get_int('other_cheque'), self.custSubj,
+                    -cheque.chqAmount, _('spended'), cheque.chqId)
             elif not self.sell:  # buying - our cheque
-                self.Document.add_cheque(dbconf.get_int(
-                    'our_cheque'), self.custSubj, cheque.chqAmount, cheque.chqDesc, cheque.chqId)
+                self.Document.add_cheque(dbconf.get_int('our_cheque'), self.custSubj,
+                    cheque.chqAmount, cheque.chqDesc, cheque.chqId)
             else:  # selling - their cheque
-                self.Document.add_cheque(dbconf.get_int(
-                    'other_cheque'), self.custSubj, -cheque.chqAmount, cheque.chqDesc, cheque.chqId)
+                self.Document.add_cheque(dbconf.get_int('other_cheque'),
+                    self.custSubj, -cheque.chqAmount, cheque.chqDesc, cheque.chqId)
 
             # add cheque history
             chequeHistoryChequeId = cheque.chqId
@@ -1610,7 +1601,7 @@ class Factor(Payments):
                             <span>' + utility.convertToPersian(str(unitPrice)) + '</span> \
                         </td> \
                         <td class="border center" style="border-right: none;" > \
-                            <span style="text-align: right;">'+unicode(sell.Products.uMeasurement)+'</span> \
+                            <span style="text-align: right;">' + sell.Products.uMeasurement + '</span> \
                         </td> \
                         <td class="border center" style="border-right: none;" > \
                             <span>' + utility.convertToPersian(str(quantity)) + '</span> \
@@ -1781,7 +1772,7 @@ class Factor(Payments):
             query = self.session.query(ProductGroups)
             query = query.select_from(
                 outerjoin(Products, ProductGroups, Products.accGroup == ProductGroups.id))
-            result = query.filter(Products.id == unicode(exch[8])).first()
+            result = query.filter(Products.id == str(exch[8])).first()
             if not self.returning:
                 sellid = result.sellId if self.sell else result.buyId
                 exch_totalAmnt = utility.getFloat(

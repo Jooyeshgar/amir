@@ -23,10 +23,6 @@ import gi
 from gi.repository import Gtk
 from gi.repository import GObject
 
-import sys
-if sys.version_info > (3,):
-    unicode = str
-
 gi.require_version('Gtk', '3.0')
 # config = share.config
 
@@ -152,8 +148,8 @@ class Customer(customergroup.Group):
                     showBalance = "(" + utility.LN(abs(balance)) + ")"
                 else:
                     showBalance = utility.LN(balance)
-                self.treestore.append(grouprow, (utility.readNumber(c.custCode), unicode(
-                    c.custName), utility.LN(debt), utility.LN(credit), showBalance))
+                self.treestore.append(grouprow, (utility.readNumber(c.custCode), str(c.custName),
+                    utility.LN(debt), utility.LN(credit), showBalance))
 
         self.window.show_all()
 
@@ -236,33 +232,23 @@ class Customer(customergroup.Group):
         custCode = utility.convertToLatin(
             self.builder.get_object("custCodeEntry").get_text())
         custGrp = self.custgrpentry.get_int()
-        custName = unicode(self.builder.get_object("custNameEntry").get_text())
-        custEcnmcsCode = unicode(self.builder.get_object(
-            "custEcnmcsCodeEntry").get_text())
-        custPersonalCode = unicode(self.builder.get_object(
-            "custPrsnalCodeEntry").get_text())
+        custName = self.builder.get_object("custNameEntry").get_text()
+        custEcnmcsCode = self.builder.get_object("custEcnmcsCodeEntry").get_text()
+        custPersonalCode = self.builder.get_object("custPrsnalCodeEntry").get_text()
 
-        custPhone = unicode(self.builder.get_object(
-            "custPhoneEntry").get_text())
-        custCell = unicode(self.builder.get_object("custCellEntry").get_text())
-        custFax = unicode(self.builder.get_object("custFaxEntry").get_text())
-        custWebPage = unicode(self.builder.get_object(
-            "custWebPageEntry").get_text())
-        custEmail = unicode(self.builder.get_object(
-            "custEmailEntry").get_text())
-        custRepViaEmail = self.builder.get_object(
-            "custRepViaEmailChk").get_active()
-        custAddress = unicode(self.builder.get_object(
-            "custAddressEntry").get_text())
-        custPostalCode = unicode(self.builder.get_object(
-            "cusPostalCodeEntry").get_text())
+        custPhone = self.builder.get_object("custPhoneEntry").get_text()
+        custCell = self.builder.get_object("custCellEntry").get_text()
+        custFax = self.builder.get_object("custFaxEntry").get_text()
+        custWebPage = self.builder.get_object("custWebPageEntry").get_text()
+        custEmail = self.builder.get_object("custEmailEntry").get_text()
+        custRepViaEmail = self.builder.get_object("custRepViaEmailChk").get_active()
+        custAddress = self.builder.get_object("custAddressEntry").get_text()
+        custPostalCode = self.builder.get_object("cusPostalCodeEntry").get_text()
 
-        callResponsible = unicode(self.builder.get_object(
-            "callResponsibleEntry").get_text())
-        custConnector = unicode(self.builder.get_object(
-            "custConnectorEntry").get_text())
+        callResponsible = self.builder.get_object("callResponsibleEntry").get_text()
+        custConnector = self.builder.get_object("custConnectorEntry").get_text()
 
-        custDesc = unicode(self.builder.get_object("custDescEntry").get_text())
+        custDesc = self.builder.get_object("custDescEntry").get_text()
         # ----------------------------------
         custTypeBuyer = self.builder.get_object(
             "custTypeBuyerChk").get_active()
@@ -275,23 +261,16 @@ class Customer(customergroup.Group):
         custCommission = self.boxCommissionRateEntry.get_float()
         custDiscRate = self.boxDiscRateEntry.get_float()
         custMarked = self.builder.get_object("markedChk").get_active()
-        custReason = unicode(self.builder.get_object(
-            "markedReasonEntry").get_text())
+        custReason = self.builder.get_object("markedReasonEntry").get_text()
         # ----------------------------------
         # custBalance         = self.boxBalanceEntry.get_float()
         # custCredit          = self.boxCreditEntry.get_float()
-        custAccName1 = unicode(self.builder.get_object(
-            "custAccName1Entry").get_text())
-        custAccNo1 = unicode(self.builder.get_object(
-            "custAccNo1Entry").get_text())
-        custAccBank1 = unicode(self.builder.get_object(
-            "custAccBank1Entry").get_text())
-        custAccName2 = unicode(self.builder.get_object(
-            "custAccName2Entry").get_text())
-        custAccNo2 = unicode(self.builder.get_object(
-            "custAccNo2Entry").get_text())
-        custAccBank2 = unicode(self.builder.get_object(
-            "custAccBank2Entry").get_text())
+        custAccName1 = self.builder.get_object("custAccName1Entry").get_text()
+        custAccNo1 = self.builder.get_object("custAccNo1Entry").get_text()
+        custAccBank1 = self.builder.get_object("custAccBank1Entry").get_text()
+        custAccName2 = self.builder.get_object("custAccName2Entry").get_text()
+        custAccNo2 = self.builder.get_object("custAccNo2Entry").get_text()
+        custAccBank2 = self.builder.get_object("custAccBank2Entry").get_text()
 
         msg = ""
         if custCode == "":
@@ -533,7 +512,7 @@ class Customer(customergroup.Group):
             else:
                 subjectCode = share.config.db.session.query(Subject).filter(
                     Subject.id == dbconf.get_int('custSubject')).first().code
-                subjectCode = unicode(subjectCode) + unicode(code)
+                subjectCode = str(subjectCode) + str(code)
                 # TODO check if this customer is used somewhere else
 
                 share.config.db.session.delete(customer)
@@ -558,7 +537,7 @@ class Customer(customergroup.Group):
         selection = self.treeview.get_selection()
         iter = selection.get_selected()[1]
         pcode = ""
-        if (iter != None and self.treestore.iter_parent(iter) == None):
+        if iter != None and self.treestore.iter_parent(iter) == None:
             pcode = self.treestore.get_value(iter, 0)
         self.addNewCustomer(sender, pcode)
 

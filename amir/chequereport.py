@@ -23,10 +23,6 @@ from gettext import gettext as _
 
 import logging
 
-import sys
-if sys.version_info > (3,):
-    unicode = str
-
 dbconf = dbconfig.dbConfig()
 # config = share.config
 
@@ -237,8 +233,8 @@ class ChequeReport(GObject.GObject):
             else:
                 chqAccount = self.bankaccounts_class.get_bank_name(
                     cheque.chqAccount)
-            addingRow = (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial), str(
-                cust), str(chqAccount), str(cheque.chqDesc), str(chqBill), str(unicode(self.chequeStatus[cheque.chqStatus])))
+            addingRow = (str(cheque.chqId), str(cheque.chqAmount), str(chqWrtDate), str(chqDueDate), str(cheque.chqSerial),
+                str(cust), str(chqAccount), str(cheque.chqDesc), str(chqBill), str(self.chequeStatus[cheque.chqStatus]))
             if cheque.chqDelete == False:
                 if stat in [3, 4, 7, 9]:
                     self.treestoreIncoming.append(None, addingRow)
@@ -250,7 +246,7 @@ class ChequeReport(GObject.GObject):
                 if stat == 1:
                     self.treestoreNotPassed.append(None, addingRow)
                     totalPass += cheque.chqAmount
-                elif (stat == 2):
+                elif stat == 2:
                     self.treestorePassed.append(None, addingRow)
                     totalnotpass += cheque.chqAmount
                 elif stat == 3:
@@ -371,8 +367,8 @@ class ChequeReport(GObject.GObject):
         #     bank_name = self.bankaccounts_class.get_bank_name(bank)
         # else:
         #     bank_name = self.bankaccounts_class.get_account(bank).accName
-        serial = unicode(self.serialNoEntry.get_text())
-        pymntDesc = unicode(self.pymntDescEntry.get_text())
+        serial = self.serialNoEntry.get_text()
+        pymntDesc = self.pymntDescEntry.get_text()
         payer = self.payerEntry.get_text()
         pymnt_str = utility.LN(pymntAmnt)
 
@@ -657,8 +653,8 @@ class ChequeReport(GObject.GObject):
                 chqBill = chqBill.bill_id
             else:
                 chqBill = 0
-            self.treestoreHistory.append(None, (str(chequeHistory.ChequeId), str(chequeHistory.Amount), str(chqWrtDate), str(chqDueDate), str(chequeHistory.Serial), str(clear), str(
-                cust), str(chequeHistory.Account), str(chequeHistory.TransId), str(chequeHistory.Desc), str(chequeHistory.Date), str(chqBill), str(self.chequeStatus[chequeHistory.Status])))
+            self.treestoreHistory.append(None, (str(chequeHistory.ChequeId), str(chequeHistory.Amount), str(chqWrtDate), str(chqDueDate), str(chequeHistory.Serial), str(clear),
+                str(cust), str(chequeHistory.Account), str(chequeHistory.TransId), str(chequeHistory.Desc), str(chequeHistory.Date), str(chqBill), str(self.chequeStatus[chequeHistory.Status])))
             self.historywindow.show_all()
 
     def on_select_cell(self, sender=0):
@@ -895,7 +891,7 @@ class ChequeReport(GObject.GObject):
         self.setCustomerName()
 
     def setCustomerName(self, sender=0, ev=0):
-        ccode = unicode(self.builder.get_object("payerNameEntry").get_text())
+        ccode = self.builder.get_object("payerNameEntry").get_text()
         query = share.config.db.session.query(Customers).select_from(Customers)
         customer = query.filter(Customers.custCode == ccode).first()
         self.builder.get_object("customerNameLbl").set_text("")

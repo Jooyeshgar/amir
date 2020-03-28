@@ -96,7 +96,7 @@ class Group(GObject.GObject):
             grpcode = self.grpCodeEntry.get_text()
             grpname = self.builder.get_object("grpNameEntry").get_text()
             grpdesc = self.builder.get_object("grpDescEntry").get_text()
-            self.saveCustGroup(grpcode, str(grpname), str(grpdesc), None)
+            self.saveCustGroup(grpcode, grpname, grpdesc, None)
 
         dialog.hide()
 
@@ -126,8 +126,7 @@ class Group(GObject.GObject):
                 grpcode = self.grpCodeEntry.get_text()
                 grpname = self.builder.get_object("grpNameEntry").get_text()
                 grpdesc = self.builder.get_object("grpDescEntry").get_text()
-                self.saveCustGroup(grpcode, str(
-                    grpname), str(grpdesc), iter)
+                self.saveCustGroup(grpcode, str(grpname), str(grpdesc), iter)
 
             dialog.hide()
 
@@ -228,7 +227,6 @@ class Group(GObject.GObject):
         self.treestore.set(treeiter, 0, data[0], 1, data[1], 2, data[2])
 
     def highlightGroup(self, code):
-        #        code = code.decode('utf-8')
         iter = self.treestore.get_iter_first()
         pre = iter
 

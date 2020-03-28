@@ -13,9 +13,6 @@ from . import customers
 from . import product
 from gi.repository import Gdk
 
-import sys
-if sys.version_info > (3,):
-    unicode = str
 
 # config = share.config
 
@@ -74,10 +71,10 @@ class CardexReport:
         if prod:
             code = prod.code
             group = prod.accGroup
-            obj.highlightProduct(unicode(code), unicode(group))
+            obj.highlightProduct(code, group)
 
     def proSelected(self, sender=0, id=0, code=0):
-        id = unicode(id)
+        id = str(id)
         if sender:
             self.proVal.set_text(id)
             sender.window.destroy()
@@ -121,7 +118,7 @@ class CardexReport:
             self.builder.get_object("purchacePriceTextView").get_buffer().set_text(
                 utility.LN(float(product.purchacePrice)))
             self.builder.get_object("dicountFormulaTextView").get_buffer().set_text(
-                str(product.discountFormula))
+                product.discountFormula)
             self.builder.get_object("sellingPriceTextView").get_buffer().set_text(
                 utility.LN(float(product.sellingPrice)))
             self.builder.get_object(
@@ -186,7 +183,7 @@ class CardexReport:
 
                 date = dateToString(factor.Factors.tDate)
                 self.rows.append((date, ftype, quantity, unitPrice, totalPrice, utility.LN(productCount), utility.readNumber(
-                    factor.Factors.Code), unicode(factor.Customers.custName), unicode(factor.Customers.custCode)))
+                    factor.Factors.Code), factor.Customers.custName, factor.Customers.custCode))
 
             for row in self.rows:
                 self.treestore.append(None,  row)

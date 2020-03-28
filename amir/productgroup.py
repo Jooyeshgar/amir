@@ -21,9 +21,6 @@ from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import GObject
 
-import sys
-if sys.version_info > (3,):
-    unicode = str
 
 # config = share.config
 
@@ -112,8 +109,8 @@ class ProductGroup(GObject.GObject):
                 #code = utility.convertToPersian(code)
                 buyId = utility.convertToPersian(buyId)
                 sellId = utility.convertToPersian(sellId)
-            self.treestore.append(None, (utility.readNumber(code), str(
-                group.name), utility.readNumber(buyId), utility.readNumber(sellId)))
+            self.treestore.append(None, (utility.readNumber(code), str(group.name),
+                utility.readNumber(buyId), utility.readNumber(sellId)))
 
         self.window.show_all()
         self.window.grab_focus()
@@ -134,8 +131,8 @@ class ProductGroup(GObject.GObject):
                 grpname = self.builder.get_object("groupNameEntry").get_text()
                 grpbuycode = self.buyCodeEntry.get_text()
                 grpsellcode = self.sellCodeEntry.get_text()
-                success = self.saveProductGroup(unicode(grpcode), unicode(
-                    grpname), grpbuycode, grpsellcode, None)
+                success = self.saveProductGroup(str(grpcode), str(grpname),
+                    grpbuycode, grpsellcode, None)
             else:
                 break
 
@@ -148,7 +145,7 @@ class ProductGroup(GObject.GObject):
         iter = selection.get_selected()[1]
 
         if iter != None:
-            grpcode = unicode(self.treestore.get(iter, 0)[0])
+            grpcode = str(self.treestore.get(iter, 0)[0])
             # if config.digittype == 1:
             #code = utility.convertToLatin(grpcode)
             # else:
@@ -183,8 +180,8 @@ class ProductGroup(GObject.GObject):
                         "groupNameEntry").get_text()
                     grpbuycode = self.buyCodeEntry.get_text()
                     grpsellcode = self.sellCodeEntry.get_text()
-                    success = self.saveProductGroup(unicode(grpcode), unicode(
-                        grpname), grpbuycode, grpsellcode, iter)
+                    success = self.saveProductGroup(str(grpcode), str(grpname),
+                        grpbuycode, grpsellcode, iter)
                 else:
                     break
 
@@ -195,7 +192,7 @@ class ProductGroup(GObject.GObject):
         iter = selection.get_selected()[1]
         if iter != None:
             #code = utility.convertToLatin(self.treestore.get(iter, 0)[0])
-            code = unicode(self.treestore.get(iter, 0)[0])
+            code = str(self.treestore.get(iter, 0)[0])
 
             query = share.config.db.session.query(ProductGroups, count(Products.id))
             query = query.select_from(
@@ -233,7 +230,7 @@ class ProductGroup(GObject.GObject):
             return False
 
         if edititer != None:
-            pcode = unicode(self.treestore.get_value(edititer, 0))
+            pcode = str(self.treestore.get_value(edititer, 0))
             #pcode = utility.convertToLatin(pcode)
             query = share.config.db.session.query(
                 ProductGroups).select_from(ProductGroups)
@@ -338,7 +335,7 @@ class ProductGroup(GObject.GObject):
 
     def selectGroupFromList(self, treeview, path, view_column):
         iter = self.treestore.get_iter(path)
-        code = unicode(self.treestore.get_value(iter, 0))
+        code = str(self.treestore.get_value(iter, 0))
 
         query = share.config.db.session.query(
             ProductGroups).select_from(ProductGroups)

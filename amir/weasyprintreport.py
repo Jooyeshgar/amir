@@ -80,8 +80,7 @@ class WeasyprintReport:
         hasWidth = True if len(col_wid) else False
         col_width = [None] * len(report_header)
         for i in range(0, len(report_header)):
-            col_width[i] = 'style="width:' + \
-                str(col_wid[i]) + 'pt" ' if hasWidth else ""
+            col_width[i] = 'style="width:' + str(col_wid[i]) + 'pt" ' if hasWidth else ""
         i = 0
         if share.config.locale == 'en_US':
             text_align = "left"

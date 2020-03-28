@@ -17,10 +17,6 @@ from .share import share
 from .helpers import get_builder
 from amir.share import Share
 
-import sys
-if sys.version_info > (3,):
-    unicode = str
-
 # config = share.config
 
 
@@ -107,17 +103,17 @@ class Subjects(GObject.GObject):
                 and_(Subject.lft >= a.lft, Subject.lft <= a.rgt)).first()
             subject_sum = subject_sum[0]
 
-            if(subject_sum == None):
+            if subject_sum == None:
                 subject_sum = LN("0")
             else:
-                if(subject_sum < 0):
+                if subject_sum < 0:
                     subject_sum = "( -" + LN(-subject_sum) + " )"
                 else:
                     subject_sum = LN(subject_sum)
 
             iter = self.treestore.append(
                 None, (code, a[1], type, subject_sum, permanent))
-            if (a[5] != 0 and ledgers_only == False):
+            if a[5] != 0 and ledgers_only == False:
                 # Add empty subledger to show expander for ledgers which have chidren
                 self.treestore.append(iter, ("", "", "", "", ""))
 
@@ -423,7 +419,7 @@ class Subjects(GObject.GObject):
                     rowcount = rowcounts[0]
                     msg = _("The type of this subject can not be changed to 'debtor', Because there are \
                             %d documents that use it as creditor.") % rowcount
-                if (rowcount > 0):
+                if rowcount > 0:
                     msgbox = Gtk.MessageDialog(
                         widget, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.CLOSE, msg)
                     msgbox.set_title(_("Can not change subject type"))
@@ -557,10 +553,10 @@ class Subjects(GObject.GObject):
                     subject_sum = subject_sum.filter(
                         and_(Subject.lft >= row[4], Subject.lft <= row[5])).first()
                     subject_sum = subject_sum[0]
-                    if(subject_sum == None):
+                    if subject_sum == None:
                         subject_sum = LN("0")
                     else:
-                        if(subject_sum < 0):
+                        if subject_sum < 0:
                             subject_sum = "(-" + LN(-subject_sum) + ")"
                         else:
                             subject_sum = LN(subject_sum)
@@ -592,7 +588,7 @@ class Subjects(GObject.GObject):
             return 1
 
     def searchName(self, sender):
-        name = unicode(self.builder.get_object('nameEntry').get_text())
+        name = self.builder.get_object('nameEntry').get_text()
         if name == "":
             self.treeview.collapse_all()
         code = share.config.db.session.query(Subject.code).filter(

@@ -9,16 +9,7 @@ from . import dbconfig
 from . import subjects
 from .share import share
 from .helpers import get_builder, comboInsertItems
-import sys
 import importlib
-try:
-    importlib.reload(sys)
-    sys.setdefaultencoding('utf-8')
-except:  # py3 most likely
-    pass  # nvm
-
-if sys.version_info > (3,):
-    unicode = str
 
 # config = share.config
 
@@ -492,7 +483,7 @@ class Setting(GObject.GObject):
                 val = conf.get_default(item[3])
             elif item[2] == True:
                 ids = ''
-                val = unicode(val)
+                val = str(val)
                 for name in val.split(','):
                     ids += '%d,' % sub.get_id_from_name(name)
                 val = ids[:-1]

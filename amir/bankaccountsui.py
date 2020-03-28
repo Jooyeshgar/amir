@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from . import class_bankaccounts
 from . import customers
 from . import helpers
@@ -8,10 +7,6 @@ from .database import Customers
 
 import glib
 from gi.repository import Gtk
-
-import sys
-if sys.version_info > (3,):
-    unicode = str
 
 # config = share.config
 
@@ -98,8 +93,8 @@ class BankAccountsUI:
             else:
                 accType = _("Savings Account")
             accBank = self.bankaccounts_class.get_bank_name(account.accBank)
-            model.set(iter, 0, unicode(account.accId), 1, account.accName, 2, unicode(
-                account.accNumber), 3, account.accOwner, 4, accType, 5, accBank)
+            model.set(iter, 0, str(account.accId), 1, account.accName, 2,
+                str(account.accNumber), 3, account.accOwner, 4, accType, 5, accBank)
         window.show_all()
     # add acount
 
@@ -189,8 +184,7 @@ class BankAccountsUI:
         msg = ''
         account_name = self.builder.get_object('account_name').get_text()
         account_number = self.builder.get_object('account_number').get_text()
-        account_type = self.builder.get_object(
-            'account_types_combo').get_active()
+        account_type = self.builder.get_object('account_types_combo').get_active()
         account_owner = self.builder.get_object('account_owner').get_text()
         bank_id = self.builder.get_object(
             'bank_names_combo').get_active()    # bankName Id
@@ -256,8 +250,8 @@ class BankAccountsUI:
             else:
                 accType = 'حساب پس انداز'
             bank_name = self.bankaccounts_class.get_bank_name(bank_id)
-            model.set(iter, 0, unicode(result), 1, account_name, 2,
-                      account_number, 3, account_owner, 4, accType, 5, bank_name)
+            model.set(iter, 0, str(result), 1, account_name, 2,
+                account_number, 3, account_owner, 4, accType, 5, bank_name)
            # glib.timeout_add_seconds(3, lambda w: w.destroy(), infobar)
         else:
             share.config.db.session.rollback()

@@ -26,9 +26,6 @@ from .helpers import get_builder, comboInsertItems
 
 import logging
 
-if sys.version_info > (3,):
-    unicode = str
-
 # config = share.config
 
 
@@ -327,8 +324,8 @@ class Payments(GObject.GObject):
             bank_name = self.bankaccounts_class.get_bank_name(bank)
         else:
             bank_name = self.bankaccounts_class.get_account(bank) .accName
-        serial = unicode(self.serialNoEntry.get_text())
-        pymntDesc = unicode(self.pymntDescEntry.get_text())
+        serial = self.serialNoEntry.get_text()
+        pymntDesc = self.pymntDescEntry.get_text()
         payer = self.payerEntry.get_text()
         iter = None
         pymnt_str = utility.LN(pymntAmnt)
@@ -358,9 +355,8 @@ class Payments(GObject.GObject):
             cheque.chqDesc = pymntDesc
 
             self.cheqListStore.set(iter, 2, self.customerNameLbl.get_text(), 3, pymnt_str,
-                                   4, wrtDate_str, 5, dueDte_str, 6, unicode(
-                                       bank_name), 7, serial, 8,
-                                   self.chequeStatus[status], 9, pymntDesc)
+                                   4, wrtDate_str, 5, dueDte_str, 6, str(bank_name), 7,
+                                   serial, 8, self.chequeStatus[status], 9, pymntDesc)
             self. lastChqID += 1
 
             self.chequesList[number-1] = Cheque(
@@ -395,8 +391,8 @@ class Payments(GObject.GObject):
                 chqId=self.lastChqID)
 
             self.session.add(cheque)
-            iter = self.cheqListStore.append((unicode(self.lastChqID), order, self.customerNameLbl.get_text(), pymnt_str, wrtDate_str,
-                                              dueDte_str, unicode(bank_name), serial, self.chequeStatus[status], pymntDesc))
+            iter = self.cheqListStore.append((str(self.lastChqID), order, self.customerNameLbl.get_text(), pymnt_str, wrtDate_str,
+                                              dueDte_str, str(bank_name), serial, self.chequeStatus[status], pymntDesc))
             self.chequesList .append(cheque)
 
             path = self.cheqListStore.get_path(iter)
@@ -529,7 +525,7 @@ class Payments(GObject.GObject):
             ch = cheque
             if wasSubmited:
                 ch_history = ChequeHistory(ch.chqId, ch.chqAmount, ch.chqWrtDate, ch.chqDueDate, ch.chqSerial,
-                                           ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, unicode(_("deleted")), date.today(), True)
+                                           ch.chqStatus, ch.chqCust, ch.chqAccount, ch.chqTransId, _("deleted"), date.today(), True)
 
             # self.session.delete(cheque)
             cheque.chqDelete = True

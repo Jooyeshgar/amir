@@ -25,9 +25,6 @@ import gi
 from gi.repository import Gtk
 from gi.repository import GObject
 
-if sys.version_info > (3,):
-    unicode = str
-
 # config = share.config
 
 gi.require_version('Gtk', '3.0')
@@ -172,7 +169,7 @@ class Product(productgroup.ProductGroup):
             Products.accGroup == accgrp).order_by(Products.code.desc()).first()
         if lastProCode:
             lastProCode = lastProCode.code
-        lastProCode = unicode(int(lastProCode)+1) if lastProCode else ""
+        lastProCode = str(int(lastProCode)+1) if lastProCode else ""
         self.builder.get_object("proCodeEntry").set_text(lastProCode)
         self.builder.get_object("accGrpEntry").set_text(accgrp)
         self.builder.get_object("proNameEntry").set_text("")
@@ -190,25 +187,18 @@ class Product(productgroup.ProductGroup):
         while not success:
             result = dialog.run()
             if result == 1:
-                code = unicode(self.builder.get_object(
-                    "proCodeEntry").get_text())
-                accgrp = unicode(self.builder.get_object(
-                    "accGrpEntry").get_text())
-                name = unicode(self.builder.get_object(
-                    "proNameEntry").get_text())
-                location = unicode(self.builder.get_object(
-                    "proLocEntry").get_text())
-                desc = unicode(self.builder.get_object(
-                    "proDescEntry").get_text())
-                formula = unicode(self.builder.get_object(
-                    "discFormulaEntry").get_text())
+                code = self.builder.get_object("proCodeEntry").get_text()
+                accgrp = self.builder.get_object("accGrpEntry").get_text()
+                name = self.builder.get_object("proNameEntry").get_text()
+                location = self.builder.get_object("proLocEntry").get_text()
+                desc = self.builder.get_object("proDescEntry").get_text()
+                formula = self.builder.get_object("discFormulaEntry").get_text()
                 quantity = self.qntyEntry.get_float()
                 q_warn = self.qntyWrnEntry.get_float()
                 p_price = self.purchPriceEntry.get_float()
                 s_price = self.sellPriceEntry.get_float()
                 oversell = self.builder.get_object("oversell").get_active()
-                measurement = unicode(
-                    self.builder.get_object("uMeasureEntry").get_text())
+                measurement = self.builder.get_object("uMeasureEntry").get_text()
                 success = self.saveProduct(
                     code, accgrp, name, location, desc, quantity, q_warn, p_price, s_price, oversell, formula, measurement)
             else:
@@ -271,26 +261,18 @@ class Product(productgroup.ProductGroup):
                 while not success:
                     result = dialog.run()
                     if result == 1:
-                        code = unicode(self.builder.get_object(
-                            "proCodeEntry").get_text())
-                        accgrp = unicode(self.builder.get_object(
-                            "accGrpEntry").get_text())
-                        name = unicode(self.builder.get_object(
-                            "proNameEntry").get_text())
-                        location = unicode(self.builder.get_object(
-                            "proLocEntry").get_text())
-                        desc = unicode(self.builder.get_object(
-                            "proDescEntry").get_text())
-                        formula = unicode(self.builder.get_object(
-                            "discFormulaEntry").get_text())
+                        code = self.builder.get_object("proCodeEntry").get_text()
+                        accgrp = self.builder.get_object("accGrpEntry").get_text()
+                        name = self.builder.get_object("proNameEntry").get_text()
+                        location = self.builder.get_object("proLocEntry").get_text()
+                        desc = self.builder.get_object("proDescEntry").get_text()
+                        formula = self.builder.get_object("discFormulaEntry").get_text()
                         quantity = self.qntyEntry.get_float()
                         q_warn = self.qntyWrnEntry.get_float()
                         p_price = self.purchPriceEntry.get_float()
                         s_price = self.sellPriceEntry.get_float()
-                        oversell = self.builder.get_object(
-                            "oversell").get_active()
-                        measurement = unicode(
-                            self.builder.get_object("uMeasureEntry").get_text())
+                        oversell = self.builder.get_object("oversell").get_active()
+                        measurement = self.builder.get_object("uMeasureEntry").get_text()
 
                         success = self.saveProduct(code, accgrp, name, location, desc, quantity,
                                                    q_warn, p_price, s_price, oversell, formula, measurement, id, iter)
@@ -342,12 +324,12 @@ class Product(productgroup.ProductGroup):
         firstnum = 0
         secnum = 0
         try:
-            flist = formula.split(u',')
+            flist = formula.split(',')
             for elm in flist:
                 if elm != '':
-                    partlist = elm.split(u':')
+                    partlist = elm.split(':')
                     price = float(partlist[1])
-                    numlist = partlist[0].split(u'-')
+                    numlist = partlist[0].split('-')
                     if len(numlist) > 0:
                         firstnum = float(numlist[0])
                         if firstnum < secnum:
@@ -474,7 +456,7 @@ class Product(productgroup.ProductGroup):
                 self.deleteProductGroup(sender)
             else:
                 # Iter points to a product
-                id = unicode(self.treestore.get_value(iter, 6))
+                id = str(self.treestore.get_value(iter, 6))
                 query = share.config.db.session.query(Products)
                 product = query.filter(Products.id == id).first()
 
@@ -499,8 +481,6 @@ class Product(productgroup.ProductGroup):
     def highlightProduct(self, code, group):
         iter = self.treestore.get_iter_first()
         if code != "":
-            code = code.decode('utf-8')
-
             query = share.config.db.session.query(ProductGroups)
             query = query.select_from(
                 outerjoin(ProductGroups, Products, ProductGroups.id == Products.accGroup))
@@ -512,8 +492,7 @@ class Product(productgroup.ProductGroup):
                 # First check parents to find related group
                 pre = iter
                 while iter:
-                    itercode = self.treestore.get_value(
-                        iter, 0).decode('utf-8')
+                    itercode = self.treestore.get_value(iter, 0)
                     if itercode < tcode:
                         pre = iter
                         iter = self.treestore.iter_next(iter)
@@ -554,7 +533,7 @@ class Product(productgroup.ProductGroup):
         obj.viewProductGroups()
 
         code = self.builder.get_object("accGrpEntry").get_text()
-        obj.highlightGroup(unicode(code))
+        obj.highlightGroup(code)
 
     def groupSelected(self, sender, id, code):
         self.builder.get_object("accGrpEntry").set_text(code)
@@ -563,7 +542,7 @@ class Product(productgroup.ProductGroup):
             Products.accGroup == code).order_by(Products.code.desc()).first()
         if lastProCode:
             lastProCode = lastProCode.code
-        lastProCode = unicode(int(lastProCode)+1) if lastProCode else ""
+        lastProCode = str(int(lastProCode)+1) if lastProCode else ""
         self.builder.get_object("proCodeEntry").set_text(lastProCode)
         sender.window.destroy()
 

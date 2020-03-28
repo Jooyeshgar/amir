@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 from sqlalchemy import *
 from migrate import *
@@ -249,78 +248,78 @@ def upgrade(migrate_engine):
         # 1 : Entry
         # 2 : Entry (Single Int from Subjects)
         # 3 : Entry (Multi  Int from Subjects)
-        {'cfgId' : 1, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : u'co-name'       , 'cfgValue' : u'Enter Company Name',
-            'cfgDesc' : u'Enter Company name here'},
-        {'cfgId' : 2, 'cfgType' : 0, 'cfgCat' : 0, 'cfgKey' : u'co-logo'       , 'cfgValue' : u'',
-            'cfgDesc' : u'Select Colpany logo'},
-        {'cfgId' : 3, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'custSubject'   , 'cfgValue' : u'4',
-            'cfgDesc' : u'Enter here'},
-        {'cfgId' : 4, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'bank'          , 'cfgValue' : u'1',
-            'cfgDesc' : u'Enter here'},
-        {'cfgId' : 5, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'cash'          , 'cfgValue' : u'3',
-            'cfgDesc' : u'Enter here'},
-        {'cfgId' : 6, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'buy'           , 'cfgValue' : u'17',
-            'cfgDesc':u'Enter here'},
-        {'cfgId' : 7, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'sell'          , 'cfgValue' : u'18',
-            'cfgDesc':u'Enter here'},
-        {'cfgId' : 8, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'sell-discount' , 'cfgValue' : u'25',
-            'cfgDesc':u'Enter here'},
-        {'cfgId' : 9, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'tax'           , 'cfgValue' : u'33',
-            'cfgDesc':u'Enter here'},
-        {'cfgId' :10, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'partners'      , 'cfgValue' : u'8',
-            'cfgDesc':u'Enter here'},
-        {'cfgId' :11, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'cost'          , 'cfgValue' : u'2',
-            'cfgDesc':u'Enter here'},
-        {'cfgId' :12, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : u'bank-wage'     , 'cfgValue' : u'31',
-            'cfgDesc':u'Enter here'},
-        {'cfgId' :13, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'our_cheque'    , 'cfgValue' : u'22',
-            'cfgDesc' :u'Enter here'},
-        {'cfgId' :14, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'other_cheque'    , 'cfgValue' : u'6',
-            'cfgDesc' :u'Enter here'},
-        {'cfgId' :15, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'income'     , 'cfgValue' : u'83',
-            'cfgDesc':u'Enter here'}
-        #{'cfgId' :11, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'fund'          , 'cfgValue' : u'??',
-        #    'cfgDesc':u'Enter here'},  #TODO cfgKey
-        #{'cfgId' :12, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : u'acc-receivable', 'cfgValue' : u'??',
-        #    'cfgDesc':u'Enter here',}, #TODO cfgKey
-        #{'cfgId' :13, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' :u'commission'     , 'cfgValue' : u'??',
-        #    'cfgDesc':u'Enter here'}   #TODO cfgKey
+        {'cfgId' : 1, 'cfgType' : 1, 'cfgCat' : 0, 'cfgKey' : 'co-name'       , 'cfgValue' : 'Enter Company Name',
+            'cfgDesc' : 'Enter Company name here'},
+        {'cfgId' : 2, 'cfgType' : 0, 'cfgCat' : 0, 'cfgKey' : 'co-logo'       , 'cfgValue' : '',
+            'cfgDesc' : 'Select Colpany logo'},
+        {'cfgId' : 3, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : 'custSubject'   , 'cfgValue' : '4',
+            'cfgDesc' : 'Enter here'},
+        {'cfgId' : 4, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : 'bank'          , 'cfgValue' : '1',
+            'cfgDesc' : 'Enter here'},
+        {'cfgId' : 5, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : 'cash'          , 'cfgValue' : '3',
+            'cfgDesc' : 'Enter here'},
+        {'cfgId' : 6, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : 'buy'           , 'cfgValue' : '17',
+            'cfgDesc':'Enter here'},
+        {'cfgId' : 7, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : 'sell'          , 'cfgValue' : '18',
+            'cfgDesc':'Enter here'},
+        {'cfgId' : 8, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : 'sell-discount' , 'cfgValue' : '25',
+            'cfgDesc':'Enter here'},
+        {'cfgId' : 9, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : 'tax'           , 'cfgValue' : '33',
+            'cfgDesc':'Enter here'},
+        {'cfgId' :10, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : 'partners'      , 'cfgValue' : '8',
+            'cfgDesc':'Enter here'},
+        {'cfgId' :11, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : 'cost'          , 'cfgValue' : '2',
+            'cfgDesc':'Enter here'},
+        {'cfgId' :12, 'cfgType' : 2, 'cfgCat' : 1, 'cfgKey' : 'bank-wage'     , 'cfgValue' : '31',
+            'cfgDesc':'Enter here'},
+        {'cfgId' :13, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : 'our_cheque'    , 'cfgValue' : '22',
+            'cfgDesc' :'Enter here'},
+        {'cfgId' :14, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : 'other_cheque'    , 'cfgValue' : '6',
+            'cfgDesc' :'Enter here'},
+        {'cfgId' :15, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : 'income'     , 'cfgValue' : '83',
+            'cfgDesc':'Enter here'}
+        #{'cfgId' :11, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : 'fund'          , 'cfgValue' : '??',
+        #    'cfgDesc':'Enter here'},  #TODO cfgKey
+        #{'cfgId' :12, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' : 'acc-receivable', 'cfgValue' : '??',
+        #    'cfgDesc':'Enter here',}, #TODO cfgKey
+        #{'cfgId' :13, 'cfgType' : 3, 'cfgCat' : 1, 'cfgKey' :'commission'     , 'cfgValue' : '??',
+        #    'cfgDesc':'Enter here'}   #TODO cfgKey
      )
 
     op = banknames.insert()
     op.execute(
-        { 'Id': 1, "Name":u"پارسیان"},
-        { 'Id': 2, "Name":u"دی"},
-        { 'Id': 3, "Name":u"سامان"},
-        { 'Id': 4, "Name":u"سپه"},
-        { 'Id': 5, "Name":u"سرمایه"},
-        { 'Id': 6, "Name":u"صادرات"},
-        { 'Id': 7, "Name":u"کشاورزی"},
-        { 'Id': 8, "Name":u"ملت"},
-        { 'Id': 9, "Name":u"ملی"}
+        { 'Id': 1, "Name":"پارسیان"},
+        { 'Id': 2, "Name":"دی"},
+        { 'Id': 3, "Name":"سامان"},
+        { 'Id': 4, "Name":"سپه"},
+        { 'Id': 5, "Name":"سرمایه"},
+        { 'Id': 6, "Name":"صادرات"},
+        { 'Id': 7, "Name":"کشاورزی"},
+        { 'Id': 8, "Name":"ملت"},
+        { 'Id': 9, "Name":"ملی"}
     )
     op = custGroups.insert()
     op.execute(
-        { 'custGrpId': 1, 'custGrpCode': 1, "custGrpName":u"عمومی", 'custGrpDesc': u"مشتریان عمومی"},
+        { 'custGrpId': 1, 'custGrpCode': 1, "custGrpName":"عمومی", 'custGrpDesc': "مشتریان عمومی"},
     )
 
     #customers = Table('customers', meta, autoload=True)
     op = customers.insert()
-    op.execute({'custId': 1 , 'custCode': u'001', 'custSubj' : 58 , 'custName': u'متفرقه', 'custGroup':1 ,
-        'custPhone': u'', 'custCell':u'' , 'custFax' : u'' , 'custAddress':u'' , 'custPostalCode':'', 'custEmail' : u'' , 'custEcnmcsCode':u'' , 'custPersonalCode':'', 'custWebPage':u'',
-        'custResposible': u'','custConnector':u'' , 'custDesc': u'' , 'custBalance': 0 , 'custCredit':0,'custRepViaEmail':False,
-        'custAccName1':u'', 'custAccNo1':u'' , 'custAccBank1':u'', 'custAccName2':u'' , 'custAccNo2':u'', 'custAccBank2':u'',
+    op.execute({'custId': 1 , 'custCode': '001', 'custSubj' : 58 , 'custName': 'متفرقه', 'custGroup':1 ,
+        'custPhone': '', 'custCell':'' , 'custFax' : '' , 'custAddress':'' , 'custPostalCode':'', 'custEmail' : '' , 'custEcnmcsCode':'' , 'custPersonalCode':'', 'custWebPage':'',
+        'custResposible': '','custConnector':'' , 'custDesc': '' , 'custBalance': 0 , 'custCredit':0,'custRepViaEmail':False,
+        'custAccName1':'', 'custAccNo1':'' , 'custAccBank1':'', 'custAccName2':'' , 'custAccNo2':'', 'custAccBank2':'',
         'custTypeBuyer':True , 'custTypeSeller':True,'custTypeMate':False, 'custTypeAgent':False,'custMarked':False ,
-        'custIntroducer': u'' , 'custCommission': u'' , 'custReason':u'' , 'custDiscRate':u'' })
+        'custIntroducer': '' , 'custCommission': '' , 'custReason':'' , 'custDiscRate':'' })
 
     #productgroups = Table('productgroups' , meta , autoload = True)
     op = productGroups.insert()
-    op.execute({'id':1 , 'code': 1 , 'name':u"گروه عمومی کالا" , 'buyId':19 , 'sellId': 20})
+    op.execute({'id':1 , 'code': 1 , 'name':"گروه عمومی کالا" , 'buyId':19 , 'sellId': 20})
 
     #products = Table('products', meta , autoload=True)
     op = products.insert()
-    op.execute({'id':1, 'code':1 , 'name': u"عمومی" , 'accGroup':1, 'location':u'محل در انبار', 'quantity':100, 'qntyWarning': 10 , 'oversell':True , 'purchacePrice':2000 ,
-         'sellingPrice':3000 , 'discountFormula':u"" ,'productDesc': u"توضیح کالا: این یک کالای پیشفرض آزمایشی است.", 'uMeasurement':u"عدد" })
+    op.execute({'id':1, 'code':1 , 'name': "عمومی" , 'accGroup':1, 'location':'محل در انبار', 'quantity':100, 'qntyWarning': 10 , 'oversell':True , 'purchacePrice':2000 ,
+         'sellingPrice':3000 , 'discountFormula':"" ,'productDesc': "توضیح کالا: این یک کالای پیشفرض آزمایشی است.", 'uMeasurement':"عدد" })
 
 def downgrade(migrate_engine):
     # Operations to reverse the above upgrade go here.

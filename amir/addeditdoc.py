@@ -10,10 +10,6 @@ from .database import Subject, Notebook
 from .helpers import get_builder
 from sqlalchemy import or_, and_, func
 
-import sys
-if sys.version_info > (3,):
-    unicode = str
-
 # config = share.config
 
 ## \defgroup UserInterface
@@ -167,12 +163,12 @@ class AddEditDoc:
             else:
                 code = 0
                 s = Subject()
-            numrows = str(self.numrows)
+            numrows = self.numrows
             if share.config.digittype == 1:
                 code = utility.convertToPersian(code)
                 numrows = utility.convertToPersian(numrows)
-            self.liststore.append(
-                (numrows, code, s.name, debt, credit, n.desc, str(n.id)))
+            self.liststore.append((numrows, code, s.name, debt,
+                credit, n.desc, str(n.id)))
 
         docnum = utility.LN(self.cl_document.number)
         self.builder.get_object("docnumber").set_text(docnum)
@@ -225,7 +221,7 @@ class AddEditDoc:
             credit = self.liststore.get(iter, 4)[0].replace(",", "")
             desctxt = self.liststore.get(iter, 5)[0]
 
-            if float(unicode(debt)) != 0:
+            if float(debt) != 0:
                 self.builder.get_object("debtor").set_active(True)
                 self.amount.set_text(debt)
             else:
@@ -241,10 +237,10 @@ class AddEditDoc:
                 type = not (self.builder.get_object(
                     "debtor").get_active() == True)
 
-                if float(unicode(debt)) != 0:
-                    self.debt_sum -= float(unicode(debt))
+                if float(debt) != 0:
+                    self.debt_sum -= float(debt)
                 else:
-                    self.credit_sum -= float(unicode(credit))
+                    self.credit_sum -= float(credit)
 
                 code = self.code.get_text()
                 amount = self.amount.get_float()
@@ -321,13 +317,11 @@ class AddEditDoc:
             msgbox.set_title(_("Are you sure?"))
             result = msgbox.run()
             if result == Gtk.ResponseType.OK:
-                id = int(unicode(self.liststore.get(iter, 6)[0]))
-                code = int(unicode(self.liststore.get(iter, 1)[0]))
-                debt = int(unicode(self.liststore.get(
-                    iter, 3)[0].replace(",", "")))
-                credit = int(unicode(self.liststore.get(
-                    iter, 4)[0].replace(",", "")))
-                index = int(unicode(self.liststore.get(iter, 0)[0]))
+                id = int(self.liststore.get(iter, 6)[0])
+                code = int(self.liststore.get(iter, 1)[0])
+                debt = int(self.liststore.get(iter, 3)[0].replace(",", ""))
+                credit = int(self.liststore.get(iter, 4)[0].replace(",", ""))
+                index = int(self.liststore.get(iter, 0)[0])
                 res = self.liststore.remove(iter)
                 self.deleted_items.append(id)
                 # Update index of next rows
@@ -351,8 +345,7 @@ class AddEditDoc:
                     diff = self.debt_sum - self.credit_sum
                 else:
                     diff = self.credit_sum - self.debt_sum
-                self.builder.get_object(
-                    "difference").set_text(utility.LN(diff))
+                self.builder.get_object("difference").set_text(utility.LN(diff))
             msgbox.destroy()
 
     # Save liststore change to database
@@ -366,15 +359,15 @@ class AddEditDoc:
         while iter != None:
             code = utility.convertToLatin(self.liststore.get(iter, 1)[0])
             debt = utility.getFloatNumber(self.liststore.get(iter, 3)[0])
-            value = -(debt)
-            if(self.liststore.get(iter, 6)[0] != None):
+            value = -debt
+            if self.liststore.get(iter, 6)[0] != None:
                 id = self.liststore.get(iter, 6)[0]
             else:
                 id = 0
             if value == 0:
                 credit = utility.getFloatNumber(self.liststore.get(iter, 4)[0])
                 value = credit
-            desctxt = unicode(self.liststore.get(iter, 5)[0])
+            desctxt = self.liststore.get(iter, 5)[0]
 
             query = share.config.db.session.query(Subject)
             query = query.filter(Subject.code == code)
@@ -503,10 +496,8 @@ class AddEditDoc:
         self.debt_sum = 0
         self.credit_sum = 0
         while iter != None:
-            self.debt_sum += int(unicode(self.liststore.get(iter, 3)
-                                         [0].replace(",", "")))
-            self.credit_sum += int(unicode(self.liststore.get(iter, 4)
-                                           [0].replace(",", "")))
+            self.debt_sum += int(self.liststore.get(iter, 3)[0].replace(",", ""))
+            self.credit_sum += int(self.liststore.get(iter, 4)[0].replace(",", ""))
             iter = self.liststore.iter_next(iter)
         self.builder.get_object("debtsum").set_text(utility.LN(self.debt_sum))
         self.builder.get_object("creditsum").set_text(

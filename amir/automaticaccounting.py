@@ -18,10 +18,6 @@ from .class_subject import Subjects
 from .utility import LN, convertToLatin, getFloat
 from gettext import gettext as _
 
-import sys
-if sys.version_info > (3,):
-    unicode = str
-
 
 ## \defgroup UserInterface
 ## @{
@@ -298,10 +294,8 @@ class AutomaticAccounting:
 
     def on_cash_payment_entry_change(self, entry=None):
         val1 = self.cash_payment_entry.get_float()
-        val2 = float(unicode(self.builder.get_object(
-            'non-cash-payment-label').get_text()).replace(',',  ''))
-        val3 = float(unicode(self.builder.get_object(
-            'spend-cheque-label').get_text()).replace(',',  ''))
+        val2 = float(self.builder.get_object('non-cash-payment-label').get_text().replace(',',  ''))
+        val3 = float(self.builder.get_object('spend-cheque-label').get_text().replace(',',  ''))
         discount = self.discount_entry.get_float()
 
         paid = val1+val2+val3+discount
@@ -416,10 +410,8 @@ class AutomaticAccounting:
                 desc = self.type_names[self.type_index][1]
             document = class_document.Document()
             if result['cash_payment']:
-                document.add_notebook(
-                    result['from'], result['cash_payment'], unicode(desc))
-                document.add_notebook(
-                    result['to'],  -result['cash_payment'], unicode(desc))
+                document.add_notebook(result['from'], result['cash_payment'], desc)
+                document.add_notebook(result['to'],  -result['cash_payment'], desc)
             if result['discount']:
                 document.add_notebook(dbconf.get_int(
                     'sell-discount'), -result['discount'], desc)
@@ -446,7 +438,7 @@ class AutomaticAccounting:
             for sp_cheque in self.spendChequeui.chequesList:
                 cl_cheque.update_status(sp_cheque.chqId, 5, customer_id)
                 document.add_cheque(custSubj, dbconf.get_int('other_cheque'), -sp_cheque.chqAmount,
-                                    unicode(_('Cheque No. %s spended') % sp_cheque.chqSerial), sp_cheque.chqId)
+                                    _('Cheque No. %s spended') % sp_cheque.chqSerial, sp_cheque.chqId)
 
             result = document.save()
 
@@ -474,16 +466,16 @@ class AutomaticAccounting:
             mysubject = Subjects()
             numrows = len(self.liststore) + 1
             #document.add_notebook(result['from'],  result['total_value'], result['desc'])
-            self.liststore.append((LN(numrows), unicode(self.from_code), unicode(
-                self.from_name), LN(0), LN(result['total_value']), result['desc'], None))
+            self.liststore.append((LN(numrows), self.from_code, self.from_name,
+                LN(0), LN(result['total_value']), result['desc'], None))
             #self.liststore.append ((numrows,                 code,                           sub.name,                          debt, credit,                              desc,           None))
             #document.add_notebook(result['to']  , -result['cash_payment'], result['desc'])
             numrows += 1
-            self.liststore.append((LN(numrows), unicode(self.to_code), unicode(
-                self.to_name), LN(result['cash_payment']), LN(0), result['desc'], None))
+            self.liststore.append((LN(numrows), self.to_code, self.to_name,
+                LN(result['cash_payment']), LN(0), result['desc'], None))
             if result['discount']:
                 numrows += 1
-                self.liststore.append((LN(numrows), unicode(mysubject.get_code(dbconf.get_int('sell-discount'))), mysubject.get_name(
+                self.liststore.append((LN(numrows), mysubject.get_code(dbconf.get_int('sell-discount')), mysubject.get_name(
                     dbconf.get_int('sell-discount')), LN(result['discount']), LN(0), result['desc'], None))
 
             self.on_destroy(self.builder.get_object('general'))

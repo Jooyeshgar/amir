@@ -1,11 +1,4 @@
-# -*- encoding: utf-8 -*-
-
 from .share import share
-
-import sys
-if sys.version_info > (3,):
-    unicode = str
-    long = int
 
 ## \defgroup Utility
 ## @{
@@ -16,8 +9,7 @@ if sys.version_info > (3,):
 
 
 def LN(num, comma=True):
-
-    if type(num) == int or type(num) == long:
+    if type(num) == int:
         num = str(num)
     elif type(num) == float:
         num = str(num)
@@ -94,7 +86,7 @@ def getInt(number_string):
 
 
 def readNumber(number):
-    # return number.replace('0123456789', u'۰۱۲۳۴۵۶۷۸۹')
+    # return number.replace('0123456789', '۰۱۲۳۴۵۶۷۸۹')
     if share.config.digittype == 1:
         return convertToPersian(number)
     else:
@@ -106,10 +98,10 @@ def convertToLatin(input_string):
         Searchs for farsi digits in input_string and converts them to latin ones.
     """
     en_numbers = '0123456789.%'
-    fa_numbers = u'۰۱۲۳۴۵۶۷۸۹/٪'
-    output_string = u''
-    for c in unicode(input_string):
-        if c in unicode(fa_numbers):
+    fa_numbers = '۰۱۲۳۴۵۶۷۸۹/٪'
+    output_string = ''
+    for c in str(input_string):
+        if c in fa_numbers:
             c = en_numbers[fa_numbers.index(c)]
         output_string += c
 
@@ -122,10 +114,10 @@ def convertToPersian(input_string):
     """
 
     en_numbers = '0123456789.%'
-    fa_numbers = u'۰۱۲۳۴۵۶۷۸۹/٪'
+    fa_numbers = '۰۱۲۳۴۵۶۷۸۹/٪'
 
-    output_string = u''
-    for c in unicode(input_string):
+    output_string = ''
+    for c in str(input_string):
         if c in en_numbers:
             c = fa_numbers[en_numbers.index(c)]
         output_string += c

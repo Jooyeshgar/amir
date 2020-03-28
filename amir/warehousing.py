@@ -1,7 +1,6 @@
 from . import numberentry
 from . import subjects
 
-
 from sqlalchemy.orm import sessionmaker, join
 from .helpers import get_builder
 from sqlalchemy.orm.util import outerjoin
@@ -14,10 +13,6 @@ from .database import *
 import gi
 from gi.repository import Gtk
 from gi.repository import GObject
-
-import sys
-if sys.version_info > (3,):
-    unicode = str
 
 ###################################################################################
 ##
@@ -369,16 +364,16 @@ class Warehousing(GObject.GObject):
     # --------------------------------------------------------------------
     def chkProInfo(self, sender=0):
         pCode = self.proCode.get_text()
-        pName = unicode(self.proName.get_text())
+        pName = self.proName.get_text()
         pWarn = self.qntyWarning.get_int()
         pOver = self.oversell.get_active()
-        pPLoc = unicode(self.proLoc.get_text())
+        pPLoc = self.proLoc.get_text()
         pQnty = self.proQnty.get_int()
         pPurc = self.purchasePrice.get_int()
         pSell = self.sellingPrice.get_int()
         pAccc = self.accGroup.get_text()
-        pDesc = unicode(self.proDesc.get_text())
-        pDisc = unicode(self.discFormula.get_text())
+        pDesc = self.proDesc.get_text()
+        pDisc = self.discFormula.get_text()
         if not pCode:
             errorstr = _("There must be a \"Code\" for each product.")
             msgbox = Gtk.MessageDialog(self.addProWin,
@@ -1117,7 +1112,7 @@ class Warehousing(GObject.GObject):
         if str(query.first().code) in self.proGrpDict:
             proIter = self.proGrpDict[str(query.first().code)]
             self.proListStore.set(proIter, 0, code, 1, name)
-            del self.proGrpDict[str(query.first().code)]
+            del self.proGrpDict[query.first().code]
             self.proGrpDict[code] = proIter
 
         updateVals = {Groups.code: code,

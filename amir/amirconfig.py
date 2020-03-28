@@ -256,12 +256,9 @@ class AmirConfig:
 
         self.paper_ppd = self.sconfig.get('Paper Setup', 'paper_ppd_name')
         self.paper_name = self.sconfig.get('Paper Setup', 'paper_display_name')
-        self.paper_width = self.sconfig.getfloat(
-            'Paper Setup', 'paper_width_points')
-        self.paper_height = self.sconfig.getfloat(
-            'Paper Setup', 'paper_height_points')
-        self.paper_orientation = self.sconfig.getint(
-            'Paper Setup', 'paper_orientation')
+        self.paper_width = self.sconfig.getfloat('Paper Setup', 'paper_width_points')
+        self.paper_height = self.sconfig.getfloat('Paper Setup', 'paper_height_points')
+        self.paper_orientation = self.sconfig.getint('Paper Setup', 'paper_orientation')
 
         self.topmargin = self.sconfig.getint('Paper Setup', 'top_margin')
         self.botmargin = self.sconfig.getint('Paper Setup', 'bottom_margin')
@@ -304,15 +301,11 @@ class AmirConfig:
         self.sconfig.set('Report Fonts', 'content_font', str(self.contentfont))
         self.sconfig.set('Report Fonts', 'footer_font', str(self.footerfont))
 
-        self.sconfig.set('Paper Setup', 'paper_ppd_name', str(self.paper_ppd))
-        self.sconfig.set('Paper Setup', 'paper_display_name',
-                         str(self.paper_name))
-        self.sconfig.set('Paper Setup', 'paper_width_points',
-                         str(self.paper_width))
-        self.sconfig.set('Paper Setup', 'paper_height_points',
-                         str(self.paper_height))
-        self.sconfig.set('Paper Setup', 'paper_orientation',
-                         str(self.paper_orientation))
+        self.sconfig.set('Paper Setup', 'paper_ppd_name', self.paper_ppd)
+        self.sconfig.set('Paper Setup', 'paper_display_name', self.paper_name)
+        self.sconfig.set('Paper Setup', 'paper_width_points', str(self.paper_width))
+        self.sconfig.set('Paper Setup', 'paper_height_points', str(self.paper_height))
+        self.sconfig.set('Paper Setup', 'paper_orientation', str(self.paper_orientation))
 
         self.sconfig.set('Paper Setup', 'top_margin', str(self.topmargin))
         self.sconfig.set('Paper Setup', 'bottom_margin', str(self.botmargin))

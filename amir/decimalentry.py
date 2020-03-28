@@ -1,19 +1,8 @@
-# -*- encoding: utf-8 -*-
-
 import gi
 from gi.repository import Gtk
 from gi.repository import GObject
 
 from . import utility
-
-try:
-    from string import replace
-except:  # py3
-    replace = str.replace
-
-import sys
-if sys.version_info > (3,):
-    unicode = str
 
 ## \defgroup Widgets
 ## @{
@@ -33,9 +22,7 @@ class DecimalEntry(Gtk.Entry):
     def insert(self, widget, text, pos):
         # the next three lines set up the text. this is done because we
         # can't use insert_text(): it always inserts at position zero.
-        # **** unicode is neccessary for persian numbers!!  ****
-        orig_text = unicode(widget.get_text())
-        text = unicode(text)
+        orig_text = widget.get_text()
         new_text = orig_text[:pos] + text + orig_text[pos:]
         hadSlash = new_text.find('/')
         commasCount1 = new_text[:pos].count(',')
@@ -51,19 +38,19 @@ class DecimalEntry(Gtk.Entry):
 
         if hadSlash != -1:
             new_text = new_text.replace('.', '/')
-    # avoid recursive calls triggered by set_text
+        # avoid recursive calls triggered by set_text
         widget.handler_block(self.insert_sig)
-    # replace the text with some new text
+        # replace the text with some new text
         widget.set_text(new_text)
         widget.handler_unblock(self.insert_sig)
-    # set the correct position in the widget
+        # set the correct position in the widget
         widget.set_position(pos + len(text))
 
     def insert_cb(self, widget, text, length, position):
         # if you don't do this, garbage comes in with text
         text = text[:length]
         pos = widget.get_position()
-    # stop default emission
+        # stop default emission
         widget.emit_stop_by_name("insert_text")
         GObject.idle_add(self.insert, widget, text, pos)
 
@@ -72,10 +59,9 @@ class DecimalEntry(Gtk.Entry):
             return
         text = widget.get_text()
         text2 = ""
-        # **** unicode is neccessary for persian numbers!!  ****
-        text1 = unicode(text)[:pos1]
+        text1 = text[:pos1]
         if pos2 != -1:
-            text2 = unicode(text)[pos2:]
+            text2 = text[pos2:]
         # print widget.get_float()
         text = text1 + text2
         hadSlash = text.find('/')
@@ -93,16 +79,14 @@ class DecimalEntry(Gtk.Entry):
         # --- This method will return the integer format of the entered
         # --- value. If there is no text entered, 0 will be returned.
         try:
-            num = self.get_text().replace(',', '')
-            val = int(unicode(num))
+            val = int(self.get_text().replace(',', ''))
         except:
             val = 0
         return val
 
     def get_float(self):
         try:
-            num = self.get_text().replace('/', '.').replace(',', '')
-            return float(unicode(num))
+            return float(self.get_text().replace('/', '.').replace(',', ''))
         except:
             return 0
 
@@ -116,7 +100,7 @@ class DecimalEntry(Gtk.Entry):
     # def readNumber (self):
     #     str = self.get_text()
     #     en_numbers = '0123456789'
-    #     fa_numbers = u'۰۱۲۳۴۵۶۷۸۹'
+    #     fa_numbers = '۰۱۲۳۴۵۶۷۸۹'
 
     #     for c in fa_numbers:
     #         str = replace(str,c,en_numbers[fa_numbers.index(c)])

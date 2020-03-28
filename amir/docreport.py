@@ -18,10 +18,6 @@ from .share import share
 from .helpers import get_builder
 from .weasyprintreport import *
 
-import sys
-if sys.version_info > (3,):
-    unicode = str
-
 # config = share.config
 
 
@@ -46,7 +42,7 @@ class DocumentReport:
             "clicked", self.printReport)
 
     def createReport(self, printFlag=True):
-        number = utility.convertToLatin(unicode(self.number.get_text()))
+        number = utility.convertToLatin(self.number.get_text())
 
         if re.match('^\d+$', number) != None:
             self.docnumbers = [int(number)]
@@ -178,10 +174,9 @@ class DocumentReport:
                     for data in row:
                         html += '<td>' + str(data) + '</td>'
                     html += '</tr>'
-            row = ['<td colspan="4" >'+unicode(_("Total")+'</td>'), '<td>'+unicode(
-                utility.LN(debt_sum)+'</td>'), '<td>'+unicode(utility.LN(credit_sum))+'</td>']
-            signaturesRow = [unicode(_("Accounting")), unicode(
-                _("Financial Manager")), unicode(_("Managing Director"))]
+            row = ['<td colspan="4" >' + _("Total") + '</td>', '<td>' +
+                utility.LN(debt_sum) + '</td>', '<td>' + utility.LN(credit_sum) + '</td>']
+            signaturesRow = [_("Accounting"), _("Financial Manager"), _("Managing Director")]
             if share.config.locale != 'en_US':
                 row = row[::-1]
                 signaturesRow = signaturesRow[::-1]

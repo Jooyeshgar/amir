@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 ## \mainpage Amir accounting software
 #
@@ -60,10 +59,6 @@ import gi
 import logging
 import sys
 import os
-
-if sys.version_info > (3,):
-    long = int
-    unicode = str
 
 if sys.platform == 'win32':
     # set path env to current directory to avoid GTK errors
@@ -132,10 +127,7 @@ except:
 logging.debug('Locale Path=%s' % (config.locale_path))
 gettext.bindtextdomain('amir', config.locale_path)
 gettext.textdomain('amir')
-try:
-    gettext.install('amir', config.locale_path, unicode=1)
-except:  # py3
-    gettext.install('amir', config.locale_path)
+gettext.install('amir', config.locale_path)
 
 
 class MainWindow(GObject.GObject):
@@ -464,12 +456,12 @@ class MainWindow(GObject.GObject):
             config.db.session.add(user)
             config.db.session.commit()
         self.loginUser = config.db.session.query(Users).filter(
-            Users.username == unicode(username.get_text())).first()
+            Users.username == str(username.get_text())).first()
         if self.loginUser:
             permission = config.db.session.query(Permissions).filter(
                 Permissions.id == self.loginUser.id).first()
-            # self.permissionValue = long(permission.value)
-            utility.setPermissionValue(long(permission.value))
+            # self.permissionValue = int(permission.value)
+            utility.setPermissionValue(int(permission.value))
         if self.loginUser and self.loginUser.validate_password(password.get_text()):
             self.window.hide()
             self.infobar = []
@@ -521,10 +513,7 @@ class MainWindow(GObject.GObject):
         locale.setlocale(locale.LC_ALL, '')
         gettext.bindtextdomain('amir', config.locale_path)
         gettext.textdomain('amir')
-        try:
-            gettext.install('amir', config.locale_path, unicode=1)
-        except:  # py3
-            gettext.install('amir', config.locale_path)
+        gettext.install('amir', config.locale_path)
         logging.info('New locale: ' + new_locale)
 
         msg = _("Please close Amir and start it again in order to apply changes")

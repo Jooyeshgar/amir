@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # calverter.py  (2008/08/16)
 ##
 # Copyright (C) 2008 Mehdi Bayazee (Bayazee@Gmail.com)

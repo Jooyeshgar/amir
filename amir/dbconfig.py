@@ -1,11 +1,7 @@
-import sys
 from . import database
 from .share import share
 
 config = share.config
-
-if sys.version_info > (3,):
-    unicode = str
 
 ## \defgroup Controller
 ## @{
@@ -38,7 +34,7 @@ class dbConfig:
             return ''
 
     def get_value(self, key):
-        key = unicode(key)
+        key = str(key)
         query = share.config.db.session.query(database.Config)
         query = query.filter(database.Config.cfgKey == key).first()
         if query:
@@ -54,10 +50,10 @@ class dbConfig:
         return False
 
     def set_value(self, key, val, commit=True):
-        val = unicode(val)
+        val = str(val)
         query = share.config.db.session.query(database.Config)
         query = query.filter(database.Config.cfgId == key)
-        query = query.update({u'cfgValue': val})
+        query = query.update({'cfgValue': val})
         if commit:  # commit all of the at once for more speed
             share.config.db.session.commit()
 
@@ -65,7 +61,7 @@ class dbConfig:
         if self.exists(key):
             raise Exception('Key already exists')
 
-        row = database.Config(unicode(key), u'', unicode(desc), mode, 2)
+        row = database.Config(str(key), '', str(desc), mode, 2)
         share.config.db.session.add(row)
         share.config.db.session.commit()
 

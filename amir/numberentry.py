@@ -1,19 +1,8 @@
-# -*- encoding: utf-8 -*-
-
 import gi
 from gi.repository import Gtk
 from gi.repository import GObject
 
 from . import utility
-
-try:
-    from string import replace
-except:
-    replace = str.replace
-
-import sys
-if sys.version_info > (3,):
-    unicode = str
 
 ## \defgroup Widgets
 ## @{
@@ -40,19 +29,19 @@ class NumberEntry(Gtk.Entry):
         except ValueError:
             new_text = orig_text
 
-    # avoid recursive calls triggered by set_text
+        # avoid recursive calls triggered by set_text
         widget.handler_block(self.insert_sig)
-    # replace the text with some new text
+        # replace the text with some new text
         widget.set_text(new_text)
         widget.handler_unblock(self.insert_sig)
-    # set the correct position in the widget
+        # set the correct position in the widget
         widget.set_position(pos + len(text))
 
     def insert_cb(self, widget, text, length, position):
         # if you don't do this, garbage comes in with text
         text = text[:length]
         pos = widget.get_position()
-    # stop default emission
+        # stop default emission
         widget.emit_stop_by_name("insert_text")
         GObject.idle_add(self.insert, widget, text, pos)
 
@@ -61,7 +50,7 @@ class NumberEntry(Gtk.Entry):
         # --- value. If there is no text entered, 0 will be returned.
         try:
             #val = int(readNumber())
-            val = int(unicode(self.get_text()))
+            val = int(self.get_text())
         except:
             val = 0
         return val

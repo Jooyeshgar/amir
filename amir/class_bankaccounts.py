@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from . import class_subject
 from . import dbconfig
 from .share import share
@@ -11,9 +10,6 @@ from sqlalchemy.orm.query import aliased
 from sqlalchemy.sql.functions import *
 from gi.repository import Gtk
 
-import sys
-if sys.version_info > (3,):
-    unicode = str
 
 # config = share.config
 ## \defgroup Controller
@@ -35,7 +31,7 @@ class BankAccountsClass:
 
     def get_bank_id(self, name):
         bank = share.config.db.session.query(BankNames).select_from(
-            BankNames).filter(BankNames.Name == unicode(name)).first()
+            BankNames).filter(BankNames.Name == name).first()
         bank_id = None
         if bank:
             bank_id = bank.Id
@@ -50,7 +46,6 @@ class BankAccountsClass:
         return bank_name
 
     def add_bank(self, bank_name):
-        bank_name = unicode(bank_name)
         query = share.config.db.session.query(BankNames).select_from(
             BankNames).filter(BankNames.Name == bank_name).first()
         if query == None:
@@ -77,16 +72,6 @@ class BankAccountsClass:
         dialog.destroy()
 
     def add_account(self, id, name, number="", type=0, owner="", bank=1, branch="", address="", phone="", webpage="", desc=""):
-        name = unicode(name)
-        number = unicode(number)
-        owner = unicode(owner)
-        bank = unicode(bank)
-        branch = unicode(branch)
-        address = unicode(address)
-        phone = unicode(phone)
-        webpage = unicode(webpage)
-        desc = unicode(desc)
-
         bank_id = bank
         dbconf = dbconfig.dbConfig()
         if id == -1:
