@@ -76,11 +76,11 @@ class PrintReport:
             rindex = 0
             pages = 0
             self.documents = {}
-            while (rindex < lencontent):
+            while rindex < lencontent:
                 docnumber = self.content[rindex][6]
                 offset = 0
                 self.documents[pages] = []
-                while (offset < self.lines_per_page and rindex < lencontent):
+                while offset < self.lines_per_page and rindex < lencontent:
                     # detect new document
                     if docnumber != self.content[rindex][6]:
                         break
@@ -258,7 +258,7 @@ class PrintReport:
 
         addh = ROW_HEIGHT + TABLE_TOP
         try:
-            while (offset < self.lines_per_page):
+            while offset < self.lines_per_page:
                 row = self.content[rindex + offset]
 
                 cr.move_to(RIGHT_EDGE, addh)
@@ -503,7 +503,7 @@ class PrintReport:
 
         addh = ROW_HEIGHT + TABLE_TOP
         try:
-            while (offset < self.lines_per_page):
+            while offset < self.lines_per_page:
                 row = self.content[rindex + offset]
 
                 cr.move_to(RIGHT_EDGE, addh)
@@ -792,7 +792,7 @@ class PrintReport:
         addh = TABLE_TOP
 
         try:
-            while (offset < self.lines_per_page):
+            while offset < self.lines_per_page:
                 row = self.content[rindex + offset]
 
                 cr.move_to(RIGHT_EDGE, addh)

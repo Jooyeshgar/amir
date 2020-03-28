@@ -1,4 +1,3 @@
-import sys
 import os
 from datetime import date
 from gettext import gettext as _

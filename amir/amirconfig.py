@@ -34,10 +34,7 @@ from .share import share
 import textwrap
 import tempfile
 import shutil
-try:
-    import ConfigParser as configparser
-except:
-    import configparser
+import configparser
 import platform
 
 from . import database

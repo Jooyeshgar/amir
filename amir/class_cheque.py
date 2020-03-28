@@ -1,4 +1,3 @@
-import sys
 from .share import share
 from .database import Cheque
 from .database import ChequeHistory
