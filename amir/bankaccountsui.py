@@ -4,6 +4,7 @@ from . import helpers
 from .share import share
 from .database import BankAccounts
 from .database import Customers
+from gettext import gettext as _
 
 import glib
 from gi.repository import Gtk

@@ -6,6 +6,8 @@ from . import utility
 from .share import share
 from .helpers import get_builder
 
+from gettext import gettext as _
+
 # config = share.config
 
 

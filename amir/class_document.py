@@ -6,6 +6,8 @@ from .database import Cheque
 from .database import ChequeHistory
 from .database import Factors
 
+from gettext import gettext as _
+
 import logging
 from datetime import date
 from sqlalchemy.orm.util import outerjoin

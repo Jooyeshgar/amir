@@ -5,11 +5,11 @@ import math
 import logging
 import cairo
 import gi
-from gi.repository import Pango
-from gi.repository import Gtk
+from gi.repository import Pango, Gtk
 gi.require_version('PangoCairo', '1.0')
 from gi.repository import PangoCairo
 
+from gettext import gettext as _
 
 # config = share.config
 

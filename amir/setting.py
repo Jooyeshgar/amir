@@ -11,6 +11,8 @@ from .share import share
 from .helpers import get_builder, comboInsertItems
 import importlib
 
+from gettext import gettext as _
+
 # config = share.config
 
 

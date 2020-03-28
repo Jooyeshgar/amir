@@ -92,19 +92,18 @@ class DecimalEntry(Gtk.Entry):
 
     def is_numeric(self):
         try:
-            float(readNumber())
+            float(self.readNumber())
             return True
         except ValueError:
             return False
 
-    # def readNumber (self):
-    #     str = self.get_text()
-    #     en_numbers = '0123456789'
-    #     fa_numbers = '۰۱۲۳۴۵۶۷۸۹'
+    def readNumber(self):
+        text = self.get_text()
+        fa_numbers = '۰۱۲۳۴۵۶۷۸۹'
 
-    #     for c in fa_numbers:
-    #         str = replace(str,c,en_numbers[fa_numbers.index(c)])
+        for c in fa_numbers:
+            text = text.replace(c, str(fa_numbers.index(c)))
 
-    #     return str
+        return text
 
 ## @}

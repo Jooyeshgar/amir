@@ -9,6 +9,7 @@ from .share import share
 from .database import Subject, Notebook
 from .helpers import get_builder
 from sqlalchemy import or_, and_, func
+from gettext import gettext as _
 
 # config = share.config
 

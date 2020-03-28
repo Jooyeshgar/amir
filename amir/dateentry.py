@@ -1,11 +1,12 @@
 import gi
-from gi.repository import Gtk
-from gi.repository import GObject
+from gi.repository import Gtk, GObject
 from datetime import date
 
 from .utility import LN, getInt, convertToLatin
 from .share import share
 from .calverter import calverter
+
+from gettext import gettext as _
 
 ## \defgroup Utility
 ## @{

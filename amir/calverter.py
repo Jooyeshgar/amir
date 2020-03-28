@@ -162,7 +162,7 @@ class calverter:
         if nthweek > 0:
             j += self.previous_weekday(weekday, jd)
         else:
-            j += next_weekday(weekday, jd)
+            j += self.next_weekday(weekday, jd)
         return j
 
     def iso_to_julian(self, year, week, day):

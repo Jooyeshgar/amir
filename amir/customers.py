@@ -20,8 +20,9 @@ from .share import share
 from datetime import date
 from .database import *
 import gi
-from gi.repository import Gtk
-from gi.repository import GObject
+from gi.repository import Gtk, GObject
+
+from gettext import gettext as _
 
 gi.require_version('Gtk', '3.0')
 # config = share.config

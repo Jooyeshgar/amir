@@ -1,5 +1,5 @@
 import gi
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk
 from datetime import date, timedelta
 import os
 import platform
@@ -11,7 +11,8 @@ from .share import share
 from .helpers import get_builder
 from . import customers
 from . import product
-from gi.repository import Gdk
+
+from gettext import gettext as _
 
 
 # config = share.config
